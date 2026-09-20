@@ -384,7 +384,7 @@ return `<h2>保存したカードセット</h2>${sets.length?sets.map(s=>`<div c
       ? externalGameTile('ALPHABET TOUCH',GamesLinks.alphabet())
       : "";
     const linkedGames=GamesLinks.assigned(bookKey,unit);
-    const individualGames=alphabetTile+linkedGames.filter(g=>g.audiences.includes('individual')).map(g=>externalGameTile(g.name,g.url)).join('');
+    const individualGames=alphabetTile+linkedGames.filter(g=>g.audiences.includes('individual')).map(g=>RoulettePresetTile.render(g)).join('');
     return `
       <section class="content-heading">
         <button class="back-button" data-route="#/book/${bookKey}" aria-label="Unit一覧へ戻る">◀</button>
@@ -401,7 +401,7 @@ return `<h2>保存したカードセット</h2>${sets.length?sets.map(s=>`<div c
           ${featureTile("look-say", "Look＆Say", "画面に短い時間表示された絵を見てこたえる", "class")}
           ${featureTile("whats-missing", "What’s Missing?", "消えたカードを見つける", "class")}
           ${featureTile("bomb-game", "Bomb Game", "選んだ言葉で進めるクラスゲーム", "class")}
-          ${linkedGames.filter(g=>g.audiences.includes('class')).map(g=>externalGameTile(g.name,g.url)).join('')}
+          ${linkedGames.filter(g=>g.audiences.includes('class')).map(g=>RoulettePresetTile.render(g)).join('')}
         </div>`)}
       ${sectionBlock("Games（個人の端末で）", "配布されたゲームを児童が自分で練習する", individualGames?`<div class="feature-grid">${individualGames}</div>`:`<div class="empty-state compact"><p>このUnitの配布用ゲームは、今後追加します。</p></div>`)}
       ${sectionBlock("Activities", "このUnitで使える活動", activities.length||interviewTiles ? `<div class="feature-grid">${activities.map((activity) => activityUnitTile(activity)).join("")}${interviewTiles}</div>` : `<div class="empty-state compact"><p>このUnitのActivityは、今後追加します。</p></div>`)}
