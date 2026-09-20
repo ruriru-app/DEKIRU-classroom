@@ -34,13 +34,13 @@ function rouletteCornerBoardMarkup(players,mode){
   }).join('');
   const coloredLayers=activePlayers.filter(player=>roulettePlaced.has(player.id)).map(player=>{
     const corner=rouletteCornerById(roulettePlaced.get(player.id)?.corner);
-    const inactive=mode==='play'&&rouletteSelectedPlayer&&rouletteSelectedPlayer!==player.id?' inactive':'';
+    const inactive=mode==='play'&&(rouletteSpinning||rouletteSelectedPlayer!==player.id)?' inactive':'';
     return '<img class="roulette-corner-board-layer corner-'+corner.id+inactive+'" data-roulette-corner-color="'+player.id+'" src="'+player.cornerBoardAsset+'" alt="">';
   }).join('');
   const controls=ROULETTE_CORNERS.map(corner=>{
     const player=roulettePlayerAtCorner(corner.id,activePlayers);
     if(player){
-      const attributes=mode==='play'?'data-roulette-move="'+player.id+'" disabled':'data-roulette-placed-player="'+player.id+'"';
+      const attributes=mode==='play'?'data-roulette-move="'+player.id+'" aria-label="Player '+player.id+' 1マスすすむ" disabled':'data-roulette-placed-player="'+player.id+'"';
       return '<button class="roulette-corner-slot corner-'+corner.id+(mode==='play'?' roulette-corner-move':'')+'" type="button" '+attributes+' style="--corner-piece-rotation:'+corner.rotation+'deg">'+roulettePieceMarkup(player,'roulette-corner-piece','')+'</button>';
     }
     if(mode==='lobby')return '<button class="roulette-corner-slot corner-'+corner.id+' empty" type="button" data-roulette-corner="'+corner.id+'" aria-label="'+corner.label+'に置く"><span>＋</span></button>';
@@ -55,7 +55,7 @@ function renderRouletteLobby(){
   const stage=document.getElementById('rouletteStage');
   if(!stage)return;
   if(!roulettePlayerCount){
-    stage.innerHTML='<div class="roulette-lobby"><h2>HOW MANY PLAYERS?</h2><div class="roulette-player-counts">'+[2,3,4].map(count=>'<button class="roulette-player-count" type="button" data-roulette-count="'+count+'">'+count+'</button>').join('')+'</div></div>';
+    stage.innerHTML='<div class="roulette-lobby"><label class="roulette-course-count">コースのマス数 <select id="rouletteCourseCount">'+[4,6,8,12].map(count=>'<option value="'+count+'"'+(activeRouletteConfig.cardCount===count?' selected':'')+'>'+count+'マス</option>').join('')+'</select></label><h2>HOW MANY PLAYERS?</h2><div class="roulette-player-counts">'+[2,3,4].map(count=>'<button class="roulette-player-count" type="button" data-roulette-count="'+count+'">'+count+'</button>').join('')+'</div></div>';
     return;
   }
   const players=ROULETTE_PLAYERS.slice(0,roulettePlayerCount);
@@ -126,9 +126,15 @@ function roulettePhrase(text,playerId,randomChoice=false){
   }
   return phrase;
 }
+function rouletteEligiblePlayers(){
+  return roulettePlayers.filter(player=>player.position<rouletteCourse.length);
+}
+function rouletteWheelSegments(){
+  const players=rouletteEligiblePlayers();
+  return players.length?Array.from({length:12},(_,index)=>players[index%players.length]):[];
+}
 function rouletteWheelGradient(){
-  const players=ROULETTE_PLAYERS.slice(0,roulettePlayerCount);
-  const segments=players.concat(players);
+  const segments=rouletteWheelSegments();
   const size=100/segments.length;
   return segments.map((player,index)=>player.color+' '+(index*size)+'% '+((index+1)*size)+'%').join(',');
 }
@@ -138,7 +144,7 @@ function renderRouletteBoard(){
   const total=rouletteCourse.length+1;
   stage.innerHTML='<div class="roulette-board" id="rouletteBoard">'
     +Array.from({length:total},(_,index)=>rouletteCourseCardMarkup(index===0?null:rouletteCourse[index-1],index,total)).join('')
-    +'<div class="roulette-center"><div class="roulette-key-sentences"><button class="roulette-key-sentence" id="rouletteEverybodyPhrase" type="button"></button><button class="roulette-key-sentence" id="rouletteSelectedPhrase" type="button"></button></div><div class="roulette-wheel-wrap"><div class="roulette-wheel-pointer"></div><div class="roulette-wheel" id="rouletteWheel" style="background:conic-gradient('+rouletteWheelGradient()+');--wheel-rotation:'+rouletteSpinRotation+'deg"></div><button class="roulette-wheel-button" id="rouletteSpin" type="button">SPIN</button></div><div class="roulette-wheel-legend">'+ROULETTE_PLAYERS.slice(0,roulettePlayerCount).map(player=>'<span>'+roulettePieceMarkup(player,'roulette-legend-piece','')+'<b>Player '+player.id+'</b></span>').join('')+'</div><div class="roulette-result" id="rouletteResult">ルーレットを回してください</div></div>'
+    +'<div class="roulette-center"><div class="roulette-key-sentences"><button class="roulette-key-sentence" id="rouletteEverybodyPhrase" type="button"></button><button class="roulette-key-sentence" id="rouletteSelectedPhrase" type="button"></button></div><div class="roulette-wheel-wrap"><div class="roulette-wheel-pointer"></div><div class="roulette-wheel" id="rouletteWheel" style="background:conic-gradient('+rouletteWheelGradient()+');--wheel-rotation:'+rouletteSpinRotation+'deg"></div><button class="roulette-wheel-button" id="rouletteSpin" type="button">SPIN</button></div><div class="roulette-wheel-legend">'+ROULETTE_PLAYERS.slice(0,roulettePlayerCount).map(player=>'<span data-roulette-legend="'+player.id+'">'+roulettePieceMarkup(player,'roulette-legend-piece','')+'<b>Player '+player.id+'</b></span>').join('')+'</div><div class="roulette-result" id="rouletteResult">ルーレットを回してください</div></div>'
     +rouletteCornerBoardMarkup(roulettePlayers,'play')
     +roulettePlayers.map(player=>{const pos=rouletteCoursePosition(player.position,total);const offset=rouletteRunnerOffset(player.id);return '<div class="roulette-runner" data-runner="'+player.id+'" style="left:calc('+pos.x+'% + '+offset.x+'px);top:calc('+pos.y+'% + '+offset.y+'px)">'+rouletteArtMarkup(player.pieceAsset,'roulette-runner-svg','Player '+player.id)+'</div>'}).join('')
     +'</div>';
@@ -159,6 +165,7 @@ function updateRoulettePhrases(){
   if(selected){selected.textContent=activeRouletteConfig.selectedSentence?(phrasePlayer?'PLAYER '+phrasePlayer:'選ばれた人')+'：'+selectedPhrase:'';selected.dataset.phrase=selectedPhrase}
 }
 function setRouletteSelected(playerId){
+  if(rouletteSpinning||!rouletteEligiblePlayers().some(player=>player.id===playerId))return;
   rouletteSelectedPlayer=playerId;
   roulettePhrasePlayerId=playerId;
   const player=roulettePlayers.find(item=>item.id===playerId);
@@ -178,7 +185,7 @@ function setRouletteSelected(playerId){
 }
 function rouletteCurrentAngle(wheel){
   const transform=wheel?getComputedStyle(wheel).transform:'';
-  const match=transform&&transform.match(/^matrix(([^)]+))$/);
+  const match=transform&&transform.match(/^matrix\(([^)]+)\)$/);
   if(!match)return ((rouletteSpinRotation%360)+360)%360;
   const values=match[1].split(',').map(Number);
   return ((Math.atan2(values[1],values[0])*180/Math.PI)%360+360)%360;
@@ -189,8 +196,10 @@ function toggleRouletteSpin(){
 }
 function spinRoulette(){
   if(rouletteSpinning||rouletteSelectedPlayer||!rouletteStarted)return;
+  const eligible=rouletteEligiblePlayers();
+  if(!eligible.length)return;
   rouletteSpinning=true;
-  roulettePendingPlayer=1+Math.floor(Math.random()*roulettePlayerCount);
+  roulettePendingPlayer=eligible[Math.floor(Math.random()*eligible.length)].id;
   const spin=document.getElementById('rouletteSpin');
   const wheel=document.getElementById('rouletteWheel');
   if(spin){spin.disabled=false;spin.textContent='STOP';spin.classList.add('stop')}
@@ -204,12 +213,13 @@ function settleRouletteSpin(){
   if(!rouletteSpinning||!rouletteStarted)return;
   if(rouletteSpinTimer)clearTimeout(rouletteSpinTimer);
   rouletteSpinTimer=0;
-  const playerId=roulettePendingPlayer||1+Math.floor(Math.random()*roulettePlayerCount);
+  const playerId=roulettePendingPlayer;
   const wheel=document.getElementById('rouletteWheel');
   const spin=document.getElementById('rouletteSpin');
   const current=rouletteCurrentAngle(wheel);
-  const occurrence=Math.random()<.5?playerId-1:playerId-1+roulettePlayerCount;
-  const segmentAngle=360/(roulettePlayerCount*2);
+  const occurrences=rouletteWheelSegments().map((player,index)=>player.id===playerId?index:-1).filter(index=>index>=0);
+  const occurrence=occurrences[Math.floor(Math.random()*occurrences.length)];
+  const segmentAngle=360/12;
   const center=(occurrence+.5)*segmentAngle;
   const desired=(360-center+360)%360;
   const delta=(desired-current+360)%360;
@@ -235,7 +245,7 @@ function settleRouletteSpin(){
 function moveRoulettePlayer(playerId){
   if(playerId!==rouletteSelectedPlayer||rouletteSpinning)return;
   const player=roulettePlayers.find(item=>item.id===playerId);
-  if(!player)return;
+  if(!player||!rouletteStarted||player.position>=rouletteCourse.length)return;
   player.position=Math.min(rouletteCourse.length,player.position+1);
   const total=rouletteCourse.length+1;
   const pos=rouletteCoursePosition(player.position,total);
@@ -249,18 +259,35 @@ function moveRoulettePlayer(playerId){
   document.querySelectorAll('#rouletteStage [data-roulette-move]').forEach(button=>button.disabled=true);
   rouletteSelectedPlayer=0;
   document.querySelectorAll('#rouletteStage [data-roulette-move]').forEach(button=>button.classList.remove('selected'));
-  document.querySelectorAll('#rouletteStage [data-roulette-corner-color]').forEach(layer=>layer.classList.remove('inactive'));
+  document.querySelectorAll('#rouletteStage [data-roulette-corner-color]').forEach(layer=>layer.classList.add('inactive'));
   updateRoulettePhrases();
+  const eligible=rouletteEligiblePlayers();
   if(player.position>=rouletteCourse.length){
+    const wheel=document.getElementById('rouletteWheel');
+    rouletteSpinRotation=0;
+    if(wheel){
+      wheel.style.setProperty('--wheel-duration','0s');
+      wheel.style.setProperty('--wheel-rotation','0deg');
+      wheel.style.background=eligible.length?'conic-gradient('+rouletteWheelGradient()+')':'#ddd';
+    }
+    document.querySelectorAll('[data-roulette-legend]').forEach(item=>{
+      const finished=!eligible.some(p=>p.id===Number(item.dataset.rouletteLegend));
+      item.classList.toggle('finished',finished);
+      item.querySelector('b').textContent='Player '+item.dataset.rouletteLegend+(finished?' GOAL!':'');
+    });
+  }
+  if(!eligible.length){
+    rouletteStarted=false;
+    document.getElementById('rouletteSpin').disabled=true;
     const board=document.getElementById('rouletteBoard');
-    if(board)board.insertAdjacentHTML('beforeend','<div class="roulette-winner">PLAYER '+playerId+' WINS!<button type="button" id="rouletteAgain">もう一度遊ぶ</button></div>');
+    if(board)board.insertAdjacentHTML('beforeend','<div class="roulette-winner">全員ゴール！<button type="button" id="rouletteAgain">もう一度遊ぶ</button></div>');
     document.getElementById('rouletteAgain')?.addEventListener('click',resetRouletteLobby);
     return;
   }
   const spin=document.getElementById('rouletteSpin');
   if(spin){spin.disabled=false;spin.textContent='SPIN';spin.classList.remove('stop')}
   const result=document.getElementById('rouletteResult');
-  if(result)result.textContent='ルーレットを回してください';
+  if(result)result.textContent=player.position>=rouletteCourse.length?'PLAYER '+playerId+' ゴール！ あと'+eligible.length+'人':'ルーレットを回してください';
 }
 function startRouletteBoard(){
   if(roulettePlaced.size!==roulettePlayerCount)return;
@@ -285,6 +312,7 @@ function resetRouletteLobby(){
 }
 function openRouletteRace(config,returnPage){
   activeRouletteConfig=normalizeRouletteConfig(config);
+  if(![4,6,8,12].includes(activeRouletteConfig.cardCount))activeRouletteConfig.cardCount=6;
   rouletteReturnPage=returnPage||'createGames';
   rouletteSharedMode=rouletteReturnPage==='sharedGame';
   document.getElementById('rouletteContextCourse').textContent=rouletteReturnPage==='lt1unit'?"Let's Try 1 Unit "+currentUnit:rouletteSharedMode?'配布ゲーム':'Create Games';
@@ -301,6 +329,13 @@ function openRouletteRace(config,returnPage){
   resetRouletteLobby();
   show('rouletteRace');
 }
+document.getElementById('rouletteStage')?.addEventListener('change',event=>{
+  if(event.target.id!=='rouletteCourseCount'||rouletteStarted)return;
+  const count=Number(event.target.value);
+  if(![4,6,8,12].includes(count))return;
+  activeRouletteConfig.cardCount=count;
+  document.getElementById('rouletteSummaryCount').textContent=count+'枚';
+});
 document.getElementById('rouletteStage')?.addEventListener('click',event=>{
   const count=event.target.closest('[data-roulette-count]');
   if(!count)return;
@@ -309,7 +344,7 @@ document.getElementById('rouletteStage')?.addEventListener('click',event=>{
   roulettePlacementSelection=0;
   renderRouletteLobby();
 });
-['rouletteShowPicture','rouletteShowEnglish','rouletteShowJapanese'].forEach(id=>document.getElementById(id)?.addEventListener('change',()=>{if(rouletteStarted)renderRouletteBoard()}));
+['rouletteShowPicture','rouletteShowEnglish','rouletteShowJapanese'].forEach(id=>document.getElementById(id)?.addEventListener('change',()=>{if(rouletteStarted)document.querySelectorAll('#rouletteStage [data-course-index]').forEach(card=>{card.classList.toggle('hide-picture',!document.getElementById('rouletteShowPicture').checked);card.classList.toggle('hide-en',!document.getElementById('rouletteShowEnglish').checked);card.classList.toggle('show-jp',document.getElementById('rouletteShowJapanese').checked)})}));
 document.querySelector('#rouletteDisplayAccordion .menu-accordion-btn')?.addEventListener('click',event=>{
   const accordion=document.getElementById('rouletteDisplayAccordion');
   const closed=accordion.classList.toggle('closed');
@@ -336,4 +371,3 @@ rouletteExpand?.addEventListener('click',async()=>{
   try{if(document.fullscreenElement===rouletteWorkspace)await document.exitFullscreen();else await rouletteWorkspace.requestFullscreen()}catch(error){}
 });
 document.addEventListener('fullscreenchange',updateRouletteFullscreenButton);
-
