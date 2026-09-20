@@ -12,7 +12,7 @@
 
 `grade34_site/roulette-presets.js` (built as `grade34/roulette-presets.js`) is an administrator-controlled array of configurations using the existing Roulette schema. It is intentionally empty: no user game is automatically promoted to official status. To register an approved preset, add its selectedCardIds, expressions, assignedUnits, audiences and remaining configuration fields, then rebuild Grade34. Runtime mappable card IDs are restricted to `GAMES_CARD_ORDER` so the WORDS list matches the launch payload.
 
-Actual official preset editorial content is still needed from the owner. The tile/registry implementation does not publish a sample as official. Grade56 has no existing Roulette integration and is not changed in this task.
+The first owner-supplied official preset has now been registered: `official-roulette-lt1-u5-colors`, “すきな色をきいてみよう”, Let's Try! 1 Unit 5, individual devices. Expressions: `What color do you like?` / `I like (P).`. All 14 colors (`color_001`–`color_014`) are selected; picture and English enabled, Japanese disabled. Initial course length is 12, still selectable at play time. The owner supplied its share URL and confirmed the Unit. Grade56 has no existing Roulette integration and is not changed in this task.
 
 ## Verification / recovery
 
