@@ -11,7 +11,9 @@ window.SentenceForms=(()=>{
   fruit_vegetable_018:'nuts',fruit_vegetable_019:'onions',fruit_vegetable_020:'oranges',
   fruit_vegetable_021:'peaches',fruit_vegetable_022:'pineapples',fruit_vegetable_023:'potatoes',
   fruit_vegetable_025:'strawberries',fruit_vegetable_026:'tomatoes',fruit_vegetable_027:'watermelons',
-  dessert_002:'donuts',dessert_003:'parfaits',dessert_008:'cream puffs'
+  dessert_002:'donuts',dessert_003:'parfaits',dessert_008:'cream puffs',
+  food_002:'rice balls',food_007:'sandwiches',food_008:'pancakes',
+  food_010:'hamburgers',food_011:'hot dogs',lets_try_expr_036:'noodles'
  };
  function preference(card){
   const plural=Object.hasOwn(preferencePlurals,card.id)?preferencePlurals[card.id]:null;

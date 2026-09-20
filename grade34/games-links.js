@@ -17,7 +17,8 @@ window.GamesLinks=(()=>{
         const cards=new Map((window.DEKIRU_DATA?.cards||[]).map(c=>[c.id,c]));
         const groups=new Map();
         [...selected].filter(id=>ids.includes(id)).forEach(id=>{const card=cards.get(id);if(!card)return;const label=window.DEKIRU_DATA?.categoryLabels?.[card.category]||card.category;if(!groups.has(label))groups.set(label,[]);groups.get(label).push(card.english);});
-        return {name:g.name||'ROULETTE RACE',url:new URL('#play='+token,base).href,audiences:g.audiences?.length?g.audiences:['individual'],expressions:[g.everybodySentence,g.selectedSentence].filter(s=>typeof s==='string'&&s.trim()),groups:[...groups].map(([category,words])=>({category,words}))};
+        const practice={ids:[...selected].filter(id=>ids.includes(id)&&cards.has(id)),preference:[g.everybodySentence,g.selectedSentence].some(s=>/\blike\s*(?:\(\s*P\s*\)|[～~])/i.test(s||''))};
+        return {name:g.name||'ROULETTE RACE',url:new URL('#play='+token,base).href,audiences:g.audiences?.length?g.audiences:['individual'],expressions:[g.everybodySentence,g.selectedSentence].filter(s=>typeof s==='string'&&s.trim()),groups:[...groups].map(([category,words])=>({category,words})),practice};
       });
     }catch{return [];}
   }

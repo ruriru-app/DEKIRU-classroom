@@ -1,6 +1,7 @@
 function rouletteAvailableCards(){
   const available=new Set(APP_DATA.completedPictureCardIds||[]);
-  return APP_DATA.cards.filter(card=>available.has(card.id)&&card.image&&(card.displayGroup==='standard'||card.displayGroup==='plus'));
+  const base=APP_DATA.cards.filter(card=>available.has(card.id)&&card.image&&(card.displayGroup==='standard'||card.displayGroup==='plus'));
+  return base.concat(APP_DATA.cards.filter(card=>available.has(card.id)&&card.image&&card.displayGroup==='lets-try'));
 }
 function defaultRouletteCardIds(){
   const ids=[];

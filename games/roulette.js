@@ -8,6 +8,7 @@ function stopRouletteGame(){
   roulettePhrasePlayerId=0;
   rouletteSelectedPhraseText='';
   roulettePhraseWord='～';
+  roulettePhraseCardId='';
   window.speechSynthesis?.cancel();
 }
 function rouletteArtMarkup(asset,className,label){
@@ -118,13 +119,15 @@ function rouletteCourseCardMarkup(card,index,total){
 function roulettePhrase(text,playerId,randomChoice=false){
   const player=roulettePlayers.find(item=>item.id===playerId);
   const currentCard=player&&player.position>0?rouletteCourse[player.position-1]:rouletteCourse[0];
-  const word=playerId===roulettePhrasePlayerId?roulettePhraseWord:(currentCard?.english||'～');
-  let phrase=String(text||'').replace(/\(\s*P\s*\)/gi,word).replace(/[～~]/g,word);
+  const rawWord=playerId===roulettePhrasePlayerId?roulettePhraseWord:(currentCard?.english||'～');
+  const card=playerId===roulettePhrasePlayerId?rouletteCourse.find(c=>c.id===roulettePhraseCardId):currentCard;
+  let phrase=String(text||'');
   if(randomChoice&&phrase.includes('/')){
     const choices=phrase.split('/').map(choice=>choice.trim()).filter(Boolean);
     phrase=choices[Math.floor(Math.random()*choices.length)]||phrase;
   }
-  return phrase;
+  return phrase.replace(/\(\s*P\s*\)|[～~]/gi,(placeholder,offset,source)=>
+    /\blike\s*$/i.test(source.slice(0,offset))&&card&&window.SentenceForms?window.SentenceForms.preference(card).english:rawWord);
 }
 function rouletteEligiblePlayers(){
   return roulettePlayers.filter(player=>player.position<rouletteCourse.length);
@@ -170,6 +173,7 @@ function setRouletteSelected(playerId){
   roulettePhrasePlayerId=playerId;
   const player=roulettePlayers.find(item=>item.id===playerId);
   roulettePhraseWord=rouletteCourse[Math.min(player?.position||0,Math.max(rouletteCourse.length-1,0))]?.english||'～';
+  roulettePhraseCardId=rouletteCourse[Math.min(player?.position||0,Math.max(rouletteCourse.length-1,0))]?.id||'';
   rouletteSelectedPhraseText=roulettePhrase(activeRouletteConfig.selectedSentence,playerId,true);
   document.querySelectorAll('#rouletteStage [data-roulette-move]').forEach(button=>{
     const selected=Number(button.dataset.rouletteMove)===playerId;
@@ -255,6 +259,7 @@ function moveRoulettePlayer(playerId){
   const card=rouletteCourse[player.position-1];
   roulettePhrasePlayerId=playerId;
   roulettePhraseWord=card?.english||roulettePhraseWord;
+  roulettePhraseCardId=card?.id||roulettePhraseCardId;
   if(card)speakText(card.speech||card.english,document.querySelector('#rouletteStage [data-course-index="'+player.position+'"]'));
   document.querySelectorAll('#rouletteStage [data-roulette-move]').forEach(button=>button.disabled=true);
   rouletteSelectedPlayer=0;
@@ -298,6 +303,7 @@ function startRouletteBoard(){
   roulettePhrasePlayerId=0;
   rouletteSelectedPhraseText='';
   roulettePhraseWord='～';
+  roulettePhraseCardId='';
   renderRouletteBoard();
 }
 function resetRouletteLobby(){

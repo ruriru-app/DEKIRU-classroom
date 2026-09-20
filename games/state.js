@@ -50,6 +50,7 @@ let rouletteSelectedPlayer=0;
 let roulettePhrasePlayerId=0;
 let rouletteSelectedPhraseText='';
 let roulettePhraseWord='～';
+let roulettePhraseCardId='';
 let rouletteSpinRotation=0;
 let rouletteSpinning=false;
 let rouletteSpinTimer=0;

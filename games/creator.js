@@ -18,11 +18,12 @@ function renderCreatorVocabulary(){
   });
   root.innerHTML=[...groups.entries()].map(([category,cards])=>{
     const selectedCount=cards.filter(card=>creatorSelectedCardIds.has(card.id)).length;
-    const levels=[['standard','Standard'],['plus','Plus']];
+    const levels=[['standard','Picture Dictionary Standard'],['plus','Picture Dictionary Plus'],['lets-try','Let’s Try! 追加語']];
     return '<details class="creator-vocab-group" data-creator-category="'+escapeHtml(category)+'"'+(openCategories.has(category)?' open':'')+'><summary>'+escapeHtml(categoryLabel(category))+'（'+selectedCount+'/'+cards.length+'）</summary>'+levels.map(([level,label])=>{
       const levelCards=cards.filter(card=>card.displayGroup===level);
+      if(!levelCards.length)return '';
       const levelSelected=levelCards.filter(card=>creatorSelectedCardIds.has(card.id)).length;
-      return '<div class="creator-vocab-level"><label class="creator-level-toggle"><input type="checkbox" data-creator-level="'+escapeHtml(category+'::'+level)+'"'+(levelCards.length&&levelSelected===levelCards.length?' checked':'')+(levelCards.length?'':' disabled')+'><span>Picture Dictionary '+label+'</span><small>'+levelSelected+'/'+levelCards.length+'</small></label><div class="creator-vocab-cards">'+levelCards.map(card=>'<label class="creator-vocab-card"><input type="checkbox" data-creator-card="'+escapeHtml(card.id)+'"'+(creatorSelectedCardIds.has(card.id)?' checked':'')+'><span>'+escapeHtml(card.english)+'</span></label>').join('')+'</div></div>';
+      return '<div class="creator-vocab-level"><label class="creator-level-toggle"><input type="checkbox" data-creator-level="'+escapeHtml(category+'::'+level)+'"'+(levelCards.length&&levelSelected===levelCards.length?' checked':'')+(levelCards.length?'':' disabled')+'><span>'+label+'</span><small>'+levelSelected+'/'+levelCards.length+'</small></label><div class="creator-vocab-cards">'+levelCards.map(card=>'<label class="creator-vocab-card"><input type="checkbox" data-creator-card="'+escapeHtml(card.id)+'"'+(creatorSelectedCardIds.has(card.id)?' checked':'')+'><span>'+escapeHtml(card.english)+'</span></label>').join('')+'</div></div>';
     }).join('')+'</details>';
   }).join('');
   root.querySelectorAll('[data-creator-level]').forEach(input=>{
