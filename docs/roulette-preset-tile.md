@@ -6,7 +6,7 @@
 - The white field displays `everybodySentence` and `selectedSentence`, with separate lines. Longer expressions use smaller type; extreme text remains scrollable rather than overwriting other fields.
 - WORDS displays the selected cards' category labels. Its modal lists only the selected, playable words, grouped by category. Native dialog keyboard focus, Escape and close-button behavior return focus to the WORDS button.
 - Play opens the existing Roulette shared-game route in a separate tab; distribute opens the existing URL/QR dialog. The two button hit areas match the artwork capsules.
-- The same tile currently renders browser-saved assigned Roulette games, allowing the design to be used immediately without labeling local games as official.
+- Only administrator-registered official presets use the illustrated tile. Browser-saved games use the usual titled personal tile with play, share and confirmed deletion.
 
 ## Official content
 
@@ -35,3 +35,10 @@ The first owner-supplied official preset has now been registered: `official-roul
 - Explicit preference forms apply at each `like (P)` placeholder, not to other sentence placeholders; uncountable food and color orange stay unchanged. Sentence read-aloud uses displayed forms.
 - Top-right temporary 発音練習 button opens only the preset’s selected vocabulary, with pictures and tap-to-speak using the activity’s preference forms. Close/Escape stops speech and restores focus. Replace the temporary button contents with owner-supplied SVG later; keep its handler and accessible name.
 - Regression tests: test-games-vocabulary.cjs, test-games-vocabulary-browser.cjs, test-roulette-practice.cjs. Existing URL positions, full image loading, preference speech, non-preference isolation, modal focus and narrow screens covered.
+
+## Personal / official separation — 2026-09-21
+
+- Origin is taken from the official registry, never a stored flag or an ID prefix. Personal records remain personal even if an ID matches an official preset.
+- Personal deletion updates only `dekiru-created-games-v1`, retaining unrelated records. The confirmation explains that all Unit placements and the Create Games entry are removed, while official presets and existing share URLs remain.
+- Cancellation and failed storage writes leave the tile/data unchanged; successful deletion removes both class/individual tile instances without closing the current section.
+- Browser regression: `test-personal-roulette-tiles.cjs`; also supports `INTERVIEW_PUBLIC=1` with an isolated test browser.

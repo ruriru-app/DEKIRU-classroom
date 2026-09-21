@@ -18,9 +18,17 @@ window.GamesLinks=(()=>{
         const groups=new Map();
         [...selected].filter(id=>ids.includes(id)).forEach(id=>{const card=cards.get(id);if(!card)return;const label=window.DEKIRU_DATA?.categoryLabels?.[card.category]||card.category;if(!groups.has(label))groups.set(label,[]);groups.get(label).push(card.english);});
         const practice={ids:[...selected].filter(id=>ids.includes(id)&&cards.has(id)),preference:[g.everybodySentence,g.selectedSentence].some(s=>/\blike\s*(?:\(\s*P\s*\)|[～~])/i.test(s||''))};
-        return {name:g.name||'ROULETTE RACE',url:new URL('#play='+token,base).href,audiences:g.audiences?.length?g.audiences:['individual'],expressions:[g.everybodySentence,g.selectedSentence].filter(s=>typeof s==='string'&&s.trim()),groups:[...groups].map(([category,words])=>({category,words})),practice};
+        return {id:g.id,isOfficial:official.includes(g),name:g.name||'ROULETTE RACE',url:new URL('#play='+token,base).href,audiences:g.audiences?.length?g.audiences:['individual'],expressions:[g.everybodySentence,g.selectedSentence].filter(s=>typeof s==='string'&&s.trim()),groups:[...groups].map(([category,words])=>({category,words})),practice};
       });
     }catch{return [];}
   }
-  return {alphabet,assigned,home:base.href};
+  function removePersonal(id){
+    if(typeof id!=='string'||!id)return false;
+    const key='dekiru-created-games-v1',saved=JSON.parse(localStorage.getItem(key)||'[]');
+    if(!Array.isArray(saved))throw new Error('保存データを読み込めないため、削除しませんでした。');
+    const remaining=saved.filter(g=>!(g?.gameType==='roulette-race'&&g.id===id));
+    if(remaining.length===saved.length)return false;
+    localStorage.setItem(key,JSON.stringify(remaining));return true;
+  }
+  return {alphabet,assigned,removePersonal,home:base.href};
 })();

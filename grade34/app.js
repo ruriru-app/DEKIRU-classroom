@@ -374,8 +374,11 @@ return `<h2>保存したカードセット</h2>${sets.length?sets.map(s=>`<div c
     </details>`;
   }
 
-  function externalGameTile(name,url){
-    return `<article class="feature-tile personal"><div class="feature-tile-heading"><span class="tile-mark">DEKIRU Games</span><strong>${escapeHtml(name)}</strong></div><p class="feature-tile-description">別タブでゲームを開きます</p><div class="share-actions"><a class="primary-button" href="${escapeHtml(url)}" target="_blank" rel="noopener">あそぶ</a><button class="secondary-button" data-game-share="${escapeHtml(url)}" data-game-name="${escapeHtml(name)}">配信</button></div></article>`;
+  function externalGameTile(name,url,personalId=''){
+    return `<article class="feature-tile personal" ${personalId?`data-personal-game="${escapeHtml(personalId)}"`:''}><div class="feature-tile-heading"><span class="tile-mark">${personalId?'個人保存':'DEKIRU Games'}</span><strong>${escapeHtml(name)}</strong></div><p class="feature-tile-description">別タブでゲームを開きます</p><div class="share-actions"><a class="primary-button" href="${escapeHtml(url)}" target="_blank" rel="noopener">あそぶ</a><button class="secondary-button" data-game-share="${escapeHtml(url)}" data-game-name="${escapeHtml(name)}">配信</button>${personalId?`<button class="secondary-button" data-delete-personal-game="${escapeHtml(personalId)}" data-game-name="${escapeHtml(name)}">削除</button>`:''}</div></article>`;
+  }
+  function assignedGameTile(game){
+    return game.isOfficial?RoulettePresetTile.render(game):externalGameTile(game.name,game.url,game.id);
   }
   function renderUnitSections(bookKey, unit, title) {
     const activities = ACTIVITIES.filter((activity) => activity.units.includes(`${bookKey}-${unit}`));
@@ -384,7 +387,7 @@ return `<h2>保存したカードセット</h2>${sets.length?sets.map(s=>`<div c
       ? externalGameTile('ALPHABET TOUCH',GamesLinks.alphabet())
       : "";
     const linkedGames=GamesLinks.assigned(bookKey,unit);
-    const individualGames=alphabetTile+linkedGames.filter(g=>g.audiences.includes('individual')).map(g=>RoulettePresetTile.render(g)).join('');
+    const individualGames=alphabetTile+linkedGames.filter(g=>g.audiences.includes('individual')).map(assignedGameTile).join('');
     return `
       <section class="content-heading">
         <button class="back-button" data-route="#/book/${bookKey}" aria-label="Unit一覧へ戻る">◀</button>
@@ -401,7 +404,7 @@ return `<h2>保存したカードセット</h2>${sets.length?sets.map(s=>`<div c
           ${featureTile("look-say", "Look＆Say", "画面に短い時間表示された絵を見てこたえる", "class")}
           ${featureTile("whats-missing", "What’s Missing?", "消えたカードを見つける", "class")}
           ${featureTile("bomb-game", "Bomb Game", "選んだ言葉で進めるクラスゲーム", "class")}
-          ${linkedGames.filter(g=>g.audiences.includes('class')).map(g=>RoulettePresetTile.render(g)).join('')}
+          ${linkedGames.filter(g=>g.audiences.includes('class')).map(assignedGameTile).join('')}
         </div>`)}
       ${sectionBlock("Games（個人の端末で）", "配布されたゲームを児童が自分で練習する", individualGames?`<div class="feature-grid">${individualGames}</div>`:`<div class="empty-state compact"><p>このUnitの配布用ゲームは、今後追加します。</p></div>`)}
       ${sectionBlock("Activities", "このUnitで使える活動", activities.length||interviewTiles ? `<div class="feature-grid">${activities.map((activity) => activityUnitTile(activity)).join("")}${interviewTiles}</div>` : `<div class="empty-state compact"><p>このUnitのActivityは、今後追加します。</p></div>`)}
@@ -641,6 +644,16 @@ return `<h2>保存したカードセット</h2>${sets.length?sets.map(s=>`<div c
   }
 
   app.addEventListener("click", (event) => {
+    const deleteGame=event.target.closest('[data-delete-personal-game]');
+    if(deleteGame){
+      if(!window.confirm(`個人保存の「${deleteGame.dataset.gameName}」を削除しますか？すべてのUnitの一覧とCreate Gamesから削除されます。公式プリセットと配信済みURLは残ります。`))return;
+      try{
+        GamesLinks.removePersonal(deleteGame.dataset.deletePersonalGame);
+        app.querySelectorAll('[data-personal-game]').forEach(tile=>{if(tile.dataset.personalGame===deleteGame.dataset.deletePersonalGame)tile.remove();});
+        showToast('個人保存のゲームを削除しました');
+      }catch{showToast('削除できませんでした。保存データは変更していません。');}
+      return;
+    }
     const gameShare=event.target.closest('[data-game-share]');
     if(gameShare){CardShare.openUrl(gameShare.dataset.gameShare,gameShare.dataset.gameName);return;}
     const savedButton=event.target.closest('[data-saved-set],[data-delete-set],[data-share-saved-set],[data-edit-saved-set]');
