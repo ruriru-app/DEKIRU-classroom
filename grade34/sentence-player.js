@@ -89,6 +89,7 @@ document.addEventListener('click',event=>{
  if(choice){open(choice.dataset.talkActivity);return;}
  if(!talkActivity)return;
  if(event.target.closest('#sentence-back')){
+  if(context.onPresetBack){const back=context.onPresetBack;stop();back();return;}
   const panel=document.getElementById('unit-content');
   if(document.fullscreenElement){document.exitFullscreen?.();return;}
   if(panel.classList.contains('fullscreen-content')){panel.classList.remove('fullscreen-content');return;}
@@ -417,5 +418,11 @@ function speakTalkSentence(text,parts,element){
   };
   speakPart(0);
 }
-return {markup,attach,settings,stop};
+function openForCards(activity,ids,onPresetBack){
+ const objects=ids.map(id=>cardById.get(id)).filter(Boolean);
+ context={...context,onPresetBack,items:[...context.items.filter(c=>!definition.objectCategories.includes(c.category)),...objects]};
+ open(activity);
+ document.getElementById('unit-content')?.closest('.workspace')?.classList.add('preset-sentence-workspace');
+}
+return {markup,attach,settings,stop,openForCards};
 })();

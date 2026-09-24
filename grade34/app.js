@@ -174,6 +174,7 @@
   }
 
   function activityTile(activity) {
+    if (activityArtwork(activity)) return activityUnitTile(activity);
     return `<article class="activity-catalog-tile">
       <div>
         <span class="status-pill">Activity</span>
@@ -329,7 +330,7 @@ return `<h2>保存したカードセット</h2>${sets.length?sets.map(s=>`<div c
         card: item => mainCard(item).replace(/ data-speak="[^"]*"/, ' tabindex="-1"') });
     }
     if (previousSidebar) app.querySelector('.unit-sidebar').scrollTop = sidebarScroll;
-    if (state.activeFeature === 'sentences') SentencePlayer.attach({unitKey:`${bookKey}-${unit}`,items:selectedItems(vocabulary,selection),cards:DATA.cards,source:pictureSource,labels:DATA.categoryLabels});
+    if (state.activeFeature === 'sentences') SentencePlayer.attach({unitKey:`${bookKey}-${unit}`,items:selectedItems(vocabulary,selection),cards:[...DATA.cards,...DATA.expressions],source:pictureSource,labels:DATA.categoryLabels});
   }
 
   function displaySettings() {
@@ -375,6 +376,7 @@ return `<h2>保存したカードセット</h2>${sets.length?sets.map(s=>`<div c
   }
 
   function externalGameTile(name,url,personalId=''){
+    if (!personalId && name === 'ALPHABET TOUCH') return illustratedTile('alphabet-touch-tile.svg', name, 'アルファベット', url, `data-game-share="${escapeHtml(url)}" data-game-name="${escapeHtml(name)}"`, 'ゲームを配る');
     return `<article class="feature-tile personal" ${personalId?`data-personal-game="${escapeHtml(personalId)}"`:''}><div class="feature-tile-heading"><span class="tile-mark">${personalId?'個人保存':'DEKIRU Games'}</span><strong>${escapeHtml(name)}</strong></div><p class="feature-tile-description">別タブでゲームを開きます</p><div class="share-actions"><a class="primary-button" href="${escapeHtml(url)}" target="_blank" rel="noopener">あそぶ</a><button class="secondary-button" data-game-share="${escapeHtml(url)}" data-game-name="${escapeHtml(name)}">配信</button>${personalId?`<button class="secondary-button" data-delete-personal-game="${escapeHtml(personalId)}" data-game-name="${escapeHtml(name)}">削除</button>`:''}</div></article>`;
   }
   function assignedGameTile(game){
@@ -412,13 +414,16 @@ return `<h2>保存したカードセット</h2>${sets.length?sets.map(s=>`<div c
   }
 
   function sectionBlock(title, subtitle, content, open = false) {
+    const banner = ['Words &amp; Phrases','Games（みんなで）','Games（個人の端末で）','Activities'].indexOf(title);
     return `<details class="content-section" ${open ? "open" : ""}>
-      <summary><span><strong>${title}</strong><small>${escapeHtml(subtitle)}</small></span></summary>
+      <summary class="${banner >= 0 ? 'illustrated-summary' : ''}"><span class="${banner >= 0 ? 'tile-accessible-text' : ''}"><strong>${title}</strong><small>${escapeHtml(subtitle)}</small></span>${banner >= 0 ? `<span class="unit-menu-art menu-art-${banner}" aria-hidden="true"><img src="assets/ui/unit-menu-banners.svg" alt=""></span>` : ''}</summary>
       <div class="section-body">${content}</div>
     </details>`;
   }
 
   function featureTile(feature, title, subtitle, type = "words") {
+    const artwork = {'look-say':'look-say-tile.svg','whats-missing':'whats-missing-tile-v2.svg','bomb-game':'bomb-game-tile.svg'}[feature];
+    if (artwork) return `<button class="illustrated-feature" data-feature="${escapeHtml(feature)}" aria-label="${escapeHtml(title)}" title="${escapeHtml(subtitle)}"><img src="assets/ui/${artwork}" alt=""></button>`;
     return `<button class="feature-tile ${type}" data-feature="${escapeHtml(feature)}">
       <span class="feature-tile-heading"><span class="tile-mark">${type === "personal" ? "個人の端末で" : type === "class" ? "みんなで" : "Words"}</span><strong>${escapeHtml(title)}</strong></span>
       <span class="feature-tile-description">${escapeHtml(subtitle)}</span>
@@ -426,6 +431,8 @@ return `<h2>保存したカードセット</h2>${sets.length?sets.map(s=>`<div c
   }
 
   function activityUnitTile(activity) {
+    const art = activityArtwork(activity);
+    if (art) return illustratedTile(art[0],activity.title,art[1],activity.href,`data-share="${escapeHtml(activity.id)}"`,'シートを配る');
     return `<article class="feature-tile activity static-tile">
       <div class="feature-tile-heading"><span class="tile-mark">Activities</span><strong>${escapeHtml(activity.title)}</strong></div>
       <span class="feature-tile-description">${escapeHtml(activity.subtitle)}</span>
@@ -433,6 +440,19 @@ return `<h2>保存したカードセット</h2>${sets.length?sets.map(s=>`<div c
         <a class="primary-button" href="${escapeHtml(activity.href)}" target="_blank" rel="noopener">ひらく</a>
         <button class="secondary-button" data-share="${escapeHtml(activity.id)}">配布</button>
       </div>
+    </article>`;
+  }
+
+  function activityArtwork(activity) {
+    return {'dekiru-clock':['clock-tile.svg','時刻'],'my-pencilcase':['pencilcase-tile.svg','文房具'],'gift-set-for-my-friend':['gift-set-tile.svg','文房具']}[activity.id];
+  }
+
+  function illustratedTile(art,title,words,url,shareAttributes,shareLabel) {
+    return `<article class="illustrated-activity" aria-label="${escapeHtml(title)}">
+      <img src="assets/ui/${art}" alt="${escapeHtml(title)}">
+      <span class="illustrated-words">${escapeHtml(words)}</span>
+      <a class="art-hotspot art-play" href="${escapeHtml(url)}" target="_blank" rel="noopener" aria-label="${escapeHtml(title)}をひらく"><span class="tile-accessible-text">Play</span></a>
+      <button class="art-hotspot art-share" ${shareAttributes} aria-label="${escapeHtml(title)}：${shareLabel}"><span class="tile-accessible-text">${shareLabel}</span></button>
     </article>`;
   }
 
@@ -751,17 +771,31 @@ return `<h2>保存したカードセット</h2>${sets.length?sets.map(s=>`<div c
       return;
     }
 
-    const featureTarget = event.target.closest("[data-feature]");
+    const featureTarget = event.target.closest("[data-feature], [data-interview-sentence]");
     if (featureTarget && state.activeUnit) {
       if (featureTarget.dataset.feature === "close" && (document.fullscreenElement || document.querySelector('.fullscreen-content'))) {
         toggleFullscreen();
         return;
       }
       LookSay.stop(true); WhatsMissing.stop(true); BombGame.stop(true);
-      state.activeFeature = featureTarget.dataset.feature === "close" ? null : featureTarget.dataset.feature;
+      const previousFeature=state.activeFeature;
+      const previousSections=[...document.querySelectorAll('details.content-section[open]')].map(e=>e.querySelector('summary')?.textContent);
+      state.activeFeature = featureTarget.dataset.interviewSentence ? 'sentences' : featureTarget.dataset.feature === "close" ? null : featureTarget.dataset.feature;
       globalThis.SentencePlayer?.stop();
       if (state.activeFeature === "today") state.todayField = "day";
       renderUnit(state.activeUnit.bookKey, state.activeUnit.unit);
+      if(featureTarget.dataset.interviewSentence){
+        const dialog=document.createElement('dialog');dialog.className='preset-sentence-dialog';dialog.setAttribute('aria-label','文で話そう');
+        SentencePlayer.openForCards(featureTarget.dataset.interviewSentence,JSON.parse(featureTarget.dataset.interviewCards),()=>dialog.close());
+        const panel=document.getElementById('unit-content');panel.remove();
+        state.activeFeature=previousFeature;renderUnit(state.activeUnit.bookKey,state.activeUnit.unit);
+        document.querySelectorAll('details.content-section').forEach(e=>{e.open=previousSections.includes(e.querySelector('summary')?.textContent);});
+        const background=document.getElementById('unit-content');background.id='unit-content-background';
+        dialog.append(panel);document.body.append(dialog);
+        dialog.addEventListener('click',async event=>{if(!event.target.closest('[data-fullscreen]'))return;try{if(document.fullscreenElement===dialog)await document.exitFullscreen();else await dialog.requestFullscreen();}catch{dialog.classList.toggle('practice-expanded');}});
+        dialog.addEventListener('close',()=>{SentencePlayer.stop();if(document.fullscreenElement&&dialog.contains(document.fullscreenElement))document.exitFullscreen?.();dialog.remove();background.id='unit-content';document.querySelector('[data-interview-sentence]')?.focus();});
+        dialog.showModal();
+      }
       return;
     }
 
