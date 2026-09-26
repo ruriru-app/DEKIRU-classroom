@@ -5,30 +5,27 @@
     nh6: {title:'NEW HORIZON Elementary 6', grade:'6年生', color:'blue', units:['This is me!','My Daily Schedule','My Weekend','Let’s see the world.','Where is it from?','Save the animals.','My Best Memory','My Future, My Dream']}
   };
   const app = document.getElementById('app');
-  const unitCategories = {
-    nh5:['directions','positions','town','impressions','animals'],
-    nh6:['nature','sea_animals','living_things','animals','bugs']
-  };
   let vocabulary = null;
   const escape = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  function renderUnit(key,book) {
+  function renderUnit(key,book,unit) {
     const data=window.DEKIRU_DATA;
-    const groups=unitCategories[key].flatMap((category,index)=>['standard','plus'].map(level=>({
+    const config=window.NheUnits.get(key,unit);
+    const groups=[...config.main,...config.sub].flatMap((category,index)=>['standard','plus'].map(level=>({
       id:category+':'+level, label:data.categoryLabels[category]+(level==='plus'?' Plus':''),
-      initial:index<3&&level==='standard', cards:data.cards.filter(c=>c.category===category&&c.displayGroup===level)
+      initial:index<config.main.length&&level==='standard', cards:data.cards.filter(c=>c.category===category&&c.displayGroup===level)
     })));
-    const storageKey='dekiru:nhe-vocabulary:'+key+':5';
+    const storageKey='dekiru:nhe-vocabulary:'+key+':'+unit;
     let selected=groups.filter(g=>g.initial).flatMap(g=>g.cards.map(c=>c.id));
     let storageError=false;
     try {const saved=JSON.parse(localStorage.getItem(storageKey));if(Array.isArray(saved))selected=saved;} catch {storageError=true;}
     const available=new Set(groups.flatMap(g=>g.cards.map(c=>c.id)));
     vocabulary={groups,storageKey,selected:new Set(selected.filter(id=>available.has(id)))};
-    document.title='Unit 5 — '+book.units[4]+' | '+book.title;
-    const tiles=window.InterviewLinks?.tiles(key,5)||'';
-    app.innerHTML=`<div class="nhe-workspace"><aside class="nhe-sidebar">${heading(book.units[4],book.title+' Unit 5','#/book/'+key)}<h2>使用する単語を選ぶ <small data-nhe-count></small></h2>${groups.map(g=>`<details class="word-group"><summary><span class="group-check"><input type="checkbox" aria-label="${g.label}をまとめて選択" data-nhe-group="${g.id}" ${g.cards.length?'':'disabled'}><span data-nhe-group-label>${g.label}</span><span>（${g.cards.length}）</span></span></summary><div class="word-group-items">${g.cards.map(c=>`<button class="word-chip" data-nhe-word="${escape(c.id)}" aria-pressed="false">${escape(c.english)}</button>`).join('')||'<p>追加の単語はありません。</p>'}</div></details>`).join('')}<p class="nhe-save-status" role="status">${storageError?'保存状態を読み込めませんでした。':''}</p></aside><section class="nhe-content">${heading(book.units[4],book.title+' Unit 5','#/book/'+key)}<div class="nhe-sections">${['Words and Phrases','Small Talk','Make Sentences','Activities'].map(name=>`<details><summary>${name}</summary><div class="nhe-section-body">${name==='Activities'&&tiles?'<div class="feature-grid">'+tiles+'</div>':'<p>準備中です。教材・活動はこれから追加します。</p>'}</div></details>`).join('')}</div></section></div>`;
+    document.title='Unit '+unit+' — '+book.units[unit-1]+' | '+book.title;
+    const tiles=window.InterviewLinks?.tiles(key,unit)||'';
+    app.innerHTML=`<div class="nhe-workspace"><aside class="nhe-sidebar">${heading(book.units[unit-1],book.title+' Unit '+unit,'#/book/'+key)}<h2>使用する単語を選ぶ <small data-nhe-count></small></h2>${groups.map(g=>`<details class="word-group"><summary><span class="group-check"><input type="checkbox" aria-label="${g.label}をまとめて選択" data-nhe-group="${g.id}" ${g.cards.length?'':'disabled'}><span data-nhe-group-label>${g.label}</span><span>（${g.cards.length}）</span></span></summary><div class="word-group-items">${g.cards.map(c=>`<button class="word-chip" data-nhe-word="${escape(c.id)}" aria-pressed="false">${escape(c.english)}</button>`).join('')||'<p>追加の単語はありません。</p>'}</div></details>`).join('')}<p class="nhe-save-status" role="status">${storageError?'保存状態を読み込めませんでした。':''}</p></aside><section class="nhe-content">${heading(book.units[unit-1],book.title+' Unit '+unit,'#/book/'+key)}<div class="nhe-sections">${['Words and Phrases','Small Talk','Make Sentences','Activities'].map(name=>`<details><summary>${name}</summary><div class="nhe-section-body">${name==='Activities'&&tiles?'<div class="feature-grid">'+tiles+'</div>':'<p>準備中です。教材・活動はこれから追加します。</p>'}</div></details>`).join('')}</div></section></div>`;
     updateVocabulary(false);
     window.NheSavedSets.mount(app.querySelector('.nhe-sidebar'),{
-      unit:key+':5',groups,getSelected:()=>vocabulary.selected,
+      unit:key+':'+unit,groups,getSelected:()=>vocabulary.selected,
       apply:ids=>{vocabulary.selected=new Set(ids.filter(id=>available.has(id)));updateVocabulary();}
     });
   }
@@ -60,8 +57,8 @@
     if(page==='book' && book) {
       document.title=book.title+' | DEKIRU Classroom';
       app.innerHTML=heading(book.title,book.grade,'#/')+`<section class="unit-grid">${book.units.map((title,i)=>`<button class="unit-tile ${book.color}" data-route="#/unit/${key}/${i+1}"><span>Unit ${i+1}</span><strong>${title}</strong></button>`).join('')}<button class="unit-tile activities" data-route="#/phonics/${key}"><span>${key==='nh5'?'一文字一音':'準備中'}</span><strong>Phonics</strong></button></section>`;
-    } else if(book && page==='unit' && number==='5') {
-      renderUnit(key,book);
+    } else if(book && page==='unit' && window.NheUnits.get(key,number)) {
+      renderUnit(key,book,Number(number));
     } else if(book && (page==='phonics' || (page==='unit' && /^[1-8]$/.test(number)))) {
       const title=page==='phonics'?'Phonics':`Unit ${number} — ${book.units[Number(number)-1]}`;
       document.title=title+' | '+book.title;
@@ -85,6 +82,12 @@
     vocabulary.groups.find(g=>g.id===input.dataset.nheGroup).cards.forEach(c=>input.checked?vocabulary.selected.add(c.id):vocabulary.selected.delete(c.id));
     updateVocabulary();
   });
-  window.addEventListener('hashchange',render);
-  render();
+  async function start(){
+    const migrate=()=>window.NheMigration.run(localStorage);
+    let result;
+    try{result=navigator.locks?await navigator.locks.request('dekiru-nhe-unit-migration',migrate):migrate();}catch(error){result={ok:false};}
+    if(!result.ok){app.innerHTML='<section class="hero"><h1>保存データの移行を完了できませんでした</h1><p>元データを保護するため、編集を停止しています。ブラウザーの保存領域を確認してから、この画面を再読み込みしてください。</p><button onclick="location.reload()">再読み込み</button></section>';return;}
+    window.addEventListener('hashchange',render);render();
+  }
+  start();
 })();
