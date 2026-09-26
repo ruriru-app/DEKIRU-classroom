@@ -1,0 +1,6936 @@
+{
+  "cardsReviewed": 72,
+  "countriesReviewed": 19,
+  "audit": [
+    {
+      "country": "GBR",
+      "cardId": "fruit_vegetable_001",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "GBR",
+      "cardId": "fruit_vegetable_002",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "GBR",
+      "cardId": "fruit_vegetable_003",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "GBR",
+      "cardId": "fruit_vegetable_004",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "GBR",
+      "cardId": "fruit_vegetable_005",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "GBR",
+      "cardId": "fruit_vegetable_006",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "GBR",
+      "cardId": "fruit_vegetable_007",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "GBR",
+      "cardId": "fruit_vegetable_008",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "GBR",
+      "cardId": "fruit_vegetable_009",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "GBR",
+      "cardId": "fruit_vegetable_010",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "GBR",
+      "cardId": "fruit_vegetable_011",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "GBR",
+      "cardId": "fruit_vegetable_012",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "GBR",
+      "cardId": "fruit_vegetable_013",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "GBR",
+      "cardId": "fruit_vegetable_014",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "GBR",
+      "cardId": "fruit_vegetable_015",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "GBR",
+      "cardId": "fruit_vegetable_016",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "GBR",
+      "cardId": "fruit_vegetable_017",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "GBR",
+      "cardId": "fruit_vegetable_018",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "GBR",
+      "cardId": "fruit_vegetable_019",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "GBR",
+      "cardId": "fruit_vegetable_020",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "GBR",
+      "cardId": "fruit_vegetable_021",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "GBR",
+      "cardId": "fruit_vegetable_022",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "GBR",
+      "cardId": "fruit_vegetable_023",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "GBR",
+      "cardId": "fruit_vegetable_024",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "GBR",
+      "cardId": "fruit_vegetable_025",
+      "status": "verified"
+    },
+    {
+      "country": "GBR",
+      "cardId": "fruit_vegetable_026",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "GBR",
+      "cardId": "fruit_vegetable_027",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "GBR",
+      "cardId": "fruit_vegetable_028",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "GBR",
+      "cardId": "fruit_vegetable_029",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "GBR",
+      "cardId": "fruit_vegetable_030",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "GBR",
+      "cardId": "fruit_vegetable_031",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "GBR",
+      "cardId": "fruit_vegetable_032",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "GBR",
+      "cardId": "fruit_vegetable_033",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "GBR",
+      "cardId": "fruit_vegetable_034",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "GBR",
+      "cardId": "ingredient_001",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "GBR",
+      "cardId": "ingredient_002",
+      "status": "verified"
+    },
+    {
+      "country": "GBR",
+      "cardId": "ingredient_003",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "GBR",
+      "cardId": "ingredient_004",
+      "status": "verified"
+    },
+    {
+      "country": "GBR",
+      "cardId": "ingredient_005",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "GBR",
+      "cardId": "ingredient_006",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "GBR",
+      "cardId": "ingredient_007",
+      "status": "verified"
+    },
+    {
+      "country": "GBR",
+      "cardId": "ingredient_008",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "GBR",
+      "cardId": "ingredient_009",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "GBR",
+      "cardId": "ingredient_010",
+      "status": "verified"
+    },
+    {
+      "country": "GBR",
+      "cardId": "ingredient_011",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "GBR",
+      "cardId": "ingredient_012",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "GBR",
+      "cardId": "ingredient_013",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "GBR",
+      "cardId": "ingredient_014",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "GBR",
+      "cardId": "ingredient_015",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "GBR",
+      "cardId": "ingredient_016",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "GBR",
+      "cardId": "ingredient_017",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "GBR",
+      "cardId": "ingredient_018",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "GBR",
+      "cardId": "clothes_001",
+      "status": "verified"
+    },
+    {
+      "country": "GBR",
+      "cardId": "clothes_002",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "GBR",
+      "cardId": "clothes_003",
+      "status": "verified"
+    },
+    {
+      "country": "GBR",
+      "cardId": "clothes_004",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "GBR",
+      "cardId": "clothes_005",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "GBR",
+      "cardId": "clothes_006",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "GBR",
+      "cardId": "clothes_007",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "GBR",
+      "cardId": "clothes_008",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "GBR",
+      "cardId": "clothes_009",
+      "status": "verified"
+    },
+    {
+      "country": "GBR",
+      "cardId": "clothes_010",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "GBR",
+      "cardId": "clothes_011",
+      "status": "verified"
+    },
+    {
+      "country": "GBR",
+      "cardId": "clothes_012",
+      "status": "verified"
+    },
+    {
+      "country": "GBR",
+      "cardId": "clothes_013",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "GBR",
+      "cardId": "clothes_014",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "GBR",
+      "cardId": "clothes_015",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "GBR",
+      "cardId": "clothes_016",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "GBR",
+      "cardId": "clothes_017",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "GBR",
+      "cardId": "clothes_018",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "GBR",
+      "cardId": "clothes_019",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "GBR",
+      "cardId": "clothes_020",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "FRA",
+      "cardId": "fruit_vegetable_001",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "FRA",
+      "cardId": "fruit_vegetable_002",
+      "status": "verified"
+    },
+    {
+      "country": "FRA",
+      "cardId": "fruit_vegetable_003",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "FRA",
+      "cardId": "fruit_vegetable_004",
+      "status": "verified"
+    },
+    {
+      "country": "FRA",
+      "cardId": "fruit_vegetable_005",
+      "status": "verified"
+    },
+    {
+      "country": "FRA",
+      "cardId": "fruit_vegetable_006",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "FRA",
+      "cardId": "fruit_vegetable_007",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "FRA",
+      "cardId": "fruit_vegetable_008",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "FRA",
+      "cardId": "fruit_vegetable_009",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "FRA",
+      "cardId": "fruit_vegetable_010",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "FRA",
+      "cardId": "fruit_vegetable_011",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "FRA",
+      "cardId": "fruit_vegetable_012",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "FRA",
+      "cardId": "fruit_vegetable_013",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "FRA",
+      "cardId": "fruit_vegetable_014",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "FRA",
+      "cardId": "fruit_vegetable_015",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "FRA",
+      "cardId": "fruit_vegetable_016",
+      "status": "verified"
+    },
+    {
+      "country": "FRA",
+      "cardId": "fruit_vegetable_017",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "FRA",
+      "cardId": "fruit_vegetable_018",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "FRA",
+      "cardId": "fruit_vegetable_019",
+      "status": "verified"
+    },
+    {
+      "country": "FRA",
+      "cardId": "fruit_vegetable_020",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "FRA",
+      "cardId": "fruit_vegetable_021",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "FRA",
+      "cardId": "fruit_vegetable_022",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "FRA",
+      "cardId": "fruit_vegetable_023",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "FRA",
+      "cardId": "fruit_vegetable_024",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "FRA",
+      "cardId": "fruit_vegetable_025",
+      "status": "verified"
+    },
+    {
+      "country": "FRA",
+      "cardId": "fruit_vegetable_026",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "FRA",
+      "cardId": "fruit_vegetable_027",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "FRA",
+      "cardId": "fruit_vegetable_028",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "FRA",
+      "cardId": "fruit_vegetable_029",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "FRA",
+      "cardId": "fruit_vegetable_030",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "FRA",
+      "cardId": "fruit_vegetable_031",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "FRA",
+      "cardId": "fruit_vegetable_032",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "FRA",
+      "cardId": "fruit_vegetable_033",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "FRA",
+      "cardId": "fruit_vegetable_034",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "FRA",
+      "cardId": "ingredient_001",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "FRA",
+      "cardId": "ingredient_002",
+      "status": "verified"
+    },
+    {
+      "country": "FRA",
+      "cardId": "ingredient_003",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "FRA",
+      "cardId": "ingredient_004",
+      "status": "verified"
+    },
+    {
+      "country": "FRA",
+      "cardId": "ingredient_005",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "FRA",
+      "cardId": "ingredient_006",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "FRA",
+      "cardId": "ingredient_007",
+      "status": "verified"
+    },
+    {
+      "country": "FRA",
+      "cardId": "ingredient_008",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "FRA",
+      "cardId": "ingredient_009",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "FRA",
+      "cardId": "ingredient_010",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "FRA",
+      "cardId": "ingredient_011",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "FRA",
+      "cardId": "ingredient_012",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "FRA",
+      "cardId": "ingredient_013",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "FRA",
+      "cardId": "ingredient_014",
+      "status": "verified"
+    },
+    {
+      "country": "FRA",
+      "cardId": "ingredient_015",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "FRA",
+      "cardId": "ingredient_016",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "FRA",
+      "cardId": "ingredient_017",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "FRA",
+      "cardId": "ingredient_018",
+      "status": "verified"
+    },
+    {
+      "country": "FRA",
+      "cardId": "clothes_001",
+      "status": "verified"
+    },
+    {
+      "country": "FRA",
+      "cardId": "clothes_002",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "FRA",
+      "cardId": "clothes_003",
+      "status": "verified"
+    },
+    {
+      "country": "FRA",
+      "cardId": "clothes_004",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "FRA",
+      "cardId": "clothes_005",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "FRA",
+      "cardId": "clothes_006",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "FRA",
+      "cardId": "clothes_007",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "FRA",
+      "cardId": "clothes_008",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "FRA",
+      "cardId": "clothes_009",
+      "status": "verified"
+    },
+    {
+      "country": "FRA",
+      "cardId": "clothes_010",
+      "status": "verified"
+    },
+    {
+      "country": "FRA",
+      "cardId": "clothes_011",
+      "status": "verified"
+    },
+    {
+      "country": "FRA",
+      "cardId": "clothes_012",
+      "status": "verified"
+    },
+    {
+      "country": "FRA",
+      "cardId": "clothes_013",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "FRA",
+      "cardId": "clothes_014",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "FRA",
+      "cardId": "clothes_015",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "FRA",
+      "cardId": "clothes_016",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "FRA",
+      "cardId": "clothes_017",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "FRA",
+      "cardId": "clothes_018",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "FRA",
+      "cardId": "clothes_019",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "FRA",
+      "cardId": "clothes_020",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "EGY",
+      "cardId": "fruit_vegetable_001",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "EGY",
+      "cardId": "fruit_vegetable_002",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "EGY",
+      "cardId": "fruit_vegetable_003",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "EGY",
+      "cardId": "fruit_vegetable_004",
+      "status": "verified"
+    },
+    {
+      "country": "EGY",
+      "cardId": "fruit_vegetable_005",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "EGY",
+      "cardId": "fruit_vegetable_006",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "EGY",
+      "cardId": "fruit_vegetable_007",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "EGY",
+      "cardId": "fruit_vegetable_008",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "EGY",
+      "cardId": "fruit_vegetable_009",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "EGY",
+      "cardId": "fruit_vegetable_010",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "EGY",
+      "cardId": "fruit_vegetable_011",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "EGY",
+      "cardId": "fruit_vegetable_012",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "EGY",
+      "cardId": "fruit_vegetable_013",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "EGY",
+      "cardId": "fruit_vegetable_014",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "EGY",
+      "cardId": "fruit_vegetable_015",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "EGY",
+      "cardId": "fruit_vegetable_016",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "EGY",
+      "cardId": "fruit_vegetable_017",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "EGY",
+      "cardId": "fruit_vegetable_018",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "EGY",
+      "cardId": "fruit_vegetable_019",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "EGY",
+      "cardId": "fruit_vegetable_020",
+      "status": "verified"
+    },
+    {
+      "country": "EGY",
+      "cardId": "fruit_vegetable_021",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "EGY",
+      "cardId": "fruit_vegetable_022",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "EGY",
+      "cardId": "fruit_vegetable_023",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "EGY",
+      "cardId": "fruit_vegetable_024",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "EGY",
+      "cardId": "fruit_vegetable_025",
+      "status": "verified"
+    },
+    {
+      "country": "EGY",
+      "cardId": "fruit_vegetable_026",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "EGY",
+      "cardId": "fruit_vegetable_027",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "EGY",
+      "cardId": "fruit_vegetable_028",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "EGY",
+      "cardId": "fruit_vegetable_029",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "EGY",
+      "cardId": "fruit_vegetable_030",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "EGY",
+      "cardId": "fruit_vegetable_031",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "EGY",
+      "cardId": "fruit_vegetable_032",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "EGY",
+      "cardId": "fruit_vegetable_033",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "EGY",
+      "cardId": "fruit_vegetable_034",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "EGY",
+      "cardId": "ingredient_001",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "EGY",
+      "cardId": "ingredient_002",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "EGY",
+      "cardId": "ingredient_003",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "EGY",
+      "cardId": "ingredient_004",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "EGY",
+      "cardId": "ingredient_005",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "EGY",
+      "cardId": "ingredient_006",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "EGY",
+      "cardId": "ingredient_007",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "EGY",
+      "cardId": "ingredient_008",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "EGY",
+      "cardId": "ingredient_009",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "EGY",
+      "cardId": "ingredient_010",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "EGY",
+      "cardId": "ingredient_011",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "EGY",
+      "cardId": "ingredient_012",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "EGY",
+      "cardId": "ingredient_013",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "EGY",
+      "cardId": "ingredient_014",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "EGY",
+      "cardId": "ingredient_015",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "EGY",
+      "cardId": "ingredient_016",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "EGY",
+      "cardId": "ingredient_017",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "EGY",
+      "cardId": "ingredient_018",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "EGY",
+      "cardId": "clothes_001",
+      "status": "verified"
+    },
+    {
+      "country": "EGY",
+      "cardId": "clothes_002",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "EGY",
+      "cardId": "clothes_003",
+      "status": "verified"
+    },
+    {
+      "country": "EGY",
+      "cardId": "clothes_004",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "EGY",
+      "cardId": "clothes_005",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "EGY",
+      "cardId": "clothes_006",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "EGY",
+      "cardId": "clothes_007",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "EGY",
+      "cardId": "clothes_008",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "EGY",
+      "cardId": "clothes_009",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "EGY",
+      "cardId": "clothes_010",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "EGY",
+      "cardId": "clothes_011",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "EGY",
+      "cardId": "clothes_012",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "EGY",
+      "cardId": "clothes_013",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "EGY",
+      "cardId": "clothes_014",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "EGY",
+      "cardId": "clothes_015",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "EGY",
+      "cardId": "clothes_016",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "EGY",
+      "cardId": "clothes_017",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "EGY",
+      "cardId": "clothes_018",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "EGY",
+      "cardId": "clothes_019",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "EGY",
+      "cardId": "clothes_020",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CHN",
+      "cardId": "fruit_vegetable_001",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHN",
+      "cardId": "fruit_vegetable_002",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHN",
+      "cardId": "fruit_vegetable_003",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHN",
+      "cardId": "fruit_vegetable_004",
+      "status": "verified"
+    },
+    {
+      "country": "CHN",
+      "cardId": "fruit_vegetable_005",
+      "status": "verified"
+    },
+    {
+      "country": "CHN",
+      "cardId": "fruit_vegetable_006",
+      "status": "verified"
+    },
+    {
+      "country": "CHN",
+      "cardId": "fruit_vegetable_007",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHN",
+      "cardId": "fruit_vegetable_008",
+      "status": "verified"
+    },
+    {
+      "country": "CHN",
+      "cardId": "fruit_vegetable_009",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CHN",
+      "cardId": "fruit_vegetable_010",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHN",
+      "cardId": "fruit_vegetable_011",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHN",
+      "cardId": "fruit_vegetable_012",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHN",
+      "cardId": "fruit_vegetable_013",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHN",
+      "cardId": "fruit_vegetable_014",
+      "status": "verified"
+    },
+    {
+      "country": "CHN",
+      "cardId": "fruit_vegetable_015",
+      "status": "verified"
+    },
+    {
+      "country": "CHN",
+      "cardId": "fruit_vegetable_016",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHN",
+      "cardId": "fruit_vegetable_017",
+      "status": "verified"
+    },
+    {
+      "country": "CHN",
+      "cardId": "fruit_vegetable_018",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHN",
+      "cardId": "fruit_vegetable_019",
+      "status": "verified"
+    },
+    {
+      "country": "CHN",
+      "cardId": "fruit_vegetable_020",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHN",
+      "cardId": "fruit_vegetable_021",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CHN",
+      "cardId": "fruit_vegetable_022",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHN",
+      "cardId": "fruit_vegetable_023",
+      "status": "verified"
+    },
+    {
+      "country": "CHN",
+      "cardId": "fruit_vegetable_024",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CHN",
+      "cardId": "fruit_vegetable_025",
+      "status": "verified"
+    },
+    {
+      "country": "CHN",
+      "cardId": "fruit_vegetable_026",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHN",
+      "cardId": "fruit_vegetable_027",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHN",
+      "cardId": "fruit_vegetable_028",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHN",
+      "cardId": "fruit_vegetable_029",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHN",
+      "cardId": "fruit_vegetable_030",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHN",
+      "cardId": "fruit_vegetable_031",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHN",
+      "cardId": "fruit_vegetable_032",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHN",
+      "cardId": "fruit_vegetable_033",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHN",
+      "cardId": "fruit_vegetable_034",
+      "status": "verified"
+    },
+    {
+      "country": "CHN",
+      "cardId": "ingredient_001",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CHN",
+      "cardId": "ingredient_002",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHN",
+      "cardId": "ingredient_003",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHN",
+      "cardId": "ingredient_004",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHN",
+      "cardId": "ingredient_005",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CHN",
+      "cardId": "ingredient_006",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CHN",
+      "cardId": "ingredient_007",
+      "status": "verified"
+    },
+    {
+      "country": "CHN",
+      "cardId": "ingredient_008",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHN",
+      "cardId": "ingredient_009",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CHN",
+      "cardId": "ingredient_010",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHN",
+      "cardId": "ingredient_011",
+      "status": "verified"
+    },
+    {
+      "country": "CHN",
+      "cardId": "ingredient_012",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHN",
+      "cardId": "ingredient_013",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CHN",
+      "cardId": "ingredient_014",
+      "status": "verified"
+    },
+    {
+      "country": "CHN",
+      "cardId": "ingredient_015",
+      "status": "verified"
+    },
+    {
+      "country": "CHN",
+      "cardId": "ingredient_016",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHN",
+      "cardId": "ingredient_017",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CHN",
+      "cardId": "ingredient_018",
+      "status": "verified"
+    },
+    {
+      "country": "CHN",
+      "cardId": "clothes_001",
+      "status": "verified"
+    },
+    {
+      "country": "CHN",
+      "cardId": "clothes_002",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CHN",
+      "cardId": "clothes_003",
+      "status": "verified"
+    },
+    {
+      "country": "CHN",
+      "cardId": "clothes_004",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CHN",
+      "cardId": "clothes_005",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CHN",
+      "cardId": "clothes_006",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CHN",
+      "cardId": "clothes_007",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CHN",
+      "cardId": "clothes_008",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CHN",
+      "cardId": "clothes_009",
+      "status": "verified"
+    },
+    {
+      "country": "CHN",
+      "cardId": "clothes_010",
+      "status": "verified"
+    },
+    {
+      "country": "CHN",
+      "cardId": "clothes_011",
+      "status": "verified"
+    },
+    {
+      "country": "CHN",
+      "cardId": "clothes_012",
+      "status": "verified"
+    },
+    {
+      "country": "CHN",
+      "cardId": "clothes_013",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CHN",
+      "cardId": "clothes_014",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CHN",
+      "cardId": "clothes_015",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CHN",
+      "cardId": "clothes_016",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CHN",
+      "cardId": "clothes_017",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CHN",
+      "cardId": "clothes_018",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CHN",
+      "cardId": "clothes_019",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CHN",
+      "cardId": "clothes_020",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "AUS",
+      "cardId": "fruit_vegetable_001",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "AUS",
+      "cardId": "fruit_vegetable_002",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "AUS",
+      "cardId": "fruit_vegetable_003",
+      "status": "verified"
+    },
+    {
+      "country": "AUS",
+      "cardId": "fruit_vegetable_004",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "AUS",
+      "cardId": "fruit_vegetable_005",
+      "status": "verified"
+    },
+    {
+      "country": "AUS",
+      "cardId": "fruit_vegetable_006",
+      "status": "verified"
+    },
+    {
+      "country": "AUS",
+      "cardId": "fruit_vegetable_007",
+      "status": "verified"
+    },
+    {
+      "country": "AUS",
+      "cardId": "fruit_vegetable_008",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "AUS",
+      "cardId": "fruit_vegetable_009",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "AUS",
+      "cardId": "fruit_vegetable_010",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "AUS",
+      "cardId": "fruit_vegetable_011",
+      "status": "verified"
+    },
+    {
+      "country": "AUS",
+      "cardId": "fruit_vegetable_012",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "AUS",
+      "cardId": "fruit_vegetable_013",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "AUS",
+      "cardId": "fruit_vegetable_014",
+      "status": "verified"
+    },
+    {
+      "country": "AUS",
+      "cardId": "fruit_vegetable_015",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "AUS",
+      "cardId": "fruit_vegetable_016",
+      "status": "verified"
+    },
+    {
+      "country": "AUS",
+      "cardId": "fruit_vegetable_017",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "AUS",
+      "cardId": "fruit_vegetable_018",
+      "status": "verified"
+    },
+    {
+      "country": "AUS",
+      "cardId": "fruit_vegetable_019",
+      "status": "verified"
+    },
+    {
+      "country": "AUS",
+      "cardId": "fruit_vegetable_020",
+      "status": "verified"
+    },
+    {
+      "country": "AUS",
+      "cardId": "fruit_vegetable_021",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "AUS",
+      "cardId": "fruit_vegetable_022",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "AUS",
+      "cardId": "fruit_vegetable_023",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "AUS",
+      "cardId": "fruit_vegetable_024",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "AUS",
+      "cardId": "fruit_vegetable_025",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "AUS",
+      "cardId": "fruit_vegetable_026",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "AUS",
+      "cardId": "fruit_vegetable_027",
+      "status": "verified"
+    },
+    {
+      "country": "AUS",
+      "cardId": "fruit_vegetable_028",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "AUS",
+      "cardId": "fruit_vegetable_029",
+      "status": "verified"
+    },
+    {
+      "country": "AUS",
+      "cardId": "fruit_vegetable_030",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "AUS",
+      "cardId": "fruit_vegetable_031",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "AUS",
+      "cardId": "fruit_vegetable_032",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "AUS",
+      "cardId": "fruit_vegetable_033",
+      "status": "verified"
+    },
+    {
+      "country": "AUS",
+      "cardId": "fruit_vegetable_034",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "AUS",
+      "cardId": "ingredient_001",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "AUS",
+      "cardId": "ingredient_002",
+      "status": "verified"
+    },
+    {
+      "country": "AUS",
+      "cardId": "ingredient_003",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "AUS",
+      "cardId": "ingredient_004",
+      "status": "verified"
+    },
+    {
+      "country": "AUS",
+      "cardId": "ingredient_005",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "AUS",
+      "cardId": "ingredient_006",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "AUS",
+      "cardId": "ingredient_007",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "AUS",
+      "cardId": "ingredient_008",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "AUS",
+      "cardId": "ingredient_009",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "AUS",
+      "cardId": "ingredient_010",
+      "status": "verified"
+    },
+    {
+      "country": "AUS",
+      "cardId": "ingredient_011",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "AUS",
+      "cardId": "ingredient_012",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "AUS",
+      "cardId": "ingredient_013",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "AUS",
+      "cardId": "ingredient_014",
+      "status": "verified"
+    },
+    {
+      "country": "AUS",
+      "cardId": "ingredient_015",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "AUS",
+      "cardId": "ingredient_016",
+      "status": "verified"
+    },
+    {
+      "country": "AUS",
+      "cardId": "ingredient_017",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "AUS",
+      "cardId": "ingredient_018",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "AUS",
+      "cardId": "clothes_001",
+      "status": "verified"
+    },
+    {
+      "country": "AUS",
+      "cardId": "clothes_002",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "AUS",
+      "cardId": "clothes_003",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "AUS",
+      "cardId": "clothes_004",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "AUS",
+      "cardId": "clothes_005",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "AUS",
+      "cardId": "clothes_006",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "AUS",
+      "cardId": "clothes_007",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "AUS",
+      "cardId": "clothes_008",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "AUS",
+      "cardId": "clothes_009",
+      "status": "verified"
+    },
+    {
+      "country": "AUS",
+      "cardId": "clothes_010",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "AUS",
+      "cardId": "clothes_011",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "AUS",
+      "cardId": "clothes_012",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "AUS",
+      "cardId": "clothes_013",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "AUS",
+      "cardId": "clothes_014",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "AUS",
+      "cardId": "clothes_015",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "AUS",
+      "cardId": "clothes_016",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "AUS",
+      "cardId": "clothes_017",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "AUS",
+      "cardId": "clothes_018",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "AUS",
+      "cardId": "clothes_019",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "AUS",
+      "cardId": "clothes_020",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "USA",
+      "cardId": "fruit_vegetable_001",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "USA",
+      "cardId": "fruit_vegetable_002",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "USA",
+      "cardId": "fruit_vegetable_003",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "USA",
+      "cardId": "fruit_vegetable_004",
+      "status": "verified"
+    },
+    {
+      "country": "USA",
+      "cardId": "fruit_vegetable_005",
+      "status": "verified"
+    },
+    {
+      "country": "USA",
+      "cardId": "fruit_vegetable_006",
+      "status": "verified"
+    },
+    {
+      "country": "USA",
+      "cardId": "fruit_vegetable_007",
+      "status": "verified"
+    },
+    {
+      "country": "USA",
+      "cardId": "fruit_vegetable_008",
+      "status": "verified"
+    },
+    {
+      "country": "USA",
+      "cardId": "fruit_vegetable_009",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "USA",
+      "cardId": "fruit_vegetable_010",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "USA",
+      "cardId": "fruit_vegetable_011",
+      "status": "verified"
+    },
+    {
+      "country": "USA",
+      "cardId": "fruit_vegetable_012",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "USA",
+      "cardId": "fruit_vegetable_013",
+      "status": "verified"
+    },
+    {
+      "country": "USA",
+      "cardId": "fruit_vegetable_014",
+      "status": "verified"
+    },
+    {
+      "country": "USA",
+      "cardId": "fruit_vegetable_015",
+      "status": "verified"
+    },
+    {
+      "country": "USA",
+      "cardId": "fruit_vegetable_016",
+      "status": "verified"
+    },
+    {
+      "country": "USA",
+      "cardId": "fruit_vegetable_017",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "USA",
+      "cardId": "fruit_vegetable_018",
+      "status": "verified"
+    },
+    {
+      "country": "USA",
+      "cardId": "fruit_vegetable_019",
+      "status": "verified"
+    },
+    {
+      "country": "USA",
+      "cardId": "fruit_vegetable_020",
+      "status": "verified"
+    },
+    {
+      "country": "USA",
+      "cardId": "fruit_vegetable_021",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "USA",
+      "cardId": "fruit_vegetable_022",
+      "status": "verified"
+    },
+    {
+      "country": "USA",
+      "cardId": "fruit_vegetable_023",
+      "status": "verified"
+    },
+    {
+      "country": "USA",
+      "cardId": "fruit_vegetable_024",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "USA",
+      "cardId": "fruit_vegetable_025",
+      "status": "verified"
+    },
+    {
+      "country": "USA",
+      "cardId": "fruit_vegetable_026",
+      "status": "verified"
+    },
+    {
+      "country": "USA",
+      "cardId": "fruit_vegetable_027",
+      "status": "verified"
+    },
+    {
+      "country": "USA",
+      "cardId": "fruit_vegetable_028",
+      "status": "verified"
+    },
+    {
+      "country": "USA",
+      "cardId": "fruit_vegetable_029",
+      "status": "verified"
+    },
+    {
+      "country": "USA",
+      "cardId": "fruit_vegetable_030",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "USA",
+      "cardId": "fruit_vegetable_031",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "USA",
+      "cardId": "fruit_vegetable_032",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "USA",
+      "cardId": "fruit_vegetable_033",
+      "status": "verified"
+    },
+    {
+      "country": "USA",
+      "cardId": "fruit_vegetable_034",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "USA",
+      "cardId": "ingredient_001",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "USA",
+      "cardId": "ingredient_002",
+      "status": "verified"
+    },
+    {
+      "country": "USA",
+      "cardId": "ingredient_003",
+      "status": "verified"
+    },
+    {
+      "country": "USA",
+      "cardId": "ingredient_004",
+      "status": "verified"
+    },
+    {
+      "country": "USA",
+      "cardId": "ingredient_005",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "USA",
+      "cardId": "ingredient_006",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "USA",
+      "cardId": "ingredient_007",
+      "status": "verified"
+    },
+    {
+      "country": "USA",
+      "cardId": "ingredient_008",
+      "status": "verified"
+    },
+    {
+      "country": "USA",
+      "cardId": "ingredient_009",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "USA",
+      "cardId": "ingredient_010",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "USA",
+      "cardId": "ingredient_011",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "USA",
+      "cardId": "ingredient_012",
+      "status": "verified"
+    },
+    {
+      "country": "USA",
+      "cardId": "ingredient_013",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "USA",
+      "cardId": "ingredient_014",
+      "status": "verified"
+    },
+    {
+      "country": "USA",
+      "cardId": "ingredient_015",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "USA",
+      "cardId": "ingredient_016",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "USA",
+      "cardId": "ingredient_017",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "USA",
+      "cardId": "ingredient_018",
+      "status": "verified"
+    },
+    {
+      "country": "USA",
+      "cardId": "clothes_001",
+      "status": "verified"
+    },
+    {
+      "country": "USA",
+      "cardId": "clothes_002",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "USA",
+      "cardId": "clothes_003",
+      "status": "verified"
+    },
+    {
+      "country": "USA",
+      "cardId": "clothes_004",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "USA",
+      "cardId": "clothes_005",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "USA",
+      "cardId": "clothes_006",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "USA",
+      "cardId": "clothes_007",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "USA",
+      "cardId": "clothes_008",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "USA",
+      "cardId": "clothes_009",
+      "status": "verified"
+    },
+    {
+      "country": "USA",
+      "cardId": "clothes_010",
+      "status": "verified"
+    },
+    {
+      "country": "USA",
+      "cardId": "clothes_011",
+      "status": "verified"
+    },
+    {
+      "country": "USA",
+      "cardId": "clothes_012",
+      "status": "verified"
+    },
+    {
+      "country": "USA",
+      "cardId": "clothes_013",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "USA",
+      "cardId": "clothes_014",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "USA",
+      "cardId": "clothes_015",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "USA",
+      "cardId": "clothes_016",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "USA",
+      "cardId": "clothes_017",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "USA",
+      "cardId": "clothes_018",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "USA",
+      "cardId": "clothes_019",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "USA",
+      "cardId": "clothes_020",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "BRA",
+      "cardId": "fruit_vegetable_001",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BRA",
+      "cardId": "fruit_vegetable_002",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BRA",
+      "cardId": "fruit_vegetable_003",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BRA",
+      "cardId": "fruit_vegetable_004",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BRA",
+      "cardId": "fruit_vegetable_005",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BRA",
+      "cardId": "fruit_vegetable_006",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BRA",
+      "cardId": "fruit_vegetable_007",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BRA",
+      "cardId": "fruit_vegetable_008",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BRA",
+      "cardId": "fruit_vegetable_009",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "BRA",
+      "cardId": "fruit_vegetable_010",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BRA",
+      "cardId": "fruit_vegetable_011",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BRA",
+      "cardId": "fruit_vegetable_012",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BRA",
+      "cardId": "fruit_vegetable_013",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BRA",
+      "cardId": "fruit_vegetable_014",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BRA",
+      "cardId": "fruit_vegetable_015",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BRA",
+      "cardId": "fruit_vegetable_016",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BRA",
+      "cardId": "fruit_vegetable_017",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BRA",
+      "cardId": "fruit_vegetable_018",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BRA",
+      "cardId": "fruit_vegetable_019",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BRA",
+      "cardId": "fruit_vegetable_020",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BRA",
+      "cardId": "fruit_vegetable_021",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "BRA",
+      "cardId": "fruit_vegetable_022",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BRA",
+      "cardId": "fruit_vegetable_023",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BRA",
+      "cardId": "fruit_vegetable_024",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "BRA",
+      "cardId": "fruit_vegetable_025",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BRA",
+      "cardId": "fruit_vegetable_026",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BRA",
+      "cardId": "fruit_vegetable_027",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BRA",
+      "cardId": "fruit_vegetable_028",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BRA",
+      "cardId": "fruit_vegetable_029",
+      "status": "verified"
+    },
+    {
+      "country": "BRA",
+      "cardId": "fruit_vegetable_030",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BRA",
+      "cardId": "fruit_vegetable_031",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BRA",
+      "cardId": "fruit_vegetable_032",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BRA",
+      "cardId": "fruit_vegetable_033",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BRA",
+      "cardId": "fruit_vegetable_034",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BRA",
+      "cardId": "ingredient_001",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "BRA",
+      "cardId": "ingredient_002",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BRA",
+      "cardId": "ingredient_003",
+      "status": "verified"
+    },
+    {
+      "country": "BRA",
+      "cardId": "ingredient_004",
+      "status": "verified"
+    },
+    {
+      "country": "BRA",
+      "cardId": "ingredient_005",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "BRA",
+      "cardId": "ingredient_006",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "BRA",
+      "cardId": "ingredient_007",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BRA",
+      "cardId": "ingredient_008",
+      "status": "verified"
+    },
+    {
+      "country": "BRA",
+      "cardId": "ingredient_009",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "BRA",
+      "cardId": "ingredient_010",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BRA",
+      "cardId": "ingredient_011",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BRA",
+      "cardId": "ingredient_012",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BRA",
+      "cardId": "ingredient_013",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "BRA",
+      "cardId": "ingredient_014",
+      "status": "verified"
+    },
+    {
+      "country": "BRA",
+      "cardId": "ingredient_015",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BRA",
+      "cardId": "ingredient_016",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BRA",
+      "cardId": "ingredient_017",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "BRA",
+      "cardId": "ingredient_018",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BRA",
+      "cardId": "clothes_001",
+      "status": "verified"
+    },
+    {
+      "country": "BRA",
+      "cardId": "clothes_002",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "BRA",
+      "cardId": "clothes_003",
+      "status": "verified"
+    },
+    {
+      "country": "BRA",
+      "cardId": "clothes_004",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "BRA",
+      "cardId": "clothes_005",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "BRA",
+      "cardId": "clothes_006",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "BRA",
+      "cardId": "clothes_007",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "BRA",
+      "cardId": "clothes_008",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "BRA",
+      "cardId": "clothes_009",
+      "status": "verified"
+    },
+    {
+      "country": "BRA",
+      "cardId": "clothes_010",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BRA",
+      "cardId": "clothes_011",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BRA",
+      "cardId": "clothes_012",
+      "status": "verified"
+    },
+    {
+      "country": "BRA",
+      "cardId": "clothes_013",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "BRA",
+      "cardId": "clothes_014",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "BRA",
+      "cardId": "clothes_015",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "BRA",
+      "cardId": "clothes_016",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "BRA",
+      "cardId": "clothes_017",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "BRA",
+      "cardId": "clothes_018",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "BRA",
+      "cardId": "clothes_019",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "BRA",
+      "cardId": "clothes_020",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CAN",
+      "cardId": "fruit_vegetable_001",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CAN",
+      "cardId": "fruit_vegetable_002",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CAN",
+      "cardId": "fruit_vegetable_003",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CAN",
+      "cardId": "fruit_vegetable_004",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CAN",
+      "cardId": "fruit_vegetable_005",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CAN",
+      "cardId": "fruit_vegetable_006",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CAN",
+      "cardId": "fruit_vegetable_007",
+      "status": "verified"
+    },
+    {
+      "country": "CAN",
+      "cardId": "fruit_vegetable_008",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CAN",
+      "cardId": "fruit_vegetable_009",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CAN",
+      "cardId": "fruit_vegetable_010",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CAN",
+      "cardId": "fruit_vegetable_011",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CAN",
+      "cardId": "fruit_vegetable_012",
+      "status": "verified"
+    },
+    {
+      "country": "CAN",
+      "cardId": "fruit_vegetable_013",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CAN",
+      "cardId": "fruit_vegetable_014",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CAN",
+      "cardId": "fruit_vegetable_015",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CAN",
+      "cardId": "fruit_vegetable_016",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CAN",
+      "cardId": "fruit_vegetable_017",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CAN",
+      "cardId": "fruit_vegetable_018",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CAN",
+      "cardId": "fruit_vegetable_019",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CAN",
+      "cardId": "fruit_vegetable_020",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CAN",
+      "cardId": "fruit_vegetable_021",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CAN",
+      "cardId": "fruit_vegetable_022",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CAN",
+      "cardId": "fruit_vegetable_023",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CAN",
+      "cardId": "fruit_vegetable_024",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CAN",
+      "cardId": "fruit_vegetable_025",
+      "status": "verified"
+    },
+    {
+      "country": "CAN",
+      "cardId": "fruit_vegetable_026",
+      "status": "verified"
+    },
+    {
+      "country": "CAN",
+      "cardId": "fruit_vegetable_027",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CAN",
+      "cardId": "fruit_vegetable_028",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CAN",
+      "cardId": "fruit_vegetable_029",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CAN",
+      "cardId": "fruit_vegetable_030",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CAN",
+      "cardId": "fruit_vegetable_031",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CAN",
+      "cardId": "fruit_vegetable_032",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CAN",
+      "cardId": "fruit_vegetable_033",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CAN",
+      "cardId": "fruit_vegetable_034",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CAN",
+      "cardId": "ingredient_001",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CAN",
+      "cardId": "ingredient_002",
+      "status": "verified"
+    },
+    {
+      "country": "CAN",
+      "cardId": "ingredient_003",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CAN",
+      "cardId": "ingredient_004",
+      "status": "verified"
+    },
+    {
+      "country": "CAN",
+      "cardId": "ingredient_005",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CAN",
+      "cardId": "ingredient_006",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CAN",
+      "cardId": "ingredient_007",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CAN",
+      "cardId": "ingredient_008",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CAN",
+      "cardId": "ingredient_009",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CAN",
+      "cardId": "ingredient_010",
+      "status": "verified"
+    },
+    {
+      "country": "CAN",
+      "cardId": "ingredient_011",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CAN",
+      "cardId": "ingredient_012",
+      "status": "verified"
+    },
+    {
+      "country": "CAN",
+      "cardId": "ingredient_013",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CAN",
+      "cardId": "ingredient_014",
+      "status": "verified"
+    },
+    {
+      "country": "CAN",
+      "cardId": "ingredient_015",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CAN",
+      "cardId": "ingredient_016",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CAN",
+      "cardId": "ingredient_017",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CAN",
+      "cardId": "ingredient_018",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CAN",
+      "cardId": "clothes_001",
+      "status": "verified"
+    },
+    {
+      "country": "CAN",
+      "cardId": "clothes_002",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CAN",
+      "cardId": "clothes_003",
+      "status": "verified"
+    },
+    {
+      "country": "CAN",
+      "cardId": "clothes_004",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CAN",
+      "cardId": "clothes_005",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CAN",
+      "cardId": "clothes_006",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CAN",
+      "cardId": "clothes_007",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CAN",
+      "cardId": "clothes_008",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CAN",
+      "cardId": "clothes_009",
+      "status": "verified"
+    },
+    {
+      "country": "CAN",
+      "cardId": "clothes_010",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CAN",
+      "cardId": "clothes_011",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CAN",
+      "cardId": "clothes_012",
+      "status": "verified"
+    },
+    {
+      "country": "CAN",
+      "cardId": "clothes_013",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CAN",
+      "cardId": "clothes_014",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CAN",
+      "cardId": "clothes_015",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CAN",
+      "cardId": "clothes_016",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CAN",
+      "cardId": "clothes_017",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CAN",
+      "cardId": "clothes_018",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CAN",
+      "cardId": "clothes_019",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CAN",
+      "cardId": "clothes_020",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "MEX",
+      "cardId": "fruit_vegetable_001",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "MEX",
+      "cardId": "fruit_vegetable_002",
+      "status": "verified"
+    },
+    {
+      "country": "MEX",
+      "cardId": "fruit_vegetable_003",
+      "status": "verified"
+    },
+    {
+      "country": "MEX",
+      "cardId": "fruit_vegetable_004",
+      "status": "verified"
+    },
+    {
+      "country": "MEX",
+      "cardId": "fruit_vegetable_005",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "MEX",
+      "cardId": "fruit_vegetable_006",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "MEX",
+      "cardId": "fruit_vegetable_007",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "MEX",
+      "cardId": "fruit_vegetable_008",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "MEX",
+      "cardId": "fruit_vegetable_009",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "MEX",
+      "cardId": "fruit_vegetable_010",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "MEX",
+      "cardId": "fruit_vegetable_011",
+      "status": "verified"
+    },
+    {
+      "country": "MEX",
+      "cardId": "fruit_vegetable_012",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "MEX",
+      "cardId": "fruit_vegetable_013",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "MEX",
+      "cardId": "fruit_vegetable_014",
+      "status": "verified"
+    },
+    {
+      "country": "MEX",
+      "cardId": "fruit_vegetable_015",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "MEX",
+      "cardId": "fruit_vegetable_016",
+      "status": "verified"
+    },
+    {
+      "country": "MEX",
+      "cardId": "fruit_vegetable_017",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "MEX",
+      "cardId": "fruit_vegetable_018",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "MEX",
+      "cardId": "fruit_vegetable_019",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "MEX",
+      "cardId": "fruit_vegetable_020",
+      "status": "verified"
+    },
+    {
+      "country": "MEX",
+      "cardId": "fruit_vegetable_021",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "MEX",
+      "cardId": "fruit_vegetable_022",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "MEX",
+      "cardId": "fruit_vegetable_023",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "MEX",
+      "cardId": "fruit_vegetable_024",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "MEX",
+      "cardId": "fruit_vegetable_025",
+      "status": "verified"
+    },
+    {
+      "country": "MEX",
+      "cardId": "fruit_vegetable_026",
+      "status": "verified"
+    },
+    {
+      "country": "MEX",
+      "cardId": "fruit_vegetable_027",
+      "status": "verified"
+    },
+    {
+      "country": "MEX",
+      "cardId": "fruit_vegetable_028",
+      "status": "verified"
+    },
+    {
+      "country": "MEX",
+      "cardId": "fruit_vegetable_029",
+      "status": "verified"
+    },
+    {
+      "country": "MEX",
+      "cardId": "fruit_vegetable_030",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "MEX",
+      "cardId": "fruit_vegetable_031",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "MEX",
+      "cardId": "fruit_vegetable_032",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "MEX",
+      "cardId": "fruit_vegetable_033",
+      "status": "verified"
+    },
+    {
+      "country": "MEX",
+      "cardId": "fruit_vegetable_034",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "MEX",
+      "cardId": "ingredient_001",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "MEX",
+      "cardId": "ingredient_002",
+      "status": "verified"
+    },
+    {
+      "country": "MEX",
+      "cardId": "ingredient_003",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "MEX",
+      "cardId": "ingredient_004",
+      "status": "verified"
+    },
+    {
+      "country": "MEX",
+      "cardId": "ingredient_005",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "MEX",
+      "cardId": "ingredient_006",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "MEX",
+      "cardId": "ingredient_007",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "MEX",
+      "cardId": "ingredient_008",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "MEX",
+      "cardId": "ingredient_009",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "MEX",
+      "cardId": "ingredient_010",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "MEX",
+      "cardId": "ingredient_011",
+      "status": "verified"
+    },
+    {
+      "country": "MEX",
+      "cardId": "ingredient_012",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "MEX",
+      "cardId": "ingredient_013",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "MEX",
+      "cardId": "ingredient_014",
+      "status": "verified"
+    },
+    {
+      "country": "MEX",
+      "cardId": "ingredient_015",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "MEX",
+      "cardId": "ingredient_016",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "MEX",
+      "cardId": "ingredient_017",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "MEX",
+      "cardId": "ingredient_018",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "MEX",
+      "cardId": "clothes_001",
+      "status": "verified"
+    },
+    {
+      "country": "MEX",
+      "cardId": "clothes_002",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "MEX",
+      "cardId": "clothes_003",
+      "status": "verified"
+    },
+    {
+      "country": "MEX",
+      "cardId": "clothes_004",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "MEX",
+      "cardId": "clothes_005",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "MEX",
+      "cardId": "clothes_006",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "MEX",
+      "cardId": "clothes_007",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "MEX",
+      "cardId": "clothes_008",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "MEX",
+      "cardId": "clothes_009",
+      "status": "verified"
+    },
+    {
+      "country": "MEX",
+      "cardId": "clothes_010",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "MEX",
+      "cardId": "clothes_011",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "MEX",
+      "cardId": "clothes_012",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "MEX",
+      "cardId": "clothes_013",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "MEX",
+      "cardId": "clothes_014",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "MEX",
+      "cardId": "clothes_015",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "MEX",
+      "cardId": "clothes_016",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "MEX",
+      "cardId": "clothes_017",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "MEX",
+      "cardId": "clothes_018",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "MEX",
+      "cardId": "clothes_019",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "MEX",
+      "cardId": "clothes_020",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CHL",
+      "cardId": "fruit_vegetable_001",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHL",
+      "cardId": "fruit_vegetable_002",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHL",
+      "cardId": "fruit_vegetable_003",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHL",
+      "cardId": "fruit_vegetable_004",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHL",
+      "cardId": "fruit_vegetable_005",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHL",
+      "cardId": "fruit_vegetable_006",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHL",
+      "cardId": "fruit_vegetable_007",
+      "status": "verified"
+    },
+    {
+      "country": "CHL",
+      "cardId": "fruit_vegetable_008",
+      "status": "verified"
+    },
+    {
+      "country": "CHL",
+      "cardId": "fruit_vegetable_009",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CHL",
+      "cardId": "fruit_vegetable_010",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHL",
+      "cardId": "fruit_vegetable_011",
+      "status": "verified"
+    },
+    {
+      "country": "CHL",
+      "cardId": "fruit_vegetable_012",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHL",
+      "cardId": "fruit_vegetable_013",
+      "status": "verified"
+    },
+    {
+      "country": "CHL",
+      "cardId": "fruit_vegetable_014",
+      "status": "verified"
+    },
+    {
+      "country": "CHL",
+      "cardId": "fruit_vegetable_015",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHL",
+      "cardId": "fruit_vegetable_016",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHL",
+      "cardId": "fruit_vegetable_017",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHL",
+      "cardId": "fruit_vegetable_018",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHL",
+      "cardId": "fruit_vegetable_019",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHL",
+      "cardId": "fruit_vegetable_020",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHL",
+      "cardId": "fruit_vegetable_021",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CHL",
+      "cardId": "fruit_vegetable_022",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHL",
+      "cardId": "fruit_vegetable_023",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHL",
+      "cardId": "fruit_vegetable_024",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CHL",
+      "cardId": "fruit_vegetable_025",
+      "status": "verified"
+    },
+    {
+      "country": "CHL",
+      "cardId": "fruit_vegetable_026",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHL",
+      "cardId": "fruit_vegetable_027",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHL",
+      "cardId": "fruit_vegetable_028",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHL",
+      "cardId": "fruit_vegetable_029",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHL",
+      "cardId": "fruit_vegetable_030",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHL",
+      "cardId": "fruit_vegetable_031",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHL",
+      "cardId": "fruit_vegetable_032",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHL",
+      "cardId": "fruit_vegetable_033",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHL",
+      "cardId": "fruit_vegetable_034",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHL",
+      "cardId": "ingredient_001",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CHL",
+      "cardId": "ingredient_002",
+      "status": "verified"
+    },
+    {
+      "country": "CHL",
+      "cardId": "ingredient_003",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHL",
+      "cardId": "ingredient_004",
+      "status": "verified"
+    },
+    {
+      "country": "CHL",
+      "cardId": "ingredient_005",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CHL",
+      "cardId": "ingredient_006",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CHL",
+      "cardId": "ingredient_007",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHL",
+      "cardId": "ingredient_008",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHL",
+      "cardId": "ingredient_009",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CHL",
+      "cardId": "ingredient_010",
+      "status": "verified"
+    },
+    {
+      "country": "CHL",
+      "cardId": "ingredient_011",
+      "status": "verified"
+    },
+    {
+      "country": "CHL",
+      "cardId": "ingredient_012",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHL",
+      "cardId": "ingredient_013",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CHL",
+      "cardId": "ingredient_014",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHL",
+      "cardId": "ingredient_015",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHL",
+      "cardId": "ingredient_016",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHL",
+      "cardId": "ingredient_017",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CHL",
+      "cardId": "ingredient_018",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHL",
+      "cardId": "clothes_001",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHL",
+      "cardId": "clothes_002",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CHL",
+      "cardId": "clothes_003",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHL",
+      "cardId": "clothes_004",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CHL",
+      "cardId": "clothes_005",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CHL",
+      "cardId": "clothes_006",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CHL",
+      "cardId": "clothes_007",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CHL",
+      "cardId": "clothes_008",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CHL",
+      "cardId": "clothes_009",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHL",
+      "cardId": "clothes_010",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHL",
+      "cardId": "clothes_011",
+      "status": "verified"
+    },
+    {
+      "country": "CHL",
+      "cardId": "clothes_012",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "CHL",
+      "cardId": "clothes_013",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CHL",
+      "cardId": "clothes_014",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CHL",
+      "cardId": "clothes_015",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CHL",
+      "cardId": "clothes_016",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CHL",
+      "cardId": "clothes_017",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CHL",
+      "cardId": "clothes_018",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CHL",
+      "cardId": "clothes_019",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "CHL",
+      "cardId": "clothes_020",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "PER",
+      "cardId": "fruit_vegetable_001",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PER",
+      "cardId": "fruit_vegetable_002",
+      "status": "verified"
+    },
+    {
+      "country": "PER",
+      "cardId": "fruit_vegetable_003",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PER",
+      "cardId": "fruit_vegetable_004",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PER",
+      "cardId": "fruit_vegetable_005",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PER",
+      "cardId": "fruit_vegetable_006",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PER",
+      "cardId": "fruit_vegetable_007",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PER",
+      "cardId": "fruit_vegetable_008",
+      "status": "verified"
+    },
+    {
+      "country": "PER",
+      "cardId": "fruit_vegetable_009",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "PER",
+      "cardId": "fruit_vegetable_010",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PER",
+      "cardId": "fruit_vegetable_011",
+      "status": "verified"
+    },
+    {
+      "country": "PER",
+      "cardId": "fruit_vegetable_012",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PER",
+      "cardId": "fruit_vegetable_013",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PER",
+      "cardId": "fruit_vegetable_014",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PER",
+      "cardId": "fruit_vegetable_015",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PER",
+      "cardId": "fruit_vegetable_016",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PER",
+      "cardId": "fruit_vegetable_017",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PER",
+      "cardId": "fruit_vegetable_018",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PER",
+      "cardId": "fruit_vegetable_019",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PER",
+      "cardId": "fruit_vegetable_020",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PER",
+      "cardId": "fruit_vegetable_021",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "PER",
+      "cardId": "fruit_vegetable_022",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PER",
+      "cardId": "fruit_vegetable_023",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PER",
+      "cardId": "fruit_vegetable_024",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "PER",
+      "cardId": "fruit_vegetable_025",
+      "status": "verified"
+    },
+    {
+      "country": "PER",
+      "cardId": "fruit_vegetable_026",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PER",
+      "cardId": "fruit_vegetable_027",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PER",
+      "cardId": "fruit_vegetable_028",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PER",
+      "cardId": "fruit_vegetable_029",
+      "status": "verified"
+    },
+    {
+      "country": "PER",
+      "cardId": "fruit_vegetable_030",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PER",
+      "cardId": "fruit_vegetable_031",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PER",
+      "cardId": "fruit_vegetable_032",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PER",
+      "cardId": "fruit_vegetable_033",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PER",
+      "cardId": "fruit_vegetable_034",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PER",
+      "cardId": "ingredient_001",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "PER",
+      "cardId": "ingredient_002",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PER",
+      "cardId": "ingredient_003",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PER",
+      "cardId": "ingredient_004",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PER",
+      "cardId": "ingredient_005",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "PER",
+      "cardId": "ingredient_006",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "PER",
+      "cardId": "ingredient_007",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PER",
+      "cardId": "ingredient_008",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PER",
+      "cardId": "ingredient_009",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "PER",
+      "cardId": "ingredient_010",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PER",
+      "cardId": "ingredient_011",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PER",
+      "cardId": "ingredient_012",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PER",
+      "cardId": "ingredient_013",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "PER",
+      "cardId": "ingredient_014",
+      "status": "verified"
+    },
+    {
+      "country": "PER",
+      "cardId": "ingredient_015",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PER",
+      "cardId": "ingredient_016",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PER",
+      "cardId": "ingredient_017",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "PER",
+      "cardId": "ingredient_018",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PER",
+      "cardId": "clothes_001",
+      "status": "verified"
+    },
+    {
+      "country": "PER",
+      "cardId": "clothes_002",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "PER",
+      "cardId": "clothes_003",
+      "status": "verified"
+    },
+    {
+      "country": "PER",
+      "cardId": "clothes_004",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "PER",
+      "cardId": "clothes_005",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "PER",
+      "cardId": "clothes_006",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "PER",
+      "cardId": "clothes_007",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "PER",
+      "cardId": "clothes_008",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "PER",
+      "cardId": "clothes_009",
+      "status": "verified"
+    },
+    {
+      "country": "PER",
+      "cardId": "clothes_010",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PER",
+      "cardId": "clothes_011",
+      "status": "verified"
+    },
+    {
+      "country": "PER",
+      "cardId": "clothes_012",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PER",
+      "cardId": "clothes_013",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "PER",
+      "cardId": "clothes_014",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "PER",
+      "cardId": "clothes_015",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "PER",
+      "cardId": "clothes_016",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "PER",
+      "cardId": "clothes_017",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "PER",
+      "cardId": "clothes_018",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "PER",
+      "cardId": "clothes_019",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "PER",
+      "cardId": "clothes_020",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "NZL",
+      "cardId": "fruit_vegetable_001",
+      "status": "verified"
+    },
+    {
+      "country": "NZL",
+      "cardId": "fruit_vegetable_002",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NZL",
+      "cardId": "fruit_vegetable_003",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NZL",
+      "cardId": "fruit_vegetable_004",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NZL",
+      "cardId": "fruit_vegetable_005",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NZL",
+      "cardId": "fruit_vegetable_006",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NZL",
+      "cardId": "fruit_vegetable_007",
+      "status": "verified"
+    },
+    {
+      "country": "NZL",
+      "cardId": "fruit_vegetable_008",
+      "status": "verified"
+    },
+    {
+      "country": "NZL",
+      "cardId": "fruit_vegetable_009",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "NZL",
+      "cardId": "fruit_vegetable_010",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NZL",
+      "cardId": "fruit_vegetable_011",
+      "status": "verified"
+    },
+    {
+      "country": "NZL",
+      "cardId": "fruit_vegetable_012",
+      "status": "verified"
+    },
+    {
+      "country": "NZL",
+      "cardId": "fruit_vegetable_013",
+      "status": "verified"
+    },
+    {
+      "country": "NZL",
+      "cardId": "fruit_vegetable_014",
+      "status": "verified"
+    },
+    {
+      "country": "NZL",
+      "cardId": "fruit_vegetable_015",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NZL",
+      "cardId": "fruit_vegetable_016",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NZL",
+      "cardId": "fruit_vegetable_017",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NZL",
+      "cardId": "fruit_vegetable_018",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NZL",
+      "cardId": "fruit_vegetable_019",
+      "status": "verified"
+    },
+    {
+      "country": "NZL",
+      "cardId": "fruit_vegetable_020",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NZL",
+      "cardId": "fruit_vegetable_021",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "NZL",
+      "cardId": "fruit_vegetable_022",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NZL",
+      "cardId": "fruit_vegetable_023",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NZL",
+      "cardId": "fruit_vegetable_024",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "NZL",
+      "cardId": "fruit_vegetable_025",
+      "status": "verified"
+    },
+    {
+      "country": "NZL",
+      "cardId": "fruit_vegetable_026",
+      "status": "verified"
+    },
+    {
+      "country": "NZL",
+      "cardId": "fruit_vegetable_027",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NZL",
+      "cardId": "fruit_vegetable_028",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NZL",
+      "cardId": "fruit_vegetable_029",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NZL",
+      "cardId": "fruit_vegetable_030",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NZL",
+      "cardId": "fruit_vegetable_031",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NZL",
+      "cardId": "fruit_vegetable_032",
+      "status": "verified"
+    },
+    {
+      "country": "NZL",
+      "cardId": "fruit_vegetable_033",
+      "status": "verified"
+    },
+    {
+      "country": "NZL",
+      "cardId": "fruit_vegetable_034",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NZL",
+      "cardId": "ingredient_001",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "NZL",
+      "cardId": "ingredient_002",
+      "status": "verified"
+    },
+    {
+      "country": "NZL",
+      "cardId": "ingredient_003",
+      "status": "verified"
+    },
+    {
+      "country": "NZL",
+      "cardId": "ingredient_004",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NZL",
+      "cardId": "ingredient_005",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "NZL",
+      "cardId": "ingredient_006",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "NZL",
+      "cardId": "ingredient_007",
+      "status": "verified"
+    },
+    {
+      "country": "NZL",
+      "cardId": "ingredient_008",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NZL",
+      "cardId": "ingredient_009",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "NZL",
+      "cardId": "ingredient_010",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NZL",
+      "cardId": "ingredient_011",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NZL",
+      "cardId": "ingredient_012",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NZL",
+      "cardId": "ingredient_013",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "NZL",
+      "cardId": "ingredient_014",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NZL",
+      "cardId": "ingredient_015",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NZL",
+      "cardId": "ingredient_016",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NZL",
+      "cardId": "ingredient_017",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "NZL",
+      "cardId": "ingredient_018",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NZL",
+      "cardId": "clothes_001",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NZL",
+      "cardId": "clothes_002",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "NZL",
+      "cardId": "clothes_003",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NZL",
+      "cardId": "clothes_004",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "NZL",
+      "cardId": "clothes_005",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "NZL",
+      "cardId": "clothes_006",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "NZL",
+      "cardId": "clothes_007",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "NZL",
+      "cardId": "clothes_008",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "NZL",
+      "cardId": "clothes_009",
+      "status": "verified"
+    },
+    {
+      "country": "NZL",
+      "cardId": "clothes_010",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NZL",
+      "cardId": "clothes_011",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NZL",
+      "cardId": "clothes_012",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NZL",
+      "cardId": "clothes_013",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "NZL",
+      "cardId": "clothes_014",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "NZL",
+      "cardId": "clothes_015",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "NZL",
+      "cardId": "clothes_016",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "NZL",
+      "cardId": "clothes_017",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "NZL",
+      "cardId": "clothes_018",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "NZL",
+      "cardId": "clothes_019",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "NZL",
+      "cardId": "clothes_020",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "PHL",
+      "cardId": "fruit_vegetable_001",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PHL",
+      "cardId": "fruit_vegetable_002",
+      "status": "verified"
+    },
+    {
+      "country": "PHL",
+      "cardId": "fruit_vegetable_003",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PHL",
+      "cardId": "fruit_vegetable_004",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PHL",
+      "cardId": "fruit_vegetable_005",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PHL",
+      "cardId": "fruit_vegetable_006",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PHL",
+      "cardId": "fruit_vegetable_007",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PHL",
+      "cardId": "fruit_vegetable_008",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PHL",
+      "cardId": "fruit_vegetable_009",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "PHL",
+      "cardId": "fruit_vegetable_010",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PHL",
+      "cardId": "fruit_vegetable_011",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PHL",
+      "cardId": "fruit_vegetable_012",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PHL",
+      "cardId": "fruit_vegetable_013",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PHL",
+      "cardId": "fruit_vegetable_014",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PHL",
+      "cardId": "fruit_vegetable_015",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PHL",
+      "cardId": "fruit_vegetable_016",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PHL",
+      "cardId": "fruit_vegetable_017",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PHL",
+      "cardId": "fruit_vegetable_018",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PHL",
+      "cardId": "fruit_vegetable_019",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PHL",
+      "cardId": "fruit_vegetable_020",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PHL",
+      "cardId": "fruit_vegetable_021",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "PHL",
+      "cardId": "fruit_vegetable_022",
+      "status": "verified"
+    },
+    {
+      "country": "PHL",
+      "cardId": "fruit_vegetable_023",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PHL",
+      "cardId": "fruit_vegetable_024",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "PHL",
+      "cardId": "fruit_vegetable_025",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PHL",
+      "cardId": "fruit_vegetable_026",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PHL",
+      "cardId": "fruit_vegetable_027",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PHL",
+      "cardId": "fruit_vegetable_028",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PHL",
+      "cardId": "fruit_vegetable_029",
+      "status": "verified"
+    },
+    {
+      "country": "PHL",
+      "cardId": "fruit_vegetable_030",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PHL",
+      "cardId": "fruit_vegetable_031",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PHL",
+      "cardId": "fruit_vegetable_032",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PHL",
+      "cardId": "fruit_vegetable_033",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PHL",
+      "cardId": "fruit_vegetable_034",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PHL",
+      "cardId": "ingredient_001",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "PHL",
+      "cardId": "ingredient_002",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PHL",
+      "cardId": "ingredient_003",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PHL",
+      "cardId": "ingredient_004",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PHL",
+      "cardId": "ingredient_005",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "PHL",
+      "cardId": "ingredient_006",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "PHL",
+      "cardId": "ingredient_007",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PHL",
+      "cardId": "ingredient_008",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PHL",
+      "cardId": "ingredient_009",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "PHL",
+      "cardId": "ingredient_010",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PHL",
+      "cardId": "ingredient_011",
+      "status": "verified"
+    },
+    {
+      "country": "PHL",
+      "cardId": "ingredient_012",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PHL",
+      "cardId": "ingredient_013",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "PHL",
+      "cardId": "ingredient_014",
+      "status": "verified"
+    },
+    {
+      "country": "PHL",
+      "cardId": "ingredient_015",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PHL",
+      "cardId": "ingredient_016",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PHL",
+      "cardId": "ingredient_017",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "PHL",
+      "cardId": "ingredient_018",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "PHL",
+      "cardId": "clothes_001",
+      "status": "verified"
+    },
+    {
+      "country": "PHL",
+      "cardId": "clothes_002",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "PHL",
+      "cardId": "clothes_003",
+      "status": "verified"
+    },
+    {
+      "country": "PHL",
+      "cardId": "clothes_004",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "PHL",
+      "cardId": "clothes_005",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "PHL",
+      "cardId": "clothes_006",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "PHL",
+      "cardId": "clothes_007",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "PHL",
+      "cardId": "clothes_008",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "PHL",
+      "cardId": "clothes_009",
+      "status": "verified"
+    },
+    {
+      "country": "PHL",
+      "cardId": "clothes_010",
+      "status": "verified"
+    },
+    {
+      "country": "PHL",
+      "cardId": "clothes_011",
+      "status": "verified"
+    },
+    {
+      "country": "PHL",
+      "cardId": "clothes_012",
+      "status": "verified"
+    },
+    {
+      "country": "PHL",
+      "cardId": "clothes_013",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "PHL",
+      "cardId": "clothes_014",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "PHL",
+      "cardId": "clothes_015",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "PHL",
+      "cardId": "clothes_016",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "PHL",
+      "cardId": "clothes_017",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "PHL",
+      "cardId": "clothes_018",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "PHL",
+      "cardId": "clothes_019",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "PHL",
+      "cardId": "clothes_020",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "THA",
+      "cardId": "fruit_vegetable_001",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "THA",
+      "cardId": "fruit_vegetable_002",
+      "status": "verified"
+    },
+    {
+      "country": "THA",
+      "cardId": "fruit_vegetable_003",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "THA",
+      "cardId": "fruit_vegetable_004",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "THA",
+      "cardId": "fruit_vegetable_005",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "THA",
+      "cardId": "fruit_vegetable_006",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "THA",
+      "cardId": "fruit_vegetable_007",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "THA",
+      "cardId": "fruit_vegetable_008",
+      "status": "verified"
+    },
+    {
+      "country": "THA",
+      "cardId": "fruit_vegetable_009",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "THA",
+      "cardId": "fruit_vegetable_010",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "THA",
+      "cardId": "fruit_vegetable_011",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "THA",
+      "cardId": "fruit_vegetable_012",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "THA",
+      "cardId": "fruit_vegetable_013",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "THA",
+      "cardId": "fruit_vegetable_014",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "THA",
+      "cardId": "fruit_vegetable_015",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "THA",
+      "cardId": "fruit_vegetable_016",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "THA",
+      "cardId": "fruit_vegetable_017",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "THA",
+      "cardId": "fruit_vegetable_018",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "THA",
+      "cardId": "fruit_vegetable_019",
+      "status": "verified"
+    },
+    {
+      "country": "THA",
+      "cardId": "fruit_vegetable_020",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "THA",
+      "cardId": "fruit_vegetable_021",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "THA",
+      "cardId": "fruit_vegetable_022",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "THA",
+      "cardId": "fruit_vegetable_023",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "THA",
+      "cardId": "fruit_vegetable_024",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "THA",
+      "cardId": "fruit_vegetable_025",
+      "status": "verified"
+    },
+    {
+      "country": "THA",
+      "cardId": "fruit_vegetable_026",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "THA",
+      "cardId": "fruit_vegetable_027",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "THA",
+      "cardId": "fruit_vegetable_028",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "THA",
+      "cardId": "fruit_vegetable_029",
+      "status": "verified"
+    },
+    {
+      "country": "THA",
+      "cardId": "fruit_vegetable_030",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "THA",
+      "cardId": "fruit_vegetable_031",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "THA",
+      "cardId": "fruit_vegetable_032",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "THA",
+      "cardId": "fruit_vegetable_033",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "THA",
+      "cardId": "fruit_vegetable_034",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "THA",
+      "cardId": "ingredient_001",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "THA",
+      "cardId": "ingredient_002",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "THA",
+      "cardId": "ingredient_003",
+      "status": "verified"
+    },
+    {
+      "country": "THA",
+      "cardId": "ingredient_004",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "THA",
+      "cardId": "ingredient_005",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "THA",
+      "cardId": "ingredient_006",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "THA",
+      "cardId": "ingredient_007",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "THA",
+      "cardId": "ingredient_008",
+      "status": "verified"
+    },
+    {
+      "country": "THA",
+      "cardId": "ingredient_009",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "THA",
+      "cardId": "ingredient_010",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "THA",
+      "cardId": "ingredient_011",
+      "status": "verified"
+    },
+    {
+      "country": "THA",
+      "cardId": "ingredient_012",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "THA",
+      "cardId": "ingredient_013",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "THA",
+      "cardId": "ingredient_014",
+      "status": "verified"
+    },
+    {
+      "country": "THA",
+      "cardId": "ingredient_015",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "THA",
+      "cardId": "ingredient_016",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "THA",
+      "cardId": "ingredient_017",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "THA",
+      "cardId": "ingredient_018",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "THA",
+      "cardId": "clothes_001",
+      "status": "verified"
+    },
+    {
+      "country": "THA",
+      "cardId": "clothes_002",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "THA",
+      "cardId": "clothes_003",
+      "status": "verified"
+    },
+    {
+      "country": "THA",
+      "cardId": "clothes_004",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "THA",
+      "cardId": "clothes_005",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "THA",
+      "cardId": "clothes_006",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "THA",
+      "cardId": "clothes_007",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "THA",
+      "cardId": "clothes_008",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "THA",
+      "cardId": "clothes_009",
+      "status": "verified"
+    },
+    {
+      "country": "THA",
+      "cardId": "clothes_010",
+      "status": "verified"
+    },
+    {
+      "country": "THA",
+      "cardId": "clothes_011",
+      "status": "verified"
+    },
+    {
+      "country": "THA",
+      "cardId": "clothes_012",
+      "status": "verified"
+    },
+    {
+      "country": "THA",
+      "cardId": "clothes_013",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "THA",
+      "cardId": "clothes_014",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "THA",
+      "cardId": "clothes_015",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "THA",
+      "cardId": "clothes_016",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "THA",
+      "cardId": "clothes_017",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "THA",
+      "cardId": "clothes_018",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "THA",
+      "cardId": "clothes_019",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "THA",
+      "cardId": "clothes_020",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "VNM",
+      "cardId": "fruit_vegetable_001",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "VNM",
+      "cardId": "fruit_vegetable_002",
+      "status": "verified"
+    },
+    {
+      "country": "VNM",
+      "cardId": "fruit_vegetable_003",
+      "status": "verified"
+    },
+    {
+      "country": "VNM",
+      "cardId": "fruit_vegetable_004",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "VNM",
+      "cardId": "fruit_vegetable_005",
+      "status": "verified"
+    },
+    {
+      "country": "VNM",
+      "cardId": "fruit_vegetable_006",
+      "status": "verified"
+    },
+    {
+      "country": "VNM",
+      "cardId": "fruit_vegetable_007",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "VNM",
+      "cardId": "fruit_vegetable_008",
+      "status": "verified"
+    },
+    {
+      "country": "VNM",
+      "cardId": "fruit_vegetable_009",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "VNM",
+      "cardId": "fruit_vegetable_010",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "VNM",
+      "cardId": "fruit_vegetable_011",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "VNM",
+      "cardId": "fruit_vegetable_012",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "VNM",
+      "cardId": "fruit_vegetable_013",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "VNM",
+      "cardId": "fruit_vegetable_014",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "VNM",
+      "cardId": "fruit_vegetable_015",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "VNM",
+      "cardId": "fruit_vegetable_016",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "VNM",
+      "cardId": "fruit_vegetable_017",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "VNM",
+      "cardId": "fruit_vegetable_018",
+      "status": "verified"
+    },
+    {
+      "country": "VNM",
+      "cardId": "fruit_vegetable_019",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "VNM",
+      "cardId": "fruit_vegetable_020",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "VNM",
+      "cardId": "fruit_vegetable_021",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "VNM",
+      "cardId": "fruit_vegetable_022",
+      "status": "verified"
+    },
+    {
+      "country": "VNM",
+      "cardId": "fruit_vegetable_023",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "VNM",
+      "cardId": "fruit_vegetable_024",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "VNM",
+      "cardId": "fruit_vegetable_025",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "VNM",
+      "cardId": "fruit_vegetable_026",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "VNM",
+      "cardId": "fruit_vegetable_027",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "VNM",
+      "cardId": "fruit_vegetable_028",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "VNM",
+      "cardId": "fruit_vegetable_029",
+      "status": "verified"
+    },
+    {
+      "country": "VNM",
+      "cardId": "fruit_vegetable_030",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "VNM",
+      "cardId": "fruit_vegetable_031",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "VNM",
+      "cardId": "fruit_vegetable_032",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "VNM",
+      "cardId": "fruit_vegetable_033",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "VNM",
+      "cardId": "fruit_vegetable_034",
+      "status": "verified"
+    },
+    {
+      "country": "VNM",
+      "cardId": "ingredient_001",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "VNM",
+      "cardId": "ingredient_002",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "VNM",
+      "cardId": "ingredient_003",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "VNM",
+      "cardId": "ingredient_004",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "VNM",
+      "cardId": "ingredient_005",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "VNM",
+      "cardId": "ingredient_006",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "VNM",
+      "cardId": "ingredient_007",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "VNM",
+      "cardId": "ingredient_008",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "VNM",
+      "cardId": "ingredient_009",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "VNM",
+      "cardId": "ingredient_010",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "VNM",
+      "cardId": "ingredient_011",
+      "status": "verified"
+    },
+    {
+      "country": "VNM",
+      "cardId": "ingredient_012",
+      "status": "verified"
+    },
+    {
+      "country": "VNM",
+      "cardId": "ingredient_013",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "VNM",
+      "cardId": "ingredient_014",
+      "status": "verified"
+    },
+    {
+      "country": "VNM",
+      "cardId": "ingredient_015",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "VNM",
+      "cardId": "ingredient_016",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "VNM",
+      "cardId": "ingredient_017",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "VNM",
+      "cardId": "ingredient_018",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "VNM",
+      "cardId": "clothes_001",
+      "status": "verified"
+    },
+    {
+      "country": "VNM",
+      "cardId": "clothes_002",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "VNM",
+      "cardId": "clothes_003",
+      "status": "verified"
+    },
+    {
+      "country": "VNM",
+      "cardId": "clothes_004",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "VNM",
+      "cardId": "clothes_005",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "VNM",
+      "cardId": "clothes_006",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "VNM",
+      "cardId": "clothes_007",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "VNM",
+      "cardId": "clothes_008",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "VNM",
+      "cardId": "clothes_009",
+      "status": "verified"
+    },
+    {
+      "country": "VNM",
+      "cardId": "clothes_010",
+      "status": "verified"
+    },
+    {
+      "country": "VNM",
+      "cardId": "clothes_011",
+      "status": "verified"
+    },
+    {
+      "country": "VNM",
+      "cardId": "clothes_012",
+      "status": "verified"
+    },
+    {
+      "country": "VNM",
+      "cardId": "clothes_013",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "VNM",
+      "cardId": "clothes_014",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "VNM",
+      "cardId": "clothes_015",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "VNM",
+      "cardId": "clothes_016",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "VNM",
+      "cardId": "clothes_017",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "VNM",
+      "cardId": "clothes_018",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "VNM",
+      "cardId": "clothes_019",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "VNM",
+      "cardId": "clothes_020",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "IDN",
+      "cardId": "fruit_vegetable_001",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "IDN",
+      "cardId": "fruit_vegetable_002",
+      "status": "verified"
+    },
+    {
+      "country": "IDN",
+      "cardId": "fruit_vegetable_003",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "IDN",
+      "cardId": "fruit_vegetable_004",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "IDN",
+      "cardId": "fruit_vegetable_005",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "IDN",
+      "cardId": "fruit_vegetable_006",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "IDN",
+      "cardId": "fruit_vegetable_007",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "IDN",
+      "cardId": "fruit_vegetable_008",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "IDN",
+      "cardId": "fruit_vegetable_009",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "IDN",
+      "cardId": "fruit_vegetable_010",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "IDN",
+      "cardId": "fruit_vegetable_011",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "IDN",
+      "cardId": "fruit_vegetable_012",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "IDN",
+      "cardId": "fruit_vegetable_013",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "IDN",
+      "cardId": "fruit_vegetable_014",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "IDN",
+      "cardId": "fruit_vegetable_015",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "IDN",
+      "cardId": "fruit_vegetable_016",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "IDN",
+      "cardId": "fruit_vegetable_017",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "IDN",
+      "cardId": "fruit_vegetable_018",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "IDN",
+      "cardId": "fruit_vegetable_019",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "IDN",
+      "cardId": "fruit_vegetable_020",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "IDN",
+      "cardId": "fruit_vegetable_021",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "IDN",
+      "cardId": "fruit_vegetable_022",
+      "status": "verified"
+    },
+    {
+      "country": "IDN",
+      "cardId": "fruit_vegetable_023",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "IDN",
+      "cardId": "fruit_vegetable_024",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "IDN",
+      "cardId": "fruit_vegetable_025",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "IDN",
+      "cardId": "fruit_vegetable_026",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "IDN",
+      "cardId": "fruit_vegetable_027",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "IDN",
+      "cardId": "fruit_vegetable_028",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "IDN",
+      "cardId": "fruit_vegetable_029",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "IDN",
+      "cardId": "fruit_vegetable_030",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "IDN",
+      "cardId": "fruit_vegetable_031",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "IDN",
+      "cardId": "fruit_vegetable_032",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "IDN",
+      "cardId": "fruit_vegetable_033",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "IDN",
+      "cardId": "fruit_vegetable_034",
+      "status": "verified"
+    },
+    {
+      "country": "IDN",
+      "cardId": "ingredient_001",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "IDN",
+      "cardId": "ingredient_002",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "IDN",
+      "cardId": "ingredient_003",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "IDN",
+      "cardId": "ingredient_004",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "IDN",
+      "cardId": "ingredient_005",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "IDN",
+      "cardId": "ingredient_006",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "IDN",
+      "cardId": "ingredient_007",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "IDN",
+      "cardId": "ingredient_008",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "IDN",
+      "cardId": "ingredient_009",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "IDN",
+      "cardId": "ingredient_010",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "IDN",
+      "cardId": "ingredient_011",
+      "status": "verified"
+    },
+    {
+      "country": "IDN",
+      "cardId": "ingredient_012",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "IDN",
+      "cardId": "ingredient_013",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "IDN",
+      "cardId": "ingredient_014",
+      "status": "verified"
+    },
+    {
+      "country": "IDN",
+      "cardId": "ingredient_015",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "IDN",
+      "cardId": "ingredient_016",
+      "status": "verified"
+    },
+    {
+      "country": "IDN",
+      "cardId": "ingredient_017",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "IDN",
+      "cardId": "ingredient_018",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "IDN",
+      "cardId": "clothes_001",
+      "status": "verified"
+    },
+    {
+      "country": "IDN",
+      "cardId": "clothes_002",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "IDN",
+      "cardId": "clothes_003",
+      "status": "verified"
+    },
+    {
+      "country": "IDN",
+      "cardId": "clothes_004",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "IDN",
+      "cardId": "clothes_005",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "IDN",
+      "cardId": "clothes_006",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "IDN",
+      "cardId": "clothes_007",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "IDN",
+      "cardId": "clothes_008",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "IDN",
+      "cardId": "clothes_009",
+      "status": "verified"
+    },
+    {
+      "country": "IDN",
+      "cardId": "clothes_010",
+      "status": "verified"
+    },
+    {
+      "country": "IDN",
+      "cardId": "clothes_011",
+      "status": "verified"
+    },
+    {
+      "country": "IDN",
+      "cardId": "clothes_012",
+      "status": "verified"
+    },
+    {
+      "country": "IDN",
+      "cardId": "clothes_013",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "IDN",
+      "cardId": "clothes_014",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "IDN",
+      "cardId": "clothes_015",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "IDN",
+      "cardId": "clothes_016",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "IDN",
+      "cardId": "clothes_017",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "IDN",
+      "cardId": "clothes_018",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "IDN",
+      "cardId": "clothes_019",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "IDN",
+      "cardId": "clothes_020",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "NOR",
+      "cardId": "fruit_vegetable_001",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NOR",
+      "cardId": "fruit_vegetable_002",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NOR",
+      "cardId": "fruit_vegetable_003",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NOR",
+      "cardId": "fruit_vegetable_004",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NOR",
+      "cardId": "fruit_vegetable_005",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NOR",
+      "cardId": "fruit_vegetable_006",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NOR",
+      "cardId": "fruit_vegetable_007",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NOR",
+      "cardId": "fruit_vegetable_008",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NOR",
+      "cardId": "fruit_vegetable_009",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "NOR",
+      "cardId": "fruit_vegetable_010",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NOR",
+      "cardId": "fruit_vegetable_011",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NOR",
+      "cardId": "fruit_vegetable_012",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NOR",
+      "cardId": "fruit_vegetable_013",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NOR",
+      "cardId": "fruit_vegetable_014",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NOR",
+      "cardId": "fruit_vegetable_015",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NOR",
+      "cardId": "fruit_vegetable_016",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NOR",
+      "cardId": "fruit_vegetable_017",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NOR",
+      "cardId": "fruit_vegetable_018",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NOR",
+      "cardId": "fruit_vegetable_019",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NOR",
+      "cardId": "fruit_vegetable_020",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NOR",
+      "cardId": "fruit_vegetable_021",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "NOR",
+      "cardId": "fruit_vegetable_022",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NOR",
+      "cardId": "fruit_vegetable_023",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NOR",
+      "cardId": "fruit_vegetable_024",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "NOR",
+      "cardId": "fruit_vegetable_025",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NOR",
+      "cardId": "fruit_vegetable_026",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NOR",
+      "cardId": "fruit_vegetable_027",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NOR",
+      "cardId": "fruit_vegetable_028",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NOR",
+      "cardId": "fruit_vegetable_029",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NOR",
+      "cardId": "fruit_vegetable_030",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NOR",
+      "cardId": "fruit_vegetable_031",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NOR",
+      "cardId": "fruit_vegetable_032",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NOR",
+      "cardId": "fruit_vegetable_033",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NOR",
+      "cardId": "fruit_vegetable_034",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NOR",
+      "cardId": "ingredient_001",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "NOR",
+      "cardId": "ingredient_002",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NOR",
+      "cardId": "ingredient_003",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NOR",
+      "cardId": "ingredient_004",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NOR",
+      "cardId": "ingredient_005",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "NOR",
+      "cardId": "ingredient_006",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "NOR",
+      "cardId": "ingredient_007",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NOR",
+      "cardId": "ingredient_008",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NOR",
+      "cardId": "ingredient_009",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "NOR",
+      "cardId": "ingredient_010",
+      "status": "verified"
+    },
+    {
+      "country": "NOR",
+      "cardId": "ingredient_011",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NOR",
+      "cardId": "ingredient_012",
+      "status": "verified"
+    },
+    {
+      "country": "NOR",
+      "cardId": "ingredient_013",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "NOR",
+      "cardId": "ingredient_014",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NOR",
+      "cardId": "ingredient_015",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NOR",
+      "cardId": "ingredient_016",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NOR",
+      "cardId": "ingredient_017",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "NOR",
+      "cardId": "ingredient_018",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NOR",
+      "cardId": "clothes_001",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NOR",
+      "cardId": "clothes_002",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "NOR",
+      "cardId": "clothes_003",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NOR",
+      "cardId": "clothes_004",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "NOR",
+      "cardId": "clothes_005",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "NOR",
+      "cardId": "clothes_006",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "NOR",
+      "cardId": "clothes_007",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "NOR",
+      "cardId": "clothes_008",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "NOR",
+      "cardId": "clothes_009",
+      "status": "verified"
+    },
+    {
+      "country": "NOR",
+      "cardId": "clothes_010",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NOR",
+      "cardId": "clothes_011",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NOR",
+      "cardId": "clothes_012",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "NOR",
+      "cardId": "clothes_013",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "NOR",
+      "cardId": "clothes_014",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "NOR",
+      "cardId": "clothes_015",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "NOR",
+      "cardId": "clothes_016",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "NOR",
+      "cardId": "clothes_017",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "NOR",
+      "cardId": "clothes_018",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "NOR",
+      "cardId": "clothes_019",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "NOR",
+      "cardId": "clothes_020",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "BGD",
+      "cardId": "fruit_vegetable_001",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BGD",
+      "cardId": "fruit_vegetable_002",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BGD",
+      "cardId": "fruit_vegetable_003",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BGD",
+      "cardId": "fruit_vegetable_004",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BGD",
+      "cardId": "fruit_vegetable_005",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BGD",
+      "cardId": "fruit_vegetable_006",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BGD",
+      "cardId": "fruit_vegetable_007",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BGD",
+      "cardId": "fruit_vegetable_008",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BGD",
+      "cardId": "fruit_vegetable_009",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "BGD",
+      "cardId": "fruit_vegetable_010",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BGD",
+      "cardId": "fruit_vegetable_011",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BGD",
+      "cardId": "fruit_vegetable_012",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BGD",
+      "cardId": "fruit_vegetable_013",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BGD",
+      "cardId": "fruit_vegetable_014",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BGD",
+      "cardId": "fruit_vegetable_015",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BGD",
+      "cardId": "fruit_vegetable_016",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BGD",
+      "cardId": "fruit_vegetable_017",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BGD",
+      "cardId": "fruit_vegetable_018",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BGD",
+      "cardId": "fruit_vegetable_019",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BGD",
+      "cardId": "fruit_vegetable_020",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BGD",
+      "cardId": "fruit_vegetable_021",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "BGD",
+      "cardId": "fruit_vegetable_022",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BGD",
+      "cardId": "fruit_vegetable_023",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BGD",
+      "cardId": "fruit_vegetable_024",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "BGD",
+      "cardId": "fruit_vegetable_025",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BGD",
+      "cardId": "fruit_vegetable_026",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BGD",
+      "cardId": "fruit_vegetable_027",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BGD",
+      "cardId": "fruit_vegetable_028",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BGD",
+      "cardId": "fruit_vegetable_029",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BGD",
+      "cardId": "fruit_vegetable_030",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BGD",
+      "cardId": "fruit_vegetable_031",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BGD",
+      "cardId": "fruit_vegetable_032",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BGD",
+      "cardId": "fruit_vegetable_033",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BGD",
+      "cardId": "fruit_vegetable_034",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BGD",
+      "cardId": "ingredient_001",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "BGD",
+      "cardId": "ingredient_002",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BGD",
+      "cardId": "ingredient_003",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BGD",
+      "cardId": "ingredient_004",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BGD",
+      "cardId": "ingredient_005",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "BGD",
+      "cardId": "ingredient_006",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "BGD",
+      "cardId": "ingredient_007",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BGD",
+      "cardId": "ingredient_008",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BGD",
+      "cardId": "ingredient_009",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "BGD",
+      "cardId": "ingredient_010",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BGD",
+      "cardId": "ingredient_011",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BGD",
+      "cardId": "ingredient_012",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BGD",
+      "cardId": "ingredient_013",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "BGD",
+      "cardId": "ingredient_014",
+      "status": "verified"
+    },
+    {
+      "country": "BGD",
+      "cardId": "ingredient_015",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BGD",
+      "cardId": "ingredient_016",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BGD",
+      "cardId": "ingredient_017",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "BGD",
+      "cardId": "ingredient_018",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "BGD",
+      "cardId": "clothes_001",
+      "status": "verified"
+    },
+    {
+      "country": "BGD",
+      "cardId": "clothes_002",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "BGD",
+      "cardId": "clothes_003",
+      "status": "verified"
+    },
+    {
+      "country": "BGD",
+      "cardId": "clothes_004",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "BGD",
+      "cardId": "clothes_005",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "BGD",
+      "cardId": "clothes_006",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "BGD",
+      "cardId": "clothes_007",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "BGD",
+      "cardId": "clothes_008",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "BGD",
+      "cardId": "clothes_009",
+      "status": "verified"
+    },
+    {
+      "country": "BGD",
+      "cardId": "clothes_010",
+      "status": "verified"
+    },
+    {
+      "country": "BGD",
+      "cardId": "clothes_011",
+      "status": "verified"
+    },
+    {
+      "country": "BGD",
+      "cardId": "clothes_012",
+      "status": "verified"
+    },
+    {
+      "country": "BGD",
+      "cardId": "clothes_013",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "BGD",
+      "cardId": "clothes_014",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "BGD",
+      "cardId": "clothes_015",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "BGD",
+      "cardId": "clothes_016",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "BGD",
+      "cardId": "clothes_017",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "BGD",
+      "cardId": "clothes_018",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "BGD",
+      "cardId": "clothes_019",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "BGD",
+      "cardId": "clothes_020",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "KHM",
+      "cardId": "fruit_vegetable_001",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "KHM",
+      "cardId": "fruit_vegetable_002",
+      "status": "verified"
+    },
+    {
+      "country": "KHM",
+      "cardId": "fruit_vegetable_003",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "KHM",
+      "cardId": "fruit_vegetable_004",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "KHM",
+      "cardId": "fruit_vegetable_005",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "KHM",
+      "cardId": "fruit_vegetable_006",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "KHM",
+      "cardId": "fruit_vegetable_007",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "KHM",
+      "cardId": "fruit_vegetable_008",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "KHM",
+      "cardId": "fruit_vegetable_009",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "KHM",
+      "cardId": "fruit_vegetable_010",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "KHM",
+      "cardId": "fruit_vegetable_011",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "KHM",
+      "cardId": "fruit_vegetable_012",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "KHM",
+      "cardId": "fruit_vegetable_013",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "KHM",
+      "cardId": "fruit_vegetable_014",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "KHM",
+      "cardId": "fruit_vegetable_015",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "KHM",
+      "cardId": "fruit_vegetable_016",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "KHM",
+      "cardId": "fruit_vegetable_017",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "KHM",
+      "cardId": "fruit_vegetable_018",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "KHM",
+      "cardId": "fruit_vegetable_019",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "KHM",
+      "cardId": "fruit_vegetable_020",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "KHM",
+      "cardId": "fruit_vegetable_021",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "KHM",
+      "cardId": "fruit_vegetable_022",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "KHM",
+      "cardId": "fruit_vegetable_023",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "KHM",
+      "cardId": "fruit_vegetable_024",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "KHM",
+      "cardId": "fruit_vegetable_025",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "KHM",
+      "cardId": "fruit_vegetable_026",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "KHM",
+      "cardId": "fruit_vegetable_027",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "KHM",
+      "cardId": "fruit_vegetable_028",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "KHM",
+      "cardId": "fruit_vegetable_029",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "KHM",
+      "cardId": "fruit_vegetable_030",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "KHM",
+      "cardId": "fruit_vegetable_031",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "KHM",
+      "cardId": "fruit_vegetable_032",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "KHM",
+      "cardId": "fruit_vegetable_033",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "KHM",
+      "cardId": "fruit_vegetable_034",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "KHM",
+      "cardId": "ingredient_001",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "KHM",
+      "cardId": "ingredient_002",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "KHM",
+      "cardId": "ingredient_003",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "KHM",
+      "cardId": "ingredient_004",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "KHM",
+      "cardId": "ingredient_005",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "KHM",
+      "cardId": "ingredient_006",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "KHM",
+      "cardId": "ingredient_007",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "KHM",
+      "cardId": "ingredient_008",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "KHM",
+      "cardId": "ingredient_009",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "KHM",
+      "cardId": "ingredient_010",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "KHM",
+      "cardId": "ingredient_011",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "KHM",
+      "cardId": "ingredient_012",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "KHM",
+      "cardId": "ingredient_013",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "KHM",
+      "cardId": "ingredient_014",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "KHM",
+      "cardId": "ingredient_015",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "KHM",
+      "cardId": "ingredient_016",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "KHM",
+      "cardId": "ingredient_017",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "KHM",
+      "cardId": "ingredient_018",
+      "status": "no-positive-row-in-reviewed-classification"
+    },
+    {
+      "country": "KHM",
+      "cardId": "clothes_001",
+      "status": "verified"
+    },
+    {
+      "country": "KHM",
+      "cardId": "clothes_002",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "KHM",
+      "cardId": "clothes_003",
+      "status": "verified"
+    },
+    {
+      "country": "KHM",
+      "cardId": "clothes_004",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "KHM",
+      "cardId": "clothes_005",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "KHM",
+      "cardId": "clothes_006",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "KHM",
+      "cardId": "clothes_007",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "KHM",
+      "cardId": "clothes_008",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "KHM",
+      "cardId": "clothes_009",
+      "status": "verified"
+    },
+    {
+      "country": "KHM",
+      "cardId": "clothes_010",
+      "status": "verified"
+    },
+    {
+      "country": "KHM",
+      "cardId": "clothes_011",
+      "status": "verified"
+    },
+    {
+      "country": "KHM",
+      "cardId": "clothes_012",
+      "status": "verified"
+    },
+    {
+      "country": "KHM",
+      "cardId": "clothes_013",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "KHM",
+      "cardId": "clothes_014",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "KHM",
+      "cardId": "clothes_015",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "KHM",
+      "cardId": "clothes_016",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "KHM",
+      "cardId": "clothes_017",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "KHM",
+      "cardId": "clothes_018",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "KHM",
+      "cardId": "clothes_019",
+      "status": "classification-not-resolved"
+    },
+    {
+      "country": "KHM",
+      "cardId": "clothes_020",
+      "status": "classification-not-resolved"
+    }
+  ],
+  "sourceHashes": [
+    {
+      "file": "import-000040424868.csv",
+      "sha256": "310d726a83c20568888658984b8e14b4f4f74f1d2c9f92be089ecfe2d355d834"
+    },
+    {
+      "file": "import-000040424869.csv",
+      "sha256": "1909e87c425ecbdc5e6e3b315c2202dbbc8200654192a91a36acd8be68595561"
+    },
+    {
+      "file": "import-000040424870.csv",
+      "sha256": "ecb1c41cfc0dc12446021fb1e89c1c6e088af66c43ab064c8f58dfca565c2531"
+    },
+    {
+      "file": "import-000040424871.csv",
+      "sha256": "f5ada22048a0f0bcd98e8269c427c20b30b07b2639b82cfe213cb1fd0f5b4841"
+    },
+    {
+      "file": "import-000040424872.csv",
+      "sha256": "906315de6a18e9b513fcc3aff016176583669a2ff330a2ed70d898d937503f53"
+    },
+    {
+      "file": "import-000040424873.csv",
+      "sha256": "ae84636aa9a2aac3db23dfe4eaeea508e80b2b791fd462344e95160ce59f1863"
+    },
+    {
+      "file": "import-000040424874.csv",
+      "sha256": "a1f68c1e3047a28f8dafd2fae757ca662269f5af6c8bf4bf931fc3a173898563"
+    },
+    {
+      "file": "import-000040424875.csv",
+      "sha256": "3a9291114a9fc417c61d13a4340e7bcf9cb52e35010d50da03c5b1976132af63"
+    },
+    {
+      "file": "import-000040424876.csv",
+      "sha256": "d07c1c79d457fe7aa89fde676cb2fd1737d56cbbd8442fda939d3fe3610c4b7e"
+    },
+    {
+      "file": "import-000040424877.csv",
+      "sha256": "398cd40dc5caedf1ff24a9320de5da96c910c5c110c170eb908284a33a587924"
+    },
+    {
+      "file": "import-000040424878.csv",
+      "sha256": "96dad924191f1117ad01a9404ace88a9e774ddd8b851d9167a2a2e6f3f0c680a"
+    },
+    {
+      "file": "import-000040424879.csv",
+      "sha256": "472642e58b456f230a6b4e1baaab370d07373f731a8ef0c41948dcc84c644358"
+    },
+    {
+      "file": "import-000040424880.csv",
+      "sha256": "041429edcbafaadb9f96f61d2be6c4c2440ed13855018492235e18194631e15f"
+    },
+    {
+      "file": "import-000040424881.csv",
+      "sha256": "5a0ff3c675e8fd0ad74483c82d12bc4bd2db45a4986d094cb29f1dc833b28ef4"
+    },
+    {
+      "file": "import-000040424882.csv",
+      "sha256": "ac728e5991c34e864401b4e85e5988e06a60966d806b2ae528d5542e2615e226"
+    },
+    {
+      "file": "import-000040424883.csv",
+      "sha256": "628c9c76f9d5564be8c3c8cae5f588e3d0a96bf709ad673dc5fe0e8156ef49af"
+    },
+    {
+      "file": "import-000040424884.csv",
+      "sha256": "ccc6cb674dd5a6d0a4564d08e10bb42ed857036db749fab8019e2f543774ffd3"
+    },
+    {
+      "file": "import-000040424885.csv",
+      "sha256": "530b9cbaef144c55f3c4f4db26b81476687557abcda1bd18a48224cda87b753f"
+    },
+    {
+      "file": "import-000040424886.csv",
+      "sha256": "720056c9459e2d61d94eebabddf4aaa3d25ea46b8d74bcf8997f03e65b05142c"
+    },
+    {
+      "file": "import-000040424887.csv",
+      "sha256": "19d5f00574384460032e18fa7372de314f6af264ddc119ab3d7186c9f74cba42"
+    },
+    {
+      "file": "import-000040424888.csv",
+      "sha256": "f5cf5d01a6f14de97ca7e437dc16f1fe626e009f1425795c0ef798a729d3f2e6"
+    },
+    {
+      "file": "import-000040424889.csv",
+      "sha256": "e6d22125d759bfd60784f20e242f23f1bdf1d9d6faa33d31f5fbbfe39008a21a"
+    }
+  ]
+}
