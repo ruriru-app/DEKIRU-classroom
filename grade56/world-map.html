@@ -1,15 +1,1 @@
-<!doctype html>
-<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Map of the World | DEKIRU Classroom</title><link rel="stylesheet" href="world-map.css?v=9b30326fefcd"></head>
-<body><main id="world-activity">
-<header><a id="back" href="index.html#/unit/nh6/5" aria-label="Activitiesへ戻る">◀ 戻る</a><div><h1>Map of the World</h1><p>世界と日本のつながりを見つけよう</p></div><button id="fullscreen" aria-pressed="false">全画面表示</button></header>
-<div class="world-layout"><section class="map-panel" aria-label="世界地図">
-<form id="search-form"><label for="country-search">国名を検索</label><div class="search-line"><input id="country-search" placeholder="例：あめりか、中国、ベトナム" autocomplete="off"><button>検索</button></div></form>
-<div id="results" aria-live="polite"></div>
-<div class="map-tools"><button id="zoom-in" aria-label="拡大">＋</button><button id="zoom-out" aria-label="縮小">−</button><button id="reset-map">全体を表示</button><span>ドラッグで移動・国をタップ</span></div>
-<div id="map" tabindex="0" aria-label="地図。矢印キーでも移動できます。">地図を読み込んでいます…</div>
-<p id="map-status" role="status"></p><p class="map-note">国・地域の境界はNatural Earthの地理データに基づく概略です。<a href="assets/WORLD-MAP-SOURCES.md" target="_blank" rel="noopener">地図の出典</a></p>
-</section><section id="country-info" aria-live="polite"><h2>どこの国かな？</h2><p>国名を検索するか、地図の国をタップしてください。</p><p>日本がその国から輸入しているものを調べられます。</p></section></div>
-<footer>輸入情報：2025年・日本向け。未収録は「輸入なし」という意味ではありません。 <a href="assets/WORLD-IMPORT-SOURCES.md" target="_blank" rel="noopener">調べ方と出典</a></footer>
-</main>
-<script src="../grade34/data/app-data.js?v=27808b03bd14"></script><script src="../grade34/data/picture-links.js?v=971a22771806"></script><script src="../grade34/card-set.js?v=3c8efcb92bad"></script>
-<script src="world-countries.js?v=c9891e92f7c6"></script><script src="world-search.js?v=c46945eb59d2"></script><script src="world-imports.js?v=7cc1488f2215"></script><script src="world-map.js?v=8d4a61a6a0f8"></script></body></html>
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>世界地図へ移動</title></head><body><p><a href="../games/world-map.html?book=nh6&amp;unit=5">世界地図を開く</a></p><script>const q=new URLSearchParams(location.search),target=new URL('../games/world-map.html',location.href);target.searchParams.set('book',q.get('book')||'nh6');target.searchParams.set('unit',q.get('unit')||'5');location.replace(target.href);</script></body></html>

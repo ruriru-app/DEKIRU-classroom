@@ -29,3 +29,29 @@
 
 From interview_work: node grade56_site/build.cjs; set INTERVIEW_BUILT=1; node run-classroom-tests.cjs.
 Sources/tests remain in grade56_site and grade34_site per the implementation plan. Generated release assets are committed under grade56. Official input CSVs are preserved under outputs; hashes in grade56/assets/import-audit.json.
+
+## Follow-up: Games ownership and publication
+
+The user explicitly requested publication and approved Games as the shared home.
+Map sources, generators, datasets and assets now live in games_site, with release
+assets under games. The former grade56/world-map.html redirects to Games.
+NHE6 Unit5 Activities supplies its return context; direct Games entry returns to
+Games. Only valid NHE book/unit parameters can choose a return destination.
+NHE6 Unit5 adds personal_items as an unchecked standard/Plus subcategory.
+
+Verification: built-output full suite 76/76 passed. Browser checks cover Games
+entry, Unit return and reopened Activities, old URL, invalid context, Japanese
+search, image loading, zoom/fullscreen, mobile layout, unavailable speech, and
+failed map recovery. Personal-items standard/Plus selections survive reload.
+The number-only browser test now waits for navigation load before reading the
+initialized scope; no product behavior was changed for that timing fix.
+
+Independent read-only review: no Critical or Important findings. Kept the
+regenerated sentence-forms cache hash because it matches the existing committed
+asset; no sentence content changed. Unchanged geographic/import evidence and
+storage-disabled behavior retain their prior review; unrelated grade34 edits
+are excluded from publication. The full-suite gate was verified separately.
+
+Current reproduction: build games_site/build.cjs and grade56_site/build.cjs,
+then run run-classroom-tests.cjs with INTERVIEW_BUILT=1. Source evidence/audit
+files moved unchanged to games/assets. Existing local worktree is retained.

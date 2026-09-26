@@ -1,8 +1,11 @@
 (()=>{'use strict';
  const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const info=$('#country-info'),map=$('#map'),status=$('#map-status');let svg,view=[0,0,1200,600],selected,drag;
+ const params=new URLSearchParams(location.search),book=params.get('book'),unit=params.get('unit');
+ const returnUnit=/^(nh5|nh6)$/.test(book)&&/^[1-8]$/.test(unit)?book+':'+unit:null;
+ if(returnUnit){$('#back').href='../grade56/index.html#/unit/'+book+'/'+unit;$('#back').setAttribute('aria-label','Activitiesへ戻る');}
  const ready=window.WorldCountries&&window.WorldSearch&&window.WorldImports&&window.DEKIRU_DATA&&window.CardSet;
- $('#back').addEventListener('click',()=>{try{sessionStorage.setItem('dekiru:nhe-return-activities','nh6:5');}catch{}if(window.speechSynthesis)window.speechSynthesis.cancel();});
+ $('#back').addEventListener('click',()=>{try{if(returnUnit)sessionStorage.setItem('dekiru:nhe-return-activities',returnUnit);}catch{}if(window.speechSynthesis)window.speechSynthesis.cancel();});
  function error(){status.innerHTML='地図やデータを読み込めませんでした。 <button id="retry">再読み込み</button>';$('#retry').onclick=()=>location.reload();}
  if(!ready){error();$('#country-search').disabled=true;return;}
  const countries=new Map(WorldCountries.map(c=>[c.id,c])),cards=new Map(DEKIRU_DATA.cards.map(c=>[c.id,c]));
