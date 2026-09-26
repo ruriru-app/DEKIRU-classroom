@@ -13,7 +13,9 @@ window.SentenceForms=(()=>{
   fruit_vegetable_025:'strawberries',fruit_vegetable_026:'tomatoes',fruit_vegetable_027:'watermelons',
   dessert_002:'donuts',dessert_003:'parfaits',dessert_008:'cream puffs',
   food_002:'rice balls',food_007:'sandwiches',food_008:'pancakes',
-  food_010:'hamburgers',food_011:'hot dogs',lets_try_expr_036:'noodles'
+  food_010:'hamburgers',food_011:'hot dogs',food_014:'sausages',food_016:'omelets',food_029:'fried eggs',lets_try_expr_036:'noodles',
+  fruit_vegetable_029:'mangoes',fruit_vegetable_030:'olives',fruit_vegetable_031:'pears',fruit_vegetable_032:'persimmons',fruit_vegetable_034:'radishes',
+  animal_001:'bears',animal_002:'elephants',animal_003:'tigers',animal_004:'lions',animal_005:'horses',animal_006:'zebras',animal_007:'camels',animal_008:'giraffes',animal_009:'gorillas',animal_010:'monkeys',animal_011:'orangutans',animal_012:'pandas',animal_013:'koalas',animal_014:'dogs',animal_015:'cats',animal_016:'foxes',animal_017:'rabbits',animal_018:'mice',animal_019:'crocodiles',animal_020:'snakes',animal_021:'frogs',animal_022:'birds',animal_023:'polar bears',animal_024:'hippos',animal_025:'cows',animal_026:'pigs',animal_027:'wild boars',animal_028:'kangaroos',animal_029:'deer',animal_030:'goats',animal_031:'sheep',animal_032:'hamsters',animal_033:'wolves',animal_034:'bats',animal_035:'chickens',animal_036:'chicks',animal_037:'hawks',animal_038:'snails',animal_039:'iguanas',animal_040:'dinosaurs',animal_041:'dragons',animal_042:'phoenixes',animal_043:'unicorns'
  };
  function preference(card){
   const plural=Object.hasOwn(preferencePlurals,card.id)?preferencePlurals[card.id]:null;

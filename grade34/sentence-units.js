@@ -1,5 +1,26 @@
 /* Unit-specific content. Add definitions here; keep the common player independent. */
 window.SentenceUnits={
+ 'lt1-5':{
+  activities:[
+   {id:'like',title:'好きな色を伝える',example:'I like blue.'},
+   {id:'question',title:'質問し、Yes / No で答える',example:"Do you like blue? / Yes, I do. / No, I don't."},
+   {id:'what_color',title:'好きなものをたずねる・答える',example:'What color do you like? / I like blue.'}
+  ],
+  subjects:['person_001','person_002'],verbCategories:['actions_5'],verbIds:['action5_002'],objectCategories:['colors'],
+  topics:[{id:'color',label:'色',category:'colors'},{id:'food',label:'食べ物',category:'foods'},{id:'sport',label:'スポーツ',category:'sports'},{id:'animal',label:'動物',category:'animals'},{id:'fruit',label:'果物',numbers:[1,2,7,11,13,14,16,20,21,22,25,27,29,31,32]},{id:'vegetable',label:'野菜',numbers:[3,4,5,6,8,9,10,12,15,17,19,23,24,26,28,30,33,34]}],
+  topicChoices(cards,topic){const group=this.topics.find(t=>t.id===topic)||this.topics[0];return cards.filter(c=>c.displayGroup!=='category'&&(group.category?c.category===group.category:group.numbers.some(n=>c.id==='fruit_vegetable_'+String(n).padStart(3,'0'))));},
+  defaults(){return {topic:'color',subject:'person_001',questionSubject:'person_002',responseSubject:'person_001',verb:'action5_002',object:'color_010',negativeObject:'color_010'};},
+  target(){return 'object';},
+  render(args){
+   if(args.activity!=='what_color')return window.SentenceUnits['lt1-4'].render(args);
+   const {cards,selected,token,row}=args;
+   const pick=(key,role)=>{const c=cards.get(selected[key]);const form=role==='object'?window.SentenceForms.preference(c):c;return token(form.english,role,c.id,'',form.speech||form.english,key);};
+   const topic=selected.topic||'color';
+   const question=row([token('What','neutral','expr_033','','What'),token(topic,'neutral',topic==='color'?'color_000':'','',topic),token('do','neutral','','','do'),pick('questionSubject','subject'),pick('verb','verb')],'?','talk-question-row');
+   const answer=row([pick('responseSubject','subject'),pick('verb','verb'),pick('object','object')],'.','talk-response-row');
+   return '<div class="talk-question-layout"><div class="talk-question-prompts">'+question+'</div><div class="talk-responses">'+answer+'</div></div>';
+  }
+ },
  'lt2-5':{
   activities:[{id:'have',title:'持っているものを伝える',example:'I have a pen.'},{id:'dont',title:'持っていないものを伝える',example:"I don't have a pen."},{id:'have_dont',title:'持っているものと持っていないものを伝える',example:"I have a pen. / I don't have a ruler."},{id:'question',title:'質問し、Yes / No で答える',example:'Do you have a pen?'}],
   subjects:['person_001','person_002'],verbCategories:['actions_5'],verbIds:['action5_015'],objectCategories:['stationery'],quantities:true,

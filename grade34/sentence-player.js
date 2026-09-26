@@ -172,6 +172,7 @@ function talkRowMarkup(tokens,punctuation,extraClass,spacerPositions){
   return '<div class="talk-sentence-row '+(extraClass||'')+'"><button class="talk-sentence-audio" type="button" data-talk-sentence="'+escapeHtml(sentence)+'" data-talk-parts="'+escapeHtml(JSON.stringify(parts))+'" aria-label="文章全体を発音する"><img src="assets/ui/originals/読み上げボタン.svg" alt=""></button>'+cards+'<span class="talk-punctuation" aria-hidden="true">'+escapeHtml(punctuation)+'</span></div>';
 }
 function talkChoiceItems(role,includeHidden){
+  if(role==='object'&&definition.topics&&talkActivity==='what_color')return definition.topicChoices(context.cards,talkSelected.topic);
   const seen=new Set();
   let cards=[];
   if(role==='subject'){
@@ -196,6 +197,14 @@ function talkObjectCategories(){
 function renderTalkChoiceControls(){
   document.querySelectorAll('[data-talk-role]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.talkRole===talkChoiceRole)));
   const target=document.getElementById('talkCategoryFilters');
+  if(definition.topics&&talkActivity==='what_color'){
+    target.innerHTML=definition.topics.map(t=>'<button type="button" class="talk-category-filter role-object" data-talk-topic="'+t.id+'" aria-pressed="'+(talkSelected.topic===t.id)+'">'+t.id+'（'+t.label+'）</button>').join('');
+    target.querySelectorAll('[data-talk-topic]').forEach(button=>button.addEventListener('click',()=>{
+      stopTalkSpeechSequence();talkSelected.topic=button.dataset.talkTopic;talkChoiceRole='object';talkChoiceTarget='object';
+      const choices=talkChoiceItems('object',false);if(!choices.some(c=>c.id===talkSelected.object))talkSelected.object=choices[0]?.id;
+      renderTalkChoiceControls();renderTalkStage();renderTalkChoices();
+    }));return;
+  }
   if(talkChoiceRole!=='object'){
     target.innerHTML='';
     return;
@@ -236,6 +245,7 @@ function renderTalkChoices(){
     return;
   }
   target.innerHTML=extra+choices.map(card=>{
+    if(definition.topics&&talkActivity==='what_color'&&talkChoiceRole==='object')card={...card,...window.SentenceForms.preference(card)};
     const id=card.id;
     const active=id===talkSelected[talkChoiceTarget];
     return '<button class="talk-choice role-'+escapeHtml(talkChoiceRole)+' '+(active?'active':'')+'" type="button" data-talk-choice="'+escapeHtml(id)+'" aria-pressed="'+String(active)+'"><span class="talk-choice-picture"><img src="'+escapeHtml(context.source(card))+'" alt=""></span><span class="talk-choice-word'+talkWordSizeClass(card.english)+'">'+escapeHtml(card.english)+'</span></button>';

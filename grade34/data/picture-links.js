@@ -3,6 +3,7 @@
   const data = window.DEKIRU_DATA;
   const additions = "../image_output/lets_try/";
   const files = {
+    what: "what.png", // Unit 5 question-word picture.
     noodle: "noodle.png", jam: "jam.png", king: "king-flat.png", queen: "queen-flat.png",
     sun: "sun-flat.png", balloon: "balloon-flat.png", shiny: "shiny-flat.png", scary: "scary-flat.png", round: "round-flat.png", furry: "furry-flat.png",
     world: "world-flat.png", shorts: "shorts-flat.png", bingo: "bingo-flat.png", game: "game-flat.png", outside: "outside-flat.png", inside: "inside-flat.png", around: "around-flat.png", fresh: "fresh-flat.png",
