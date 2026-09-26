@@ -14,7 +14,7 @@
       id:category+':'+level, label:data.categoryLabels[category]+(level==='plus'?' Plus':''),
       initial:index<config.main.length&&level==='standard', cards:data.cards.filter(c=>c.category===category&&c.displayGroup===level)
     })));
-    const storageKey='dekiru:nhe-vocabulary:'+key+':'+unit;
+    const storageKey='dekiru:nhe-vocabulary:'+key+':'+unit+(key==='nh6'&&unit===5?':v2':'');
     let selected=groups.filter(g=>g.initial).flatMap(g=>g.cards.map(c=>c.id));
     let storageError=false;
     try {const saved=JSON.parse(localStorage.getItem(storageKey));if(Array.isArray(saved))selected=saved;} catch {storageError=true;}
@@ -86,7 +86,11 @@
   async function start(){
     const migrate=()=>window.NheMigration.run(localStorage);
     let result;
-    try{result=navigator.locks?await navigator.locks.request('dekiru-nhe-unit-migration',migrate):migrate();}catch(error){result={ok:false};}
+    try{
+      if(window.NheMigration.isComplete(localStorage))result={ok:true};
+      else if(navigator.locks)result=await navigator.locks.request('dekiru-nhe-unit-migration',migrate);
+      else{app.innerHTML='<section class="hero"><h1>安全な移行のため、対応ブラウザーで開いてください</h1><p>ChromeまたはEdgeの新しいバージョンで、公開サイトを開き直してください。保存済みデータは変更していません。</p></section>';return;}
+    }catch(error){result={ok:false};}
     if(!result.ok){app.innerHTML='<section class="hero"><h1>保存データの移行を完了できませんでした</h1><p>元データを保護するため、編集を停止しています。ブラウザーの保存領域を確認してから、この画面を再読み込みしてください。</p><button onclick="location.reload()">再読み込み</button></section>';return;}
     window.addEventListener('hashchange',render);render();
   }

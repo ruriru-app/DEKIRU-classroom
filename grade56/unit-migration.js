@@ -25,17 +25,14 @@
         // Keep an untouched snapshot before any data is changed. Never remove this backup automatically.
         storage.setItem(backupKey,backup);
       }
-      const saved=JSON.parse(backup),data=readSets(storage.getItem(setsKey));
-      if(data){
-        let changed=false;
-        for(const move of saved.moves){const s=data.sets.find(s=>s.id===move.id&&s.unit==='nh6:5');if(s){s.unit='nh6:6';s.name=move.name;changed=true;}}
-        if(changed)storage.setItem(setsKey,JSON.stringify(data));
-      }
+      const saved=JSON.parse(backup);
+      // Unit remapping is a read overlay. Never rewrite the shared document:
+      // an already-open Let's Try tab may be saving there without our lock.
       if(saved.selection!==null&&storage.getItem(newKey)===null)storage.setItem(newKey,saved.selection);
-      if(storage.getItem(oldKey)!==null)storage.removeItem(oldKey);
+      // Keep the old selection; the new Unit5 uses its own versioned key.
       storage.setItem(doneKey,'1');
       return {ok:true,migrated:saved.moves.length>0||saved.selection!==null};
     }catch(error){return {ok:false,migrated:false,error:String(error.message||error)};}
   }
-  window.NheMigration={run};
+  window.NheMigration={run,isComplete:storage=>storage.getItem(doneKey)==='1',moves:storage=>JSON.parse(storage.getItem(backupKey)||'{"moves":[]}').moves};
 })();

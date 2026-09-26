@@ -12,7 +12,7 @@
     const status=document.createElement('p');status.dataset.nheSetStatus='';status.setAttribute('role','status');save.after(status);
     function refresh(){
       try {
-        const sets=window.SavedCardSets.list(unit);
+        const sets=window.NheSetStore.list(unit);
         list.innerHTML='<h2>保存したカードセット</h2>'+ (sets.length?sets.map(s=>`<div class="nhe-saved-row"><button class="side-action" data-nhe-load-set="${esc(s.id)}">${esc(s.name)}</button><div><button class="secondary-button" data-nhe-edit-set="${esc(s.id)}">確認・編集</button><button class="secondary-button" data-nhe-delete-set="${esc(s.id)}">削除</button></div></div>`).join(''):'<p>単語を選び「セットを保存」で追加できます。</p>');
       }catch(e){list.textContent=e.message;}
     }
@@ -31,7 +31,7 @@
         try{
           const ids=set?[...dialog.querySelectorAll('[data-set-word]:checked')].map(i=>i.dataset.setWord):[...selected];
           if(!ids.length)throw new Error('保存する単語を選択してください。');
-          window.SavedCardSets.save(unit,dialog.querySelector('[name="setName"]').value,{v:1,refs:ids.map(id=>'card:'+id),d:set?.payload.d||3},set?.id);
+          window.NheSetStore.save(unit,dialog.querySelector('[name="setName"]').value,{v:1,refs:ids.map(id=>'card:'+id),d:set?.payload.d||3},set?.id);
           closeDialog();refresh();status.textContent='セットを保存しました。';
         }catch(e){dialog.querySelector('[role="alert"]').textContent=e.message;}
       };
@@ -41,11 +41,11 @@
       const button=event.target.closest('button');if(!button)return;
       try{
         const id=button.dataset.nheLoadSet||button.dataset.nheEditSet||button.dataset.nheDeleteSet;
-        const set=window.SavedCardSets.list(unit).find(s=>s.id===id);
+        const set=window.NheSetStore.list(unit).find(s=>s.id===id);
         if(!set)throw new Error('セットが見つかりません。画面を開き直してください。');
         if(button.hasAttribute('data-nhe-load-set')){apply(window.CardSet.resolve(set.payload).items.map(c=>c.id));status.textContent='「'+set.name+'」を呼び出しました。';}
         else if(button.hasAttribute('data-nhe-edit-set'))edit(set);
-        else if(confirm('「'+set.name+'」を削除しますか？')){window.SavedCardSets.remove(unit,id);refresh();status.textContent='セットを削除しました。';}
+        else if(confirm('「'+set.name+'」を削除しますか？')){window.NheSetStore.remove(unit,id);refresh();status.textContent='セットを削除しました。';}
       }catch(e){status.textContent=e.message;}
     };
     refresh();
