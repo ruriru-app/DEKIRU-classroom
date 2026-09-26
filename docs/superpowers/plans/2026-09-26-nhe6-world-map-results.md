@@ -55,3 +55,23 @@ are excluded from publication. The full-suite gate was verified separately.
 Current reproduction: build games_site/build.cjs and grade56_site/build.cjs,
 then run run-classroom-tests.cjs with INTERVIEW_BUILT=1. Source evidence/audit
 files moved unchanged to games/assets. Existing local worktree is retained.
+
+## Follow-up: annual quantities
+
+User approved adding yearly quantities and explicitly requested publication.
+Import cards now show their existing commodity classification's 2025 quantity,
+rounded to about three significant digits with readable Japanese units.
+Original totals are retained in the evidence details. Food weight and clothing
+counts are never added together; common-unit coverage is required across all HS
+rows. Quantity0 means below the statistical unit, not no imports; unknown
+quantities display 数量未収録. Multiple below-unit rows retain their row count
+so the combined upper bound is not understated.
+
+All 261 card totals were independently reconciled against unchanged source CSVs.
+Annual/monthly quantity reconciliation also passes. Previous card selection,
+classification notes and source evidence are unchanged. Desktop/mobile displays,
+unrounded details, Games/Unit navigation and 77/77 full-suite tests passed.
+The new multiple-zero regression was observed failing before its fix; the final
+full suite passed after rebuilding. Independent review found no remaining issues.
+Unchanged commodity mapping/provenance was not reopened by the bounded review;
+browser layout/full-suite verification was performed by the primary implementer.
