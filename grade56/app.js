@@ -6,6 +6,7 @@
   };
   const app = document.getElementById('app');
   let vocabulary = null;
+  let pronunciation = null;
   const escape = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   function renderUnit(key,book,unit) {
     const data=window.DEKIRU_DATA;
@@ -29,6 +30,7 @@
       unit:key+':'+unit,groups,getSelected:()=>vocabulary.selected,
       apply:ids=>{vocabulary.selected=new Set(ids.filter(id=>available.has(id)));updateVocabulary();}
     });
+    pronunciation=window.NhePractice.mount(app,()=>vocabulary.groups.flatMap(g=>g.cards).filter(c=>vocabulary.selected.has(c.id)));
   }
   function updateVocabulary(save=true) {
     if(!vocabulary)return;
@@ -44,12 +46,14 @@
       button.setAttribute('aria-pressed',String(active));button.classList.toggle('off',!active);
     });
     app.querySelector('[data-nhe-count]').textContent='使用 '+selected.size+'語';
+    pronunciation?.refresh();
     if(save)try{localStorage.setItem(storageKey,JSON.stringify([...selected]));app.querySelector('.nhe-save-status').textContent='';}catch{app.querySelector('.nhe-save-status').textContent='このブラウザーに選択を保存できません。';}
   }
   function heading(title, subtitle, back) {
     return `<section class="page-heading"><button class="back-button" data-route="${back}" aria-label="戻る"><img src="../grade34/assets/ui/originals/戻る.svg" alt=""></button><div><p class="eyebrow">${subtitle}</p><h1>${title}</h1></div></section>`;
   }
   function render() {
+    pronunciation?.close();pronunciation=null;
     vocabulary=null;
     const [page,key,number] = location.hash.replace(/^#\/?/,'').split('/');
     const book=books[key];
