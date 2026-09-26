@@ -1,7 +1,7 @@
 (()=>{
  'use strict';const $=id=>document.getElementById(id),S=InterviewSession,cards=window.DEKIRU_DATA.cards;
  const authorPreview=new URLSearchParams(location.search).get('authorPreview')==='1'&&parent!==window;
- let delivery=null,state=null,selectedStudent=null,timer=null,store=null,corrupt=false,saveError='',activeSlot=null,speakingButton=null;
+ let delivery=null,state=null,selectedStudent=null,timer=null,store=null,corrupt=false,saveError='',activeSlot=null,speakingButton=null,loadVersion=0;
  const audio=InterviewAudio.create({onUnavailable:()=>{$('studentStatus').textContent='この端末では読み上げを利用できません';},onSpeaking:on=>document.querySelectorAll('.student-speaker').forEach(e=>e.classList.toggle('speaking',on&&e===speakingButton))});
  const el=(tag,text,cls)=>{const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e;};
  const now=()=>new Date().toISOString();
@@ -38,11 +38,11 @@
   for(const a of delivery.preset.answerAreas){const area=el('section',undefined,'student-area');area.dataset.areaId=a.id;area.tabIndex=0;area.setAttribute('role','group');area.setAttribute('aria-label',a.label+'へ移す');const h=el('h2');h.append(el('span',a.label+' '+Object.values(state.assignments).filter(v=>v===a.id).length+'人'),el('span','＋'));const list=el('div',undefined,'student-names');names(list,a.id);area.append(h,list);bindArea(area,a.id);$('answerAreas').append(area);}
   $('unassignedNames').replaceChildren();names($('unassignedNames'),null);$('unassignedTitle').textContent='未実施 '+Object.values(state.assignments).filter(v=>v===null).length+'人';bindArea($('unassignedArea'),null);
  }
- function load(){stop();delivery=null;state=null;selectedStudent=null;saveError='';corrupt=false;hide('');try{const token=location.hash.match(/^#interview=([A-Za-z0-9_-]+)$/)?.[1];if(!token)throw Error();delivery=InterviewShare.decode(token);if(!checkExpiry())return;
+ async function load(){const version=++loadVersion;stop();delivery=null;state=null;selectedStudent=null;saveError='';corrupt=false;hide('');try{const token=location.hash.match(/^#interview=([A-Za-z0-9_.-]+)$/)?.[1];if(!token)throw Error();const decoded=await InterviewShare.decodeShared(token);if(version!==loadVersion)return;delivery=decoded;if(!checkExpiry())return;
   try{store=InterviewProgress.create(localStorage);}catch{store=InterviewProgress.create({getItem(){throw Error()},setItem(){throw Error()},removeItem(){throw Error()}});}
   const saved=store.read(delivery,cards);if(saved.status==='corrupt'){corrupt=true;hide('保存した活動を再開できません。「はじめから」でやり直してください。');$('studentRestart').hidden=false;return;}
   state=saved.status==='saved'?saved.state:S.create(delivery,now());if(saved.status==='empty')persist();render();
- }catch{delivery=null;hide('配信内容を読み込めませんでした。先生にもう一度配信してもらってください。');}}
+ }catch{if(version!==loadVersion)return;delivery=null;hide('配信内容を読み込めませんでした。先生にもう一度配信してもらってください。');}}
  function requestReset(){if(!checkExpiry())return;audio.stop();$('restartDialog').showModal();}
  $('restartCancel').onclick=()=>$('restartDialog').close();$('restartConfirm').onclick=()=>{if(!checkExpiry())return;$('restartDialog').close();state=S.reset(delivery,now());selectedStudent=null;corrupt=false;persist();render();};
  $('studentRestart').onclick=requestReset;

@@ -1,0 +1,7 @@
+/* Immutable transport dictionary. Never alter existing entries: append a new key for revisions. No rosters. */
+(function(root){
+ 'use strict';
+ function freeze(v){if(v&&typeof v==='object'){Object.values(v).forEach(freeze);Object.freeze(v);}return v;}
+ const presets=freeze({'lt1u4-colors-1':{"version":2,"type":"interview","id":"interview-474feb27-6934-4f8b-8c10-871df5e75bc0","name":"Do you like (色)?","title":"自分と同じものを好きな人は何人いるかな？","description":"I like (色).と自分の好きな色を言ってから、Do you like (色)?を使って、クラスのメンバーに好きな色を質問します。","studentInstructions":"自分の好きな色をいって、友だちがその色を好きか質問してみましょう。","assignedUnits":[{"bookId":"lt1","unit":4}],"question":{"template":"I like (P).\nDo you like (P)?","slots":[{"id":"P","type":"picture-card","cardIds":["color_001","color_002","color_003","color_004","color_005","color_006","color_007","color_008","color_009","color_010","color_011","color_012","color_013","color_014"]}]},"cardIds":["color_001","color_002","color_003","color_004","color_005","color_006","color_007","color_008","color_009","color_010","color_011","color_012","color_013","color_014"],"answerAreas":[{"id":"answer-acd33d89-1001-40ba-8d8b-ae467647f681","label":"YES","order":0},{"id":"answer-7f587b72-7c58-4193-a140-4a7bdf1f20d1","label":"NO","order":1}],"createdAt":"2026-09-19T10:46:41.859Z","updatedAt":"2026-09-19T14:05:05.556Z"}});
+ root.InterviewSharePresets=presets;if(typeof module==='object')module.exports=presets;
+})(typeof window==='object'?window:globalThis);

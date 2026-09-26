@@ -1,7 +1,7 @@
 (()=>{
  'use strict';
  const M=InterviewModel,R=ClassRoster,$=id=>document.getElementById(id),params=new URLSearchParams(location.search),store=()=>InterviewStore.create(localStorage);
- let preset,roster=null,reviewed='',valid=false,selected=params.get('classId')||'';
+ let preset,roster=null,reviewed='',valid=false,sending=false,selected=params.get('classId')||'';
  function showPreset(){
   $('presetTitle').textContent=preset.title;$('presetName').hidden=true;$('presetDescription').textContent=preset.description;$('presetQuestion').textContent=preset.question.template;
   let instructions=$('presetStudentInstructions');if(!instructions){instructions=document.createElement('p');instructions.id='presetStudentInstructions';$('presetDescription').after(instructions);}instructions.textContent=preset.studentInstructions?'児童への説明：'+preset.studentInstructions:'';
@@ -18,7 +18,7 @@
  }
  const status=s=>$('rosterStatus').textContent=s;
  const options=()=>({script:$('rosterScript').value,scope:$('rosterScope').value});
- function gate(){$('interviewSend').disabled=!(valid&&$('rosterConsent').checked);}
+ function gate(){$('interviewSend').disabled=sending||!(valid&&$('rosterConsent').checked);}
  function preview(){
   valid=false;$('rosterRows').replaceChildren();$('rosterWarnings').textContent='';$('rosterCount').textContent=roster?roster.students.length+'人':'';status('');
   $('rosterSettings').href=ClassSettingsLinks.url(location.href,selected);
@@ -52,13 +52,15 @@
  for(const id of ['rosterScript','rosterScope'])$(id).onchange=()=>{$('rosterConsent').checked=false;reviewed='';$('rosterScript').disabled=$('rosterScope').value==='number';preview();};
  $('rosterConsent').onchange=()=>{refresh();reviewed=$('rosterConsent').checked&&valid?JSON.stringify(roster):'';gate();};
  addEventListener('storage',refresh);addEventListener('focus',refresh);
- $('interviewSend').onclick=()=>{try{
+ $('interviewSend').onclick=async()=>{if(sending)return;sending=true;gate();try{
   M.check($('rosterConsent').checked&&valid,'名簿と共有の注意を確認してください');
   const latest=store().listRosters().find(r=>r.id===selected);
   if(!latest||JSON.stringify(latest)!==reviewed){refresh();$('rosterConsent').checked=false;gate();throw Error('名簿が変更されました。内容を確認してください。');}
-  const current=R.toDeliveryRoster(latest,options()),delivery=InterviewShare.snapshot(preset,current,Number($('linkDuration').value)),url=InterviewShare.buildUrl(delivery,new URL('interview-receive.html',location.href));
+  const settings=JSON.stringify([options(),$('linkDuration').value]),current=R.toDeliveryRoster(latest,options()),delivery=InterviewShare.snapshot(preset,current,Number($('linkDuration').value)),url=await InterviewShare.buildShortUrl(delivery,new URL('interview-receive.html',location.href));
+  M.check($('rosterConsent').checked&&settings===JSON.stringify([options(),$('linkDuration').value])&&JSON.stringify(store().listRosters().find(r=>r.id===selected))===JSON.stringify(latest),'配信の設定が変わりました。確認してもう一度配信してください。');
   const deadline=new Date(delivery.expiresAt).toLocaleString('ja-JP',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'});
   $('deliveryDeadline').textContent='直前に作成したリンクの終了：'+deadline;$('deliveryDeadline').hidden=false;
-  CardShare.openUrl(url,preset.title,current.students.length+'人・終了：'+deadline+'。クラス内だけで共有してください。');
- }catch(e){status(e.message);}};
+  const lengthNotice=url.length>2024?' このリンクは2,024文字を超えるため、Google Classroomへのリンク添付ができない場合があります。出席番号のみの表示にすると短くできます。':'';
+  CardShare.openUrl(url,preset.title,current.students.length+'人・終了：'+deadline+'。クラス内だけで共有してください。'+lengthNotice);
+ }catch(e){status(e.message);}finally{sending=false;gate();}};
 })();
