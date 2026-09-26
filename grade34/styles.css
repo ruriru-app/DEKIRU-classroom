@@ -327,7 +327,7 @@ h1 { margin-bottom: 12px; font-size: clamp(32px, 4vw, 58px); line-height: 1.18; 
 .tile-accessible-text{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip-path:inset(50%);white-space:nowrap!important}
 .content-section>summary.illustrated-summary{padding:12px 0;display:block}
 .content-section>summary.illustrated-summary::after{display:none}
-.unit-menu-art{display:block;position:relative;width:min(100%,760px);aspect-ratio:1922/224;overflow:hidden}
+.unit-menu-art{display:block;position:relative;width:min(100%,760px);aspect-ratio:2500/224;overflow:hidden}
 .unit-menu-art img{position:absolute;left:0;width:100%;max-width:none;height:auto;top:0}
 .menu-art-1 img{top:-127.68%}.menu-art-2 img{top:-249.1%}.menu-art-3 img{top:-378.8%}
 .illustrated-feature,.illustrated-activity{position:relative;display:block;width:100%;min-width:0;padding:0;border:0;background:transparent;border-radius:18px;overflow:hidden;align-self:start}

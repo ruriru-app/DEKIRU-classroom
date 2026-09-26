@@ -416,7 +416,7 @@ return `<h2>保存したカードセット</h2>${sets.length?sets.map(s=>`<div c
   function sectionBlock(title, subtitle, content, open = false) {
     const banner = ['Words &amp; Phrases','Games（みんなで）','Games（個人の端末で）','Activities'].indexOf(title);
     return `<details class="content-section" ${open ? "open" : ""}>
-      <summary class="${banner >= 0 ? 'illustrated-summary' : ''}"><span class="${banner >= 0 ? 'tile-accessible-text' : ''}"><strong>${title}</strong><small>${escapeHtml(subtitle)}</small></span>${banner >= 0 ? `<span class="unit-menu-art menu-art-${banner}" aria-hidden="true"><img src="assets/ui/unit-menu-banners.svg" alt=""></span>` : ''}</summary>
+      <summary class="${banner >= 0 ? 'illustrated-summary' : ''}"><span class="${banner >= 0 ? 'tile-accessible-text' : ''}"><strong>${title}</strong><small>${escapeHtml(subtitle)}</small></span>${banner >= 0 ? `<span class="unit-menu-art menu-art-${banner}" aria-hidden="true"><img src="assets/ui/unit-menu-banners-v2.svg" alt=""></span>` : ''}</summary>
       <div class="section-body">${content}</div>
     </details>`;
   }
