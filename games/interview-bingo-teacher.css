@@ -1,0 +1,15 @@
+.bingo-teacher-right{display:grid;gap:14px;min-width:0}
+.bingo-teacher-settings{min-width:0;border:1px solid #c6ddec;border-radius:18px;background:#f5fbff;padding:18px;font-size:13px}
+.bingo-teacher-settings h2{font-size:20px;margin:0 0 16px}
+#createInterviewBingo .bingo-teacher-settings>label{display:grid;grid-template-columns:1fr 110px;gap:10px;margin:12px 0}
+.bingo-teacher-actions{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.bingo-teacher-settings [data-teacher-dirty]{color:#416c8c}
+.bingo-teacher-settings [data-teacher-errors],.bingo-teacher-settings [data-teacher-warnings]{white-space:pre-wrap;color:#854825;margin:10px 0;line-height:1.5}
+.bingo-teacher-card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:8px}
+#createInterviewBingo .bingo-teacher-card-grid label{position:relative;display:flex;flex-direction:column;min-width:0;padding:8px;border:1px solid #c6ddec;border-radius:10px;text-align:center;cursor:pointer;font-size:12px}
+.bingo-teacher-card-grid img{width:100%;height:64px;object-fit:contain}
+#createInterviewBingo .bingo-teacher-card-grid input{align-self:flex-start}
+.bingo-teacher-candidates>p{font-size:12px;color:#756d65}
+.bingo-teacher-settings [data-teacher-distribution]{max-height:250px;overflow:auto}
+.bingo-teacher-settings [data-teacher-distribution] p{margin:4px 0}
+.bingo-distribution-note{color:#854825;line-height:1.5}
