@@ -1,0 +1,24 @@
+/* Page rules are scoped to the standalone iframe document by its root content. */
+@page{size:A4 portrait;margin:0}
+body:has(>.my-card-sheet){margin:0;padding:0;background:white;color:#38332f;font-family:Arial,'Yu Gothic',sans-serif}
+.my-card-sheet{position:relative;box-sizing:border-box;width:210mm;height:297mm;display:grid;grid-template-columns:repeat(3,70mm);grid-template-rows:repeat(3,99mm);gap:0;break-after:page;page-break-after:always}
+.my-card-sheet:last-child{break-after:auto;page-break-after:auto}
+.my-card-slot{box-sizing:border-box;min-width:0;min-height:0;width:70mm;height:99mm;padding:5mm;display:flex;flex-direction:column;gap:2mm;break-inside:avoid;page-break-inside:avoid;overflow:hidden}
+.my-card-slot h1{font-size:13pt;text-align:center;line-height:1.2;margin:0;flex:none}
+.my-card-pictures{display:grid;grid-template-columns:repeat(var(--columns),minmax(0,1fr));grid-template-rows:repeat(var(--rows),minmax(0,1fr));gap:2mm;flex:1;min-height:0;min-width:0}
+.my-card-pictures figure{margin:0;min-width:0;min-height:0;display:flex;flex-direction:column;gap:1mm;text-align:center}
+.my-card-pictures img{display:block;object-fit:contain;min-height:0;min-width:0;width:100%;flex:1}
+.my-card-pictures figcaption{font-size:9pt;line-height:1.15;overflow-wrap:anywhere;flex:none}
+.my-card-name{display:flex;gap:2mm;align-items:end;height:6mm;font-size:10pt;flex:none}
+.my-card-name span{flex:1;border-bottom:.2mm solid #666;height:5mm}
+.my-card-cut{position:absolute;display:block;pointer-events:none;background:#bbb}
+.my-card-cut.vertical{top:0;bottom:0;width:.15mm;transform:translateX(-50%)}
+.my-card-cut.horizontal{left:0;right:0;height:.15mm;transform:translateY(-50%)}
+.bingo-print-preview{min-width:0;max-width:100%;font-size:13px}
+.bingo-print-toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.bingo-print-toolbar h2{font-size:18px;margin:5px auto 5px 0}
+.bingo-print-scroll{overflow:auto;width:100%;background:#e9eff2;border-radius:10px;padding:6px;box-sizing:border-box}
+.bingo-print-paper{position:relative;margin:0 auto;min-height:20px}
+[data-my-card-frame]{display:block;position:absolute;top:0;left:0;border:0;background:white;transform-origin:top left}
+[data-print-status]{color:#416c8c;white-space:pre-wrap}
+@media print{body:has(>.my-card-sheet){print-color-adjust:exact;-webkit-print-color-adjust:exact}}
