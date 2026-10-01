@@ -4,16 +4,23 @@ body:has(>.my-card-sheet){margin:0;padding:0;background:white;color:#38332f;font
 .my-card-sheet{position:relative;box-sizing:border-box;width:210mm;height:297mm;display:grid;grid-template-columns:repeat(3,70mm);grid-template-rows:repeat(3,99mm);gap:0;break-after:page;page-break-after:always}
 .my-card-sheet:last-child{break-after:auto;page-break-after:auto}
 .my-card-slot{box-sizing:border-box;min-width:0;min-height:0;width:70mm;height:99mm;padding:5mm;display:flex;flex-direction:column;gap:2mm;break-inside:avoid;page-break-inside:avoid;overflow:hidden}
-.my-card-slot h1{font-size:13pt;text-align:center;line-height:1.2;margin:0;flex:none}
+.my-card-set-name{font-size:9pt;line-height:1.15;text-align:center;overflow-wrap:anywhere;flex:none}
+.my-card-set-name:empty{display:none}
+.my-card-slot h1{font-size:10pt;text-align:center;line-height:1.2;margin:0;flex:none;white-space:nowrap}
 .my-card-pictures{display:grid;grid-template-columns:repeat(var(--columns),minmax(0,1fr));grid-template-rows:repeat(var(--rows),minmax(0,1fr));gap:2mm;flex:1;min-height:0;min-width:0}
 .my-card-pictures figure{margin:0;min-width:0;min-height:0;display:flex;flex-direction:column;gap:1mm;text-align:center}
 .my-card-pictures img{display:block;object-fit:contain;min-height:0;min-width:0;width:100%;flex:1}
 .my-card-pictures figcaption{font-size:9pt;line-height:1.15;overflow-wrap:anywhere;flex:none}
-.my-card-name{display:flex;gap:2mm;align-items:end;height:6mm;font-size:10pt;flex:none}
-.my-card-name span{flex:1;border-bottom:.2mm solid #666;height:5mm}
+.my-card-sheet[data-per-page="12"]{grid-template-columns:repeat(4,50mm);grid-template-rows:repeat(3,89mm);padding:15mm 5mm}
+.my-card-sheet[data-per-page="12"] .my-card-slot{width:50mm;height:89mm;padding:3mm;gap:1.5mm}
+.my-card-sheet[data-per-page="12"] .my-card-set-name{font-size:8pt}
+.my-card-sheet[data-per-page="12"] .my-card-pictures{gap:1.5mm}
+.my-card-sheet[data-per-page="12"] figcaption{font-size:8pt}
 .my-card-cut{position:absolute;display:block;pointer-events:none;background:#bbb}
 .my-card-cut.vertical{top:0;bottom:0;width:.15mm;transform:translateX(-50%)}
 .my-card-cut.horizontal{left:0;right:0;height:.15mm;transform:translateY(-50%)}
+.my-card-sheet[data-per-page="12"] .vertical{top:15mm;bottom:15mm}
+.my-card-sheet[data-per-page="12"] .horizontal{left:5mm;right:5mm}
 .bingo-print-preview{min-width:0;max-width:100%;font-size:13px}
 .bingo-print-toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
 .bingo-print-toolbar h2{font-size:18px;margin:5px auto 5px 0}

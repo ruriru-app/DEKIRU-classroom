@@ -1,6 +1,6 @@
 // Link-only integration. Game engines and authoring stay in DEKIRU Games.
 window.GamesLinks=(()=>{
-  const base=new URL(location.protocol==='file:'?'../games_site/':'../games/',location.href);
+  const base=new URL(location.protocol==='file:'?'../games/':'../games/',location.href);
   const encode=value=>btoa(Array.from(new TextEncoder().encode(JSON.stringify(value)),b=>String.fromCharCode(b)).join('')).replaceAll('+','-').replaceAll('/','_').replace(/=+$/,'');
   const alphabet=()=>new URL('#alphabet='+encode({v:1,g:'at',m:'upper',l:'easy'}),base).href;
   function assigned(book,unit){

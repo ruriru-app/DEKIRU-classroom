@@ -1,0 +1,86 @@
+/* Scoped copy of the compact Interview author layout; existing Interview is untouched. */
+body:has(#createInterviewBingo.active) main{padding-top:16px;padding-bottom:16px}
+#createInterviewBingo{max-width:none;padding:12px 20px}
+#createInterviewBingo>.head h1{font-size:24px;margin:0}
+#createInterviewBingo .interview-form{display:grid;align-content:start;gap:12px;min-width:0;overflow:auto;background:#fff;border:1px solid #e5ddd7;border-radius:22px;padding:14px;font-size:13px}
+#createInterviewBingo .interview-form h2{font-size:15px;line-height:1.4;margin:2px 0 8px}
+#createInterviewBingo .interview-form p{margin:5px 0 8px}
+#createInterviewBingo label{display:flex;gap:6px;align-items:center}
+#createInterviewBingo .interview-field{display:grid;gap:4px;min-width:0}
+#createInterviewBingo input:not([type=checkbox]),#createInterviewBingo textarea,#createInterviewBingo select{width:100%;box-sizing:border-box;font:inherit;color:inherit;padding:7px;border:1px solid #cbc5bf;border-radius:10px;background:#fff;min-width:0}
+#createInterviewBingo textarea{resize:vertical;min-height:48px}
+#createInterviewBingo input[type=checkbox]{width:14px;height:14px;flex:none;margin:0}
+#createInterviewBingo button{font:inherit;cursor:pointer;min-height:30px;border:1px solid #c6ddec;border-radius:10px;padding:5px 10px;background:#edf6ff;color:#544e49}
+#createInterviewBingo button:disabled{opacity:.45;cursor:default}
+#createInterviewBingo :focus-visible{outline:3px solid #5189be;outline-offset:2px}
+#createInterviewBingo small{display:block;font-size:11px;line-height:1.5;color:#756d65}
+#createInterviewBingo .interview-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+#createInterviewBingo .interview-row label{flex:1}
+#createInterviewBingo .interview-units details,#bingoCards details{border:1px solid #e5ddd7;border-radius:12px;margin:5px 0;padding:8px;background:white}
+#createInterviewBingo summary{font-weight:bold;cursor:pointer}
+#createInterviewBingo .interview-units label{font-size:12px;margin:7px 0;align-items:flex-start}
+#bingoCards summary{display:flex;align-items:center;gap:7px;padding:3px 0;line-height:1.4;list-style:none}
+#bingoCards summary::-webkit-details-marker{display:none}
+#bingoCards summary::after{content:'◀';margin-left:auto;font-size:11px;color:#8a827a}
+#bingoCards details[open]>summary::after{content:'▼'}
+#bingoCards .interview-tier{margin:6px 0}
+#bingoCards .interview-tier>label{font-size:12px}
+#bingoCards .interview-tier-chips{gap:4px;margin-top:5px}
+#bingoCards .interview-chip{font-size:12px;min-height:26px;padding:3px 9px;border-color:#ddd8d2;border-radius:999px;background:#f2f0ed;color:#847c75}
+#bingoCards .interview-chip[aria-pressed=true]{border-color:#8bb7e8;background:#e4f2ff;color:#544e49;box-shadow:inset 0 0 0 1px #8bb7e8}
+#createInterviewBingo .bingo-range{display:grid;grid-template-columns:32px minmax(0,1fr) auto minmax(0,1fr) auto;gap:5px;align-items:center;margin:8px 0}
+#createInterviewBingo .bingo-range label{display:grid;font-size:11px;gap:3px}
+#createInterviewBingo .bingo-my-card{margin:12px 0;flex-wrap:wrap}
+#createInterviewBingo #bingoMyCardCount{width:64px}
+#createInterviewBingo #bingoSave{background:#dcedff;font-weight:bold}
+#createInterviewBingo [role=status],.bingo-preview-notice{color:#84442a;white-space:pre-wrap}
+#bingoPreviewContent{flex:1;overflow:auto;min-height:0;padding:16px}
+#createInterviewBingo .interview-preview-panel{container-type:inline-size}
+#createInterviewBingo.bingo-preview-only .interview-editor-layout{grid-template-columns:minmax(0,1fr)}
+#bingoPreviewContent>[hidden]{display:none!important}
+.bingo-print-preview{min-width:0;max-width:100%;font-size:13px}
+.bingo-print-toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.bingo-print-toolbar h2{font-size:18px;margin:5px auto 5px 0}
+.bingo-print-layout{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:10px 0}
+.bingo-print-layout select{max-width:100%;font:inherit;padding:8px;border:1px solid #bad9ed;border-radius:8px;background:white;color:inherit}
+.bingo-print-scroll{overflow:auto;width:100%;background:#e9eff2;border-radius:10px;padding:6px;box-sizing:border-box}
+.bingo-print-paper{position:relative;margin:0 auto;min-height:20px}
+[data-my-card-frame]{display:block;position:absolute;top:0;left:0;border:0;background:white;transform-origin:top left}
+[data-print-status]{color:#416c8c;white-space:pre-wrap}
+.bingo-teacher-heading{font-size:20px;margin:0 0 14px}
+.bingo-teacher-layout{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:start}
+.bingo-teacher-layout>.bingo-preview-summary{min-width:0}
+.bingo-roster-preview{min-width:0;border:1px solid #e5ddd7;border-radius:18px;padding:20px;background:white;font-size:13px;overflow-wrap:anywhere}
+.bingo-roster-preview h2{font-size:20px;margin:0 0 18px}
+.bingo-roster-preview p{line-height:1.6;margin:14px 0}
+.bingo-roster-preview [data-roster-settings]{display:inline-block;color:#386d9a;margin:16px 0}
+.bingo-roster-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:8px}
+.bingo-roster-names{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;max-height:280px;overflow:auto}
+.bingo-roster-names>div{background:#edf6ff;border:1px solid #c6ddec;border-radius:7px;padding:7px;font-size:12px;overflow-wrap:anywhere}
+.bingo-roster-preview [data-roster-status],.bingo-roster-preview [data-roster-warning]{color:#84442a}
+@container(max-width:620px){.bingo-teacher-layout{grid-template-columns:minmax(0,1fr)}.bingo-roster-preview{padding:14px}}
+.bingo-preview-summary{background:#fff;border:1px solid #e5ddd7;border-radius:18px;padding:20px;font-size:14px;overflow-wrap:anywhere}
+.bingo-preview-summary h2{font-size:21px;margin:0 0 12px}
+.bingo-preview-summary h3{font-size:16px;margin:18px 0 8px}
+.bingo-preview-summary p{white-space:pre-wrap;margin:8px 0}
+.bingo-preview-memo{color:#756d65;font-size:12px}
+.bingo-expression-text{white-space:pre-wrap;line-height:1.7}
+#bingoCompletedExpressions{background:#eef6ff;border-radius:12px;padding:12px}
+.bingo-preview-selectors{display:flex;flex-wrap:wrap;gap:8px}
+#createInterviewBingo .bingo-preview-selectors label{display:grid;max-width:200px}
+.bingo-preview-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:8px}
+.bingo-preview-cards>div{border:1px solid #e5ddd7;border-radius:12px;padding:8px;display:flex;flex-direction:column;align-items:center;gap:5px;min-width:0;font-size:12px;text-align:center}
+.bingo-preview-cards img{width:100%;height:76px;object-fit:contain}
+.bingo-preview-notice{padding:10px;border:1px solid #edcf9b;border-radius:10px;background:#fff8e9;font-size:13px}
+#bingoLibrary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px}
+#bingoLibrary .interview-saved-card{display:grid;grid-template-columns:minmax(0,1fr) 104px;grid-template-rows:auto minmax(0,1fr);gap:7px 6px;padding:10px 8px 10px 22px;align-items:center}
+#bingoLibrary .interview-saved-heading{grid-column:1/-1;min-width:0;max-height:34px;overflow:auto;font-size:12px;line-height:1.35}
+#bingoLibrary .interview-saved-heading strong{font-size:inherit}
+#bingoLibrary .interview-saved-info{font-size:11px;line-height:1.35;gap:5px;min-height:0;max-height:100%;overflow:auto;align-self:stretch}
+#bingoLibrary .interview-saved-actions{gap:5px;justify-self:end;width:104px}
+#bingoLibrary .interview-saved-actions button{padding:3px 2px;min-height:27px;font:inherit;font-size:11px;border:1px solid #c6ddec;border-radius:9px;white-space:nowrap;background:#edf6ff;color:#544e49;cursor:pointer}
+#bingoLibrary .interview-saved-actions [data-delete]{background:#fff2f6;border-color:#edced9}
+#bingoLibrary .interview-saved-actions [data-preview]{grid-column:1/-1}
+@media(max-width:1199px){#bingoLibrary{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:900px){#bingoLibrary{grid-template-columns:repeat(2,minmax(0,1fr))}#createInterviewBingo .interview-form{max-height:65dvh}#createInterviewBingo .interview-preview-panel{height:650px}}
+@media(max-width:600px){#bingoLibrary{grid-template-columns:1fr}#createInterviewBingo{padding:8px 0}#createInterviewBingo>.head{flex-wrap:wrap}#createInterviewBingo>.head h1{font-size:20px}#createInterviewBingo>.head p{flex-basis:100%;white-space:normal}#bingoPreviewContent{padding:8px}.bingo-preview-summary{padding:12px}}

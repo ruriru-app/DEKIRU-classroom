@@ -384,7 +384,7 @@ return `<h2>保存したカードセット</h2>${sets.length?sets.map(s=>`<div c
   }
   function renderUnitSections(bookKey, unit, title) {
     const activities = ACTIVITIES.filter((activity) => activity.units.includes(`${bookKey}-${unit}`));
-    const interviewTiles=window.InterviewLinks?.tiles(bookKey,unit)||'';
+    const interviewTiles=(window.InterviewLinks?.tiles(bookKey,unit)||'')+(window.InterviewBingoLinks?.tiles(bookKey,unit)||'');
     const alphabetTile = bookKey === "lt1" && unit === 6
       ? externalGameTile('ALPHABET TOUCH',GamesLinks.alphabet())
       : "";
@@ -497,7 +497,7 @@ return `<h2>保存したカードセット</h2>${sets.length?sets.map(s=>`<div c
     if (feature === "today") return todayView();
     if (feature === "unit-activities") {
       const activities = ACTIVITIES.filter((activity) => activity.units.includes(`${bookKey}-${unit}`));
-      const interviewTiles=window.InterviewLinks?.tiles(bookKey,unit)||'';
+      const interviewTiles=(window.InterviewLinks?.tiles(bookKey,unit)||'')+(window.InterviewBingoLinks?.tiles(bookKey,unit)||'');
       return activities.length||interviewTiles
         ? `<div class="catalog-grid embedded">${activities.map(activityTile).join("")}${interviewTiles}</div>`
         : `<div class="empty-state"><h2>Activityは準備中です</h2><p>このUnitに合う活動を、今後ここへ追加します。</p></div>`;
