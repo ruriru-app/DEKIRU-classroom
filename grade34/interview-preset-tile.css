@@ -6,6 +6,8 @@
 .interview-preset-tile .interview-preset-expression{left:15%;top:34%;width:70%;height:26%;display:flex;flex-direction:column;align-items:center;justify-content:center;font:clamp(12px,4.5cqw,23px)/1.4 'DEKIRU Andika',sans-serif}
 .interview-preset-words{left:17%;top:63%;width:66%;height:15%;font:700 clamp(12px,4cqw,20px)/1.2 sans-serif}
 .interview-preset-words span{position:absolute;left:39%;width:58%;top:28%}
+.interview-preset-words-multiple{top:60%;height:21%}
+.interview-preset-words-multiple span{top:50%;transform:translateY(-50%);font-size:clamp(10px,3.4cqw,17px)}
 .interview-preset-play{left:7%;top:81%;width:42%;height:16%}
 .interview-preset-share{left:51%;top:81%;width:42%;height:16%}
 .preset-sentence-dialog{width:min(1500px,96vw);max-width:96vw;height:90vh;max-height:94vh;box-sizing:border-box;padding:12px;border:2px solid #b1d9e9;border-radius:22px;background:#fff;overflow:auto}

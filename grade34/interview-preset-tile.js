@@ -4,10 +4,14 @@ window.InterviewPresetTile=(()=>{
  function render(p){
   const preset=window.InterviewLinks.get(p.id,'published');
   const practice=JSON.stringify({ids:preset.cardIds,preference:true});
+  const data=window.DEKIRU_DATA,cards=new Map(data.cards.map(card=>[card.id,card]));
+  const categories=[...new Set(preset.cardIds.map(id=>cards.get(id)?.category).filter(Boolean))];
+  const labels=categories.map(category=>data.categoryLabels[category]||category),words=labels.join('・')||'単語';
+  const activity=preset.question.template.trim()==='Do you like (P)?'?'question':'like_question';
   return `<article class="interview-preset-tile" aria-label="${esc(p.title)}">
    <img src="assets/ui/interview-preset-base.svg" alt="" draggable="false">
-   <button type="button" class="interview-preset-expression" data-interview-sentence="like_question" data-interview-cards="${esc(JSON.stringify(preset.cardIds))}" aria-label="この表現で文で話そう" title="タップして文で話そう">${preset.question.template.split('\n').map(s=>`<span>${esc(s)}</span>`).join('')}</button>
-   <button type="button" class="interview-preset-words" data-interview-practice="${esc(practice)}" aria-label="色の発音練習" title="タップして発音練習"><span>色</span></button>
+   <button type="button" class="interview-preset-expression" data-interview-sentence="${activity}" data-interview-cards="${esc(JSON.stringify(preset.cardIds))}" aria-label="この表現で文で話そう" title="タップして文で話そう">${preset.question.template.split('\n').map(s=>`<span>${esc(s)}</span>`).join('')}</button>
+   <button type="button" class="interview-preset-words${categories.length>1?' interview-preset-words-multiple':''}" data-interview-practice="${esc(practice)}" aria-label="${esc(words)}の発音練習" title="タップして発音練習"><span>${labels.length?labels.map(esc).join('<br>'):esc(words)}</span></button>
    <a class="interview-preset-play" href="${esc(p.href)}" aria-label="Play：Interviewの準備" title="クラスを選んでInterviewを始める"></a>
    <a class="interview-preset-share" href="${esc(p.href)}#rosterSelect" aria-label="シートを配る" title="クラスを選んでシートを配る"></a>
   </article>`;

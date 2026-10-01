@@ -143,7 +143,12 @@
         const choices=value.cardIds.map(id=>cardMap.get(id));
         for(const slot of value.expressions.slots)if(!selected.has(previewSelections[slot.id]))previewSelections[slot.id]=choices[0]?.id;
         let completed='カードを選ぶと、(P) を置き換えた表現を確認できます。';
-        try{completed=B.completeExpressions(value,Object.fromEntries(value.expressions.slots.map(s=>[s.id,cardMap.get(previewSelections[s.id])])));}catch{/* Incomplete drafts remain visible. */}
+        try{
+          const slots=value.expressions.slots,card=cardMap.get(previewSelections[slots[0]?.id]);
+          completed=slots.length===1&&card
+            ?window.InterviewBingoExpressions.render(value.expressions,card,{completeExpressions:B.completeExpressions,forms:window.SentenceForms}).text
+            :B.completeExpressions(value,Object.fromEntries(slots.map(s=>[s.id,cardMap.get(previewSelections[s.id])])));
+        }catch{/* Incomplete drafts remain visible. */}
         // Keep the roster panel instance (and its choices) when author fields change.
         teacherPane.innerHTML=`<h2 class="bingo-teacher-heading">Interview Bingoの準備</h2><div class="bingo-teacher-layout">
           <article class="bingo-preview-summary"><h2>${esc(value.title||'活動タイトルを入力してください')}</h2>
