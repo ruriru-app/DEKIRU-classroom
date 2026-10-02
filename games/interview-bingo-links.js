@@ -2,8 +2,22 @@
 (()=>{
  'use strict';
  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const artwork=new URL('assets/ui/interview-bingo-preset.svg',document.currentScript?.src||location.href).href;
  const store=()=>window.InterviewBingoStore.create(localStorage,{validCardIds:null});
- function officialTile(p,bookId,unit){return `<article class="official-bingo-tile" data-official-bingo="${esc(p.id)}"><div class="official-bingo-top"><span>公式プリセット</span><strong>INTERVIEW BINGO</strong></div><h3>${esc(p.title)}</h3><p class="official-bingo-expression">${esc(p.expressions.template)}</p><p class="official-bingo-words">文房具 · ${p.cardIds.length}語</p><a class="official-bingo-start" href="${esc(window.InterviewBingoRoutes.prepareHref(p.id,bookId,Number(unit),'published'))}">教師用の準備へ <span aria-hidden="true">→</span></a><small>マス数の設定・児童画面の試用・配布用カードの印刷</small></article>`;}
+ function officialTile(p,bookId,unit){
+  const data=window.DEKIRU_DATA||window.GAMES_DATA||{},cards=new Map((data.cards||[]).map(card=>[card.id,card]));
+  const categories=[...new Set(p.cardIds.map(id=>cards.get(id)?.category).filter(Boolean))];
+  const words=categories.map(category=>data.categoryLabels?.[category]||category).join('・')||'単語';
+  const practice=JSON.stringify({ids:p.cardIds,preference:false});
+  const href=window.InterviewBingoRoutes.prepareHref(p.id,bookId,Number(unit),'published');
+  return `<article class="official-bingo-tile" data-official-bingo="${esc(p.id)}" aria-label="${esc(p.title)}">
+   <img src="${esc(artwork)}" alt="" draggable="false">
+   <button type="button" class="official-bingo-expression" data-interview-sentence="question" data-interview-cards="${esc(JSON.stringify(p.cardIds))}" data-preset-practice-key="${esc(p.id)}" aria-label="${esc(p.expressions.template)}：この表現で文で話そう" title="この表現で文で話そう">${esc(p.expressions.template)}</button>
+   <button type="button" class="official-bingo-words" data-interview-practice="${esc(practice)}" aria-label="${esc(words)}の発音練習" title="${esc(words)}の発音練習">${esc(words)}</button>
+   <a class="official-bingo-play" data-bingo-tile-play href="${esc(href)}" aria-label="Play：Interview Bingoの準備" title="Interview Bingoの準備へ"></a>
+   <a class="official-bingo-share" data-bingo-tile-share href="${esc(href)}#bingoDistribution" aria-label="シートを配る" title="シートを配る"></a>
+  </article>`;
+ }
  function tiles(bookId,unit){
   const assigned=p=>p.assignedUnits.some(u=>u.bookId===bookId&&u.unit===Number(unit));let output='';
   for(const value of window.INTERVIEW_BINGO_CATALOG||[]){try{const p=window.InterviewBingoModel.validatePreset(value,null);if(assigned(p))output+=officialTile(p,bookId,unit);}catch(e){output+=`<p role="status">公式Bingo: ${esc(e.message)}</p>`;}}

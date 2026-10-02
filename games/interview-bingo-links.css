@@ -1,13 +1,12 @@
-.official-bingo-tile{min-width:0;padding:20px;border:2px solid #96d4f3;border-radius:22px;background:#edf9ff;color:#554f49;display:flex;flex-direction:column;gap:12px;overflow-wrap:anywhere}
-.official-bingo-top{display:flex;align-items:center;flex-wrap:wrap;gap:8px;font-size:13px;color:#347eae}
-.official-bingo-top>span{padding:4px 9px;border-radius:99px;background:white;border:1px solid #b7e3f6;font-size:12px}
-.official-bingo-tile h3{margin:0;font-size:clamp(18px,2vw,24px);line-height:1.4}
-.official-bingo-tile p{margin:0;line-height:1.5}
-.official-bingo-expression{background:white;border-radius:14px;padding:12px;text-align:center;white-space:pre-line}
-.official-bingo-words{font-size:15px;font-weight:700}
-.official-bingo-start{display:block;margin-top:auto;padding:12px 15px;background:#399deb;color:white;text-align:center;border-radius:99px;text-decoration:none;font-weight:700;line-height:1.4}
-.official-bingo-start:hover{background:#2388d4}.official-bingo-start:focus-visible{outline:3px solid #8065c6;outline-offset:3px}
-.official-bingo-tile small{font-size:12px;line-height:1.6;color:#596b78}
+.official-bingo-tile{position:relative;container-type:inline-size;aspect-ratio:1527.43/1080;min-width:0;isolation:isolate}
+.official-bingo-tile>img{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.official-bingo-tile :is(button,a){position:absolute;display:flex;align-items:center;justify-content:center;margin:0;padding:0;border:0;background:transparent;box-shadow:none;color:#554039;cursor:pointer;text-decoration:none;border-radius:999px}
+.official-bingo-tile :is(button,a):hover{background:#ffffff30}
+.official-bingo-tile :is(button,a):focus-visible{outline:3px solid #7862bb;outline-offset:2px}
+.official-bingo-expression{left:14.8067%;top:33.4420%;width:70.7652%;height:26.9127%;text-align:center;font:700 clamp(12px,4.3cqw,25px)/1.3 'DEKIRU Andika',sans-serif}
+.official-bingo-words{left:42.6535%;top:63.7364%;width:40.0809%;height:12.205%;font:700 clamp(12px,3.8cqw,21px)/1.2 sans-serif}
+.official-bingo-play{left:7.2248%;top:79.7545%;width:41.7080%;height:16.0186%}
+.official-bingo-share{left:51.4467%;top:79.7545%;width:41.7079%;height:16.0186%}
 .feature-grid:has(>.official-bingo-tile),.catalog-grid:has(>.official-bingo-tile){grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
 @media(max-width:1100px){.feature-grid:has(>.official-bingo-tile),.catalog-grid:has(>.official-bingo-tile){grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:700px){.feature-grid:has(>.official-bingo-tile),.catalog-grid:has(>.official-bingo-tile){grid-template-columns:1fr}}

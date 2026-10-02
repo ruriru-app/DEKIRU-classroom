@@ -778,6 +778,7 @@ return `<h2>保存したカードセット</h2>${sets.length?sets.map(s=>`<div c
         return;
       }
       LookSay.stop(true); WhatsMissing.stop(true); BombGame.stop(true);
+      const presetPracticeKey=featureTarget.dataset.presetPracticeKey;
       const previousFeature=state.activeFeature;
       const previousSections=[...document.querySelectorAll('details.content-section[open]')].map(e=>e.querySelector('summary')?.textContent);
       state.activeFeature = featureTarget.dataset.interviewSentence ? 'sentences' : featureTarget.dataset.feature === "close" ? null : featureTarget.dataset.feature;
@@ -793,7 +794,7 @@ return `<h2>保存したカードセット</h2>${sets.length?sets.map(s=>`<div c
         const background=document.getElementById('unit-content');background.id='unit-content-background';
         dialog.append(panel);document.body.append(dialog);
         dialog.addEventListener('click',async event=>{if(!event.target.closest('[data-fullscreen]'))return;try{if(document.fullscreenElement===dialog)await document.exitFullscreen();else await dialog.requestFullscreen();}catch{dialog.classList.toggle('practice-expanded');}});
-        dialog.addEventListener('close',()=>{SentencePlayer.stop();if(document.fullscreenElement&&dialog.contains(document.fullscreenElement))document.exitFullscreen?.();dialog.remove();background.id='unit-content';document.querySelector('[data-interview-sentence]')?.focus();});
+        dialog.addEventListener('close',()=>{SentencePlayer.stop();if(document.fullscreenElement&&dialog.contains(document.fullscreenElement))document.exitFullscreen?.();dialog.remove();background.id='unit-content';const opener=[...document.querySelectorAll('[data-preset-practice-key]')].find(element=>element.dataset.presetPracticeKey===presetPracticeKey);(opener||document.querySelector('[data-interview-sentence]'))?.focus();});
         dialog.showModal();
       }
       return;
