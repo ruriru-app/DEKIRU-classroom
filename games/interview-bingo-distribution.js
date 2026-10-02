@@ -44,7 +44,10 @@
   }
   function invalidate(){
    if(destroyed)return;
-   try{renderContext(getContext());}catch(error){showError(error);}
+   try{
+    if(!isFresh())throw Error('プリセットが変更されました。準備画面を開き直してください。');
+    renderContext(getContext());
+   }catch(error){showError(error);}
   }
   hours.onchange=invalidate;consent.onchange=gate;
   button.onclick=async()=>{
