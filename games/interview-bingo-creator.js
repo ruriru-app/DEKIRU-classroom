@@ -40,7 +40,7 @@
             <button type="button" id="bingoSave">プリセットを保存</button><small>この端末のブラウザ内に保存します。公開・端末間の同期は行いません。</small><p role="status" aria-live="polite"></p>
           </div>`}
           <section class="interview-preview-panel" aria-label="Interview Bingoのプレビュー">
-            <div class="interview-preview-toolbar"><strong>プレビュー</strong><div role="group" aria-label="プレビュー画面">${[['teacher','教師用'],['compose','児童：シート作り'],['interview','児童：インタビュー'],['my-card','配布用カード']].map(([key,label])=>`<button type="button" data-bingo-tab="${key}" aria-pressed="${key==='teacher'}">${label}</button>`).join('')}</div><small>児童画面は設定した人数の仮名で試せます。配置・名前は保存しません。配布用カードは匿名で印刷できます。児童への配信は未実装です。</small></div>
+            <div class="interview-preview-toolbar"><strong>プレビュー</strong><div role="group" aria-label="プレビュー画面">${[['teacher','教師用'],['compose','児童：シート作り'],['interview','児童：インタビュー'],['my-card','配布用カード']].map(([key,label])=>`<button type="button" data-bingo-tab="${key}" aria-pressed="${key==='teacher'}">${label}</button>`).join('')}</div><small>児童画面は設定した人数の仮名で試せます。配置・名前は保存しません。配布用カードは匿名で印刷できます。児童への配信は「Interview Bingoの準備」画面で行います。</small></div>
             <div id="bingoPreviewContent"></div>
           </section>
         </div>`;
