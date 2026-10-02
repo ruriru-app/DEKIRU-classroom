@@ -1,13 +1,20 @@
-/* Games-only student trial. No roster access, storage, distribution or printing. */
+/* Student board. Identity and persistence are supplied by its caller. */
 (()=>{
   'use strict';
   const S=window.InterviewBingoSession;
   const names=['あおい','いちか','うた','えいた','おとは','かいと','きこ','くるみ','けんと','こはる','さくら','しゅん','すず','せな','そうた','たくみ','ちひろ','つむぎ','てつ','とうま','なな','にこ','のぞみ','はる','ひなた','ふうか','ほのか','まこと','みお','むつき','めい','もも','ゆい','りく','れん'];
   const makePeople=count=>Array.from({length:count},(_,i)=>({id:'bingo-demo-'+String(i+1).padStart(2,'0'),label:(i+1)+' '+(i===0?'自分':names[i]||'児童'+(i+1))}));
   const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  function create({onPageChange=()=>{}}={}){
-    const element=document.createElement('section');element.className='bingo-student';element.dataset.bingoStudent='';element.setAttribute('aria-label','児童用BINGOプレビュー');
-    let people=makePeople(35),state=S.createState({studentIds:people.slice(1).map(p=>p.id)}),activity={},cards=new Map(),dialog=null,anchor=null,frame=0,destroyed=false;
+  const validPupilId=id=>typeof id==='string'&&id.length<=100&&/^[A-Za-z0-9_-]+$/.test(id);
+  function create({onPageChange=()=>{},mode='preview',people:injectedPeople=null,selfId=null,onStateChange=()=>{},canInteract=()=>true}={}){
+    if(mode!=='preview'&&mode!=='delivery')throw Error('児童画面のモードが不正です');
+    const delivery=mode==='delivery';
+    if(delivery&&(!Array.isArray(injectedPeople)||!injectedPeople.length||injectedPeople.some(p=>!p||!validPupilId(p.id)||typeof p.label!=='string')||injectedPeople.filter(p=>p.id===selfId).length!==1||new Set(injectedPeople.map(p=>p.id)).size!==injectedPeople.length))throw Error('本人を名簿から選んでください');
+    const ownId=delivery?selfId:'bingo-demo-01';
+    const element=document.createElement('section');element.className='bingo-student';element.dataset.bingoStudent='';element.setAttribute('aria-label',delivery?'児童用BINGO':'児童用BINGOプレビュー');
+    let people=delivery?injectedPeople.map(p=>({id:p.id,label:p.label})):makePeople(35),state=S.createState({studentIds:people.filter(p=>p.id!==ownId).map(p=>p.id)}),activity={},cards=new Map(),dialog=null,anchor=null,frame=0,destroyed=false;
+    const cloneState=()=>JSON.parse(JSON.stringify(state));
+    const canAct=()=>!destroyed&&canInteract();
     const button=(action,label,disabled=false)=>`<button type="button" data-bingo-action="${action}" ${disabled?'disabled':''}>${label}</button>`;
     const picture=card=>`<span class="bingo-picture"><img src="${esc(card.image)}" alt="" draggable="false"></span><span class="bingo-card-word">${esc(card.english)}</span>`;
     function fitBoard(){
@@ -24,7 +31,7 @@
     function expand(){
       if(dialog){collapse();return;}
       anchor=document.createComment('student preview position');element.replaceWith(anchor);
-      dialog=document.createElement('dialog');dialog.className='bingo-student-dialog';dialog.setAttribute('aria-label','児童用プレビュー拡大');
+      dialog=document.createElement('dialog');dialog.className='bingo-student-dialog';dialog.setAttribute('aria-label',delivery?'児童用BINGO拡大':'児童用プレビュー拡大');
       dialog.addEventListener('cancel',event=>{event.preventDefault();collapse();});
       document.body.append(dialog);dialog.append(element);element.classList.add('bingo-student-expanded');dialog.showModal();render();element.querySelector('[data-bingo-action=expand]').focus();
     }
@@ -51,7 +58,7 @@
           </div></div>
         </section><section class="bingo-student-right" aria-label="${compose?'Picture Cards':'インタビュー'}">
           ${compose?`<h3>Picture Cards <small>${cards.size}枚から選ぼう</small></h3><p class="bingo-student-instructions">${esc(activity.studentInstructions||'カードをタップすると、左の空いているマスに入ります。')}</p><div data-bingo-candidates>${[...cards.values()].map(card=>{const count=state.cells.filter(c=>c.cardId===card.id).length;return `<button type="button" data-bingo-candidate="${esc(card.id)}" aria-label="${esc(card.english)}" ${count>=2||progress.complete?'disabled':''}>${picture(card)}<small class="bingo-card-use">使用中 ${count}／2</small></button>`;}).join('')||'<p>教師用画面で候補カードを選んでください。</p>'}</div>`:
-          `<div class="bingo-student-expression-area"><h3>活動で使う表現</h3><p data-bingo-expressions>${esc(expression.text)}</p>${expression.notice?`<p class="bingo-student-notice">${esc(expression.notice)}</p>`:''}</div><div class="bingo-names-heading"><h3>相手の名前 <small>仮の名簿・${people.length}人（1番として試用）</small></h3><p>使った名前は1回だけ。間違えたら「名前を外す」。</p></div><div data-bingo-names>${people.map((person,i)=>`<button type="button" data-bingo-person="${person.id}" ${i===0||!progress.complete||!current?.cardId||current.studentId||progress.usedStudentIds.includes(person.id)?'disabled':''}>${esc(person.label)}</button>`).join('')}</div>`}
+          `<div class="bingo-student-expression-area"><h3>活動で使う表現</h3><p data-bingo-expressions>${esc(expression.text)}</p>${expression.notice?`<p class="bingo-student-notice">${esc(expression.notice)}</p>`:''}</div><div class="bingo-names-heading"><h3>相手の名前 ${delivery?'':`<small>仮の名簿・${people.length}人（1番として試用）</small>`}</h3><p>使った名前は1回だけ。間違えたら「名前を外す」。</p></div><div data-bingo-names>${people.map(person=>`<button type="button" data-bingo-person="${esc(person.id)}" ${person.id===ownId||!progress.complete||!current?.cardId||current.studentId||progress.usedStudentIds.includes(person.id)?'disabled':''}>${esc(person.label)}</button>`).join('')}</div>`}
         </section></div>`;
       element.querySelectorAll('img').forEach(img=>{img.onerror=()=>{const fallback=document.createElement('span');fallback.dataset.bingoImageFallback='';fallback.textContent='絵なし';img.replaceWith(fallback);};});
       const list=element.querySelector('[data-bingo-candidates],[data-bingo-names]');if(list)list.scrollTop=scroll;
@@ -74,9 +81,15 @@
       }
       fitBoard();scheduleFit();
     }
-    function dispatch(action){state=S.transition(state,action);render();}
+    function dispatch(action){
+      if(!canAct())return false;
+      const next=S.transition(state,action);
+      if(JSON.stringify(next)===JSON.stringify(state))return false;
+      state=next;render();onStateChange(cloneState());return true;
+    }
     function click(event){
       const target=event.target.closest('button');if(!target||!element.contains(target)||target.disabled)return;
+      if(!canAct())return;
       if(target.hasAttribute('data-bingo-candidate'))dispatch({type:'place',cardId:target.dataset.bingoCandidate});
       else if(target.hasAttribute('data-bingo-cell'))dispatch({type:state.page==='compose'?'removeCard':'select',index:Number(target.dataset.bingoCell)});
       else if(target.hasAttribute('data-bingo-person'))dispatch({type:'assignName',studentId:target.dataset.bingoPerson});
@@ -84,23 +97,33 @@
         case 'expand':expand();break;
         case 'random':if(!S.getProgress(state).usedStudentIds.length||confirm('名前と配置を消して、もう一度RANDOMで作りますか？'))dispatch({type:'random'});break;
         case 'remove-name':dispatch({type:'removeName'});break;
-        case 'back':dispatch({type:'setPage',page:'compose'});onPageChange('compose');break;
-        case 'start':if(S.getProgress(state).complete){dispatch({type:'setPage',page:'interview'});onPageChange('interview');}break;
+        case 'back':if(dispatch({type:'setPage',page:'compose'}))onPageChange('compose');break;
+        case 'start':if(S.getProgress(state).complete&&dispatch({type:'setPage',page:'interview'}))onPageChange('interview');break;
       }
     }
     element.addEventListener('click',click);
     function update(value){
-      activity=value.activity;cards=new Map(value.cards.map(c=>[c.id,c]));
+      if(!canAct())return;
+      const nextCards=new Map(value.cards.map(c=>[c.id,c]));
+      let nextState=state;
       if(value.reset){
         const config=value.config;
-        if(!config||![3,4,5].includes(config.size)||!Number.isInteger(config.participantCount)||config.participantCount<1||config.participantCount>100)throw Error('教師用の設定を確認してください。');
-        people=makePeople(config.participantCount);state=S.createState({size:config.size,cardIds:[...cards.keys()],studentIds:people.slice(1).map(p=>p.id)});
+        if(!config||![3,4,5].includes(config.size)||(!delivery&&(!Number.isInteger(config.participantCount)||config.participantCount<1||config.participantCount>100)))throw Error('教師用の設定を確認してください。');
+        if(!delivery)people=makePeople(config.participantCount);
+        nextState=S.createState({size:config.size,cardIds:[...nextCards.keys()],studentIds:people.filter(p=>p.id!==ownId).map(p=>p.id)});
       }
-      state=S.transition(state,{type:'syncCandidates',cardIds:[...cards.keys()]});
-      if(value.page)state=S.transition(state,{type:'setPage',page:value.page});render();
+      nextState=S.transition(nextState,{type:'syncCandidates',cardIds:[...nextCards.keys()]});
+      if(value.page)nextState=S.transition(nextState,{type:'setPage',page:value.page});
+      if(delivery&&nextState.page==='interview'&&!S.getProgress(nextState).complete)throw Error('未完成の盤面でインタビューを開始できません');
+      activity=value.activity;cards=nextCards;state=nextState;render();
+    }
+    function restoreState(value){
+      if(!canAct())return;
+      state=S.validateState(value,{size:state.size,cardIds:[...cards.keys()],studentIds:people.filter(p=>p.id!==ownId).map(p=>p.id)});
+      render();
     }
     function destroy(){collapse();destroyed=true;cancelAnimationFrame(frame);observer.disconnect();element.removeEventListener('click',click);element.remove();}
-    return {element,update,destroy,collapse,getProgress:()=>S.getProgress(state)};
+    return {element,update,destroy,collapse,getProgress:()=>S.getProgress(state),getState:cloneState,restoreState};
   }
   window.InterviewBingoStudent={create};
 })();
