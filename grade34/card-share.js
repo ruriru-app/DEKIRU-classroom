@@ -44,6 +44,7 @@
       catch { const field = dialog.querySelector('textarea'); field.focus(); field.select(); dialog.querySelector('.share-status').textContent = 'URLを選択しました。コピーしてください。'; }
     };
     dialog.showModal();
+    return dialog;
   }
   window.CardShare = {open,openSave,openUrl};
 })();

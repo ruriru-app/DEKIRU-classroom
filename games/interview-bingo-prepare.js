@@ -4,7 +4,7 @@
  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  function mount({root,search=location.search}){
   const B=window.InterviewBingoModel,Q=window.InterviewBingoSetup,R=window.InterviewBingoRoutes;
-  let student=null,printer=null,roster=null,teacher=null,destroyed=false,stale=false,changed=false,tab='teacher';
+  let student=null,printer=null,roster=null,teacher=null,delivery=null,destroyed=false,stale=false,changed=false,tab='teacher';
   root.innerHTML='<header class="bingo-prep-header"><button type="button" data-prep-back aria-label="Unitへ戻る">◀ 戻る</button><h1>Interview Bingoの準備</h1></header><p data-prep-error role="alert"></p>';
   const error=root.querySelector('[data-prep-error]');
   let route,preset,cards,map,fingerprint,store;
@@ -18,21 +18,23 @@
   }catch(e){error.textContent=e.message;root.querySelector('[data-prep-back]').onclick=()=>{location.href=route?R.unitHref(route.bookId,route.unit):'index.html#/createActivities';};return {destroy(){destroyed=true;}};}
   let draft=Q.initial({cardIds:preset.cardIds,recommendedMyCardWordCount:preset.recommendations.myCardWordCount,setName:preset.title}),applied=null,batch=null;
   const ui=document.createElement('div');ui.innerHTML=`<p class="bingo-prep-note">設定はこのページ内だけで保持します。再読み込みすると初期設定に戻ります。プリセット・名簿は変更しません。</p><nav class="bingo-prep-tabs" aria-label="準備画面"><button type="button" data-prep-tab="teacher">教師用</button><button type="button" data-prep-tab="student">児童（仮名で試用）</button><button type="button" data-prep-tab="print">配布用カード</button></nav><section data-prep-pane="teacher" class="bingo-prep-layout"><article class="bingo-prep-summary"><h2>${esc(preset.title)}</h2><p><strong>児童への説明</strong><br>${esc(preset.studentInstructions)}</p><p><strong>教師用メモ</strong><br>${esc(preset.teacherMemo)}</p><h3>活動で使う表現</h3><p class="bingo-prep-expressions">${esc(preset.expressions.template)}</p><div class="bingo-prep-slots">${preset.expressions.slots.map(s=>`<label>(${s.id}) の確認<select data-prep-slot="${s.id}">${cards.map(c=>`<option value="${esc(c.id)}">${esc(c.english)}</option>`).join('')}</select></label>`).join('')}</div><p data-prep-completed class="bingo-prep-expressions"></p></article><div class="bingo-prep-right"></div></section><section data-prep-pane="student" class="bingo-prep-student" hidden></section><section data-prep-pane="print" class="bingo-prep-print" hidden></section>`;root.append(ui);
-  const availability=document.createElement('p');availability.className='bingo-prep-note';availability.textContent='現在は教師用の準備・仮名での試用・配布用カードの印刷ができます。児童端末へのリンク配信はまだ未対応です。';root.insertBefore(availability,ui);
+  const availability=document.createElement('p');availability.className='bingo-prep-note';availability.textContent='教師用の準備から児童端末への配信リンクを作れます。児童（仮名で試用）と紙カードの印刷も利用できます。';root.insertBefore(availability,ui);
   const right=root.querySelector('.bingo-prep-right');
-  roster=window.InterviewBingoRosterPreview.create({onCountChange(){if(teacher)updateSettings();}});
+  roster=window.InterviewBingoRosterPreview.create({context:'delivery',onCountChange(){if(teacher)updateSettings();},onSelectionChange(){delivery?.invalidate();}});
   roster.element.addEventListener('change',()=>{changed=true;});
   student=window.InterviewBingoStudent.create();
   printer=window.InterviewBingoPrint.create({canOutput:()=>fresh()&&!!batch&&Q.printKey(batch.config)===Q.printKey(draft),onRegenerate:()=>generate(true)});
   teacher=window.InterviewBingoTeacher.create({tryLabel:'児童画面を仮名で試す',onChange:changeConfig,onTry:()=>show('student'),onGenerate:()=>generate(false),onUseRosterCount(){const n=roster.getSelectedCount();if(n!==null)changeConfig({...draft,participantCount:n});}});
-  root.querySelector('.bingo-prep-summary').append(teacher.candidatesElement);right.append(roster.element,teacher.element);
+  delivery=window.InterviewBingoDistribution.create({getContext:(freshRoster=false)=>{if(freshRoster)roster.refresh();return {preset,config:{size:draft.size,candidateIds:[...draft.candidateIds]},selection:roster.getSelection({fresh:freshRoster})};},isFresh:()=>fresh(),receiverUrl:new URL('interview-bingo-receive.html',location.href)});
+  delivery.element.tabIndex=-1;delivery.element.addEventListener('change',()=>{changed=true;});
+  root.querySelector('.bingo-prep-summary').append(teacher.candidatesElement);right.append(roster.element,teacher.element,delivery.element);
   root.querySelector('[data-prep-pane=student]').append(student.element);root.querySelector('[data-prep-pane=print]').append(printer.element);
   function fresh(){
    if(stale||destroyed)return false;
    try{const p=readPreset();if(!p||JSON.stringify(B.validatePreset(p,new Set(map.keys())))!==fingerprint)throw Error('changed');return true;}
    catch{stale=true;batch=null;printer.invalidate('プリセットが変更されました。準備画面を開き直してください。');student.collapse();student.element.inert=true;error.textContent='プリセットが変更・削除されたか、読み込めなくなりました。元のUnitから準備画面を開き直してください。';return false;}
   }
-  function changeConfig(next){if(Q.printKey(next)!==Q.printKey(draft)){batch=null;printer.invalidate('設定が変更されました。教師用画面から配布用カードを作り直してください。');}draft=next;changed=true;updateSettings();}
+  function changeConfig(next){if(Q.printKey(next)!==Q.printKey(draft)){batch=null;printer.invalidate('設定が変更されました。教師用画面から配布用カードを作り直してください。');}draft=next;changed=true;updateSettings();delivery.invalidate();}
   function updateSettings(extra=[]){
    const distribution=batch?Object.fromEntries(batch.config.candidateIds.map(id=>[id,0])):null;
    if(batch)for(const ids of batch.cards.slice(0,draft.participantCount))for(const id of ids)distribution[id]++;
@@ -56,10 +58,11 @@
   root.querySelectorAll('[data-prep-slot]').forEach(s=>s.onchange=expressions);expressions();
   root.querySelectorAll('[data-prep-tab]').forEach(b=>b.onclick=()=>show(b.dataset.prepTab));
   root.querySelector('[data-prep-back]').onclick=()=>{if((changed||batch||student.getProgress().filled)&&!confirm('このページの設定・配置を終了してUnitへ戻りますか？'))return;location.href=R.unitHref(route.bookId,route.unit);};
-  function refresh(){if(destroyed)return;fresh();roster.refresh();}
-  function storage(e){if(e.key===null||e.key==='dekiru-interview-bingo-presets-v1')fresh();if(e.key===null||e.key==='dekiru-class-rosters-v1')roster.refresh();}
+  function refresh(){if(destroyed)return;fresh();roster.refresh();delivery.invalidate();}
+  function storage(e){if(e.key===null||e.key==='dekiru-interview-bingo-presets-v1'){fresh();delivery.invalidate();}if(e.key===null||e.key==='dekiru-class-rosters-v1')roster.refresh();}
   window.addEventListener('focus',refresh);window.addEventListener('storage',storage);show('teacher');
-  return {destroy(){destroyed=true;window.removeEventListener('focus',refresh);window.removeEventListener('storage',storage);student.destroy();printer.destroy();teacher.destroy();}};
+  if(location.hash==='#bingoDistribution')requestAnimationFrame(()=>{delivery.element.scrollIntoView({block:'start'});delivery.element.focus({preventScroll:true});});
+  return {destroy(){destroyed=true;window.removeEventListener('focus',refresh);window.removeEventListener('storage',storage);student.destroy();printer.destroy();teacher.destroy();delivery.destroy();}};
  }
  window.InterviewBingoPrepare={mount};document.addEventListener('DOMContentLoaded',()=>{const root=document.getElementById('bingoPreparation');if(root)mount({root});});
 })();

@@ -2,7 +2,7 @@
 (()=>{
   'use strict';
   const settingsBase=new URL('../grade34/class-settings.html',document.currentScript.src);
-  function create({onCountChange=()=>{}}={}){
+  function create({context='preview',onCountChange=()=>{},onSelectionChange=()=>{}}={}){
     const element=document.createElement('section');element.className='bingo-roster-preview';
     element.setAttribute('aria-label','クラスと名前の表示設定');
     element.innerHTML=`<h2>クラスと名前の表示</h2>
@@ -17,11 +17,23 @@
       <p data-roster-count></p><p data-roster-warning aria-live="polite"></p>
       <div class="bingo-roster-names" aria-label="名簿の表示確認"></div>
       <p data-roster-status role="note" aria-live="polite"></p>
-      <small>名簿はこのプレビューでの確認用です。BINGOプリセットには保存しません。児童への配信は未実装です。</small>`;
+      <small>${context==='delivery'?'選んだ表示名だけを配信リンクに含めます。名簿の元データと教師用メモは含めません。':'名簿はこのプレビューでの確認用です。BINGOプリセットには保存しません。配信リンクはUnitから開く準備画面で作成します。'}</small>`;
     const select=element.querySelector('#bingoRosterSelect'),script=element.querySelector('[data-roster-script]'),scope=element.querySelector('[data-roster-scope]');
     const rows=element.querySelector('.bingo-roster-names'),count=element.querySelector('[data-roster-count]'),warning=element.querySelector('[data-roster-warning]'),status=element.querySelector('[data-roster-status]'),settings=element.querySelector('[data-roster-settings]');
-    let selected='',roster=null;
+    let selected='',roster=null,lastNotification='';
     const getSelectedCount=()=>roster?roster.students.length:null;
+    function getSelection({fresh=false}={}){
+      if(!selected)throw Error('配信するクラスを選んでください。');
+      const source=fresh?window.InterviewStore.create(localStorage).listRosters().find(r=>r.id===selected):roster;
+      if(!source)throw Error('選んだクラスが変更・削除されました。名簿を確認してください。');
+      const chosenScript=script.value,chosenScope=scope.value;
+      const delivery=window.ClassRoster.toDeliveryRoster(source,{script:chosenScript,scope:chosenScope});
+      return {rosterId:selected,script:chosenScript,scope:chosenScope,roster:delivery,signature:JSON.stringify([selected,chosenScript,chosenScope,source])};
+    }
+    function notify(){
+      const signature=JSON.stringify([selected,script.value,scope.value,roster]);
+      if(signature!==lastNotification){lastNotification=signature;onSelectionChange();}
+    }
     function link(){const url=new URL(settingsBase);if(selected)url.searchParams.set('classId',selected);settings.href=url.href;}
     function configure(){
       const old=script.value,choices=roster?.version===1?[['legacy','登録済みの氏名（旧形式）']]:[['kanji','漢字'],['hiragana','ひらがな'],['english','英語']];
@@ -54,11 +66,11 @@
         roster=null;selected='';select.replaceChildren(new Option('名簿を読み込めません',''));select.disabled=true;
         rows.replaceChildren();count.textContent='';warning.textContent='';configure();link();status.textContent=e.message;
       }
-      onCountChange(getSelectedCount());
+      onCountChange(getSelectedCount());notify();
     }
     select.onchange=()=>{selected=select.value;refresh();};
-    script.onchange=render;scope.onchange=render;
-    refresh();return {element,refresh,getSelectedCount};
+    script.onchange=()=>{render();notify();};scope.onchange=()=>{render();notify();};
+    refresh();return {element,refresh,getSelectedCount,getSelection};
   }
   window.InterviewBingoRosterPreview={create};
 })();
