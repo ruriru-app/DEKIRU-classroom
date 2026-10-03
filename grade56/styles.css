@@ -39,16 +39,15 @@ body {font-family:'DEKIRU Andika','Yu Gothic',sans-serif;}
 .nhe-sections>details{border-top:1px solid #e3ddd7}
 .nhe-sections>details>summary{padding:24px 4px;font-size:22px;font-weight:bold;cursor:pointer}
 .nhe-section-body{padding:0 4px 20px;color:#756c66}
-.town-entry-tile{display:block;color:inherit;text-decoration:none;min-width:0}
-.speech-entry-tile{min-width:0}
-.speech-entry-open{display:block;color:inherit;text-decoration:none}
-.speech-entry-open::after{content:"";position:absolute;inset:0;z-index:1;border-radius:inherit}
-.speech-entry-open:focus-visible{outline:none}.speech-entry-open:focus-visible::after{outline:3px solid #5189be;outline-offset:3px}
-.speech-entry-actions{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-top:16px}
-.speech-entry-actions small{font-size:12px}.speech-entry-actions button,.speech-entry-url{position:relative;z-index:2}
-.speech-entry-actions button{min-height:40px;font-size:14px;padding:8px 12px}
-.speech-entry-tile .speech-entry-status{margin-top:8px;font-size:13px}
-.speech-entry-url{width:100%;box-sizing:border-box;margin-top:8px;padding:8px;font:inherit;font-size:13px}
+.speech-entry-tile,.town-entry-tile{min-width:0}
+.speech-entry-open,.town-entry-open{display:block;color:inherit;text-decoration:none}
+.speech-entry-open::after,.town-entry-open::after{content:"";position:absolute;inset:0;z-index:1;border-radius:inherit}
+.speech-entry-open:focus-visible,.town-entry-open:focus-visible{outline:none}.speech-entry-open:focus-visible::after,.town-entry-open:focus-visible::after{outline:3px solid #5189be;outline-offset:-3px}
+.speech-entry-actions,.town-entry-actions{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-top:16px}
+.speech-entry-actions small,.town-entry-actions small{font-size:12px}.speech-entry-actions button,.speech-entry-url,.town-entry-actions button,.town-entry-url{position:relative;z-index:2}
+.speech-entry-actions button,.town-entry-actions button{min-height:40px;font-size:14px;padding:8px 12px}
+.speech-entry-tile .speech-entry-status,.town-entry-tile .town-entry-status{margin-top:8px;font-size:13px}
+.speech-entry-url,.town-entry-url{width:100%;box-sizing:border-box;margin-top:8px;padding:8px;font:inherit;font-size:13px}
 @media(max-width:720px){.nhe-workspace{grid-template-columns:minmax(0,1fr);gap:16px}.nhe-sidebar{max-height:420px}.nhe-sidebar,.nhe-content{padding:16px}.nhe-workspace .page-heading h1{font-size:22px}}
 .top-grid {grid-template-columns:repeat(2,minmax(0,1fr));}
 .unit-grid {grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(3,auto);grid-auto-flow:column;}

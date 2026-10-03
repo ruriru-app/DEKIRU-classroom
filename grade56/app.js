@@ -11,7 +11,7 @@
   function activityTiles(key,unit) {
     const world=key==='nh6'&&unit===5?'<a class="feature-tile" href="../games/world-map.html?book=nh6&amp;unit=5"><strong>Map of the World</strong><p>国の場所・英語名・日本への輸入品を調べる</p></a>':'';
     const restaurant=key==='nh5'&&unit===6?'<a class="feature-tile" href="../games/ruriru-restaurant.html"><strong>RuRiRu RESTAURANT<br>1,000円チャレンジ</strong><p>メニューと値段を決めて、注文の合計1,000円を目指そう</p></a>':'';
-    const town=key==='nh5'&&unit===5?'<a class="feature-tile town-entry-tile" href="../games/ruriru-town.html"><strong>RuRiRu Town<br>道案内</strong><p>スタート地点を選び、まっすぐ・左・右の指示で町を歩こう</p></a>':'';
+    const town=key==='nh5'&&unit===5?'<div class="feature-tile town-entry-tile"><a class="town-entry-open" data-town-open href="../games/ruriru-town.html" target="_blank" rel="noopener noreferrer"><strong>RuRiRu Town<br>道案内</strong><p>スタート地点を選び、まっすぐ・左・右の指示で町を歩こう</p></a><div class="town-entry-actions"><small>別ウインドウで開く ↗</small><button type="button" class="secondary-button" data-town-copy="https://ruriru-app.github.io/DEKIRU-classroom/games/ruriru-town.html">児童用URLをコピー</button></div><p class="town-entry-status" role="status" hidden></p><input class="town-entry-url" aria-label="配信用URL" readonly hidden></div>':'';
     return world+restaurant+town+(window.InterviewLinks?.tiles(key,unit)||'')+(window.InterviewBingoLinks?.tiles(key,unit)||'');
   }
   function renderUnit(key,book,unit) {
@@ -47,14 +47,14 @@
     const publicUrl=new URL(path,'https://ruriru-app.github.io/DEKIRU-classroom/grade56/').href;
     if(body)body.innerHTML='<div class="feature-grid"><div class="feature-tile speech-entry-tile"><a class="speech-entry-open" data-speech-open href="'+escape(path)+'" target="_blank" rel="noopener noreferrer"><strong>BUILD MY SPEECH</strong><p>カードで文を作り、まとめてスピーチを練習しよう</p></a><div class="speech-entry-actions"><small>別ウインドウで開く ↗</small><button type="button" class="secondary-button" data-speech-copy="'+escape(publicUrl)+'">URLをコピー</button></div><p class="speech-entry-status" role="status" hidden></p><input class="speech-entry-url" aria-label="配信用URL" readonly hidden></div></div>';
   }
-  async function copySpeechUrl(button){
-    const tile=button.closest('.speech-entry-tile'),status=tile.querySelector('.speech-entry-status'),field=tile.querySelector('.speech-entry-url'),url=button.dataset.speechCopy;
+  async function copyActivityUrl(button){
+    const tile=button.closest('.speech-entry-tile,.town-entry-tile'),status=tile.querySelector('[role="status"]'),field=tile.querySelector('input[readonly]'),url=button.dataset.speechCopy||button.dataset.townCopy;
     button.disabled=true;field.hidden=true;status.hidden=false;status.textContent='コピーしています…';
     try{await navigator.clipboard.writeText(url);status.textContent='URLをコピーしました';}
     catch{field.value=url;field.hidden=false;field.focus();field.select();status.textContent='このURLを選択しました。手動でコピーしてください。';}
     finally{button.disabled=false;}
   }
-  function openSpeechWindow(event,link){
+  function openActivityWindow(event,link){
     // Preserve native modified-click behavior and use target=_blank as a fallback.
     if(event.defaultPrevented||event.button!==0||event.ctrlKey||event.metaKey||event.shiftKey||event.altKey)return;
     let popup;try{popup=window.open('about:blank','_blank','popup,width=1280,height=800');}catch{return;}
@@ -105,10 +105,10 @@
     window.scrollTo(0,0);
   }
   app.addEventListener('click',event=>{
-    const copy=event.target.closest('[data-speech-copy]');
-    if(copy){copySpeechUrl(copy);return;}
-    const speech=event.target.closest('[data-speech-open]');
-    if(speech){openSpeechWindow(event,speech);return;}
+    const copy=event.target.closest('[data-speech-copy],[data-town-copy]');
+    if(copy){copyActivityUrl(copy);return;}
+    const activity=event.target.closest('[data-speech-open],[data-town-open]');
+    if(activity){openActivityWindow(event,activity);return;}
     const word=event.target.closest('[data-nhe-word]');
     if(word&&vocabulary){const id=word.dataset.nheWord;vocabulary.selected.has(id)?vocabulary.selected.delete(id):vocabulary.selected.add(id);updateVocabulary();return;}
     const target=event.target.closest('[data-route]');
