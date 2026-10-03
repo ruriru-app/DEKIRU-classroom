@@ -42,7 +42,7 @@
     if(!window.SpeechPresets?.list().some(p=>p.book===book&&p.unit===unit))return;
     const section=[...app.querySelectorAll('.nhe-sections details')].find(el=>el.querySelector('summary')?.textContent==='Make Sentences');
     const body=section?.querySelector('.nhe-section-body');
-    if(body)body.innerHTML='<a class="feature-tile" href="build-my-speech.html?book='+encodeURIComponent(book)+'&amp;unit='+unit+'"><strong>BUILD MY SPEECH</strong><p>カードで文を作り、まとめてスピーチを練習しよう</p></a>';
+    if(body)body.innerHTML='<div class="feature-grid"><a class="feature-tile speech-entry-tile" href="build-my-speech.html?book='+encodeURIComponent(book)+'&amp;unit='+unit+'"><strong>BUILD MY SPEECH</strong><p>カードで文を作り、まとめてスピーチを練習しよう</p></a></div>';
   }
   function updateVocabulary(save=true) {
     if(!vocabulary)return;

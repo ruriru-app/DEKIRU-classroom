@@ -39,6 +39,7 @@ body {font-family:'DEKIRU Andika','Yu Gothic',sans-serif;}
 .nhe-sections>details{border-top:1px solid #e3ddd7}
 .nhe-sections>details>summary{padding:24px 4px;font-size:22px;font-weight:bold;cursor:pointer}
 .nhe-section-body{padding:0 4px 20px;color:#756c66}
+.nhe-section-body a.speech-entry-tile{color:inherit;text-decoration:none}
 @media(max-width:720px){.nhe-workspace{grid-template-columns:minmax(0,1fr);gap:16px}.nhe-sidebar{max-height:420px}.nhe-sidebar,.nhe-content{padding:16px}.nhe-workspace .page-heading h1{font-size:22px}}
 .top-grid {grid-template-columns:repeat(2,minmax(0,1fr));}
 .unit-grid {grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(3,auto);grid-auto-flow:column;}
