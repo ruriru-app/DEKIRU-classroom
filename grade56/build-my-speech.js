@@ -28,9 +28,14 @@ window.SpeechEditor=(()=>{
    cards=window.SentenceCards.create({root,resolveImage:t=>t.imageUrl||catalog.card(t.cardId)?.imageUrl||'',iconUrl:'../grade34/assets/ui/originals/読み上げボタン.svg',audio:{speak:(text,element)=>audio.speak(text,element.isConnected?element:stage.querySelector('[data-speech-slot="'+CSS.escape(state.ui.slotId)+'"]')),sentence:(text,parts,element)=>audio.sentence(text,parts,element,state.ui.clearSpeech)},contractions:preset.contractions,onSelect:id=>dispatch({type:'ui',patch:{slotId:id}}),onLayout:fit});
    stage.innerHTML='<div class="speech-sentences">'+window.SpeechModel.stepSentences(preset,state,step.id).map(s=>cards.row(s.tokens,s.punctuation)).join('')+'</div>';
    stage.querySelectorAll('[data-talk-selection-key]').forEach(b=>{b.dataset.speechSlot=b.dataset.talkSelectionKey;b.setAttribute('aria-pressed',String(b.dataset.speechSlot===state.ui.slotId));b.setAttribute('aria-label',b.textContent.trim()+' を入れ替える');});
+   stage.querySelectorAll('.talk-card').forEach(b=>{if([...(b.querySelector('.talk-card-word')?.textContent||'')].length>60)b.dataset.longWord='true';});
    cards.bind(stage);inputs.render(slots.some(s=>s.id===state.ui.slotId)?state.ui.slotId:slots[0]?.id||'');requestAnimationFrame(fit);
   }
-  function fit(){if(!disposed)cards?.fit(stage,state.ui.zoomPercent);}
+  function fit(){
+   if(disposed||!cards)return;const scale=cards.fit(stage,state.ui.zoomPercent);
+   // Auto-fit never makes long words microscopic; overflow stays inside the stage.
+   if(state.ui.zoomPercent===null){const sizes=[...stage.querySelectorAll('.talk-card-word')].map(el=>parseFloat(getComputedStyle(el).fontSize));const minimum=Math.min(...sizes);if(minimum&&minimum*scale<14)stage.firstElementChild.style.zoom=String(Math.max(scale,14/minimum));}
+  }
   function click(e){const b=e.target.closest('button');if(!b||!root.contains(b))return;
    if(b.dataset.speechStep)dispatch({type:'ui',patch:{stepId:b.dataset.speechStep}});
    else if(b.dataset.speechVariant)dispatch({type:'variant',stepId:state.ui.stepId,variantId:b.dataset.speechVariant});

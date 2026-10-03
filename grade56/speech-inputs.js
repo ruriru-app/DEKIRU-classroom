@@ -12,7 +12,10 @@ window.SpeechInputs=(()=>{
   }
   function list(){
    const s=slot(),state=getState(),items=choices();
-   if(s.inputType==='list')return '<label>候補のリスト<select data-choice-list aria-label="候補のリスト">'+items.map(c=>'<option value="'+esc(c.id)+'"'+(state.slotValues[s.id]?.id===c.id?' selected':'')+'>'+esc(c.label)+'</option>').join('')+'</select></label>';
+   if(s.inputType==='list'){
+    const selected=state.slotValues[s.id],missing=!items.some(c=>c.id===selected?.id);
+    return '<label>候補のリスト<select data-choice-list aria-label="候補のリスト">'+(missing?'<option value="" disabled selected>作文中：'+esc(selected?.insertText||'')+'</option>':'')+items.map(c=>'<option value="'+esc(c.id)+'" data-choice-kind="'+c.kind+'"'+(selected?.id===c.id?' selected':'')+'>'+esc(c.label)+'</option>').join('')+'</select></label><div class="speech-list-words">'+items.filter(c=>c.kind==='custom').map(c=>'<span>'+esc(c.label)+' <button type="button" data-delete-word="'+esc(c.id)+'" aria-label="この追加語を削除">削除</button></span>').join('')+'</div>';
+   }
    return '<div class="speech-candidates">'+(items.length?items.map(c=>'<div class="speech-candidate"><button type="button" data-speech-choice="'+esc(c.id)+'" data-choice-kind="'+(c.kind||'choice')+'" aria-pressed="'+(state.slotValues[s.id]?.id===c.id)+'">'+(c.imageUrl?'<img src="'+esc(c.imageUrl)+'" alt="">':'')+'<span>'+esc(c.label)+'</span></button>'+(c.kind==='custom'?'<button type="button" data-delete-word="'+esc(c.id)+'" aria-label="この追加語を削除">削除</button>':'')+'</div>').join(''):'<p>'+ (s.inputType==='country-search'?'見つかりません。別の国名で検索してください。':'まだ候補がありません。「＋ ほかの言葉」から追加できます。')+'</p>')+'</div>';
   }
   function render(id){current=id;const s=slot(),state=getState();root.hidden=!s;if(!s){root.replaceChildren();return;}
@@ -30,7 +33,7 @@ window.SpeechInputs=(()=>{
   function submit(e){if(!e.target.matches('[data-word-form]'))return;e.preventDefault();if(composing)return;const result=dispatch({type:'add-word',slotId:current,id:'word-'+crypto.randomUUID(),text:root.querySelector('[data-word-input]').value});if(!result.ok)root.querySelector('[data-input-message]').textContent=result.error;}
   function compositionStart(){composing=true;}function compositionEnd(){composing=false;}
   function keydown(e){if(e.key==='Enter'&&(composing||e.isComposing||e.keyCode===229))e.preventDefault();}
-  function change(e){if(e.target.matches('[data-choice-list]'))dispatch({type:'select',slotId:current,selection:{kind:'choice',id:e.target.value}});}
+  function change(e){if(e.target.matches('[data-choice-list]'))dispatch({type:'select',slotId:current,selection:{kind:e.target.selectedOptions[0]?.dataset.choiceKind||'choice',id:e.target.value}});}
   const events={click,input,change,submit,compositionstart:compositionStart,compositionend:compositionEnd,keydown};for(const [name,fn]of Object.entries(events))root.addEventListener(name,fn);
   return {render,dispose(){for(const [name,fn]of Object.entries(events))root.removeEventListener(name,fn);}};
  }

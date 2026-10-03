@@ -29,6 +29,7 @@
     document.title='Unit '+unit+' — '+book.units[unit-1]+' | '+book.title;
     const tiles=activityTiles(key,unit);
     app.innerHTML=`<div class="nhe-workspace"><aside class="nhe-sidebar">${heading(book.units[unit-1],book.title+' Unit '+unit,'#/book/'+key)}<h2>使用する単語を選ぶ <small data-nhe-count></small></h2>${groups.map(g=>`<details class="word-group"><summary><span class="group-check"><input type="checkbox" aria-label="${g.label}をまとめて選択" data-nhe-group="${g.id}" ${g.cards.length?'':'disabled'}><span data-nhe-group-label>${g.label}</span><span>（${g.cards.length}）</span></span></summary><div class="word-group-items">${g.cards.map(c=>`<button class="word-chip" data-nhe-word="${escape(c.id)}" aria-pressed="false">${escape(c.english)}</button>`).join('')||'<p>追加の単語はありません。</p>'}</div></details>`).join('')}<p class="nhe-save-status" role="status">${storageError?'保存状態を読み込めませんでした。':''}</p></aside><section class="nhe-content">${heading(book.units[unit-1],book.title+' Unit '+unit,'#/book/'+key)}<div class="nhe-sections">${['Words and Phrases','Small Talk','Make Sentences','Activities'].map(name=>`<details><summary>${name}</summary><div class="nhe-section-body">${name==='Activities'&&tiles?'<div class="feature-grid">'+tiles+'</div>':'<p>準備中です。教材・活動はこれから追加します。</p>'}</div></details>`).join('')}</div></section></div>`;
+    renderUnitMakeSentences(key,unit);
     try{if(sessionStorage.getItem('dekiru:nhe-return-activities')===key+':'+unit){app.querySelector('.nhe-sections details:last-child').open=true;sessionStorage.removeItem('dekiru:nhe-return-activities');}}catch{}
     updateVocabulary(false);
     window.NheSavedSets.mount(app.querySelector('.nhe-sidebar'),{
@@ -36,6 +37,12 @@
       apply:ids=>{vocabulary.selected=new Set(ids.filter(id=>available.has(id)));updateVocabulary();}
     });
     pronunciation=window.NhePractice.mount(app,()=>vocabulary.groups.flatMap(g=>g.cards).filter(c=>vocabulary.selected.has(c.id)));
+  }
+  function renderUnitMakeSentences(book,unit){
+    if(!window.SpeechPresets?.list().some(p=>p.book===book&&p.unit===unit))return;
+    const section=[...app.querySelectorAll('.nhe-sections details')].find(el=>el.querySelector('summary')?.textContent==='Make Sentences');
+    const body=section?.querySelector('.nhe-section-body');
+    if(body)body.innerHTML='<a class="feature-tile" href="build-my-speech.html?book='+encodeURIComponent(book)+'&amp;unit='+unit+'"><strong>BUILD MY SPEECH</strong><p>カードで文を作り、まとめてスピーチを練習しよう</p></a>';
   }
   function updateVocabulary(save=true) {
     if(!vocabulary)return;
