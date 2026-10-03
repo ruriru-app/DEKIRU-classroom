@@ -10,11 +10,13 @@
    let raw,db;
    try{db=access();raw=db.getItem(k);}catch(e){blocked.add(k);return {state:fresh,status:'blocked',message:'保存領域を利用できません。この画面では続けられます。'};}
    if(raw===null){ready.add(k);return {state:fresh,status:'new',message:'この端末に自動保存します。'};}
-   try{const restored=g.SpeechModel.reconcile(preset,JSON.parse(raw));ready.add(k);return {state:restored.state,status:'saved',message:restored.warnings.length?'保存した文を復元しました。一部の設定を現在の教材に合わせました。':'保存した文を復元しました。'};}
-   catch(e){
-    try{let backup=k+':backup:'+now(),n=0;while(db.getItem(backup)!==null)backup=k+':backup:'+now()+':'+(++n);db.setItem(backup,raw);ready.add(k);return {state:fresh,status:'recovered',message:'読み込めない保存内容を退避しました。新しい文を作れます。'};}
-    catch(e){blocked.add(k);return {state:fresh,status:'blocked',message:'以前の保存内容を安全に退避できません。上書きせず、この画面内だけで編集します。'};}
-   }
+   let restored;
+   try{restored=g.SpeechModel.reconcile(preset,JSON.parse(raw));}catch(e){/* Preserve unreadable data before allowing a new save. */}
+   if(restored&&!restored.warnings.length){ready.add(k);return {state:restored.state,status:'saved',message:'保存した文を復元しました。'};}
+   // A successful parse may still discard old selections. Back up both recovery paths.
+   const recoveredState=restored?.state||fresh;
+   try{let backup=k+':backup:'+now(),n=0;while(db.getItem(backup)!==null)backup=k+':backup:'+now()+':'+(++n);db.setItem(backup,raw);ready.add(k);return {state:recoveredState,status:'recovered',message:restored?'元の保存内容を退避し、一部の設定を現在の教材に合わせて復元しました。':'読み込めない保存内容を退避しました。新しい文を作れます。'};}
+   catch(e){blocked.add(k);return {state:recoveredState,status:'blocked',message:'以前の保存内容を安全に退避できません。上書きせず、この画面内だけで編集します。'};}
   }
   function save(preset,state){
    const k=key(preset.book,preset.unit);
