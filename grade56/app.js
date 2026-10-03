@@ -42,7 +42,23 @@
     if(!window.SpeechPresets?.list().some(p=>p.book===book&&p.unit===unit))return;
     const section=[...app.querySelectorAll('.nhe-sections details')].find(el=>el.querySelector('summary')?.textContent==='Make Sentences');
     const body=section?.querySelector('.nhe-section-body');
-    if(body)body.innerHTML='<div class="feature-grid"><a class="feature-tile speech-entry-tile" href="build-my-speech.html?book='+encodeURIComponent(book)+'&amp;unit='+unit+'"><strong>BUILD MY SPEECH</strong><p>カードで文を作り、まとめてスピーチを練習しよう</p></a></div>';
+    const path='build-my-speech.html?book='+encodeURIComponent(book)+'&unit='+unit;
+    const publicUrl=new URL(path,'https://ruriru-app.github.io/DEKIRU-classroom/grade56/').href;
+    if(body)body.innerHTML='<div class="feature-grid"><div class="feature-tile speech-entry-tile"><a class="speech-entry-open" data-speech-open href="'+escape(path)+'" target="_blank" rel="noopener noreferrer"><strong>BUILD MY SPEECH</strong><p>カードで文を作り、まとめてスピーチを練習しよう</p></a><div class="speech-entry-actions"><small>別ウインドウで開く ↗</small><button type="button" class="secondary-button" data-speech-copy="'+escape(publicUrl)+'">URLをコピー</button></div><p class="speech-entry-status" role="status" hidden></p><input class="speech-entry-url" aria-label="配信用URL" readonly hidden></div></div>';
+  }
+  async function copySpeechUrl(button){
+    const tile=button.closest('.speech-entry-tile'),status=tile.querySelector('.speech-entry-status'),field=tile.querySelector('.speech-entry-url'),url=button.dataset.speechCopy;
+    button.disabled=true;field.hidden=true;status.hidden=false;status.textContent='コピーしています…';
+    try{await navigator.clipboard.writeText(url);status.textContent='URLをコピーしました';}
+    catch{field.value=url;field.hidden=false;field.focus();field.select();status.textContent='このURLを選択しました。手動でコピーしてください。';}
+    finally{button.disabled=false;}
+  }
+  function openSpeechWindow(event,link){
+    // Preserve native modified-click behavior and use target=_blank as a fallback.
+    if(event.defaultPrevented||event.button!==0||event.ctrlKey||event.metaKey||event.shiftKey||event.altKey)return;
+    let popup;try{popup=window.open('about:blank','_blank','popup,width=1280,height=800');}catch{return;}
+    if(!popup)return;
+    popup.opener=null;popup.location.replace(link.href);event.preventDefault();
   }
   function updateVocabulary(save=true) {
     if(!vocabulary)return;
@@ -88,6 +104,10 @@
     window.scrollTo(0,0);
   }
   app.addEventListener('click',event=>{
+    const copy=event.target.closest('[data-speech-copy]');
+    if(copy){copySpeechUrl(copy);return;}
+    const speech=event.target.closest('[data-speech-open]');
+    if(speech){openSpeechWindow(event,speech);return;}
     const word=event.target.closest('[data-nhe-word]');
     if(word&&vocabulary){const id=word.dataset.nheWord;vocabulary.selected.has(id)?vocabulary.selected.delete(id):vocabulary.selected.add(id);updateVocabulary();return;}
     const target=event.target.closest('[data-route]');
