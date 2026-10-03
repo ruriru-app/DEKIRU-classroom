@@ -1,0 +1,524 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>RuRiRu RESTAURANT — 1,000円チャレンジ | DEKIRU Games</title>
+<style>
+:root{--blue:#8BB7E8;--green:#A8D08D;--orange:#FFB463;--pink:#F48BA8;--purple:#B59AD9;--cream:#FFF9EF;--ink:#4d4a46;--line:#eadfce}
+*{box-sizing:border-box} body{margin:0;background:var(--cream);color:var(--ink);font-family:Andika,system-ui,sans-serif;overflow:hidden}
+.app{height:100dvh;display:grid;grid-template-rows:auto 1fr auto;gap:10px;padding:12px 16px}
+header{display:flex;align-items:center;justify-content:space-between}
+h1{font-size:clamp(22px,3vw,34px);margin:0;letter-spacing:.03em}.progress{font-weight:700;background:white;border:2px solid var(--line);border-radius:999px;padding:7px 14px}
+.menu-area{min-height:0;display:grid;grid-template-rows:repeat(3,1fr);gap:8px}
+.row{background:#fff;border:2px solid var(--line);border-radius:18px;padding:7px 10px;display:grid;grid-template-columns:145px 1fr;gap:10px;min-height:0}
+.rowhead{display:flex;flex-direction:column;justify-content:center;gap:4px;font-weight:700}.rowhead small{font-size:16px}
+.slots{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;min-height:0}
+.slot{border:2px dashed #d8d0c5;border-radius:15px;min-width:0;min-height:0;display:flex;align-items:center;justify-content:center;background:#fffaf3;overflow:hidden;position:relative}
+.slot img{width:100%;height:100%;object-fit:contain;border-radius:13px;display:block}.slot.filled{border-style:solid;border-color:var(--orange);cursor:pointer}
+.picker{background:white;border:2px solid var(--line);border-radius:20px;padding:9px 10px 10px}
+.picker-top{display:flex;gap:8px;align-items:center;margin-bottom:8px}.tabs{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none}.tabs::-webkit-scrollbar{display:none}
+.tab{border:0;border-radius:999px;padding:7px 14px;font:700 15px Andika,system-ui;white-space:nowrap;background:#eee8df;color:var(--ink)}.tab.active{background:var(--blue);color:white}
+.rail{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x proximity;padding:2px 2px 7px;touch-action:pan-x}.rail::-webkit-scrollbar{height:7px}.rail::-webkit-scrollbar-thumb{background:#d7cbbd;border-radius:10px}
+.card{flex:0 0 clamp(108px,12vw,148px);aspect-ratio:1/1;border:0;padding:0;background:white;border-radius:18px;overflow:hidden;box-shadow:0 2px 8px #00000012;scroll-snap-align:start;position:relative;cursor:pointer}
+.card img{width:100%;height:100%;object-fit:cover;border-radius:18px;display:block}.card.selected{opacity:.38}.card.selected:after{content:"✓";position:absolute;inset:0;display:grid;place-items:center;font-size:54px;font-weight:700;color:#438c75;text-shadow:0 1px 4px white}
+.footer{display:flex;justify-content:flex-end;align-items:center}.next{border:0;border-radius:16px;padding:12px 24px;font:700 18px Andika,system-ui;background:#ddd6cb;color:#999;pointer-events:none}.next.ready{background:var(--orange);color:#503d2c;pointer-events:auto;box-shadow:0 3px 0 #d99448}
+.main .rowhead{color:#cf7c35}.drink .rowhead{color:#5b92c9}.side .rowhead{color:#7aa75f}
+@media(max-width:900px){.app{padding:8px}.row{grid-template-columns:105px 1fr;padding:5px 7px}.slots{gap:5px}.rowhead{font-size:14px}.rowhead small{font-size:13px}.picker{padding:7px}.card{flex-basis:105px}}
+
+.screen{display:none}.screen.active{display:block}
+#menuScreen{display:none}#menuScreen.active{display:grid}
+#loadingScreen.active{display:flex}
+#loadingScreen{position:fixed;inset:0;z-index:50;background:var(--cream);align-items:center;justify-content:center;flex-direction:column;padding:5vw}
+.loading-logo{width:min(760px,86vw);max-height:56vh;object-fit:contain;border-radius:24px}
+.loading-text{font-size:clamp(20px,3vw,32px);font-weight:700;margin-top:18px}
+.loading-count{font-size:16px;margin-top:4px}
+.loading-bar{width:min(520px,72vw);height:12px;border-radius:999px;background:#eadfce;overflow:hidden;margin-top:10px}
+.loading-bar>div{height:100%;width:0;background:var(--orange);transition:width .15s}
+#priceScreen.active{display:block}#priceScreen{height:100dvh;padding:12px 16px;background:var(--cream);overflow:auto}
+.price-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.price-header h1{margin:0}
+.price-layout{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:14px}
+.price-left{display:grid;gap:9px}
+.price-cat{background:white;border:2px solid var(--line);border-radius:18px;padding:8px 10px}
+.price-cat-title{font-weight:700;margin-bottom:6px}
+.price-cards{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.price-item{min-width:0}
+.price-item img{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:14px;display:block;transition:filter .2s,opacity .2s}
+.price-item.awaiting img{filter:grayscale(1);opacity:.55}
+.price-item.priced img{filter:none;opacity:1}
+.range-slot{height:50px;border:2px dashed #d8d0c5;border-radius:12px;margin-top:5px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;touch-action:none}
+.range-slot.filled{border-style:solid}
+.range-panel{background:white;border:2px solid var(--line);border-radius:18px;padding:12px;position:sticky;top:12px;height:max-content}
+.range-panel h2{font-size:20px;margin:0 0 8px}
+.range-help{font-size:13px;margin:0 0 10px}
+.range-btn{width:100%;border:0;border-radius:14px;padding:12px 8px;margin:6px 0;font:700 16px Andika,system-ui;color:#403b36;touch-action:none;cursor:pointer;box-shadow:0 2px 0 #00000016}
+.range-btn:disabled{opacity:.32;cursor:default}.range-btn.active-range{outline:4px solid #5d5147;outline-offset:2px;transform:translateY(-1px)}
+.range-btn small{display:block;font-size:13px}
+.r1{background:#F7E7C6}.r2{background:#A8D08D}.r3{background:#8BB7E8}.r4{background:#B59AD9}.r5{background:#F48BA8}
+.price-actions{display:flex;justify-content:space-between;align-items:center;margin-top:12px;gap:10px}
+.backbtn,.rangesbtn,.openbtn{border:0;border-radius:15px;padding:11px 18px;font:700 17px Andika,system-ui}
+.backbtn{background:#eee8df;color:var(--ink)}.rangesbtn,.openbtn{background:#ddd6cb;color:#999;pointer-events:none}
+.rangesbtn.ready,.openbtn.ready{background:var(--orange);color:#503d2c;pointer-events:auto;box-shadow:0 3px 0 #d99448}
+.price-picker{margin-top:5px;border-radius:12px;background:#fff8ee;border:2px solid var(--orange);position:relative}
+.price-summary{padding:8px 6px;font-weight:700;text-align:center;cursor:pointer;font-size:13px}
+.price-options{display:none;position:absolute;z-index:20;left:50%;transform:translateX(-50%);top:100%;width:74px;max-height:210px;overflow-y:auto;background:white;border:2px solid var(--orange);border-radius:10px;box-shadow:0 5px 14px #0002;padding:4px}
+.price-picker.open .price-options{display:block}
+.price-option{display:block;width:100%;border:0;border-radius:7px;padding:6px 2px;background:white;font:700 12px Andika,system-ui;text-align:center}
+.price-option+ .price-option{margin-top:2px}
+.price-option.chosen{background:var(--orange)}
+@media(max-width:900px){
+ #priceScreen{padding:7px}.price-layout{grid-template-columns:minmax(0,1fr) 210px;gap:7px}
+ .price-cat{padding:5px}.price-cards{gap:4px}.range-slot{height:36px;font-size:11px}.range-panel{padding:7px}
+ .range-btn{font-size:12px;padding:8px 4px}.range-btn small{font-size:10px}
+ 
+}
+
+#restaurantScreen{height:100dvh;padding:8px 12px;background:var(--cream);overflow:hidden}
+#restaurantScreen.active{display:block}
+.rest-head{height:44px;display:flex;align-items:center;justify-content:space-between}
+.rest-head h1{margin:0;font-size:clamp(19px,2.5vw,29px)}
+.rest-layout{height:calc(100dvh - 52px);display:grid;grid-template-columns:minmax(0,1.55fr) minmax(290px,.7fr);gap:10px}
+.rest-menu{min-height:0;display:grid;grid-template-rows:repeat(3,1fr);gap:6px}
+.rest-cat{min-height:0;background:#fff;border:2px solid var(--line);border-radius:17px;padding:5px 7px;display:grid;grid-template-columns:110px 1fr;gap:6px}
+.rest-cat-title{display:flex;align-items:center;font-weight:700}
+.rest-cat.main .rest-cat-title{color:#cf7c35}.rest-cat.drink .rest-cat-title{color:#5b92c9}.rest-cat.side .rest-cat-title{color:#7aa75f}
+.rest-cards{min-height:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}
+.rest-card{position:relative;min-width:0;min-height:0;border:3px solid transparent;border-radius:14px;background:#fff;padding:0;overflow:hidden}
+.rest-card img{width:100%;height:100%;object-fit:contain;display:block;border-radius:11px}
+.rest-card.selected{border-color:var(--orange)}
+.rest-card.selected:after{content:"✓";position:absolute;right:4px;top:4px;width:27px;height:27px;border-radius:50%;display:grid;place-items:center;background:var(--orange);color:#fff;font-weight:700;font-size:19px}
+.rest-card.dim img{filter:grayscale(1);opacity:.22}
+.rest-card.source{border-color:var(--blue);box-shadow:0 0 0 3px #dbeaff}
+.rest-card.moved{visibility:hidden}
+.checkout-panel{min-height:0;background:#fff;border:2px solid var(--line);border-radius:18px;padding:8px;display:flex;flex-direction:column}
+.finish-order{width:100%;border:0;border-radius:14px;padding:9px;font:700 15px Andika,system-ui;background:var(--orange);color:#503d2c}
+.finish-order:disabled{background:#ddd6cb;color:#999}
+.checkout-title{text-align:center;font-weight:700;font-size:17px;margin:6px 0}
+.checkout-grid{min-height:0;flex:1;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(2,minmax(0,1fr));gap:5px}
+.checkout-slot{min-height:0;border:2px dashed #d8d0c5;border-radius:12px;background:#fffaf3;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.checkout-slot.target{border-color:var(--blue);background:#f4f9ff}
+.checkout-card{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;min-height:0}
+.checkout-card img{width:100%;min-height:0;flex:1;object-fit:contain}
+.checkout-price{font-weight:700;font-size:clamp(12px,1.5vw,18px);padding:1px 3px 3px}
+.total-area{border-top:2px solid var(--line);margin-top:6px;padding-top:6px}
+.total-btn,.new-order{width:100%;border:0;border-radius:13px;padding:8px;font:700 15px Andika,system-ui}
+.total-btn{background:#ddd6cb;color:#999;pointer-events:none}
+.total-btn.ready{background:var(--blue);color:#fff;pointer-events:auto}
+.total-result{text-align:center;min-height:50px;padding:3px}
+.total-amount{font-size:clamp(21px,2.7vw,32px);font-weight:700}
+.total-diff{font-size:clamp(13px,1.8vw,19px);font-weight:700}
+.new-order{display:none;background:var(--green);color:#405c35;margin-top:4px}.new-order.show{display:block}
+.perfect-overlay{display:none;position:fixed;inset:0;z-index:80;background:#fff9efee;align-items:center;justify-content:center;flex-direction:column}
+.perfect-overlay.show{display:flex}.perfect-overlay strong{font-size:clamp(45px,8vw,90px);color:#e88c4c}.perfect-overlay span{font-size:clamp(24px,4vw,42px);font-weight:700}
+@media(max-width:900px){
+ #restaurantScreen{padding:5px}.rest-layout{grid-template-columns:minmax(0,1.55fr) 245px;gap:5px}
+ .rest-cat{grid-template-columns:78px 1fr;padding:3px}.rest-cards{gap:2px}.checkout-panel{padding:5px}
+ .finish-order{font-size:11px;padding:6px}.checkout-title{font-size:12px;margin:3px}.checkout-grid{gap:2px}
+ .checkout-price{font-size:10px}.total-btn,.new-order{font-size:11px;padding:6px}
+}
+
+
+.confetti-piece{position:fixed;z-index:100;top:-24px;width:12px;height:20px;border-radius:2px;pointer-events:none;animation:confettiFall 4.6s linear forwards}
+@keyframes confettiFall{0%{transform:translate3d(0,-8vh,0) rotate(0)}100%{transform:translate3d(var(--drift),112vh,0) rotate(var(--spin))}}
+
+</style>
+<link rel="stylesheet" href="ruriru-restaurant-navigation.css?v=03b6800ce94c">
+</head>
+<body>
+<div id="loadingScreen" class="screen active">
+<img class="loading-logo" src="assets/ruriru-restaurant/image-071389d6be56bbe4.jpg" alt="RuRiRu Restaurant ¥1000 Challenge">
+<div class="loading-text">Now Loading...</div>
+<div class="loading-count" id="loadCount">0 / 30</div>
+<div class="loading-bar"><div id="loadBar"></div></div>
+</div>
+<div class="app" id="menuScreen">
+<header><h1>SET THE MENU</h1><div class="progress" id="total">0 / 15</div></header>
+<main class="menu-area">
+  <section class="row main"><div class="rowhead">MAIN <small id="count-main">0 / 5</small></div><div class="slots" id="slots-main"></div></section>
+  <section class="row drink"><div class="rowhead">DRINK <small id="count-drink">0 / 5</small></div><div class="slots" id="slots-drink"></div></section>
+  <section class="row side"><div class="rowhead">SIDE &amp; DESSERT <small id="count-side">0 / 5</small></div><div class="slots" id="slots-side"></div></section>
+</main>
+<section class="picker">
+ <div class="picker-top"><div class="tabs">
+   <button class="tab" data-filter="all">ALL</button><button class="tab active" data-filter="main">MAIN</button>
+   <button class="tab" data-filter="drink">DRINK</button><button class="tab" data-filter="side">SIDE &amp; DESSERT</button>
+ </div></div>
+ <div class="rail" id="rail"></div>
+</section>
+<div class="footer"><button class="next" id="next">SET THE PRICE →</button></div>
+</div>
+
+<section id="priceScreen" class="screen">
+  <div class="price-header"><h1>SET THE PRICE</h1><div class="progress" id="rangeProgress">0 / 15</div></div>
+  <div class="price-layout">
+    <div class="price-left" id="priceLeft"></div>
+    <aside class="range-panel">
+      <h2>PRICE RANGE</h2>
+      <p class="range-help">Choose a price range, then tap the item slots.</p>
+      <div id="rangeButtons"></div>
+      <div class="price-actions"><button class="rangesbtn" id="setRanges">SET THE RANGES →</button></div>
+    </aside>
+  </div>
+  <div class="price-actions">
+    <button class="backbtn" id="backMenu">← SET THE MENU</button>
+    <button class="openbtn" id="openRestaurant">OPEN THE RESTAURANT!</button>
+  </div>
+</section>
+
+
+<section id="restaurantScreen" class="screen">
+ <div class="rest-head">
+  <h1>RuRiRu RESTAURANT <small>¥1,000 Challenge</small></h1>
+  <div class="progress" id="orderCount">ORDER 0 / 8</div>
+ </div>
+ <div class="rest-layout">
+  <main class="rest-menu" id="restMenu"></main>
+  <aside class="checkout-panel">
+   <button class="finish-order" id="finishOrdering" disabled>FINISH ORDERING</button>
+   <div class="checkout-title">CHECKOUT</div>
+   <div class="checkout-grid" id="checkoutGrid"></div>
+   <div class="total-area">
+    <button class="total-btn" id="totalBtn">TOTAL</button>
+    <div class="total-result" id="totalResult"></div>
+    <button class="new-order" id="newOrder">NEW ORDER</button>
+   </div>
+  </aside>
+ </div>
+</section>
+<div class="perfect-overlay" id="perfectOverlay"><strong>PERFECT!</strong><span>Exactly ¥1,000!</span></div>
+
+<audio id="decisionSound" preload="auto" src="assets/ruriru-restaurant/audio-8c331b98b06b34e9.mp3"></audio>
+<audio id="itemPriceSound" preload="auto" src="assets/ruriru-restaurant/audio-75c5b3b4eec7e92e.mp3"></audio>
+<audio id="totalSound" preload="auto" src="assets/ruriru-restaurant/audio-901a208613a2de7a.mp3"></audio>
+<audio id="cheerSound" preload="auto" src="assets/ruriru-restaurant/audio-0e3b01c8ec275ec1.mp3"></audio>
+<script>
+const IMAGE_DATA = {"fried_chicken":"assets/ruriru-restaurant/image-f4f0ca499a633892.png","omelet_rice":"assets/ruriru-restaurant/image-3460fa64fe9f7ab4.png","milk":"assets/ruriru-restaurant/image-2c5da7a1062682c5.png","sandwich":"assets/ruriru-restaurant/image-365350259c43cb39.png","salad":"assets/ruriru-restaurant/image-36c14429718b3a36.png","cake":"assets/ruriru-restaurant/image-18ae656e2e3a1f85.png","curry_and_rice":"assets/ruriru-restaurant/image-d588ae69ddee9cae.png","tea":"assets/ruriru-restaurant/image-5e2ca69888c89c3e.png","vanilla_shake":"assets/ruriru-restaurant/image-efc5570dc9abc380.png","pancake":"assets/ruriru-restaurant/image-f6f8bebace0584b5.png","coffee":"assets/ruriru-restaurant/image-1cb6facf35f1cf9e.png","pudding":"assets/ruriru-restaurant/image-fe433dd4b7281d57.png","chicken_nuggets":"assets/ruriru-restaurant/image-b43d5bb9c1c74a75.png","pizza":"assets/ruriru-restaurant/image-391729e5f134bbc6.png","french_fries":"assets/ruriru-restaurant/image-f8bcec1f995de546.png","strawberry_shake":"assets/ruriru-restaurant/image-63ee2c3d16dcf309.png","spaghetti":"assets/ruriru-restaurant/image-e95c582a15a5bcde.png","corn_soup":"assets/ruriru-restaurant/image-dc2b62592b30b2a1.png","cola":"assets/ruriru-restaurant/image-e063d97a979aaa85.png","apple_juice":"assets/ruriru-restaurant/image-c837b47fac952de3.png","steak":"assets/ruriru-restaurant/image-710f968708c00d07.png","grilled_fish":"assets/ruriru-restaurant/image-252cf431b1e08c7e.png","hamburger_steak":"assets/ruriru-restaurant/image-52bc19ef3fe765bb.png","hamburger":"assets/ruriru-restaurant/image-62af3efe0c33c446.png","orange_juice":"assets/ruriru-restaurant/image-d2a5d1c2dd211ee6.png","ice_cream":"assets/ruriru-restaurant/image-25d02e3992e9ed60.png","apple_pie":"assets/ruriru-restaurant/image-0e5793e929b2ee03.png","grape_juice":"assets/ruriru-restaurant/image-75ee4ae84e27d6f4.png","chocolate_shake":"assets/ruriru-restaurant/image-97cf8b6af5989ae3.png","hot_dog":"assets/ruriru-restaurant/image-3aa3339c84d8c863.png"};
+const ITEMS = [{"id": "hamburger", "name": "hamburger", "cat": "main"}, {"id": "pizza", "name": "pizza", "cat": "main"}, {"id": "spaghetti", "name": "spaghetti", "cat": "main"}, {"id": "curry_and_rice", "name": "curry and rice", "cat": "main"}, {"id": "omelet_rice", "name": "omelet rice", "cat": "main"}, {"id": "hamburger_steak", "name": "hamburger steak", "cat": "main"}, {"id": "steak", "name": "steak", "cat": "main"}, {"id": "grilled_fish", "name": "grilled fish", "cat": "main"}, {"id": "hot_dog", "name": "hot dog", "cat": "main"}, {"id": "sandwich", "name": "sandwich", "cat": "main"}, {"id": "cola", "name": "cola", "cat": "drink"}, {"id": "orange_juice", "name": "orange juice", "cat": "drink"}, {"id": "apple_juice", "name": "apple juice", "cat": "drink"}, {"id": "grape_juice", "name": "grape juice", "cat": "drink"}, {"id": "strawberry_shake", "name": "strawberry shake", "cat": "drink"}, {"id": "vanilla_shake", "name": "vanilla shake", "cat": "drink"}, {"id": "chocolate_shake", "name": "chocolate shake", "cat": "drink"}, {"id": "milk", "name": "milk", "cat": "drink"}, {"id": "coffee", "name": "coffee", "cat": "drink"}, {"id": "tea", "name": "tea", "cat": "drink"}, {"id": "french_fries", "name": "french fries", "cat": "side"}, {"id": "fried_chicken", "name": "fried chicken", "cat": "side"}, {"id": "chicken_nuggets", "name": "chicken nuggets", "cat": "side"}, {"id": "salad", "name": "salad", "cat": "side"}, {"id": "corn_soup", "name": "corn soup", "cat": "side"}, {"id": "ice_cream", "name": "ice cream", "cat": "side"}, {"id": "pudding", "name": "pudding", "cat": "side"}, {"id": "cake", "name": "cake", "cat": "side"}, {"id": "apple_pie", "name": "apple pie", "cat": "side"}, {"id": "pancake", "name": "pancake", "cat": "side"}];
+const selected={main:[],drink:[],side:[]}; let filter='main';
+const rail=document.getElementById('rail');
+function slots(cat){
+ const el=document.getElementById('slots-'+cat); el.innerHTML='';
+ for(let i=0;i<5;i++){const s=document.createElement('div');s.className='slot';
+   const item=selected[cat][i];
+   if(item){s.classList.add('filled');s.title='Tap to remove';const im=document.createElement('img');im.src=IMAGE_DATA[item.id];im.alt=item.name;s.append(im);s.onclick=()=>remove(item.id);}
+   el.append(s);
+ }
+ document.getElementById('count-'+cat).textContent=selected[cat].length+' / 5'+(selected[cat].length===5?' ✓':'');
+}
+function renderRail(){
+ rail.innerHTML='';
+ ITEMS.filter(x=>filter==='all'||x.cat===filter).forEach(item=>{
+   const b=document.createElement('button');b.className='card'+(isSelected(item.id)?' selected':'');b.disabled=isSelected(item.id);
+   const im=document.createElement('img');im.src=IMAGE_DATA[item.id];im.alt=item.name;b.append(im);b.onclick=()=>add(item);rail.append(b);
+ });
+}
+function isSelected(id){return Object.values(selected).some(a=>a.some(x=>x.id===id))}
+function add(item){
+ if(selected[item.cat].length>=5)return;
+ selected[item.cat].push(item); update();
+ if(selected[item.cat].length===5){
+   const next={main:'drink',drink:'side',side:null}[item.cat];
+   if(next){filter=next;document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.filter===filter));renderRail();}
+ }
+}
+function remove(id){for(const c of ['main','drink','side']){const i=selected[c].findIndex(x=>x.id===id);if(i>=0)selected[c].splice(i,1)}update()}
+function update(){
+ ['main','drink','side'].forEach(slots);renderRail();
+ const n=selected.main.length+selected.drink.length+selected.side.length;
+ document.getElementById('total').textContent=n+' / 15';
+ document.getElementById('next').classList.toggle('ready',n===15);
+}
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{filter=t.dataset.filter;document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===t));renderRail()});
+document.getElementById('next').onclick=()=>alert('SET THE PRICE is ready for the next prototype.');
+update();
+
+const RANGES=[
+ {id:'r1',label:'¥10–90',min:10,max:90,limit:1},
+ {id:'r2',label:'¥100–290',min:100,max:290,limit:6},
+ {id:'r3',label:'¥300–490',min:300,max:490,limit:4},
+ {id:'r4',label:'¥500–690',min:500,max:690,limit:3},
+ {id:'r5',label:'¥700–890',min:700,max:890,limit:1}
+];
+let assignments={}, prices={}, rangesLocked=false, activeRange=null;
+
+function selectedItems(){return ['main','drink','side'].flatMap(c=>selected[c])}
+function showScreen(id){
+ document.getElementById('loadingScreen').classList.remove('active');
+ document.getElementById('menuScreen').classList.remove('active');
+ document.getElementById('priceScreen').classList.remove('active');
+ document.getElementById('restaurantScreen').classList.remove('active');
+ document.getElementById(id).classList.add('active');
+ window.scrollTo(0,0);
+}
+function buildPriceScreen(){
+ const left=document.getElementById('priceLeft');left.innerHTML='';
+ const names={main:'MAIN',drink:'DRINK',side:'SIDE & DESSERT'};
+ ['main','drink','side'].forEach(cat=>{
+  const box=document.createElement('section');box.className='price-cat';
+  box.innerHTML='<div class="price-cat-title">'+names[cat]+'</div>';
+  const cards=document.createElement('div');cards.className='price-cards';
+  selected[cat].forEach(item=>{
+   const wrap=document.createElement('div');wrap.className='price-item '+(rangesLocked?(prices[item.id]!=null?'priced':'awaiting'):'');wrap.dataset.itemwrap=item.id;
+   const im=document.createElement('img');im.src=IMAGE_DATA[item.id];im.alt=item.name;wrap.append(im);
+   const slot=document.createElement('div');slot.className='range-slot';slot.dataset.item=item.id;
+   setupSlot(slot,item);wrap.append(slot);cards.append(wrap);
+  });
+  box.append(cards);left.append(box);
+ });
+ renderRangeButtons();updateRangeState();
+}
+function usedCount(rid){return Object.values(assignments).filter(x=>x===rid).length}
+function renderRangeButtons(){
+ const el=document.getElementById('rangeButtons');el.innerHTML='';
+ RANGES.forEach(r=>{
+  const b=document.createElement('button');
+  b.className='range-btn '+r.id+(activeRange===r.id?' active-range':'');
+  b.dataset.range=r.id;
+  const left=r.limit-usedCount(r.id);
+  b.innerHTML=r.label+'<small>'+left+' LEFT / '+r.limit+'</small>';
+  b.disabled=rangesLocked||left<=0;
+  b.onclick=()=>{
+    if(b.disabled)return;
+    activeRange=r.id;
+    renderRangeButtons();
+  };
+  el.append(b);
+ });
+}
+function setupSlot(slot,item){
+ slot.onclick=()=>{
+   if(rangesLocked||!activeRange)return;
+   assignRange(item.id,activeRange);
+ };
+ renderSlot(slot,item);
+}
+function assignRange(itemId,rid){
+ if(rangesLocked||!rid)return;
+ const r=RANGES.find(x=>x.id===rid);if(!r)return;
+ const old=assignments[itemId];
+ if(old===rid)return;
+ if(usedCount(rid)>=r.limit)return;
+ assignments[itemId]=rid;
+ if(usedCount(rid)>=r.limit) activeRange=null;
+ document.querySelectorAll('.range-slot').forEach(s=>{
+   const item=selectedItems().find(x=>x.id===s.dataset.item);
+   if(item)renderSlot(s,item);
+ });
+ renderRangeButtons();updateRangeState();
+}
+function renderSlot(slot,item){
+ const rid=assignments[item.id];slot.className='range-slot'+(rid?' filled '+rid:'');
+ if(!rangesLocked){slot.textContent=rid?RANGES.find(x=>x.id===rid).label:'TAP';return}
+ const r=RANGES.find(x=>x.id===rid);
+ slot.innerHTML='';
+ const pick=document.createElement('div');pick.className='price-picker';
+ const sum=document.createElement('div');sum.className='price-summary';sum.textContent=prices[item.id]?'¥'+prices[item.id]:r.label+' ▼';
+ const opts=document.createElement('div');opts.className='price-options';
+ for(let v=r.min;v<=r.max;v+=10){
+   const b=document.createElement('button');
+   b.className='price-option'+(prices[item.id]===v?' chosen':'');
+   b.textContent=String(v);
+   b.onclick=e=>{
+     e.stopPropagation();
+     prices[item.id]=v;
+     document.querySelectorAll('.price-picker.open').forEach(x=>x.classList.remove('open'));
+     renderSlot(slot,item);
+     const wrap=document.querySelector('[data-itemwrap="'+item.id+'"]');
+     if(wrap){wrap.classList.remove('awaiting');wrap.classList.add('priced')}
+     updatePriceState();
+   };
+   opts.append(b)
+ }
+ sum.onclick=e=>{
+   e.stopPropagation();
+   const wasOpen=pick.classList.contains('open');
+   document.querySelectorAll('.price-picker.open').forEach(x=>x.classList.remove('open'));
+   if(!wasOpen)pick.classList.add('open');
+ };
+ pick.append(sum,opts);slot.append(pick);
+}
+function updateRangeState(){
+ const n=Object.keys(assignments).length;document.getElementById('rangeProgress').textContent=n+' / 15';
+ document.getElementById('setRanges').classList.toggle('ready',n===15&&!rangesLocked);
+}
+function updatePriceState(){
+ const count=selectedItems().filter(x=>prices[x.id]!=null).length;
+ if(rangesLocked) document.getElementById('rangeProgress').textContent='PRICE '+count+' / 15'+(count===15?' ✓':'');
+ const ready=count===15;
+ document.getElementById('openRestaurant').classList.toggle('ready',ready);
+}
+document.getElementById('setRanges').onclick=()=>{
+ if(Object.keys(assignments).length!==15)return;playSound('decisionSound');rangesLocked=true;
+ document.querySelectorAll('.range-slot').forEach(s=>{const item=selectedItems().find(x=>x.id===s.dataset.item);renderSlot(s,item)});
+ renderRangeButtons();document.getElementById('setRanges').classList.remove('ready');
+ document.getElementById('setRanges').textContent='RANGES SET ✓';
+ document.querySelectorAll('.price-item').forEach(w=>{w.classList.remove('priced');w.classList.add('awaiting')});
+ document.getElementById('rangeProgress').textContent='PRICE 0 / 15';
+ updatePriceState();
+};
+document.getElementById('backMenu').onclick=()=>{if(rangesLocked){if(!confirm('Price ranges are already set. Return to menu and reset prices?'))return;assignments={};prices={};rangesLocked=false;activeRange=null;document.getElementById('setRanges').textContent='SET THE RANGES →'}showScreen('menuScreen')};
+document.getElementById('openRestaurant').onclick=()=>{
+ if(!selectedItems().every(x=>prices[x.id]!=null))return;
+ playSound('decisionSound');
+ buildRestaurant();
+ showScreen('restaurantScreen');
+};
+
+document.getElementById('next').onclick=()=>{playSound('decisionSound');buildPriceScreen();showScreen('priceScreen')};
+
+
+
+function playSound(id){
+ const a=document.getElementById(id); if(!a)return;
+ try{a.currentTime=0;const p=a.play();if(p&&p.catch)p.catch(()=>{});}catch(e){}
+}
+function launchConfetti(){
+ const colors=['#8CCBC2','#A8D08D','#FFB463','#F48BA8','#B59AD9','#8BB7E8'];
+ for(let i=0;i<90;i++){
+  const p=document.createElement('i');p.className='confetti-piece';
+  p.style.left=((i*37)%101)+'vw';p.style.background=colors[i%colors.length];
+  p.style.setProperty('--drift',(((i*29)%180)-90)+'px');
+  p.style.setProperty('--spin',(360+((i*53)%900))+'deg');
+  p.style.animationDelay=((i%18)*.055)+'s';p.style.animationDuration=(3.2+(i%9)*.18)+'s';
+  if(i%3===0){p.style.width='8px';p.style.height='14px'}
+  document.body.appendChild(p);setTimeout(()=>p.remove(),5600);
+ }
+}
+
+let restaurantOrder=[],restaurantFinished=false,checkoutSource=null,checkoutItems=Array(8).fill(null),restaurantTotalDone=false;
+
+function buildRestaurant(){
+ restaurantOrder=[];restaurantFinished=false;checkoutSource=null;checkoutItems=Array(8).fill(null);restaurantTotalDone=false;
+ const menu=document.getElementById('restMenu');menu.innerHTML='';
+ const labels={main:'MAIN',drink:'DRINK',side:'SIDE & DESSERT'};
+ ['main','drink','side'].forEach(cat=>{
+  const box=document.createElement('section');box.className='rest-cat '+cat;
+  const title=document.createElement('div');title.className='rest-cat-title';title.textContent=labels[cat];
+  const cards=document.createElement('div');cards.className='rest-cards';
+  selected[cat].forEach(item=>{
+   const b=document.createElement('button');b.className='rest-card';b.dataset.restId=item.id;
+   const im=document.createElement('img');im.src=IMAGE_DATA[item.id];im.alt=item.name;b.append(im);
+   b.onclick=()=>restaurantMenuTap(item.id);
+   cards.append(b);
+  });
+  box.append(title,cards);menu.append(box);
+ });
+ const f=document.getElementById('finishOrdering');f.disabled=true;f.textContent='FINISH ORDERING';
+ document.getElementById('totalResult').innerHTML='';
+ document.getElementById('newOrder').classList.remove('show');
+ renderCheckout();updateOrderCount();
+}
+
+function restaurantMenuTap(id){
+ if(restaurantTotalDone)return;
+ const card=document.querySelector('[data-rest-id="'+id+'"]');
+ if(!restaurantFinished){
+  const n=restaurantOrder.indexOf(id);
+  if(n>=0)restaurantOrder.splice(n,1);
+  else if(restaurantOrder.length<8)restaurantOrder.push(id);
+  card.classList.toggle('selected',restaurantOrder.includes(id));
+  document.getElementById('finishOrdering').disabled=restaurantOrder.length===0;
+  updateOrderCount();return;
+ }
+ if(!restaurantOrder.includes(id)||checkoutItems.includes(id))return;
+ checkoutSource=checkoutSource===id?null:id;
+ document.querySelectorAll('.rest-card').forEach(x=>x.classList.remove('source'));
+ if(checkoutSource)card.classList.add('source');
+ renderCheckout();
+}
+
+function updateOrderCount(){
+ const n=checkoutItems.filter(Boolean).length;
+ document.getElementById('orderCount').textContent=restaurantFinished?('CHECKOUT '+n+' / '+restaurantOrder.length):('ORDER '+restaurantOrder.length+' / 8');
+}
+
+document.getElementById('finishOrdering').onclick=()=>{
+ if(!restaurantOrder.length)return;
+ playSound('decisionSound');
+ restaurantFinished=true;checkoutSource=null;
+ const f=document.getElementById('finishOrdering');f.disabled=true;f.textContent='ORDER CONFIRMED ✓';
+ document.querySelectorAll('.rest-card').forEach(card=>{
+  card.classList.remove('selected');
+  if(!restaurantOrder.includes(card.dataset.restId))card.classList.add('dim');
+ });
+ renderCheckout();updateOrderCount();
+};
+
+function renderCheckout(){
+ const grid=document.getElementById('checkoutGrid');grid.innerHTML='';
+ for(let i=0;i<8;i++){
+  const slot=document.createElement('div');slot.className='checkout-slot';
+  const id=checkoutItems[i];
+  if(id){
+   const item=selectedItems().find(x=>x.id===id);
+   const card=document.createElement('div');card.className='checkout-card';
+   const im=document.createElement('img');im.src=IMAGE_DATA[id];im.alt=item?item.name:'';
+   const price=document.createElement('div');price.className='checkout-price';price.textContent='¥'+prices[id];
+   card.append(im,price);card.onclick=()=>returnCheckoutItem(i,id);slot.append(card);
+  }else{
+   if(restaurantFinished&&checkoutSource)slot.classList.add('target');
+   slot.onclick=()=>placeCheckoutItem(i);
+  }
+  grid.append(slot);
+ }
+ const moved=checkoutItems.filter(Boolean).length;
+ const ready=restaurantFinished&&restaurantOrder.length>0&&moved===restaurantOrder.length&&!restaurantTotalDone;
+ document.getElementById('totalBtn').classList.toggle('ready',ready);
+}
+
+function placeCheckoutItem(index){
+ if(!restaurantFinished||!checkoutSource||checkoutItems[index])return;
+ checkoutItems[index]=checkoutSource;
+ playSound('itemPriceSound');
+ const card=document.querySelector('[data-rest-id="'+checkoutSource+'"]');
+ if(card){card.classList.remove('source');card.classList.add('moved');}
+ checkoutSource=null;renderCheckout();updateOrderCount();
+}
+
+function returnCheckoutItem(index,id){
+ if(restaurantTotalDone)return;
+ checkoutItems[index]=null;
+ const card=document.querySelector('[data-rest-id="'+id+'"]');
+ if(card)card.classList.remove('moved');
+ renderCheckout();updateOrderCount();
+}
+
+document.getElementById('totalBtn').onclick=()=>{
+ if(restaurantTotalDone)return;
+ const moved=checkoutItems.filter(Boolean);
+ if(!restaurantFinished||moved.length!==restaurantOrder.length)return;
+ restaurantTotalDone=true;
+ playSound('decisionSound');
+ const total=moved.reduce((sum,id)=>sum+prices[id],0);
+ const diff=total-1000;
+ const sign=diff>0?'+':diff<0?'−':'';
+ setTimeout(()=>{
+  playSound('totalSound');
+  document.getElementById('totalResult').innerHTML=
+   '<div class="total-amount">TOTAL ¥'+total.toLocaleString()+'</div>'+
+   '<div class="total-diff">'+(diff===0?'PERFECT!':'¥1,000 → '+sign+'¥'+Math.abs(diff).toLocaleString())+'</div>';
+  if(diff===0){
+   setTimeout(()=>{
+    playSound('cheerSound');launchConfetti();
+    const o=document.getElementById('perfectOverlay');o.classList.add('show');
+    setTimeout(()=>o.classList.remove('show'),4200);
+   },500);
+  }
+ },180);
+ document.getElementById('totalBtn').classList.remove('ready');
+ document.getElementById('newOrder').classList.add('show');
+};
+
+document.getElementById('newOrder').onclick=()=>buildRestaurant();
+
+// Preload all embedded images before showing the menu.
+(function preload(){
+ const entries=Object.entries(IMAGE_DATA);let done=0;
+ function tick(){done++;document.getElementById('loadCount').textContent=done+' / '+entries.length;document.getElementById('loadBar').style.width=(done/entries.length*100)+'%';if(done===entries.length)setTimeout(()=>showScreen('menuScreen'),180)}
+ entries.forEach(([id,src])=>{const im=new Image();im.onload=tick;im.onerror=tick;im.src=src});
+})();
+
+</script>
+<script src="ruriru-restaurant-navigation.js?v=0da70a827769"></script>
+</body></html>
