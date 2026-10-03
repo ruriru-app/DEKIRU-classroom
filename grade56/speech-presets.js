@@ -11,7 +11,10 @@ window.SpeechPresets=(()=>{
   })).filter(Boolean);
   const regions=[['asia','アジア','Asia'],['europe','ヨーロッパ','Europe'],['africa','アフリカ','Africa'],['north-america','北アメリカ','North America'],['south-america','南アメリカ','South America'],['oceania','オセアニア','Oceania'],['antarctica','南極','Antarctica']].map(([id,ja,en])=>c(id,ja+' / '+en,en));
   const favoriteAspect=[catalog.card('color_000',{id:'color',label:'color',insertText:'color'}),catalog.card('shape_000',{id:'shape',label:'shape',insertText:'shape',imageUrl:catalog.imageUrl('../grade34/assets/cards/shapes/shape_000.png')}),...['design','size','texture','material'].map(id=>({...c(id,id),imageUrl:catalog.artwork(id)}))];
-  const givers=[['mother','family_005'],['father','family_004'],['friend','person_013'],['brother','family_009'],['sister','family_011']].map(([id,ref])=>catalog.card(ref,{id,label:id,insertText:'My '+id}));
+  const givers=[
+   ['mother','family_005'],['father','family_004'],['friend','person_013'],['brother','family_009'],['sister','family_011'],
+   ['grandfather','family_001'],['grandmother','family_002'],['aunt','family_008'],['uncle','family_007'],['cousin','family_012'],['parents','family_006'],['grandparents','family_003']
+  ].map(([id,ref])=>catalog.card(ref,{id,label:id,insertText:'My '+id}));
   const places=[catalog.card('town_037',{id:'mall',label:'at a shopping mall',insertText:'at a shopping mall'}),c('kyoto','in Kyoto'),c('online','online')];
   const actions=[['eat','action5_021'],['see','action5_018'],['visit','action6_012'],['buy','action5_022']].map(([id,ref])=>catalog.card(ref,{id,label:id,insertText:id}));
   const countries=catalog.allCountries(),targets=[c('sushi','sushi')];
@@ -28,8 +31,8 @@ window.SpeechPresets=(()=>{
    slot('action','do-there','picture-card','actions','eat',false,'したいことを選ぼう。'),
    slot('target','do-there','my-words','targets','sushi',true,'何を？・どこを？を英語で入力しよう。例：koalas / the Eiffel Tower / a T-shirt')
   ];
-  const fixedPictures={I:'person_001',like:'action5_002',want:'action5_004',go:'action5_016'};
-  const w=(word,role)=>({word,role,cardRef:fixedPictures[word]||''}),s=(slotId,role,editable=true)=>({slotId,role,editable});
+  const fixedPictures={I:'person_001',like:'action5_002',want:'action5_004',go:'action5_016',bought:'action5_022',in:'position_002'};
+  const w=(word,role)=>({word,role,cardRef:fixedPictures[word]||'',...(word==='bought'?{imageTone:'sepia'}:{})}),s=(slotId,role,editable=true)=>({slotId,role,editable});
   const sentence=(stepId,tokens)=>({id:stepId+'.main',tokens,punctuation:'.'});
   const step=(id,label,required,tokens)=>({id,label,required,sentences:[sentence(id,tokens)]});
   const steps=[

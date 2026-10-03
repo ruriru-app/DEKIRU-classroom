@@ -19,5 +19,33 @@
 /* Font replacement point: adjust these five variables together for RuRiRu. */
 .speech-candidate{height:155px}.speech-candidate>[data-speech-choice]{min-height:0;overflow:hidden}.speech-candidate img{flex:none}.speech-candidate span{max-height:49px;overflow:auto;width:100%}.speech-candidate [data-choice-kind=custom] span{max-height:112px}.speech-candidate:has([data-choice-kind=custom]){flex-basis:165px}
 #speech-app .talk-card[data-long-word]{width:300px}#speech-app .talk-card[data-long-word] .talk-card-picture{height:80px}#speech-app .talk-sentence-row:has([data-long-word]){align-items:flex-start}
-.speech-summary-writing{--writing-font:'DEKIRU Andika',sans-serif;--writing-line-height:80px;--writing-ascender:24px;--writing-x-height:35px;--writing-baseline:51px;--writing-descender:61px}
+.speech-summary-writing{--writing-font:'DEKIRU Andika',sans-serif;--writing-line-height:60px;--writing-ascender:14px;--writing-x-height:25px;--writing-baseline:41px;--writing-descender:51px}
+.speech-summary-writing article{padding:2px 8px;margin-bottom:3px}
 .speech-summary-writing [data-summary-text]{font-family:var(--writing-font);font-size:32px;line-height:var(--writing-line-height);background-image:linear-gradient(to bottom,transparent var(--writing-ascender),#9dcfe9 var(--writing-ascender),#9dcfe9 calc(var(--writing-ascender) + 1px),transparent calc(var(--writing-ascender) + 1px),transparent var(--writing-x-height),#9dcfe9 var(--writing-x-height),#9dcfe9 calc(var(--writing-x-height) + 1px),transparent calc(var(--writing-x-height) + 1px),transparent var(--writing-baseline),#d95791 var(--writing-baseline),#d95791 calc(var(--writing-baseline) + 2px),transparent calc(var(--writing-baseline) + 2px),transparent var(--writing-descender),#9dcfe9 var(--writing-descender),#9dcfe9 calc(var(--writing-descender) + 1px),transparent calc(var(--writing-descender) + 1px));background-size:100% var(--writing-line-height);background-repeat:repeat-y}
+/* Reuse the sentence player's controls, scoped to this independent editor. */
+.speech-heading{display:flex;align-items:center;gap:18px;min-width:0}.speech-heading small,.speech-heading h1{white-space:nowrap}.speech-header{min-height:52px}.speech-header [role=status]{max-width:30%}
+#speech-app .talk-topbar{grid-template-columns:minmax(0,1fr) 118px;box-shadow:none;gap:8px}
+#speech-app .speech-rules{grid-template-columns:repeat(7,minmax(0,1fr))}
+#speech-app .speech-rules .talk-rule{min-height:54px;font-size:clamp(12px,1.1vw,20px)}
+#speech-app .talk-icon-control{min-height:0;padding:0;border:0}
+#speech-app .talk-speed-control{font-size:12px}
+#speech-app .talk-speed-control select{min-height:0;height:20px;padding:0;font-size:12px;border:0;border-radius:0}
+#speech-app .talk-stage-wrap>.talk-stage{width:100%;flex:1}
+#speech-app .sentence-fullscreen{position:absolute;right:10px;top:10px;z-index:4;width:42px;height:42px;min-height:0;padding:0;border:0;border-radius:14px;background:#edf6ff;font-size:22px;box-shadow:none}
+#speech-app .talk-stage-zoom{padding:0;box-shadow:none}
+.speech-summary-toolbar{display:flex;align-items:center;gap:14px;min-height:64px}.speech-summary-toolbar h2{flex:none;white-space:nowrap}.speech-summary-actions{display:flex;align-items:center;gap:8px;flex:1;flex-wrap:wrap}.speech-summary-actions button{white-space:nowrap;font-size:14px}.speech-summary-toolbar .talk-audio-controls{align-self:center;flex:none}
+#speech-app .speech-summary-wrap .speech-summary-lines{padding-right:50px}
+#speech-app .speech-summary-stage [data-read-one]{min-height:44px;box-shadow:none}
+#speech-app .talk-card-picture .talk-image-sepia{filter:sepia(1)}
+#speech-app [data-speech-slot="giver"] .talk-card-word.extra-long{font-size:18px}
+#speech-app .speech-editable-slot{padding:9px;background:#d9f0ff;border-radius:22px}
+#speech-app .speech-editable-slot:has([aria-pressed=true]){background:#c8e3fc}
+#speech-app .talk-sentence-row:has(.speech-editable-slot){align-items:center}
+#speech-app .talk-sentence-row:has(.speech-editable-slot) .talk-punctuation{align-self:flex-end;margin-bottom:9px}
+@media(max-width:1100px){.speech-summary-toolbar{gap:8px}.speech-summary-actions{gap:5px}.speech-summary-actions button{font-size:12px;padding:7px 8px}}
+.speech-tools{padding-top:4px}.speech-tools button{min-height:28px}
+.speech-word-actions,.speech-candidate .speech-word-actions{display:flex;flex:none;gap:4px;max-height:none;overflow:visible;width:auto}
+.speech-word-actions button,.speech-candidates .speech-word-actions button{flex:1;min-width:0;min-height:32px;font-size:12px;padding:3px 8px;background:#f0f8ff}
+.speech-list-words .speech-word-actions{display:inline-flex;margin-left:8px;vertical-align:middle}
+@media(max-width:1100px){#speech-app .talk-stage-wrap:not(.speech-summary-wrap){padding-top:54px}}
+@media(max-width:800px){.speech-heading{gap:8px}.speech-heading small{font-size:11px}.speech-heading h1{font-size:16px}.speech-header [role=status]{font-size:10px}}

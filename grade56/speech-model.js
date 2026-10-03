@@ -70,7 +70,7 @@ window.SpeechModel=(()=>{
    const tokens=sentence.tokens.map((t,index)=>{
     const value=t.slotId?state.slotValues[t.slotId]:null;
     const raw=value?.insertText??t.word??'',word=index===0?raw.replace(/^./,c=>c.toUpperCase()):raw;
-    return {word,role:t.role||'neutral',speech:value?.speechText||t.speech||word,cardId:value?.cardRef||t.cardRef||'',imageUrl:value?.imageUrl||t.imageUrl||'',symbol:t.symbol||'',selectionKey:t.slotId&&t.editable!==false?t.slotId:''};
+    return {word,role:t.role||'neutral',speech:value?.speechText||t.speech||word,cardId:value?.cardRef||t.cardRef||'',imageUrl:value?.imageUrl||t.imageUrl||'',symbol:t.symbol||'',selectionKey:t.slotId&&t.editable!==false?t.slotId:'',...(t.imageTone==='sepia'?{imageTone:'sepia'}:{})};
    });
    return {id:sentence.id,stepId,tokens,text:tokens.map(t=>t.word).join(' ')+(sentence.punctuation||''),parts:tokens.map(t=>t.speech),punctuation:sentence.punctuation||''};
   });
@@ -103,6 +103,17 @@ window.SpeechModel=(()=>{
     const words=state.myWords[slot.myWordsGroupId]||=[];
     if(words.some(w=>w.id===action.id))return reject('同じ登録番号があります。');
     words.push({id:action.id,text:value});state.myWords[slot.myWordsGroupId]=words;state.slotValues[slot.id]={kind:'custom',id:action.id,label:value,insertText:value};state.ui.inputOpen=false;state.drafts[slot.id]={...(state.drafts[slot.id]||{}),text:''};break;
+   }
+   case 'edit-word': {
+    const value=text(action.text),word=slot?.allowMyWords&&(state.myWords[slot.myWordsGroupId]||[]).find(w=>w.id===action.id);
+    if(!word)return reject('編集する追加語がありません。');
+    if(!value)return reject('英語を1～200文字で入力してください。');
+    word.text=value;
+    for(const s of p.slots.filter(s=>s.myWordsGroupId===slot.myWordsGroupId)){
+     const selected=state.slotValues[s.id];
+     if(selected?.kind==='custom'&&selected.id===word.id)state.slotValues[s.id]={kind:'custom',id:word.id,label:value,insertText:value};
+    }
+    state.ui.inputOpen=false;break;
    }
    case 'delete-word': {
     const group=action.groupId;if(!p.slots.some(s=>s.myWordsGroupId===group)||!own(state.myWords,group))return reject('語群がありません。');

@@ -10,7 +10,7 @@ window.SentenceCards=(()=>{
   const listen=(el,event,fn)=>{el.addEventListener(event,fn);listeners.push(()=>el.removeEventListener(event,fn));};
   function card(token){
    const image=resolveImage(token),word=token.word||'',speech=token.speech||word,parts=contractions[word.toLowerCase()]||[];
-   const picture=image?'<img src="'+escape(image)+'" alt="" onerror="this.parentElement.classList.add(&quot;symbol&quot;);this.parentElement.textContent=&quot;?&quot;">':'<span aria-hidden="true">'+escape(token.symbol||'•')+'</span>';
+   const picture=image?'<img src="'+escape(image)+'"'+(token.imageTone==='sepia'?' class="talk-image-sepia"':'')+' alt="" onerror="this.parentElement.classList.add(&quot;symbol&quot;);this.parentElement.textContent=&quot;?&quot;">':'<span aria-hidden="true">'+escape(token.symbol||'•')+'</span>';
    const expansion=parts.length?' data-talk-expansion="'+escape(parts.join('|'))+'" title="長押しすると元の形を表示"':'';
    const selection=token.selectionKey?' data-talk-selection-key="'+escape(token.selectionKey)+'" data-talk-selection-role="'+escape(token.role)+'"':'';
    return '<button class="talk-card role-'+escape(token.role)+'" type="button" data-talk-speech="'+escape(speech)+'"'+selection+expansion+' aria-label="'+escape(word)+' の音声を再生"><span class="talk-card-picture '+(image?'':'symbol')+'">'+picture+'</span><span class="talk-card-word'+sizeClass(word)+'">'+escape(word)+'</span></button>';
