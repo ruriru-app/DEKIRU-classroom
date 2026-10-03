@@ -4,17 +4,30 @@ window.SentencePlayer=(()=>{
 let context={},definition=null,unitKey='',cardById=new Map(),talkActivity=null;
 let talkChoiceRole='object',talkChoiceTarget='object',talkSelected={},talkHiddenCategories=new Set();
 let talkSoundEnabled=true,talkSpeechRate=.55,talkClearSpeech=false,talkZoom=null;
-let talkSpeechSequenceId=0,talkSpeechPauseTimer=null,speakingElement=null;
-const timers=new Set();
+const speech=window.SentenceAudio.create({root:document,getRate:()=>talkSpeechRate,getEnabled:()=>talkSoundEnabled});
+let shared=null;
 let stageObserver=null;
+function sharedCards(){
+ if(!shared)shared=window.SentenceCards.create({
+  root:document,contractions:CONTRACTION_PARTS,
+  resolveImage:token=>{const source=cardById.get(token.cardId);return source?context.source(source):'';},
+  iconUrl:'assets/ui/originals/読み上げボタン.svg',
+  audio:{speak:speech.speak,sentence:(text,parts,element)=>speech.sentence(text,parts,element,talkClearSpeech)},
+  onLayout:fitStage,
+  onSelect:(key,role)=>{
+   talkChoiceTarget=key;talkChoiceRole=role||talkChoiceRole;
+   if(definition.quantities&&/^(object|negativeObject)(Count|Color)$/.test(talkChoiceTarget)){
+    talkHiddenCategories.delete(talkChoiceTarget.endsWith('Count')?'Count':'Color');
+    talkChoiceTarget=talkChoiceTarget.replace(/(Count|Color)$/,'');talkChoiceRole='object';
+   }
+   renderTalkChoiceControls();renderTalkChoices();
+  }
+ });
+ return shared;
+}
 function fitStage(){
- const stage=document.getElementById('talkStage'),content=stage?.firstElementChild;
- if(!content)return;
- content.style.zoom='1';
- const width=content.getBoundingClientRect().width,height=content.getBoundingClientRect().height;
- const fitted=Math.min(1,(stage.clientWidth-24)/Math.max(1,width),(stage.clientHeight-24)/Math.max(1,height));
- const scale=talkZoom===null?fitted:talkZoom/100;
- content.style.zoom=String(scale);
+ const stage=document.getElementById('talkStage');if(!stage?.firstElementChild)return;
+ const scale=sharedCards().fit(stage,talkZoom);
  const range=document.getElementById('talkZoomRange'),label=document.getElementById('talkZoomValue');
  if(range)range.value=String(Math.round(scale*100));
  if(label)label.textContent=Math.round(scale*100)+'%';
@@ -22,8 +35,7 @@ function fitStage(){
 const CONTRACTION_PARTS={"don't":['do','not'],"i'm":['I','am'],"you're":['you','are'],"it's":['it','is'],"that's":['that','is'],"what's":['what','is'],"who's":['who','is'],"can't":['can','not'],"won't":['will','not']};
 const escapeHtml=value=>String(value??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'","&#039;");
 const categoryLabel=category=>context.labels?.[category]||category;
-function schedule(fn,delay){const id=setTimeout(()=>{timers.delete(id);fn();},delay);timers.add(id);return id;}
-function stop(){stopTalkSpeechSequence();timers.forEach(clearTimeout);timers.clear();stageObserver?.disconnect();talkActivity=null;}
+function stop(){stopTalkSpeechSequence();shared?.dispose();shared=null;stageObserver?.disconnect();talkActivity=null;}
 function menu(){return '<div class="sentence-menu talk-activity-list">'+definition.activities.map((a,i)=>'<button type="button" class="talk-activity-choice" data-talk-activity="'+a.id+'"><span class="talk-activity-heading"><span class="activity-number">'+(i+1)+'</span>'+escapeHtml(a.title)+'</span><strong>'+escapeHtml(a.example)+'</strong></button>').join('')+'</div>';}
 function markup(key){
  if(unitKey!==key){stop();unitKey=key;}
@@ -113,64 +125,19 @@ window.addEventListener('resize',()=>{const stage=document.getElementById('talkS
 function talkToken(word,role,cardId,symbol,speech,selectionKey){
   return {word,role,cardId:cardId||'',symbol:symbol||'',speech:speech||word.replace(/[,.?]$/,''),selectionKey:selectionKey||''};
 }
-function contractionParts(word){
-  return CONTRACTION_PARTS[String(word||'').toLowerCase()]||[];
-}
-function talkWordSizeClass(word){
-  const length=[...String(word||'')].length;
-  return length>=12?' extra-long':length>=9?' long':'';
-}
+function talkWordSizeClass(word){return window.SentenceCards.sizeClass(word);}
 function fitTalkWordLabels(root){
-  const apply=()=>{
-    if(!root?.isConnected)return;
-    const content=document.getElementById('talkStage')?.firstElementChild;
-    if(content)content.style.zoom='1';
-    root.querySelectorAll('.talk-card-word,.talk-choice-word').forEach(label=>{
-      label.style.fontSize='';
-      label.style.paddingInline='1px';
-      const minimum=label.classList.contains('talk-choice-word')?9:11;
-      let size=parseFloat(getComputedStyle(label).fontSize)||minimum;
-      const available=Math.max(1,label.clientWidth-2);
-      const textWidth=()=>{
-        const range=document.createRange();
-        range.selectNodeContents(label);
-        return range.getBoundingClientRect().width;
-      };
-      while(textWidth()>available&&size>minimum){
-        size=Math.max(minimum,size-1);
-        label.style.fontSize=size+'px';
-      }
-    });
-    fitStage();
-  };
-  requestAnimationFrame(apply);
-  document.fonts?.ready.then(apply);
+ const current=sharedCards();
+ const apply=()=>{
+  if(!root?.isConnected||shared!==current)return;
+  const content=document.getElementById('talkStage')?.firstElementChild;
+  if(content)content.style.zoom='1';
+  current.fitLabels(root);fitStage();
+ };
+ requestAnimationFrame(apply);document.fonts?.ready.then(apply);
 }
-function sentenceStartToken(token,index){
-  if(index!==0)return token;
-  const word=String(token.word||'');
-  if(!word)return token;
-  return {...token,word:word.charAt(0).toUpperCase()+word.slice(1)};
-}
-function talkCardMarkup(token){
-  const source=token.cardId?cardById.get(token.cardId):null;
-  const image=source?context.source(source):'';
-  const word=token.word||source?.english||'';
-  const speech=token.speech||source?.speech||word;
-  const expansionParts=contractionParts(word);
-  const picture=image?'<img src="'+escapeHtml(image)+'" alt="" onerror="this.parentElement.classList.add(&quot;symbol&quot;);this.parentElement.textContent=&quot;?&quot;">':'<span aria-hidden="true">'+escapeHtml(token.symbol||'•')+'</span>';
-  const expansionData=expansionParts.length?' data-talk-expansion="'+escapeHtml(expansionParts.join('|'))+'" title="長押しすると元の形を表示"':'';
-  const selectionData=token.selectionKey?' data-talk-selection-key="'+escapeHtml(token.selectionKey)+'" data-talk-selection-role="'+escapeHtml(token.role)+'"':'';
-  return '<button class="talk-card role-'+escapeHtml(token.role)+'" type="button" data-talk-speech="'+escapeHtml(speech)+'"'+selectionData+expansionData+' aria-label="'+escapeHtml(word)+' の音声を再生"><span class="talk-card-picture '+(image?'':'symbol')+'">'+picture+'</span><span class="talk-card-word'+talkWordSizeClass(word)+'">'+escapeHtml(word)+'</span></button>';
-}
-function talkRowMarkup(tokens,punctuation,extraClass,spacerPositions){
-  const displayTokens=tokens.map(sentenceStartToken);
-  const sentence=displayTokens.map(token=>token.speech||token.word).join(' ')+punctuation;
-  const parts=displayTokens.map(token=>token.speech||token.word);
-  const positions=new Set(spacerPositions===true?[0]:(Array.isArray(spacerPositions)?spacerPositions:[]));
-  const cards=displayTokens.map((token,index)=>(positions.has(index)?'<span class="talk-card-spacer" aria-hidden="true"></span>':'')+'<span class="talk-token-slot" data-talk-token-slot>'+talkCardMarkup(token)+'</span>').join('');
-  return '<div class="talk-sentence-row '+(extraClass||'')+'"><button class="talk-sentence-audio" type="button" data-talk-sentence="'+escapeHtml(sentence)+'" data-talk-parts="'+escapeHtml(JSON.stringify(parts))+'" aria-label="文章全体を発音する"><img src="assets/ui/originals/読み上げボタン.svg" alt=""></button>'+cards+'<span class="talk-punctuation" aria-hidden="true">'+escapeHtml(punctuation)+'</span></div>';
-}
+function talkCardMarkup(token){return sharedCards().card(token);}
+function talkRowMarkup(tokens,punctuation,extraClass,spacerPositions){return sharedCards().row(tokens,punctuation,extraClass,spacerPositions);}
 function talkChoiceItems(role,includeHidden){
   if(role==='object'&&definition.topics&&talkActivity==='what_color')return definition.topicChoices(context.cards,talkSelected.topic);
   const seen=new Set();
@@ -262,81 +229,7 @@ function renderTalkChoices(){
   }));
   fitTalkWordLabels(target);
 }
-function talkExpansionToken(part){
-  const normalized=String(part||'').toLowerCase();
-  if(normalized==='do')return talkToken('do','verb','','〇','do');
-  if(normalized==='not')return talkToken('not','negative','','×','not');
-  return talkToken(part,'neutral','','•',part);
-}
-function talkCardElement(token){
-  const template=document.createElement('template');
-  template.innerHTML=talkCardMarkup(token).trim();
-  return template.content.firstElementChild;
-}
-function showTalkContractionParts(card,onRestore){
-  const slot=card.closest('[data-talk-token-slot]');
-  const parts=String(card.dataset.talkExpansion||'').split('|').filter(Boolean);
-  if(!slot||!parts.length||slot.dataset.expanding==='true')return;
-  slot.dataset.expanding='true';
-  slot.classList.add('show-contraction-parts');
-  const partCards=parts.map(part=>talkCardElement(talkExpansionToken(part)));
-  slot.replaceChildren(...partCards);
-  fitTalkWordLabels(slot);
-  partCards.forEach(partCard=>partCard.addEventListener('click',()=>{
-    if(talkSoundEnabled)speakText(partCard.dataset.talkSpeech,partCard,talkSpeechRate);
-  }));
-  schedule(()=>{
-    slot.replaceChildren(card);
-    slot.classList.remove('show-contraction-parts');
-    delete slot.dataset.expanding;
-    fitTalkWordLabels(slot);
-    onRestore?.();
-  },3000);
-}
-function bindTalkStageEvents(stage){
-  stage.querySelectorAll('[data-talk-sentence]').forEach(button=>button.addEventListener('click',()=>{
-    if(!talkSoundEnabled)return;
-    let parts=[];
-    try{parts=JSON.parse(button.dataset.talkParts||'[]');}catch{}
-    speakTalkSentence(button.dataset.talkSentence,parts,button);
-  }));
-  stage.querySelectorAll('[data-talk-speech]').forEach(card=>{
-    let timer=null;
-    let longPressed=false;
-    const showExpansion=()=>{
-      if(!card.dataset.talkExpansion)return;
-      longPressed=true;
-      showTalkContractionParts(card,()=>{longPressed=false;});
-    };
-    const start=()=>{
-      if(!card.dataset.talkExpansion)return;
-      clearTimeout(timer);
-      timer=schedule(showExpansion,550);
-    };
-    const finish=()=>{
-      clearTimeout(timer);
-    };
-    card.addEventListener('pointerdown',start);
-    card.addEventListener('pointerup',finish);
-    card.addEventListener('pointercancel',finish);
-    card.addEventListener('pointerleave',()=>{if(!longPressed)clearTimeout(timer)});
-    card.addEventListener('contextmenu',event=>{if(card.dataset.talkExpansion){event.preventDefault();showExpansion();finish();}});
-    card.addEventListener('click',event=>{
-      if(longPressed){longPressed=false;event.preventDefault();return;}
-      if(card.dataset.talkSelectionKey){
-        talkChoiceTarget=card.dataset.talkSelectionKey;
-        talkChoiceRole=card.dataset.talkSelectionRole||talkChoiceRole;
-        if(definition.quantities&&/^(object|negativeObject)(Count|Color)$/.test(talkChoiceTarget)){
-          talkHiddenCategories.delete(talkChoiceTarget.endsWith('Count')?'Count':'Color');
-          talkChoiceTarget=talkChoiceTarget.replace(/(Count|Color)$/,'');talkChoiceRole='object';
-        }
-        renderTalkChoiceControls();
-        renderTalkChoices();
-      }
-      if(talkSoundEnabled)speakText(card.dataset.talkSpeech,card,talkSpeechRate);
-    });
-  });
-}
+function bindTalkStageEvents(stage){sharedCards().bind(stage);}
 function renderTalkStage(){
   stopTalkSpeechSequence();
   const stage=document.getElementById('talkStage');
@@ -357,77 +250,7 @@ function updateTalkClarityButton(){
   button.title=talkClearSpeech?'1枚ずつ読む：ON':'1枚ずつ読む：OFF';
 }
 
-function stopTalkSpeechSequence(){
-  talkSpeechSequenceId+=1;
-  clearTimeout(talkSpeechPauseTimer);
-  talkSpeechPauseTimer=null;
-  window.speechSynthesis?.cancel();
-  document.querySelectorAll('#talkStage .talk-card.speaking').forEach(card=>card.classList.remove('speaking'));
-  speakingElement?.classList.remove('speaking');
-  speakingElement=null;
-}
-function createSpeechUtterance(text,rate){
-  const utterance=new SpeechSynthesisUtterance(text);
-  utterance.lang='en-US';
-  utterance.rate=Number.isFinite(rate)?rate:.86;
-  const voices=window.speechSynthesis.getVoices();
-  utterance.voice=voices.find(voice=>voice.lang==='en-US'&&voice.localService&&!/natural|online/i.test(voice.name))||voices.find(voice=>voice.lang==='en-US'&&voice.localService)||voices.find(voice=>voice.lang==='en-US')||voices.find(voice=>voice.lang?.startsWith('en')&&voice.localService)||voices.find(voice=>voice.lang?.startsWith('en'))||null;
-  return utterance;
-}
-function speakText(text,element,rate){
-  if(!text||!('speechSynthesis' in window)||!('SpeechSynthesisUtterance' in window))return;
-  stopTalkSpeechSequence();
-  const playbackId=talkSpeechSequenceId;
-  const utterance=createSpeechUtterance(text,rate);
-  speakingElement=element||null;
-  speakingElement?.classList.add('speaking');
-  utterance.onend=utterance.onerror=()=>{
-    if(playbackId!==talkSpeechSequenceId)return;
-    speakingElement?.classList.remove('speaking');
-    speakingElement=null;
-  };
-  window.speechSynthesis.speak(utterance);
-}
-function speakTalkSentence(text,parts,element){
-  if(!talkClearSpeech){
-    speakText(text,element,talkSpeechRate);
-    return;
-  }
-  if(!text||!('speechSynthesis' in window)||!('SpeechSynthesisUtterance' in window))return;
-  const spokenParts=(Array.isArray(parts)&&parts.length?parts:[text]).map(part=>String(part||'').trim()).filter(Boolean);
-  if(!spokenParts.length)return;
-  const punctuation=String(text).trim().match(/[?!.]$/)?.[0]||'';
-  if(punctuation)spokenParts[spokenParts.length-1]+=punctuation;
-  stopTalkSpeechSequence();
-  const sequenceId=talkSpeechSequenceId;
-  const row=element?.closest('.talk-sentence-row');
-  const slots=[...(row?.querySelectorAll('[data-talk-token-slot]')||[])];
-  const clearHighlights=()=>slots.forEach(slot=>slot.querySelectorAll('.talk-card.speaking').forEach(card=>card.classList.remove('speaking')));
-  const highlightSlot=index=>slots[index]?.querySelectorAll('.talk-card').forEach(card=>card.classList.add('speaking'));
-  speakingElement=element||null;
-  speakingElement?.classList.add('speaking');
-  const finish=()=>{
-    clearHighlights();
-    if(sequenceId!==talkSpeechSequenceId)return;
-    speakingElement?.classList.remove('speaking');
-    speakingElement=null;
-  };
-  const speakPart=index=>{
-    if(sequenceId!==talkSpeechSequenceId)return;
-    if(index>=spokenParts.length){finish();return;}
-    clearHighlights();
-    highlightSlot(index);
-    const utterance=createSpeechUtterance(spokenParts[index],talkSpeechRate);
-    utterance.onend=()=>{
-      clearHighlights();
-      if(sequenceId!==talkSpeechSequenceId)return;
-      talkSpeechPauseTimer=setTimeout(()=>speakPart(index+1),360);
-    };
-    utterance.onerror=finish;
-    window.speechSynthesis.speak(utterance);
-  };
-  speakPart(0);
-}
+function stopTalkSpeechSequence(){speech.stop();}
 function openForCards(activity,ids,onPresetBack){
  const objects=ids.map(id=>cardById.get(id)).filter(Boolean);
  context={...context,onPresetBack,items:[...context.items.filter(c=>!definition.objectCategories.includes(c.category)),...objects]};
