@@ -11,7 +11,8 @@
   function activityTiles(key,unit) {
     const world=key==='nh6'&&unit===5?'<a class="feature-tile" href="../games/world-map.html?book=nh6&amp;unit=5"><strong>Map of the World</strong><p>国の場所・英語名・日本への輸入品を調べる</p></a>':'';
     const restaurant=key==='nh5'&&unit===6?'<a class="feature-tile" href="../games/ruriru-restaurant.html"><strong>RuRiRu RESTAURANT<br>1,000円チャレンジ</strong><p>メニューと値段を決めて、注文の合計1,000円を目指そう</p></a>':'';
-    return world+restaurant+(window.InterviewLinks?.tiles(key,unit)||'')+(window.InterviewBingoLinks?.tiles(key,unit)||'');
+    const town=key==='nh5'&&unit===5?'<a class="feature-tile town-entry-tile" href="../games/ruriru-town.html"><strong>RuRiRu Town<br>道案内</strong><p>スタート地点を選び、まっすぐ・左・右の指示で町を歩こう</p></a>':'';
+    return world+restaurant+town+(window.InterviewLinks?.tiles(key,unit)||'')+(window.InterviewBingoLinks?.tiles(key,unit)||'');
   }
   function renderUnit(key,book,unit) {
     const data=window.DEKIRU_DATA;
