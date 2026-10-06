@@ -16,8 +16,12 @@
 .class-help{font-size:13px;color:#756d66}
 .class-help summary{cursor:pointer}
 .class-help p{margin:6px 0}
-.class-confirm{display:flex;align-items:center;gap:16px}
+.class-confirm{display:flex;align-items:center;gap:12px 16px;flex-wrap:wrap}
 .class-confirm p{margin:0;font-weight:bold}
+.class-settings #rosterAdd{margin-left:auto;background:#edf6ff;border-color:#9bc8e7}
+.class-settings .class-add-help{font-size:13px;color:#756d66}
+.class-added-row{background:#f0f8ff}
+.class-settings .class-cancel-add{display:block;width:100%;margin-top:6px;padding:6px 2px;font-size:12px;line-height:1.4;white-space:normal;background:white;border-color:#e5c7ca;color:#98616b}
 .class-table-wrap{max-height:28vh}
 .class-table-wrap:has(tbody:empty){display:none}
 .class-settings .interview-actions{justify-content:flex-end;margin-top:4px}

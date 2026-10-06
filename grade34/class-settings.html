@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>クラス設定 | DEKIRU Classroom</title><link rel="stylesheet" href="styles.css?v=060c5ed82177"><link rel="stylesheet" href="header-theme.css?v=4e4ec224a300"><link rel="stylesheet" href="interview.css?v=2cfd25adc24c"><link rel="stylesheet" href="class-settings.css?v=58aa12b6e743"></head>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>クラス設定 | DEKIRU Classroom</title><link rel="stylesheet" href="styles.css?v=060c5ed82177"><link rel="stylesheet" href="header-theme.css?v=4e4ec224a300"><link rel="stylesheet" href="interview.css?v=2cfd25adc24c"><link rel="stylesheet" href="class-settings.css?v=d284d784e8dd"></head>
 <body class="classroom-grade34 interview-page">
 <header class="app-header"><a class="brand" href="index.html#/" aria-label="トップへ戻る"><img src="assets/ui/branding/logo-grade34.svg" alt="DEKIRU Classroom"></a><nav class="header-actions"><a class="icon-button" href="index.html#/" aria-label="ホーム"><img src="assets/ui/originals/ホームアイコン.svg" alt=""></a></nav></header>
 <main class="interview-main class-settings"><div class="interview-heading"><button id="classSettingsBack" aria-label="戻る" type="button">戻る</button><h1>クラス設定</h1></div>
@@ -10,9 +10,11 @@
 <label class="interview-field">名簿を貼り付け<textarea id="rosterPaste" rows="5" maxlength="150000" aria-describedby="pasteHelp" placeholder="番号だけでも登録できます。&#10;1&#10;2&#10;3"></textarea></label>
 <details class="class-help"><summary>名前も入力するときの列の並び</summary><p id="pasteHelp">出席番号・苗字（漢字）・名前（漢字）・苗字（ひらがな）・名前（ひらがな）・苗字（英語）・名前（英語）の７列です。出席番号は必須です。使わない表記の列は空欄にできます。</p>
 <p class="class-example">例：1 ／ 山田 ／ 春 ／ やまだ ／ はる ／ Yamada ／ Haru</p></details>
-<div class="class-confirm"><button id="rosterConfirm" type="button">名簿を確認</button><p id="rosterCount">0人</p></div><p id="rosterWarnings" aria-live="polite"></p>
+<div class="class-confirm"><button id="rosterConfirm" type="button">名簿を確認</button><p id="rosterCount">0人</p><button id="rosterAdd" type="button" aria-describedby="rosterAddHelp">＋児童を追加</button></div>
+<p id="rosterAddHelp" class="class-add-help">転入生などを1人ずつ追加できます。追加・修正後は「名簿を保存」を押してください（100人まで）。</p>
+<p id="rosterWarnings" aria-live="polite"></p>
 <div class="class-table-wrap" tabindex="0" aria-label="名簿の編集表"><table class="class-table"><thead><tr><th>出席番号</th><th>苗字（漢字）</th><th>名前（漢字）</th><th>苗字（ひらがな）</th><th>名前（ひらがな）</th><th>苗字（英語）</th><th>名前（英語）</th></tr></thead><tbody id="rosterRows"></tbody></table></div>
 <p id="rosterDirty" aria-live="polite"></p><p id="rosterStatus" role="status" aria-live="polite"></p>
 <div class="interview-actions"><button id="rosterSave" type="button">名簿を保存</button><button id="rosterDelete" type="button" disabled>名簿を削除</button></div>
 </section></main>
-<script src="interview-model.js?v=4973b30b818f"></script><script src="class-roster.js?v=6f311b7ec296"></script><script src="interview-store.js?v=0edb30b3e0a2"></script><script src="class-settings-links.js?v=86bb289939d1"></script><script src="class-settings.js?v=e087b0f2254d"></script><script src="common-ui.js?v=5b3d99baf5a9"></script></body></html>
+<script src="interview-model.js?v=4973b30b818f"></script><script src="class-roster.js?v=6f311b7ec296"></script><script src="interview-store.js?v=0edb30b3e0a2"></script><script src="class-settings-links.js?v=86bb289939d1"></script><script src="class-settings.js?v=694c4e4b98c2"></script><script src="common-ui.js?v=5b3d99baf5a9"></script></body></html>
