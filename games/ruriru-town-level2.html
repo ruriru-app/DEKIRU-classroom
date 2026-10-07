@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="ja">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RuRiRu Town LEVEL 2 — 道案内 | DEKIRU Classroom</title>
+<link rel="stylesheet" href="ruriru-town-level2.css?v=a88e29606cd6">
+<script src="ruriru-town-level2-model.js?v=9d8041ba923f" defer></script><script src="ruriru-town-level2.js?v=c037dd57c3e8" defer></script></head>
+<body>
+<main class="app">
+ <div class="map-wrap"><div class="stage" id="stage">
+  <img class="map" src="assets/ruriru-town/level2-map.png" width="1448" height="1086" alt="RuRiRu Town LEVEL 2：病院、動物園、公園、学校などがある町の地図" aria-describedby="map-description">
+  <div id="map-description" class="visually-hidden">
+   道路は格子状です。横道は上から1〜4、縦道は左から1〜5です。区画は4列、3段あります。STARTは外周の交差点に、左上から時計回りにA〜Nの順にあります。
+   上段（横道1と2の間）の区画は左から、HospitalとChurch、Zoo、ParkとPolice Station、Junior High SchoolとFire Station。
+   中段（横道2と3の間）は左から、StationとBus StopとPost Office、Castle、SupermarketとRestaurant、AquariumとShrine。
+   下段（横道3と4の間）は左から、Amusement Park、Elementary SchoolとBookstore、Stadium、LibraryとConvenience StoreとTempleです。
+  </div>
+  <div id="markers" aria-hidden="true"></div>
+  <div class="character" id="char" hidden><img id="sprite" src="assets/ruriru-town/characters/south-0.png" alt="道案内のキャラクター"></div>
+ </div></div>
+ <aside class="panel" aria-label="道案内の操作">
+  <h1>RuRiRu Town <span>LEVEL 2</span></h1>
+  <div class="label" id="start-label">START</div><div class="starts" id="starts" role="group" aria-labelledby="start-label"></div>
+  <div class="label" id="move-label">MOVE</div>
+  <div class="controls" role="group" aria-labelledby="move-label">
+   <button class="ctrl" id="left" type="button" disabled aria-describedby="turnHint"><span class="icon" aria-hidden="true">↶</span>TURN LEFT</button>
+   <button class="ctrl" id="right" type="button" disabled aria-describedby="turnHint"><span class="icon" aria-hidden="true">↷</span>TURN RIGHT</button>
+   <button class="ctrl forward" id="forward" type="button" disabled><span class="icon" aria-hidden="true">↑</span>GO STRAIGHT<small>1区画進む</small></button>
+   <button class="ctrl little" id="little" type="button" disabled><span class="icon" aria-hidden="true">⇡</span>Go straight for just a little bit.<small>半区画進む</small></button>
+  </div>
+  <p class="turn-hint" id="turnHint">曲がれるのは交差点だけです。</p>
+  <p class="status" id="status" role="status" aria-live="polite">A〜Nを押してキャラクターを置きます。</p>
+  <p class="visually-hidden" id="location" role="status" aria-live="polite" aria-atomic="true"></p>
+ </aside>
+</main>
+<audio id="turnSound" preload="auto" src="assets/ruriru-town/audio/turn.mp3"></audio>
+<audio id="placeSound" preload="auto" src="assets/ruriru-town/audio/place.mp3"></audio>
+<audio id="walkSound" preload="auto" loop src="assets/ruriru-town/audio/walk.mp3"></audio>
+</body></html>
