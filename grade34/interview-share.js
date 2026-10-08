@@ -3,7 +3,12 @@
  const M=root.InterviewModel||(typeof require==='function'?require('./interview-model.js'):null),C=root.ShareCodec||(typeof require==='function'?require('./share-codec.js'):null);
  function snapshot(preset,roster,hours=1){
   M.check([1,4,12,24].includes(hours),'有効期間を選んでください');
-  const now=Date.now();return M.validateDelivery({version:2,type:'interview-delivery',deliveryId:M.newId('delivery'),issuedAt:new Date(now).toISOString(),expiresAt:new Date(now+hours*3600000).toISOString(),presetId:preset.id,preset,roster});
+  const now=Date.now(),issuedAt=new Date(now).toISOString(),source=M.validateRoster(roster);
+  // Identities used only inside this new delivery; the teacher's saved roster is untouched.
+  // Like Bingo, names/numbers stay intact but private UUIDs and class edit timestamps need not travel.
+  const sharedRoster={version:1,id:'roster',className:source.className,createdAt:issuedAt,updatedAt:issuedAt,
+   students:source.students.map((s,i)=>({id:'p'+(i+1),name:s.name,...(s.number!==undefined?{number:s.number}:{})}))};
+  return M.validateDelivery({version:2,type:'interview-delivery',deliveryId:M.newId('delivery'),issuedAt,expiresAt:new Date(now+hours*3600000).toISOString(),presetId:preset.id,preset,roster:sharedRoster});
  }
  function isExpired(value,now=Date.now()){const d=M.validateDelivery(value);return d.version===2&&now>=Date.parse(d.expiresAt);}
  function encode(value){return C.encodeJson(M.validateDelivery(value));}
