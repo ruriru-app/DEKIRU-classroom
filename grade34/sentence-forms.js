@@ -2,7 +2,7 @@
  * Explicit IDs avoid changing color orange or guessing plurals for new vocabulary.
  * Food used as a substance (milk, cabbage, cake, etc.) retains its dictionary form.
  */
-window.SentenceForms=(()=>{
+(function(root){
  const preferencePlurals={
   fruit_vegetable_001:'apples',fruit_vegetable_002:'bananas',fruit_vegetable_003:'beans',
   fruit_vegetable_006:'carrots',fruit_vegetable_007:'cherries',fruit_vegetable_009:'cucumbers',
@@ -33,5 +33,5 @@ window.SentenceForms=(()=>{
   const noun=measure?card.english:n===1?card.english:card.english+(card.english==='brush'?'es':'s');
   return {english,speech:english,quantity,measure,color,noun,count:n};
  }
- return {preference,possession};
-})();
+ const api={preference,possession};root.SentenceForms=api;if(typeof module==='object')module.exports=api;
+})(typeof window==='object'?window:globalThis);

@@ -8,21 +8,32 @@
  function stop(){clearTimeout(timer);timer=null;audio.stop();}
  function hide(message){stop();$('receiveContent').hidden=true;$('studentAudio').hidden=true;$('studentRestart').hidden=true;$('composeQuestion').replaceChildren();$('studentChoices').replaceChildren();$('questionCards').replaceChildren();$('answerAreas').replaceChildren();$('unassignedNames').replaceChildren();$('studentStatus').textContent='';$('receiveError').textContent=message;if($('restartDialog').open)$('restartDialog').close();}
  function checkExpiry(){clearTimeout(timer);if(!delivery)return false;if(InterviewShare.isExpired(delivery)){hide('活動時間が終了しました');return false;}if(delivery.expiresAt)timer=setTimeout(checkExpiry,Math.min(60000,Date.parse(delivery.expiresAt)-Date.now()));return true;}
- function image(card){const img=el('img');img.alt='';img.src=card.pictureUrl||('../'+card.image);img.onerror=()=>{img.hidden=true;};return img;}
+ function image(card){const img=el('img');img.alt='';img.src=card.pictureUrl||('../outputs/01a083b7-e2ae-7c21-9071-01333c4d45aa/github-classroom/'+card.image);img.onerror=()=>{img.hidden=true;};return img;}
  function question(target){
   target.replaceChildren();const map=S.selectedCards(delivery,state,cards),fixed={i:'person_001',you:'person_002',like:'action5_002',have:'action5_015'};
+  const shared=SentenceCards.create({resolveImage:t=>{const c=cards.find(c=>c.id===t.cardId);return c?c.pictureUrl||('../outputs/01a083b7-e2ae-7c21-9071-01333c4d45aa/github-classroom/'+c.image):'';},iconUrl:'assets/ui/originals/読み上げボタン.svg'});
+  const content=el('div',undefined,'student-expression-content'),prompts=el('div',undefined,'student-expression-prompts');content.append(prompts);target.append(content);
   InterviewModel.sentenceTemplates(delivery.preset.question.template).forEach((template,index)=>{
    const row=el('div',undefined,'student-sentence'),line=el('div',undefined,'student-sentence-cards'),speak=el('button',undefined,'student-speaker');speak.type='button';speak.setAttribute('aria-label',(index+1)+'文目を読み上げる');if(state.phase==='sheet'&&index===0)speak.id='questionSpeak';
    const icon=el('img');icon.alt='';icon.src='assets/ui/originals/読み上げボタン.svg';speak.append(icon);speak.disabled=InterviewModel.slotIds(template).some(id=>!map[id]);
-   speak.onclick=()=>{if(!checkExpiry())return;const text=template.replace(/\(P[1-9]?\)/g,m=>map[m.slice(1,-1)].english);speakingButton=speak;audio.speak(text,text.split(/\s+/));};row.append(speak,line);target.append(row);
+   speak.onclick=()=>{if(!checkExpiry())return;const text=InterviewModel.completeQuestion({...delivery.preset,question:{...delivery.preset.question,template}},map);speakingButton=speak;audio.speak(text,text.split(/\s+/));};row.append(speak,line);prompts.append(row);
   for(const token of S.tokens(delivery,map,template)){
-   const picking=token.kind==='picture'&&state.phase==='compose',e=el(picking?'button':'div',undefined,'student-token '+token.kind);
+   const picking=token.kind==='picture'&&state.phase==='compose';let e;
    const card=token.kind==='picture'?map[token.slotId]:cards.find(c=>c.id===fixed[token.text.toLowerCase()]);
-   if(card)e.append(image(card));else if(token.kind==='picture')e.classList.add('waiting');
+   if(token.kind==='punctuation'){e=el('span',token.text,'student-token punctuation');line.append(e);continue;}
+   const lower=token.text.toLowerCase(),role=token.kind==='picture'?'object':['i','you'].includes(lower)?'subject':['like','have'].includes(lower)?'verb':'neutral';
+   const holder=el('div');holder.innerHTML=shared.card({word:token.text,speech:token.text,role,cardId:card?.id,symbol:lower==='do'?'?':'•'});e=holder.firstElementChild;e.classList.add('student-token',token.kind);
+   e.onclick=()=>{if(checkExpiry())audio.speak(token.text,[token.text]);};
+   if(!card&&token.kind==='picture'){e.classList.add('waiting');e.querySelector('.talk-card-picture').textContent='';e.querySelector('.talk-card-word').textContent='下のカードから\nえらんでね';}
    if(picking){e.type='button';e.dataset.slotId=token.slotId;e.setAttribute('aria-label',token.slotId+' のカードを選ぶ');e.setAttribute('aria-pressed',String(activeSlot===token.slotId));e.onclick=()=>{activeSlot=token.slotId;const occurrence=[...target.querySelectorAll('[data-slot-id]')].indexOf(e);render();target.querySelectorAll('[data-slot-id]')[occurrence]?.focus({preventScroll:true});};if(delivery.preset.question.slots.length>1)e.append(el('small',token.slotId));}
-   e.append(el('span',e.classList.contains('waiting')?'下のカードから\nえらんでね':token.text));line.append(e);
+   line.append(e);
   }
   });
+  if(InterviewModel.sentenceTemplates(delivery.preset.question.template).some(t=>/^Do you (like|have) \(P[1-9]?\)\?$/i.test(t.trim()))&&delivery.preset.answerAreas.some(a=>/^yes$/i.test(a.label.trim()))&&delivery.preset.answerAreas.some(a=>/^no$/i.test(a.label.trim()))){
+   const responses=el('div',undefined,'student-expression-responses');
+   for(const yes of [true,false]){const r=el('div',undefined,'student-response');r.innerHTML=shared.row([{word:yes?'Yes,':'No,',speech:yes?'Yes':'No',role:'neutral',symbol:yes?'〇':'×'},{word:'I',role:'subject',cardId:'person_001'},{word:yes?'do':"don't",role:yes?'verb':'negative',symbol:yes?'〇':'×'}],'.');r.querySelector('[data-talk-sentence]').onclick=()=>{if(checkExpiry())audio.speak(yes?'Yes, I do.':"No, I don't.");};responses.append(r);}content.append(responses);
+  }
+  const fit=()=>{if(target.isConnected)shared.fit(target);};requestAnimationFrame(fit);document.fonts.ready.then(fit);
  }
  function persist(){const saved=store.save(delivery,state);saveError=saved.ok?'':saved.error;}
  function selection(){document.querySelectorAll('[data-student-id]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.studentId===selectedStudent)));status();}
@@ -52,6 +63,7 @@
  for(const [id,key] of [['soundToggle','enabled'],['wordToggle','wordByWord']])$(id).onclick=()=>{if(!checkExpiry())return;const value=!audio.getOptions()[key];audio.setOptions({[key]:value});$(id).setAttribute('aria-pressed',String(value));};
  $('speechRate').onchange=()=>{if(checkExpiry())audio.setOptions({rate:Number($('speechRate').value)});};
  window.addEventListener('hashchange',load);window.addEventListener('focus',checkExpiry);window.addEventListener('pageshow',checkExpiry);window.addEventListener('pagehide',stop);document.addEventListener('visibilitychange',()=>{if(document.hidden)audio.stop();checkExpiry();});
+ window.addEventListener('resize',()=>{if(state)render();});
  if(authorPreview){
   $('interviewReceiveBack').disabled=true;$('studentFullscreen').disabled=true;
   addEventListener('message',event=>{if(event.source!==parent||!(event.origin===location.origin||(location.protocol==='file:'&&event.origin==='null'))||event.data?.type!=='interview-author-preview')return;try{
