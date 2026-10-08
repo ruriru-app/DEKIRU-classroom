@@ -10,7 +10,8 @@
   check(value&&Array.isArray(value.cardIds)&&value.cardIds.length>=1&&value.cardIds.length<=100,'候補カードを1〜100枚選んでください。');
   const cardIds=value.cardIds.map(id);check(new Set(cardIds).size===cardIds.length,'候補カードが重複しています。');check(!known||cardIds.every(v=>known.has(v)),'使えないカードが含まれています。');
   check(Number.isInteger(value.maxCards)&&value.maxCards>=1&&value.maxCards<=5,'選べる枚数を1〜5枚にしてください。');
-  return {title:text(value.title,'活動タイトル',80),studentInstructions:text(value.studentInstructions,'児童への説明',500,true),cardIds,maxCards:value.maxCards};
+  const nameSize=value.nameSize===undefined?'large':value.nameSize;check(['small','medium','large'].includes(nameSize),'名前の表示サイズを確認してください。');
+  return {title:text(value.title,'活動タイトル',80),studentInstructions:text(value.studentInstructions,'児童への説明',500,true),cardIds,maxCards:value.maxCards,nameSize};
  }
  function validatePreset(value,validCardIds){check(value?.version===1&&value.type==='self-introduction','自己紹介シートの形式を確認してください。');return {version:1,type:'self-introduction',id:id(value.id),name:text(value.name,'保存名',80),...activity(value,validCardIds),createdAt:date(value.createdAt),updatedAt:date(value.updatedAt)};}
  function validateDelivery(value,validCardIds){check(value?.version===1&&value.type==='self-introduction-delivery','配布シートの形式を確認してください。');return {version:1,type:'self-introduction-delivery',deliveryId:id(value.deliveryId),issuedAt:date(value.issuedAt),activity:activity(value.activity,validCardIds)};}

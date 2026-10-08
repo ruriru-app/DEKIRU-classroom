@@ -42,15 +42,16 @@ html,body{margin:0;height:100%;overflow:hidden;background:#d5f1fc;color:#544e49;
 .intro-choices button[aria-pressed=true]{border-color:#8870cc;background:#f1eaff;opacity:.65}
 .intro-student .intro-primary{align-self:center;background:#e8f4d5;border:2px solid #9fc377;padding:8px 24px;font-size:20px;flex:none}
 .intro-presentation{height:100%;display:grid;grid-template-rows:auto minmax(0,1fr);gap:12px}
-.intro-display-name{min-width:0;width:100%;max-height:105px;line-height:1.2;white-space:pre;text-align:center;overflow:hidden;text-shadow:1px 0 #544e49,-1px 0 #544e49,0 1px #544e49,0 -1px #544e49;font-weight:bold}
+.intro-display-name{min-width:0;min-height:0;width:100%;display:flex;align-items:center;justify-content:center;line-height:1.1;white-space:pre;text-align:center;overflow:hidden;text-shadow:1px 0 #544e49,-1px 0 #544e49,0 1px #544e49,0 -1px #544e49;font-weight:bold}
+.intro-display-name span{flex:0 0 auto}
 .intro-display-name:empty{display:none}
 .intro-presentation:has(.intro-display-name:empty){grid-template-rows:minmax(0,1fr)}
-.intro-display-board{display:grid;min-height:0;min-width:0;gap:12px;justify-content:center;align-content:center}
+.intro-display-board{display:grid;grid-template-rows:var(--intro-card-size);min-height:0;min-width:0;gap:12px;justify-content:center;align-content:center}
 .intro-display-card{width:var(--intro-card-size);height:var(--intro-card-size);border:2px solid #b9d6e7;border-radius:20px;background:white;padding:8px;overflow:hidden}
 .intro-display-card img{width:100%;height:100%;object-fit:contain}
 .intro-image-fallback{display:flex;align-items:center;justify-content:center;width:100%;height:100%;font-size:12px}
 .intro-student:fullscreen,.intro-student::backdrop{background:#d5f1fc}
 .intro-student [hidden]{display:none!important}
 .intro-error{margin:16px;padding:24px;background:white;border-radius:20px;white-space:pre-wrap}
-@media(max-height:650px){.intro-student{padding:8px;gap:6px}.intro-title-block{max-height:58px}.intro-title-block h1{font-size:20px}.intro-name-panel,.intro-cards-panel{padding:10px;gap:7px}.intro-name-editor{min-height:65px;max-height:78px}.intro-name-editor button{font-size:30px}.intro-keyboard button{min-height:38px}.intro-cards-panel{grid-template-rows:auto 80px minmax(0,1fr)}.intro-colors button{height:30px;width:30px;min-height:30px}}
+@media(max-height:650px){.intro-student{padding:8px;gap:6px}.intro-title-block{max-height:58px}.intro-title-block h1{font-size:20px}.intro-name-panel,.intro-cards-panel{padding:10px;gap:7px}.intro-name-editor{min-height:65px;max-height:78px}.intro-name-editor button{font-size:30px}.intro-keyboard button{min-height:38px;line-height:1.2}.intro-cards-panel{grid-template-rows:auto 80px minmax(0,1fr)}.intro-colors button{height:30px;width:30px;min-height:30px}}
 @media(max-width:800px) and (orientation:portrait){.intro-compose{grid-template-columns:1fr;grid-template-rows:minmax(320px,.95fr) minmax(0,1fr)}.intro-name-panel{gap:6px}.intro-name-editor{min-height:60px;max-height:75px}.intro-keyboard{grid-template-columns:repeat(10,minmax(0,1fr))}.intro-colors button{width:32px;height:32px;min-height:32px}.intro-cards-panel{grid-template-rows:auto 75px minmax(0,1fr)}.intro-choices{grid-template-columns:repeat(auto-fill,minmax(100px,1fr))}}
