@@ -1,0 +1,56 @@
+@font-face{font-family:Andika;src:url('../grade34/assets/ui/fonts/Andika-Regular.ttf') format('truetype');font-display:swap}
+html,body{margin:0;height:100%;overflow:hidden;background:#d5f1fc;color:#544e49;font-family:Andika,'Trebuchet MS',sans-serif}
+#introReceive{height:100dvh}
+.intro-student,.intro-student *{box-sizing:border-box}
+.intro-student{height:100%;padding:12px;display:grid;grid-template-rows:auto auto minmax(0,1fr);gap:8px;background:#d5f1fc;color:#544e49;overflow:hidden}
+.intro-top{display:flex;gap:12px;align-items:center;min-width:0}
+.intro-title-block{min-width:0;flex:1;max-height:76px;overflow:auto}
+.intro-title-block h1{margin:0;font-size:24px;overflow-wrap:anywhere}
+.intro-title-block p{margin:2px 0 0;font-size:15px;white-space:pre-wrap;overflow-wrap:anywhere}
+.intro-student button{font:inherit;color:inherit;border:1px solid #b9d6e7;border-radius:10px;background:#edf6ff;cursor:pointer;min-height:44px;padding:6px 10px;box-shadow:none}
+.intro-student button:disabled{opacity:.4;cursor:default}
+.intro-student button:focus-visible{outline:3px solid #548abe;outline-offset:2px}
+.intro-student .intro-back{padding:0;border:0;background:transparent;width:48px;height:48px;flex:none}
+.intro-back img{width:100%;height:100%}
+.intro-student .intro-fullscreen{width:48px;height:48px;background:white;font-size:24px;flex:none}
+.intro-status{margin:0;color:#84472d;font-size:14px;min-height:0}
+.intro-status:empty{display:none}
+.intro-stage{grid-row:3;min-width:0;min-height:0;display:flex;flex-direction:column;gap:8px}
+.intro-compose{min-height:0;flex:1;display:grid;grid-template-columns:minmax(0,38fr) minmax(0,62fr);gap:12px}
+.intro-name-panel,.intro-cards-panel,.intro-presentation{min-height:0;min-width:0;border-radius:20px;background:white;padding:14px;overflow:hidden}
+.intro-name-panel{display:flex;flex-direction:column;gap:10px}
+.intro-student h2{margin:0;font-size:20px}
+.intro-name-editor{display:flex;align-items:center;gap:4px;flex-wrap:wrap;align-content:center;min-height:90px;max-height:120px;overflow:auto;border:1px solid #d7d0c8;border-radius:12px;padding:8px}
+.intro-name-editor button{font-size:38px;line-height:1.1;background:white;padding:2px 6px;min-width:30px;text-shadow:1px 0 #544e49,-1px 0 #544e49,0 1px #544e49,0 -1px #544e49;white-space:pre}
+.intro-name-editor button[aria-pressed=true]{border:2px solid #729bd1;background:#edf6ff}
+.intro-hint{font-size:13px;margin:0;color:#766c65}
+.intro-colors{display:flex;gap:6px;flex-wrap:wrap}
+.intro-colors button{width:38px;height:38px;min-height:38px;border:2px solid #d2cbc4;border-radius:50%}
+.intro-colors button[aria-pressed=true]{outline:3px solid #6c94cb;outline-offset:1px}
+.intro-keyboard{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;margin-top:auto}
+.intro-keyboard button{font-size:22px;font-weight:bold;background:#edf6ff;padding:3px;min-width:0}
+.intro-keyboard .intro-space{grid-column:span 2;font-size:14px}
+.intro-cards-panel{display:grid;grid-template-rows:auto 100px minmax(0,1fr);gap:10px}
+.intro-selected{display:flex;gap:8px;min-height:0}
+.intro-selected button,.intro-empty{width:calc((100% - 32px)/5);max-width:120px;min-width:0;border-radius:12px;border:2px solid #a8cdd8;display:flex;align-items:center;justify-content:center;padding:4px;background:white}
+.intro-empty{border-style:dashed;color:#9a8f86}
+.intro-selected img{width:100%;height:100%;object-fit:contain}
+.intro-choices{display:grid;grid-template-columns:repeat(auto-fill,minmax(115px,1fr));grid-auto-rows:160px;gap:8px;min-height:0;overflow:auto;align-content:start;padding:3px}
+.intro-choices button{background:white;border:2px solid #d8d0c9;min-width:0;min-height:0;height:100%;padding:6px;display:grid;grid-template-rows:minmax(0,1fr) auto;gap:3px;align-items:center}
+.intro-choices img{width:100%;height:100%;min-height:0;object-fit:contain}
+.intro-choices span{font-size:16px;text-align:center;line-height:1.2;overflow-wrap:anywhere}
+.intro-choices button[aria-pressed=true]{border-color:#8870cc;background:#f1eaff;opacity:.65}
+.intro-student .intro-primary{align-self:center;background:#e8f4d5;border:2px solid #9fc377;padding:8px 24px;font-size:20px;flex:none}
+.intro-presentation{height:100%;display:grid;grid-template-rows:auto minmax(0,1fr);gap:12px}
+.intro-display-name{min-width:0;width:100%;max-height:105px;line-height:1.2;white-space:pre;text-align:center;overflow:hidden;text-shadow:1px 0 #544e49,-1px 0 #544e49,0 1px #544e49,0 -1px #544e49;font-weight:bold}
+.intro-display-name:empty{display:none}
+.intro-presentation:has(.intro-display-name:empty){grid-template-rows:minmax(0,1fr)}
+.intro-display-board{display:grid;min-height:0;min-width:0;gap:12px;justify-content:center;align-content:center}
+.intro-display-card{width:var(--intro-card-size);height:var(--intro-card-size);border:2px solid #b9d6e7;border-radius:20px;background:white;padding:8px;overflow:hidden}
+.intro-display-card img{width:100%;height:100%;object-fit:contain}
+.intro-image-fallback{display:flex;align-items:center;justify-content:center;width:100%;height:100%;font-size:12px}
+.intro-student:fullscreen,.intro-student::backdrop{background:#d5f1fc}
+.intro-student [hidden]{display:none!important}
+.intro-error{margin:16px;padding:24px;background:white;border-radius:20px;white-space:pre-wrap}
+@media(max-height:650px){.intro-student{padding:8px;gap:6px}.intro-title-block{max-height:58px}.intro-title-block h1{font-size:20px}.intro-name-panel,.intro-cards-panel{padding:10px;gap:7px}.intro-name-editor{min-height:65px;max-height:78px}.intro-name-editor button{font-size:30px}.intro-keyboard button{min-height:38px}.intro-cards-panel{grid-template-rows:auto 80px minmax(0,1fr)}.intro-colors button{height:30px;width:30px;min-height:30px}}
+@media(max-width:800px) and (orientation:portrait){.intro-compose{grid-template-columns:1fr;grid-template-rows:minmax(320px,.95fr) minmax(0,1fr)}.intro-name-panel{gap:6px}.intro-name-editor{min-height:60px;max-height:75px}.intro-keyboard{grid-template-columns:repeat(10,minmax(0,1fr))}.intro-colors button{width:32px;height:32px;min-height:32px}.intro-cards-panel{grid-template-rows:auto 75px minmax(0,1fr)}.intro-choices{grid-template-columns:repeat(auto-fill,minmax(100px,1fr))}}
