@@ -1,0 +1,11 @@
+(function(root){
+ 'use strict';const M=root.SelfIntroductionModel||(typeof require==='function'?require('./self-introduction-model.js'):null),C=root.ShareCodec||(typeof require==='function'?require('../grade34/share-codec.js'):null),LIMIT=160000;
+ async function transform(bytes,decompress){
+  const stream=new Blob([bytes]).stream().pipeThrough(decompress?new DecompressionStream('deflate'):new CompressionStream('deflate')),reader=stream.getReader(),parts=[];let count=0;
+  try{for(;;){const {value,done}=await reader.read();if(done)break;count+=value.length;if(count>LIMIT){await reader.cancel();throw Error('配布データが大きすぎます。');}parts.push(value);}}finally{reader.releaseLock();}
+  const result=new Uint8Array(count);let pos=0;for(const part of parts){result.set(part,pos);pos+=part.length;}return result;
+ }
+ async function buildShortUrl(delivery,baseUrl){const d=M.validateDelivery(delivery),a=d.activity,wire=[1,d.deliveryId,d.issuedAt,a.title,a.studentInstructions,a.cardIds,a.maxCards];let bytes=new TextEncoder().encode(JSON.stringify(wire)),prefix='s1j.';M.check(bytes.length<=LIMIT,'配布データが大きすぎます。');if(typeof CompressionStream!=='undefined'){bytes=await transform(bytes,false);prefix='s1z.';}const url=new URL(baseUrl);url.hash='intro='+prefix+C.bytesToBase64Url(bytes);M.check(url.href.length<=2024,'配布URLが長すぎます。説明を短くするか、候補カードを減らしてください。');return url.href;}
+ async function decodeShared(token,validCardIds){M.check(typeof token==='string'&&token.length<=220000&&/^s1[jz]\.[A-Za-z0-9_-]+$/.test(token),'配布URLの形式を確認してください。');let bytes=C.base64UrlToBytes(token.slice(4));M.check(bytes.length<=LIMIT,'配布データが大きすぎます。');if(token[2]==='z'){M.check(typeof DecompressionStream!=='undefined','新しいブラウザで開いてください。');bytes=await transform(bytes,true);}const w=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(bytes));M.check(Array.isArray(w)&&w.length===7&&w[0]===1,'配布データの形式を確認してください。');return M.validateDelivery({version:1,type:'self-introduction-delivery',deliveryId:w[1],issuedAt:w[2],activity:{title:w[3],studentInstructions:w[4],cardIds:w[5],maxCards:w[6]}},validCardIds);}
+ const api={buildShortUrl,decodeShared};root.SelfIntroductionShare=api;if(typeof module==='object')module.exports=api;
+})(typeof window==='object'?window:globalThis);
