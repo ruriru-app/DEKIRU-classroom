@@ -17,7 +17,7 @@ function show(id){
   document.body.classList.toggle('shared-roulette-mode',id==='rouletteRace'&&rouletteSharedMode);
   document.body.classList.toggle('alphabet-player-mode',id==='alphabetTouch');
   document.body.classList.toggle('shared-alphabet-mode',id==='alphabetTouch'&&alphabetSharedMode);
-  document.body.classList.toggle('create-games-page-mode',['createGames','createActivities','createRouletteGame','createInterview','createInterviewBingo'].includes(id));
+  document.body.classList.toggle('create-games-page-mode',['createGames','createActivities','createRouletteGame','createInterview','createInterviewBingo','createSelfIntroduction'].includes(id));
   if(!location.hash.startsWith('#play=')&&!location.hash.startsWith('#alphabet='))history.replaceState(null,'','#/'+(id==='home'?'':id));
   window.scrollTo(0,0);
 }
