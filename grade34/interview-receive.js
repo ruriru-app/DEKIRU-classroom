@@ -58,14 +58,13 @@
  $('restartCancel').onclick=()=>$('restartDialog').close();$('restartConfirm').onclick=()=>{if(!checkExpiry())return;$('restartDialog').close();state=S.reset(delivery,now());selectedStudent=null;corrupt=false;persist();render();};
  $('studentRestart').onclick=requestReset;
  $('startInterview').onclick=()=>{if(checkExpiry()){state=S.start(delivery,state,now());persist();render();}};
- $('interviewReceiveBack').onclick=async()=>{audio.stop();if(document.fullscreenElement){await document.exitFullscreen();return;}if(state?.phase==='sheet'){if(Object.values(state.assignments).some(v=>v!==null)){requestReset();return;}state=S.reset(delivery,now());persist();render();}else location.href='index.html#/';};
  $('studentFullscreen').onclick=async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else await $('studentShell').requestFullscreen();}catch{$('studentStatus').textContent='この端末では全画面表示を利用できません';}};
  for(const [id,key] of [['soundToggle','enabled'],['wordToggle','wordByWord']])$(id).onclick=()=>{if(!checkExpiry())return;const value=!audio.getOptions()[key];audio.setOptions({[key]:value});$(id).setAttribute('aria-pressed',String(value));};
  $('speechRate').onchange=()=>{if(checkExpiry())audio.setOptions({rate:Number($('speechRate').value)});};
  window.addEventListener('hashchange',load);window.addEventListener('focus',checkExpiry);window.addEventListener('pageshow',checkExpiry);window.addEventListener('pagehide',stop);document.addEventListener('visibilitychange',()=>{if(document.hidden)audio.stop();checkExpiry();});
  window.addEventListener('resize',()=>{if(state)render();});
  if(authorPreview){
-  $('interviewReceiveBack').disabled=true;$('studentFullscreen').disabled=true;
+  $('studentFullscreen').disabled=true;
   addEventListener('message',event=>{if(event.source!==parent||!(event.origin===location.origin||(location.protocol==='file:'&&event.origin==='null'))||event.data?.type!=='interview-author-preview')return;try{
    stop();const preset=InterviewModel.validatePreset(event.data.preset),stamp=now();delivery=InterviewModel.validateDelivery({version:1,type:'interview-delivery',deliveryId:'author-preview',issuedAt:stamp,presetId:preset.id,preset,roster:{version:1,id:'preview-roster',className:'プレビュー',students:Array.from({length:35},(_,i)=>({id:'preview-student-'+(i+1),name:'',number:String(i+1)})),createdAt:stamp,updatedAt:stamp}});
    store={save:()=>({ok:true})};state=S.create(delivery,stamp);selectedStudent=null;saveError='';corrupt=false;
