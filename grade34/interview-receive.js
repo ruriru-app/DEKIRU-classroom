@@ -8,10 +8,10 @@
  function stop(){clearTimeout(timer);timer=null;audio.stop();}
  function hide(message){stop();$('receiveContent').hidden=true;$('studentAudio').hidden=true;$('studentRestart').hidden=true;$('composeQuestion').replaceChildren();$('studentChoices').replaceChildren();$('questionCards').replaceChildren();$('answerAreas').replaceChildren();$('unassignedNames').replaceChildren();$('studentStatus').textContent='';$('receiveError').textContent=message;if($('restartDialog').open)$('restartDialog').close();}
  function checkExpiry(){clearTimeout(timer);if(!delivery)return false;if(InterviewShare.isExpired(delivery)){hide('活動時間が終了しました');return false;}if(delivery.expiresAt)timer=setTimeout(checkExpiry,Math.min(60000,Date.parse(delivery.expiresAt)-Date.now()));return true;}
- function image(card){const img=el('img');img.alt='';img.src=card.pictureUrl||('../outputs/01a083b7-e2ae-7c21-9071-01333c4d45aa/github-classroom/'+card.image);img.onerror=()=>{img.hidden=true;};return img;}
+ function image(card){const img=el('img');img.alt='';img.src=card.pictureUrl||('../'+card.image);img.onerror=()=>{img.hidden=true;};return img;}
  function question(target){
   target.replaceChildren();const map=S.selectedCards(delivery,state,cards),fixed={i:'person_001',you:'person_002',like:'action5_002',have:'action5_015'};
-  const shared=SentenceCards.create({resolveImage:t=>{const c=cards.find(c=>c.id===t.cardId);return c?c.pictureUrl||('../outputs/01a083b7-e2ae-7c21-9071-01333c4d45aa/github-classroom/'+c.image):'';},iconUrl:'assets/ui/originals/読み上げボタン.svg'});
+  const shared=SentenceCards.create({resolveImage:t=>{const c=cards.find(c=>c.id===t.cardId);return c?c.pictureUrl||('../'+c.image):'';},iconUrl:'assets/ui/originals/読み上げボタン.svg'});
   const content=el('div',undefined,'student-expression-content'),prompts=el('div',undefined,'student-expression-prompts');content.append(prompts);target.append(content);
   InterviewModel.sentenceTemplates(delivery.preset.question.template).forEach((template,index)=>{
    const row=el('div',undefined,'student-sentence'),line=el('div',undefined,'student-sentence-cards'),speak=el('button',undefined,'student-speaker');speak.type='button';speak.setAttribute('aria-label',(index+1)+'文目を読み上げる');if(state.phase==='sheet'&&index===0)speak.id='questionSpeak';
