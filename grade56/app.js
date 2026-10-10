@@ -13,7 +13,8 @@
     const restaurant=key==='nh5'&&unit===6?'<a class="feature-tile" href="../games/ruriru-restaurant.html"><strong>RuRiRu RESTAURANT<br>1,000円チャレンジ</strong><p>メニューと値段を決めて、注文の合計1,000円を目指そう</p></a>':'';
     const town=key==='nh5'&&unit===5?'<div class="feature-tile town-entry-tile"><a class="town-entry-open" data-town-open href="../games/ruriru-town.html" target="_blank" rel="noopener noreferrer"><strong>RuRiRu Town<br>道案内</strong><p>スタート地点を選び、まっすぐ・左・右の指示で町を歩こう</p></a><div class="town-entry-actions"><small>別ウインドウで開く ↗</small><button type="button" class="secondary-button" data-town-copy="https://ruriru-app.github.io/DEKIRU-classroom/games/ruriru-town.html">児童用URLをコピー</button></div><p class="town-entry-status" role="status" hidden></p><input class="town-entry-url" aria-label="配信用URL" readonly hidden></div>':'';
     const townLevel2=key==='nh5'&&unit===5?'<div class="feature-tile town-entry-tile"><a class="town-entry-open" data-town-open href="../games/ruriru-town-level2.html" target="_blank" rel="noopener noreferrer"><strong>RuRiRu Town LEVEL 2<br>道案内 ― 少しだけ進もう</strong><p>Go straight for just a little bit. 半区画ずつ進み、交差点で曲がろう</p></a><div class="town-entry-actions"><small>別ウインドウで開く ↗</small><button type="button" class="secondary-button" data-town-copy="https://ruriru-app.github.io/DEKIRU-classroom/games/ruriru-town-level2.html">児童用URLをコピー</button></div><p class="town-entry-status" role="status" hidden></p><input class="town-entry-url" aria-label="配信用URL" readonly hidden></div>':'';
-    return world+restaurant+town+townLevel2+(window.InterviewLinks?.tiles(key,unit)||'')+(window.InterviewBingoLinks?.tiles(key,unit)||'');
+    const animals=key==='nh6'&&unit===6?'<div class="feature-tile town-entry-tile"><a class="town-entry-open" href="https://ruriru-app.github.io/DEKIRU-Endangered-Animals/" target="_blank" rel="noopener noreferrer"><strong>Endangered Animals<br>絶滅危惧種デジタル図鑑</strong><p>50種類の写真から、すむ場所・減っている理由・できることを調べよう</p></a><div class="town-entry-actions"><small>別タブで開く ↗</small><button type="button" class="secondary-button" data-activity-copy="https://ruriru-app.github.io/DEKIRU-Endangered-Animals/">児童用URLをコピー</button></div><p class="town-entry-status" role="status" hidden></p><input class="town-entry-url" aria-label="配信用URL" readonly hidden></div>':'';
+    return world+restaurant+town+townLevel2+animals+(window.InterviewLinks?.tiles(key,unit)||'')+(window.InterviewBingoLinks?.tiles(key,unit)||'');
   }
   function renderUnit(key,book,unit) {
     const data=window.DEKIRU_DATA;
@@ -49,7 +50,7 @@
     if(body)body.innerHTML='<div class="feature-grid"><div class="feature-tile speech-entry-tile"><a class="speech-entry-open" data-speech-open href="'+escape(path)+'" target="_blank" rel="noopener noreferrer"><strong>BUILD MY SPEECH</strong><p>カードで文を作り、まとめてスピーチを練習しよう</p></a><div class="speech-entry-actions"><small>別ウインドウで開く ↗</small><button type="button" class="secondary-button" data-speech-copy="'+escape(publicUrl)+'">URLをコピー</button></div><p class="speech-entry-status" role="status" hidden></p><input class="speech-entry-url" aria-label="配信用URL" readonly hidden></div></div>';
   }
   async function copyActivityUrl(button){
-    const tile=button.closest('.speech-entry-tile,.town-entry-tile'),status=tile.querySelector('[role="status"]'),field=tile.querySelector('input[readonly]'),url=button.dataset.speechCopy||button.dataset.townCopy;
+    const tile=button.closest('.speech-entry-tile,.town-entry-tile'),status=tile.querySelector('[role="status"]'),field=tile.querySelector('input[readonly]'),url=button.dataset.speechCopy||button.dataset.townCopy||button.dataset.activityCopy;
     button.disabled=true;field.hidden=true;status.hidden=false;status.textContent='コピーしています…';
     try{await navigator.clipboard.writeText(url);status.textContent='URLをコピーしました';}
     catch{field.value=url;field.hidden=false;field.focus();field.select();status.textContent='このURLを選択しました。手動でコピーしてください。';}
@@ -106,7 +107,7 @@
     window.scrollTo(0,0);
   }
   app.addEventListener('click',event=>{
-    const copy=event.target.closest('[data-speech-copy],[data-town-copy]');
+    const copy=event.target.closest('[data-speech-copy],[data-town-copy],[data-activity-copy]');
     if(copy){copyActivityUrl(copy);return;}
     const activity=event.target.closest('[data-speech-open],[data-town-open]');
     if(activity){openActivityWindow(event,activity);return;}
