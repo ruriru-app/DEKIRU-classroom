@@ -37,5 +37,7 @@
     const id='living_'+String(n).padStart(3,'0'), card=cards.get(id);
     if(card) card.pictureUrl='assets/cards/living_things/'+id+'.png';
   }
+  const know=cards.get('action6_052');
+  if(know) know.pictureUrl='assets/cards/actions_6/action6_052.png';
   data.letsTryPictureReuse = reuse;
 })();

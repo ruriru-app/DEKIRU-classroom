@@ -59,7 +59,7 @@ window.SpeechPresets=(()=>{
   const problems=['living_001','living_003','living_005','living_011','living_012','living_013','living_016','living_017','living_018','living_019'].map(id=>catalog.card(id,{category:Number(id.slice(-3))>=11?'問題 Plus':'問題'})).filter(Boolean);
   const actions=['living_002','living_004','living_006','living_007','living_008','living_009','living_010','living_020','living_021','living_022','living_023','living_024','living_025'].map(id=>catalog.card(id,{category:Number(id.slice(-3))>=20?'できること Plus':'できること'})).filter(Boolean);
   const features=['impression_010','impression_008','impression_009','personality_008','state_001','state_002'].map(id=>catalog.card(id,{category:'特徴'})).filter(Boolean);
-  const questionVerbs=[catalog.card('action5_002',{id:'like',category:'質問する動詞'}),c('know','know','know','質問する動詞')];
+  const questionVerbs=[catalog.card('action5_002',{id:'like',category:'質問する動詞'}),catalog.card('action6_052',{id:'know',category:'質問する動詞'})];
   const actionTargets=[['living_005','plastic'],['item_042','garbage'],['item_040','plastic bags'],['item_001','bags'],['item_028','boxes'],['clothes_000','clothes'],['living_026','glass bottles']].map(([id,word])=>catalog.card(id,{label:word,insertText:word,speechText:word,category:id==='living_026'?'何を？ Plus':'何を？'})).filter(Boolean);
   const choiceSets={animals,habitats,problems,actions,features,questionVerbs,actionTargets};
   const slot=(id,ownerStepId,choiceSetId,initial,allowMyWords,hint)=>({id,ownerStepId,inputType:'picture-card',choiceSetId,defaultValue:selection(choiceSets[choiceSetId].find(c=>c.id===initial)),allowMyWords,myWordsGroupId:id,hint});
