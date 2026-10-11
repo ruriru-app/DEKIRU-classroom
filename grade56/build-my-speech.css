@@ -46,6 +46,9 @@
 @media(max-width:1100px){.speech-summary-toolbar{gap:8px}.speech-summary-actions{gap:5px}.speech-summary-actions button{font-size:12px;padding:7px 8px}}
 .speech-tools{padding-top:4px}.speech-tools button{min-height:28px}
 .speech-word-actions,.speech-candidate .speech-word-actions{display:flex;flex:none;gap:4px;max-height:none;overflow:visible;width:auto}
+/* Unit6 phrase cards wrap at spaces; the existing fitter then shrinks unbroken words. */
+#speech-app[data-speech-unit="nh6:6"] .talk-card:not([data-long-word]) .talk-card-word{overflow-wrap:normal}
+#speech-app[data-speech-unit="nh6:6"] .speech-candidate [data-speech-choice^="living_02"] span{font-size:14px;overflow-wrap:normal}
 .speech-word-actions button,.speech-candidates .speech-word-actions button{flex:1;min-width:0;min-height:32px;font-size:12px;padding:3px 8px;background:#f0f8ff}
 .speech-list-words .speech-word-actions{display:inline-flex;margin-left:8px;vertical-align:middle}
 @media(max-width:1100px){#speech-app .talk-stage-wrap:not(.speech-summary-wrap){padding-top:54px}}

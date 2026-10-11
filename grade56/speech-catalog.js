@@ -14,10 +14,15 @@ window.SpeechCatalog=(()=>{
    const src=source(item);if(!src)return null;
    return {id,label:item.english,insertText:item.english,category:item.category,cardRef:id,imageUrl:imageUrl(src),...overrides};
   }
+  function pluralCard(id,overrides={}){
+   const item=cards.get(id);if(!item||!window.SentenceForms)return null;
+   const form=window.SentenceForms.preference(item);
+   return card(id,{insertText:form.english,speechText:form.speech,...overrides});
+  }
   function country(id){const c=countries.find(c=>c.id===id);return c?{id:c.id,label:c.ja+' / '+(inserts[c.id]||c.en),insertText:inserts[c.id]||c.en,category:'国名'}:null;}
   const allCountries=()=>countries.map(c=>country(c.id));
   const artwork=name=>new URL(name+'.png',assetBase).href;
-  return {card,country,findCountries:query=>search(query).map(c=>country(c.id)),imageUrl,allCountries,artwork};
+  return {card,pluralCard,country,findCountries:query=>search(query).map(c=>country(c.id)),imageUrl,allCountries,artwork};
  }
  return {create};
 })();

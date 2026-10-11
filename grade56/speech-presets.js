@@ -51,6 +51,43 @@ window.SpeechPresets=(()=>{
   ];
   return {schemaVersion:1,unitId:'nh6:5',book:'nh6',unit:5,title:'Where is it from?',steps,slots,choiceSets,contractions:{"it's":['It','is'],"don't":['do','not']}};
  }
- const registry=[{book:'nh6',unit:5,title:'Where is it from?',factory:unit5}];
+ function unit6(catalog){
+  // Reuse the dictionary's explicit plural forms, including mice, deer and wolves.
+  // Real animals only; mythical creatures remain in the general Picture Card library.
+  const animals=Array.from({length:39},(_,i)=>catalog.pluralCard('animal_'+String(i+1).padStart(3,'0'),{category:'動物'})).filter(Boolean);
+  const habitats=[['nature_001','deserts'],['nature_002','forests'],['nature_003','rainforests'],['nature_004','lakes'],['nature_005','mountains'],['nature_006','rivers'],['nature_007','savannas'],['nature_008','sea'],['nature_009','beaches'],['nature_011','islands'],['nature_012','ocean'],['nature_013','mudflats'],['nature_014','wetlands'],['nature_016','ponds']].map(([id,form])=>catalog.card(id,{category:'生息場所',insertText:form,speechText:form})).filter(Boolean);
+  const problems=['living_001','living_003','living_005','living_011','living_012','living_013','living_016','living_017','living_018','living_019'].map(id=>catalog.card(id,{category:Number(id.slice(-3))>=11?'問題 Plus':'問題'})).filter(Boolean);
+  const actions=['living_002','living_004','living_006','living_007','living_008','living_009','living_010','living_020','living_021','living_022','living_023','living_024','living_025'].map(id=>catalog.card(id,{category:Number(id.slice(-3))>=20?'できること Plus':'できること'})).filter(Boolean);
+  const features=['impression_010','impression_008','impression_009','personality_008','state_001','state_002'].map(id=>catalog.card(id,{category:'特徴'})).filter(Boolean);
+  const questionVerbs=[catalog.card('action5_002',{id:'like',category:'質問する動詞'}),c('know','know','know','質問する動詞')];
+  const choiceSets={animals,habitats,problems,actions,features,questionVerbs};
+  const slot=(id,ownerStepId,choiceSetId,initial,allowMyWords,hint)=>({id,ownerStepId,inputType:'picture-card',choiceSetId,defaultValue:selection(choiceSets[choiceSetId].find(c=>c.id===initial)),allowMyWords,myWordsGroupId:id,hint});
+  const slots=[
+   slot('animal','save','animals','animal_011',true,'動物名を複数形で入力しよう。例：sea otters / turtles。ここで選んだ動物は、ほかの文にも共通して使います。'),
+   slot('habitat','habitat','habitats','nature_003',true,'the の後に続く生息場所を入力しよう。例：forests / sea。冠詞 the は自動で付きます。'),
+   slot('problem','problem','problems','living_001',true,'問題を表す名詞・語句を入力しよう。is に続くので、単数形や数えられない名詞を使います。例：water pollution'),
+   slot('action','action','actions','living_002',true,'できることを動詞から入力しよう。例：support conservation groups。can の後なので動詞は原形です。'),
+   slot('problem2','problem-too','problems','living_005',true,'もう1つの問題を表す、単数形や数えられない名詞を入力しよう。'),
+   slot('action2','action-too','actions','living_006',true,'もう1つのできることを、動詞の原形から入力しよう。'),
+   slot('feature','features','features','impression_010',true,'動物の特徴を表す言葉を入力しよう。例：cute / beautiful'),
+   slot('questionVerb','question','questionVerbs','like',false,'like または know を選ぼう。')
+  ];
+  const fixedPictures={I:'person_001',We:'person_005',They:'person_006',you:'person_002',save:'action6_016',live:'action6_002',like:'action5_002',in:'position_002'};
+  const w=(word,role)=>({word,role,cardRef:fixedPictures[word]||''}),s=(slotId,role,editable=true)=>({slotId,role,editable});
+  const step=(id,label,required,tokens,punctuation='.')=>({id,label,required,sentences:[{id:id+'.main',tokens,punctuation}]});
+  const steps=[
+   step('save','守りたい動物',true,[w("Let's",'subject'),w('save','verb'),w('the','object'),s('animal','object')]),
+   step('habitat','どこに住んでいるか',true,[s('animal','subject',false),w('live','verb'),w('in','place'),w('the','place'),s('habitat','place')]),
+   step('problem','大きな問題',true,[s('problem','subject'),w('is','verb'),w('a','adjective'),w('big','adjective'),w('problem','object')]),
+   step('action','私たちにできること',true,[w('We','subject'),w('can','verb'),s('action','verb')]),
+   step('problem-too','もう1つの問題',false,[s('problem2','subject'),w('is','verb'),w('a','adjective'),w('big','adjective'),w('problem,','object'),w('too','adverb')]),
+   step('action-too','もう1つのできること',false,[w('We','subject'),w('can','verb'),s('action2','verb')]),
+   step('like','その動物が好き',false,[w('I','subject'),w('like','verb'),s('animal','object',false)]),
+   step('features','動物の特徴',false,[w('They','subject'),w('are','verb'),s('feature','adjective')]),
+   step('question','聞いている人への質問',false,[w('Do','neutral'),w('you','subject'),s('questionVerb','verb'),s('animal','object',false)],'?')
+  ];
+  return {schemaVersion:1,unitId:'nh6:6',book:'nh6',unit:6,title:'Save the animals.',steps,slots,choiceSets,contractions:{"let's":['Let','us']}};
+ }
+ const registry=[{book:'nh6',unit:5,title:'Where is it from?',factory:unit5},{book:'nh6',unit:6,title:'Save the animals.',factory:unit6}];
  return {get(book,unit,catalog){return registry.find(r=>r.book===book&&String(r.unit)===String(unit))?.factory(catalog)||null;},list(){return registry.map(({book,unit,title})=>({book,unit,title}));}};
 })();

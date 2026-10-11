@@ -1,7 +1,7 @@
 /* Image-only links: vocabulary IDs, wording, Basic/Advance selection stay intact. */
 (() => {
   const data = window.DEKIRU_DATA;
-  const additions = "../image_output/lets_try/";
+  const additions = "assets/cards/lets_try/";
   const files = {
     what: "what.png", // Unit 5 question-word picture.
     noodle: "noodle.png", jam: "jam.png", king: "king-flat.png", queen: "queen-flat.png",
@@ -29,8 +29,13 @@
   // Category illustrations exist in the original dictionary image folder.
   for (const id of ["weather_000", "school_000"]) {
     const card = cards.get(id);
-    if (card) card.pictureUrl = "../image_output/" + card.image.replace("assets/cards/", "");
+    if (card) card.pictureUrl = "assets/cards/" + card.image.replace("assets/cards/", "");
   }
   data.letsTryPictureFiles = files;
+  // New conservation Plus cards have local originals, like the category pictures above.
+  for (let n=16;n<=25;n++) {
+    const id='living_'+String(n).padStart(3,'0'), card=cards.get(id);
+    if(card) card.pictureUrl='assets/cards/living_things/'+id+'.png';
+  }
   data.letsTryPictureReuse = reuse;
 })();
