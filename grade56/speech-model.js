@@ -6,6 +6,8 @@ window.SpeechModel=(()=>{
  const definitions=step=>step.variants?.length?step.variants.flatMap(v=>v.sentences):step.sentences;
  const active=(step,state)=>step.variants?.length?(step.variants.find(v=>v.id===state.stepVariants[step.id])||step.variants.find(v=>v.id===step.defaultVariantId)||step.variants[0]).sentences:step.sentences;
  const slotFor=(p,id)=>p.slots.find(s=>s.id===id),stepFor=(p,id)=>p.steps.find(s=>s.id===id);
+ function slotActive(slot,state){const rule=slot?.choiceIdsByParent;if(!rule)return true;const parent=state.slotValues[rule.slotId];return parent?.kind==='choice'&&own(rule.ids,parent.id);}
+ function choicesFor(p,state,id){const slot=slotFor(p,id);if(!slot)return [];const all=p.choiceSets[slot.choiceSetId]||[],rule=slot.choiceIdsByParent;if(!rule)return all;if(!slotActive(slot,state))return [];const ids=rule.ids[state.slotValues[rule.slotId].id];return all.filter(c=>ids.includes(c.id));}
  function validatePreset(p){
   const errors=[];
   if(!p||p.schemaVersion!==1||!Array.isArray(p.steps)||!p.steps.length||!Array.isArray(p.slots)||!p.choiceSets)return ['Invalid speech preset'];
@@ -28,13 +30,14 @@ window.SpeechModel=(()=>{
    if(s.allowMyWords&&!validId(s.myWordsGroupId))errors.push('Invalid MY WORDS group '+s.id);
   }
   for(const list of Object.values(p.choiceSets)){if(!Array.isArray(list)){errors.push('Invalid choices');continue;}const ids=new Set();for(const c of list){if(!validId(c.id)||ids.has(c.id)||!text(c.insertText))errors.push('Invalid choice '+c.id);ids.add(c.id);}}
+  for(const s of p.slots){const rule=s.choiceIdsByParent;if(!rule)continue;const parent=slotFor(p,rule.slotId),all=p.choiceSets[s.choiceSetId]||[];if(!parent||parent.id===s.id||parent.choiceIdsByParent||!rule.ids||typeof rule.ids!=='object'||Array.isArray(rule.ids))errors.push('Invalid dependent slot '+s.id);else for(const [id,ids]of Object.entries(rule.ids))if(!(p.choiceSets[parent.choiceSetId]||[]).some(c=>c.id===id)||!Array.isArray(ids)||ids.some(id=>!all.some(c=>c.id===id)))errors.push('Invalid dependent choices '+s.id);}
   for(const s of p.steps)for(const sentence of definitions(s)||[])for(const t of sentence.tokens||[])if(t.slotId&&!slots.has(t.slotId))errors.push('Unknown slot '+t.slotId);
   return errors;
  }
  function canonical(p,state,slot,selection,restore=false){
   if(!selection||!slot)return null;
   if(selection.kind==='choice'){
-   const c=(p.choiceSets[slot.choiceSetId]||[]).find(x=>x.id===selection.id);
+   const c=choicesFor(p,state,slot.id).find(x=>x.id===selection.id);
    if(!c)return null;
    const value={kind:'choice',id:c.id,label:c.label,insertText:c.insertText};
    for(const field of ['cardRef','imageUrl','speechText','audioUrl'])if(c[field])value[field]=c[field];return value;
@@ -57,22 +60,23 @@ window.SpeechModel=(()=>{
   const errors=validatePreset(p);if(errors.length)throw new Error(errors.join('; '));
   const state={schemaVersion:1,unitId:p.unitId,slotValues:{},stepVariants:{},optionalEnabled:{},sentenceOrder:[],myWords:{},drafts:{},ui:{stepId:p.steps[0].id,slotId:'',filters:{},rate:.55,sound:true,clearSpeech:false,zoomPercent:null,summaryWriting:false,summaryAudio:false,summaryReordering:false,inputOpen:false}};
   for(const step of p.steps){if(step.variants?.length)state.stepVariants[step.id]=step.defaultVariantId;if(!step.required)state.optionalEnabled[step.id]=false;}
-  for(const slot of p.slots){if(slot.allowMyWords)state.myWords[slot.myWordsGroupId]||=[];state.slotValues[slot.id]=canonical(p,state,slot,slot.defaultValue,true);if(!state.slotValues[slot.id])throw new Error('Invalid default '+slot.id);}
+  for(const slot of p.slots){if(slot.allowMyWords)state.myWords[slot.myWordsGroupId]||=[];state.slotValues[slot.id]=canonical(p,state,slot,slot.defaultValue,true);if(!state.slotValues[slot.id]&&!slot.optional)throw new Error('Invalid default '+slot.id);}
   state.ui.slotId=editableSlots(p,state,state.ui.stepId)[0]?.id||'';ensureOrder(p,state);return state;
  }
  function editableSlots(p,state,stepId){
   const step=stepFor(p,stepId);if(!step)return [];
-  return [...new Set(active(step,state).flatMap(s=>s.tokens.filter(t=>t.slotId&&t.editable!==false).map(t=>t.slotId)))].map(id=>slotFor(p,id)).filter(Boolean);
+  return [...new Set(active(step,state).flatMap(s=>s.tokens.filter(t=>t.slotId&&t.editable!==false).map(t=>t.slotId)))].map(id=>slotFor(p,id)).filter(s=>s&&slotActive(s,state));
  }
- function stepSentences(p,state,stepId){
+ function stepSentences(p,state,stepId,{includeEmptySlots=false}={}){
   const step=stepFor(p,stepId);if(!step)return [];
   return active(step,state).map(sentence=>{
-   const tokens=sentence.tokens.map((t,index)=>{
+   const tokens=sentence.tokens.filter(t=>!t.slotId||slotActive(slotFor(p,t.slotId),state)).filter(t=>includeEmptySlots||!t.slotId||!slotFor(p,t.slotId)?.optional||state.slotValues[t.slotId]).map((t,index)=>{
     const value=t.slotId?state.slotValues[t.slotId]:null;
     const raw=value?.insertText??t.word??'',word=index===0?raw.replace(/^./,c=>c.toUpperCase()):raw;
-    return {word,role:t.role||'neutral',speech:value?.speechText||t.speech||word,cardId:value?.cardRef||t.cardRef||'',imageUrl:value?.imageUrl||t.imageUrl||'',symbol:t.symbol||'',selectionKey:t.slotId&&t.editable!==false?t.slotId:'',...(t.imageTone==='sepia'?{imageTone:'sepia'}:{})};
+    const placeholder=!!(t.slotId&&slotFor(p,t.slotId)?.optional&&!value);
+    return {word,role:t.role||'neutral',speech:value?.speechText||t.speech||word,cardId:value?.cardRef||t.cardRef||'',imageUrl:value?.imageUrl||t.imageUrl||'',symbol:placeholder?'＋':t.symbol||'',selectionKey:t.slotId&&t.editable!==false?t.slotId:'',...(placeholder?{placeholder:true}:{}),...(t.imageTone==='sepia'?{imageTone:'sepia'}:{})};
    });
-   return {id:sentence.id,stepId,tokens,text:tokens.map(t=>t.word).join(' ')+(sentence.punctuation||''),parts:tokens.map(t=>t.speech),punctuation:sentence.punctuation||''};
+   return {id:sentence.id,stepId,tokens,text:tokens.filter(t=>!t.placeholder).map(t=>t.word).join(' ')+(sentence.punctuation||''),parts:tokens.filter(t=>!t.placeholder).map(t=>t.speech),punctuation:sentence.punctuation||''};
   });
  }
  function summary(p,state){const map=new Map(p.steps.filter(s=>s.required||state.optionalEnabled[s.id]).flatMap(s=>stepSentences(p,state,s.id)).map(s=>[s.id,s]));return state.sentenceOrder.filter(id=>map.has(id)).map(id=>map.get(id));}
@@ -90,6 +94,7 @@ window.SpeechModel=(()=>{
   const reject=error=>({ok:false,state:before,error});
   switch(action.type){
    case 'select': {const value=canonical(p,state,slot,action.selection);if(!value||!editableSlots(p,state,state.ui.stepId).some(s=>s.id===slot.id))return reject('この候補は選べません。');state.slotValues[slot.id]=value;break;}
+   case 'clear-slot':if(!slot?.optional||!editableSlots(p,state,state.ui.stepId).some(s=>s.id===slot.id))return reject('この欄は外せません。');state.slotValues[slot.id]=null;break;
    case 'variant': if(!step?.variants?.some(v=>v.id===action.variantId))return reject('文の種類がありません。');state.stepVariants[step.id]=action.variantId;if(state.ui.stepId===step.id)setUi(p,state,{stepId:step.id});break;
    case 'optional': if(!step||step.required||typeof action.enabled!=='boolean')return reject('必須の文は外せません。');state.optionalEnabled[step.id]=action.enabled;break;
    case 'reset-step': if(!step)return reject('文がありません。');for(const s of p.slots.filter(s=>s.ownerStepId===step.id)){state.slotValues[s.id]=canonical(p,state,s,s.defaultValue,true);delete state.drafts[s.id];}if(step.variants)state.stepVariants[step.id]=step.defaultVariantId;if(state.ui.stepId===step.id)setUi(p,state,{stepId:step.id});break;
@@ -99,7 +104,7 @@ window.SpeechModel=(()=>{
     ids.splice(action.targetIndex,0,ids.splice(from,1)[0]);let i=0;const shown=new Set(ids);state.sentenceOrder=state.sentenceOrder.map(id=>shown.has(id)?ids[i++]:id);break;
    }
    case 'add-word': {
-    const value=text(action.text);if(!slot?.allowMyWords||!value||!validId(action.id))return reject('英語を1～200文字で入力してください。');
+    const value=text(action.text);if(!slot?.allowMyWords||!slotActive(slot,state)||!value||!validId(action.id))return reject('英語を1～200文字で入力してください。');
     const words=state.myWords[slot.myWordsGroupId]||=[];
     if(words.some(w=>w.id===action.id))return reject('同じ登録番号があります。');
     words.push({id:action.id,text:value});state.myWords[slot.myWordsGroupId]=words;state.slotValues[slot.id]={kind:'custom',id:action.id,label:value,insertText:value};state.ui.inputOpen=false;state.drafts[slot.id]={...(state.drafts[slot.id]||{}),text:''};break;
@@ -124,17 +129,23 @@ window.SpeechModel=(()=>{
    case 'ui':setUi(p,state,action.patch);break;
    default:return reject('操作がありません。');
   }
-  ensureOrder(p,state);return {ok:true,state};
+  normalizeDependentSlots(p,state,before);ensureOrder(p,state);return {ok:true,state};
+ }
+ function normalizeDependentSlots(p,state,before){
+  for(const slot of p.slots){const rule=slot.choiceIdsByParent;if(!rule)continue;const value=state.slotValues[slot.id],parent=state.slotValues[rule.slotId],oldParent=before?.slotValues[rule.slotId];const changed=before&&(parent?.kind!==oldParent?.kind||parent?.id!==oldParent?.id);
+   if(!slotActive(slot,state)||(value&&((changed&&value.kind!=='choice')||!canonical(p,state,slot,value,true))))state.slotValues[slot.id]=null;
+  }
+  const visible=editableSlots(p,state,state.ui.stepId);if(state.ui.slotId&&!visible.some(s=>s.id===state.ui.slotId)){state.ui.slotId=visible[0]?.id||'';state.ui.inputOpen=false;}
  }
  function reconcile(p,saved){
   const state=initialState(p),warnings=[];
   if(!saved||typeof saved!=='object'||saved.schemaVersion!==1||saved.unitId!==p.unitId)throw new Error('保存形式またはUnitが一致しません。');
   for(const group of Object.keys(state.myWords)){const seen=new Set();state.myWords[group]=(Array.isArray(saved.myWords?.[group])?saved.myWords[group]:[]).filter(w=>{if(!w||!validId(w.id)||seen.has(w.id)||!text(w.text)){warnings.push('無効な追加語を除外しました。');return false;}seen.add(w.id);return true;}).map(w=>({id:w.id,text:w.text.trim()}));}
-  for(const slot of p.slots){if(!own(saved.slotValues,slot.id))continue;const value=canonical(p,state,slot,saved.slotValues[slot.id],true);if(value)state.slotValues[slot.id]=value;else warnings.push('無効な選択を初期値に戻しました。');}
+  for(const slot of p.slots.filter(s=>!s.choiceIdsByParent).concat(p.slots.filter(s=>s.choiceIdsByParent))){if(!own(saved.slotValues,slot.id))continue;if(slot.optional&&saved.slotValues[slot.id]===null){state.slotValues[slot.id]=null;continue;}const value=canonical(p,state,slot,saved.slotValues[slot.id],true);if(value)state.slotValues[slot.id]=value;else warnings.push('無効な選択を初期値に戻しました。');}
   for(const step of p.steps){if(step.variants?.some(v=>v.id===saved.stepVariants?.[step.id]))state.stepVariants[step.id]=saved.stepVariants[step.id];if(!step.required&&typeof saved.optionalEnabled?.[step.id]==='boolean')state.optionalEnabled[step.id]=saved.optionalEnabled[step.id];}
   if(Array.isArray(saved.sentenceOrder))state.sentenceOrder=saved.sentenceOrder.filter(id=>typeof id==='string');ensureOrder(p,state);
   for(const slot of p.slots)for(const field of ['text','search']){const value=saved.drafts?.[slot.id]?.[field];if(typeof value==='string'&&value.length<=10000){state.drafts[slot.id]||={};state.drafts[slot.id][field]=value;}}
-  setUi(p,state,saved.ui);return {state,warnings};
+  setUi(p,state,saved.ui);normalizeDependentSlots(p,state);return {state,warnings};
  }
- return {validatePreset,initialState,reduce,stepSentences,summary,editableSlots,reconcile};
+ return {validatePreset,initialState,reduce,stepSentences,summary,editableSlots,reconcile,choicesFor};
 })();

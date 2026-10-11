@@ -2,13 +2,16 @@ window.SpeechInputs=(()=>{
  'use strict';
  const esc=x=>window.SentenceCards.escape(x);
  function mount(root,{preset,getState,catalog,dispatch}){
-  let current='',composing=false,editing=null;
+  let current='',composing=false,editing=null,viewKey='';
+  const listPositions=new Map();
   const slot=()=>preset.slots.find(s=>s.id===current);
+  const filtersFor=(s,state)=>['ALL',...(s.allowMyWords?['MY WORDS']:[]),...new Set(window.SpeechModel.choicesFor(preset,state,s.id).map(c=>c.category).filter(Boolean))];
+  const filterFor=(s,state)=>{const saved=state.ui.filters[s.id]||'ALL';return filtersFor(s,state).includes(saved)?saved:'ALL';};
   const wordActions=id=>'<span class="speech-word-actions"><button type="button" data-edit-word="'+esc(id)+'" aria-label="この追加語を編集">編集</button><button type="button" data-delete-word="'+esc(id)+'" aria-label="この追加語を削除">削除</button></span>';
   function choices(){
    const s=slot(),state=getState();if(!s)return [];
    if(s.inputType==='country-search')return catalog.findCountries(state.drafts[s.id]?.search||'');
-   const filter=state.ui.filters[s.id]||'ALL',official=preset.choiceSets[s.choiceSetId].map(c=>({...c,kind:'choice'})),custom=(state.myWords[s.myWordsGroupId]||[]).map(c=>({id:c.id,label:c.text,kind:'custom'}));
+   const filter=filterFor(s,state),official=window.SpeechModel.choicesFor(preset,state,s.id).map(c=>({...c,kind:'choice'})),custom=(state.myWords[s.myWordsGroupId]||[]).map(c=>({id:c.id,label:c.text,kind:'custom'}));
    return filter==='MY WORDS'?custom:filter==='ALL'?[...official,...custom]:official.filter(c=>c.category===filter);
   }
   function list(){
@@ -19,13 +22,19 @@ window.SpeechInputs=(()=>{
    }
    return '<div class="speech-candidates">'+(items.length?items.map(c=>'<div class="speech-candidate"><button type="button" data-speech-choice="'+esc(c.id)+'" data-choice-kind="'+(c.kind||'choice')+'" aria-pressed="'+(state.slotValues[s.id]?.id===c.id)+'">'+(c.imageUrl?'<img src="'+esc(c.imageUrl)+'" alt="">':'')+'<span>'+esc(c.label)+'</span></button>'+(c.kind==='custom'?wordActions(c.id):'')+'</div>').join(''):'<p>'+ (s.inputType==='country-search'?'見つかりません。別の国名で検索してください。':'まだ候補がありません。「＋ ほかの言葉」から追加できます。')+'</p>')+'</div>';
   }
-  function render(id){if(current!==id||!getState().ui.inputOpen)editing=null;current=id;const s=slot(),state=getState();root.hidden=!s;if(!s){root.replaceChildren();return;}
-   const filters=['ALL',...(s.allowMyWords?['MY WORDS']:[]),...new Set(preset.choiceSets[s.choiceSetId].map(c=>c.category).filter(Boolean))];
-   root.innerHTML='<div data-speech-inputs>'+ (s.inputType==='country-search'?'<label>国名を検索<input data-country-search aria-label="国名を検索" placeholder="日本語・かな・英語" value="'+esc(state.drafts[id]?.search||'')+'"></label>':'<div class="speech-filters">'+filters.map(f=>'<button type="button" data-filter="'+esc(f)+'" aria-pressed="'+((state.ui.filters[id]||'ALL')===f)+'">'+esc(f)+'</button>').join('')+'</div>')+(state.ui.inputOpen&&s.allowMyWords?'<form data-word-form class="speech-word-form"><h3>'+(editing?'追加した言葉を編集する':'ほかの言葉を追加する')+'</h3><label>英語を入力<input data-word-input aria-label="英語を入力" value="'+esc(editing?editing.text:state.drafts[id]?.text||'')+'"></label><p>'+esc(s.hint)+'</p><p data-input-message role="status">1～200文字で入力できます。</p><div><button type="submit">'+(editing?'更新':'追加する')+'</button> <button type="button" data-cancel-word>キャンセル</button></div></form>':'<div class="speech-picker">'+(s.allowMyWords?'<button type="button" class="speech-add-word" data-add-word>＋ ほかの言葉</button>':'')+'<div data-candidate-host>'+list()+'</div></div>')+'</div>';
+  function render(id){
+   const previousList=root.querySelector('.speech-candidates');if(previousList&&viewKey)listPositions.set(viewKey,previousList.scrollLeft);
+   if(current!==id||!getState().ui.inputOpen)editing=null;current=id;const s=slot(),state=getState();root.hidden=!s;if(!s){viewKey='';root.replaceChildren();return;}
+   const filter=filterFor(s,state),filters=filtersFor(s,state);
+   viewKey=JSON.stringify([id,filter,s.choiceIdsByParent?state.slotValues[s.choiceIdsByParent.slotId]?.id||'':'']);
+   root.innerHTML='<div data-speech-inputs>'+ (s.inputType==='country-search'?'<label>国名を検索<input data-country-search aria-label="国名を検索" placeholder="日本語・かな・英語" value="'+esc(state.drafts[id]?.search||'')+'"></label>':'<div class="speech-filters">'+filters.map(f=>'<button type="button" data-filter="'+esc(f)+'" aria-pressed="'+(filter===f)+'">'+esc(f)+'</button>').join('')+'</div>')+(state.ui.inputOpen&&s.allowMyWords?'<form data-word-form class="speech-word-form"><h3>'+(editing?'追加した言葉を編集する':'ほかの言葉を追加する')+'</h3><label>英語を入力<input data-word-input aria-label="英語を入力" value="'+esc(editing?editing.text:state.drafts[id]?.text||'')+'"></label><p>'+esc(s.hint)+'</p><p data-input-message role="status">1～200文字で入力できます。</p><div><button type="submit">'+(editing?'更新':'追加する')+'</button> <button type="button" data-cancel-word>キャンセル</button></div></form>':'<div class="speech-picker">'+(s.allowMyWords?'<button type="button" class="speech-add-word" data-add-word>＋ ほかの言葉</button>':'')+'<div data-candidate-host>'+list()+'</div></div>')+'</div>';
+   if(s.optional){const info=document.createElement('div');info.className='speech-optional-object';info.innerHTML='<span>何を？（追加は任意）</span><button type="button" data-clear-slot'+(!state.slotValues[id]?' disabled':'')+'>何を？を外す</button>';root.querySelector('[data-speech-inputs]').prepend(info);}
+   const nextList=root.querySelector('.speech-candidates');if(nextList)nextList.scrollLeft=listPositions.get(viewKey)||0;
   }
   function click(e){const b=e.target.closest('button');if(!b)return;
    if(b.hasAttribute('data-speech-choice'))dispatch({type:'select',slotId:current,selection:{kind:b.dataset.choiceKind||'choice',id:b.dataset.speechChoice}});
    else if(b.hasAttribute('data-filter'))dispatch({type:'ui',patch:{filters:{[current]:b.dataset.filter}}});
+   else if(b.hasAttribute('data-clear-slot'))dispatch({type:'clear-slot',slotId:current});
    else if(b.hasAttribute('data-add-word')){editing=null;dispatch({type:'ui',patch:{inputOpen:true}});root.querySelector('[data-word-input]')?.focus();}
    else if(b.hasAttribute('data-edit-word')){const word=(getState().myWords[slot().myWordsGroupId]||[]).find(w=>w.id===b.dataset.editWord);if(word){editing={...word};dispatch({type:'ui',patch:{inputOpen:true}});root.querySelector('[data-word-input]')?.focus();}}
    else if(b.hasAttribute('data-cancel-word'))dispatch({type:'ui',patch:{inputOpen:false}});

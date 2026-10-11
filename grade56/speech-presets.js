@@ -60,7 +60,8 @@ window.SpeechPresets=(()=>{
   const actions=['living_002','living_004','living_006','living_007','living_008','living_009','living_010','living_020','living_021','living_022','living_023','living_024','living_025'].map(id=>catalog.card(id,{category:Number(id.slice(-3))>=20?'できること Plus':'できること'})).filter(Boolean);
   const features=['impression_010','impression_008','impression_009','personality_008','state_001','state_002'].map(id=>catalog.card(id,{category:'特徴'})).filter(Boolean);
   const questionVerbs=[catalog.card('action5_002',{id:'like',category:'質問する動詞'}),c('know','know','know','質問する動詞')];
-  const choiceSets={animals,habitats,problems,actions,features,questionVerbs};
+  const actionTargets=[['living_005','plastic'],['item_042','garbage'],['item_040','plastic bags'],['item_001','bags'],['item_028','boxes'],['clothes_000','clothes'],['living_026','glass bottles']].map(([id,word])=>catalog.card(id,{label:word,insertText:word,speechText:word,category:id==='living_026'?'何を？ Plus':'何を？'})).filter(Boolean);
+  const choiceSets={animals,habitats,problems,actions,features,questionVerbs,actionTargets};
   const slot=(id,ownerStepId,choiceSetId,initial,allowMyWords,hint)=>({id,ownerStepId,inputType:'picture-card',choiceSetId,defaultValue:selection(choiceSets[choiceSetId].find(c=>c.id===initial)),allowMyWords,myWordsGroupId:id,hint});
   const slots=[
    slot('animal','save','animals','animal_011',true,'動物名を複数形で入力しよう。例：sea otters / turtles。ここで選んだ動物は、ほかの文にも共通して使います。'),
@@ -72,6 +73,7 @@ window.SpeechPresets=(()=>{
    slot('feature','features','features','impression_010',true,'動物の特徴を表す言葉を入力しよう。例：cute / beautiful'),
    slot('questionVerb','question','questionVerbs','like',false,'like または know を選ぼう。')
   ];
+  for(const [id,ownerStepId,parentId]of [['actionTarget','action','action'],['actionTarget2','action-too','action2']])slots.push({id,ownerStepId,inputType:'picture-card',choiceSetId:'actionTargets',defaultValue:null,optional:true,allowMyWords:true,myWordsGroupId:id,hint:'何を減らす・再使用する・リサイクルするかを入力しよう。例：bags / boxes / glass bottles。追加は任意です。',choiceIdsByParent:{slotId:parentId,ids:{living_008:['living_005','item_042','item_040'],living_009:['item_001','item_028','clothes_000'],living_010:['living_005','item_028','living_026']}}});
   const fixedPictures={I:'person_001',We:'person_005',They:'person_006',you:'person_002',save:'action6_016',live:'action6_002',like:'action5_002',in:'position_002'};
   const w=(word,role)=>({word,role,cardRef:fixedPictures[word]||''}),s=(slotId,role,editable=true)=>({slotId,role,editable});
   const step=(id,label,required,tokens,punctuation='.')=>({id,label,required,sentences:[{id:id+'.main',tokens,punctuation}]});
@@ -79,9 +81,9 @@ window.SpeechPresets=(()=>{
    step('save','守りたい動物',true,[w("Let's",'subject'),w('save','verb'),w('the','object'),s('animal','object')]),
    step('habitat','どこに住んでいるか',true,[s('animal','subject',false),w('live','verb'),w('in','place'),w('the','place'),s('habitat','place')]),
    step('problem','大きな問題',true,[s('problem','subject'),w('is','verb'),w('a','adjective'),w('big','adjective'),w('problem','object')]),
-   step('action','私たちにできること',true,[w('We','subject'),w('can','verb'),s('action','verb')]),
+   step('action','私たちにできること',true,[w('We','subject'),w('can','verb'),s('action','verb'),s('actionTarget','object')]),
    step('problem-too','もう1つの問題',false,[s('problem2','subject'),w('is','verb'),w('a','adjective'),w('big','adjective'),w('problem,','object'),w('too','adverb')]),
-   step('action-too','もう1つのできること',false,[w('We','subject'),w('can','verb'),s('action2','verb')]),
+   step('action-too','もう1つのできること',false,[w('We','subject'),w('can','verb'),s('action2','verb'),s('actionTarget2','object')]),
    step('like','その動物が好き',false,[w('I','subject'),w('like','verb'),s('animal','object',false)]),
    step('features','動物の特徴',false,[w('They','subject'),w('are','verb'),s('feature','adjective')]),
    step('question','聞いている人への質問',false,[w('Do','neutral'),w('you','subject'),s('questionVerb','verb'),s('animal','object',false)],'?')

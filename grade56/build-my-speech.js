@@ -34,9 +34,13 @@ window.SpeechEditor=(()=>{
    const slots=window.SpeechModel.editableSlots(preset,state,step.id);
    controls.innerHTML='<div class="talk-topbar"><div class="talk-rules speech-rules" aria-label="文の組み立ての色分け">'+roles.map(([role,label])=>'<span class="talk-rule role-'+role+'">'+label+'</span>').join('')+'</div>'+audioControls(state.ui)+'</div><div class="speech-tools"><strong>'+esc(step.label)+'</strong><button type="button" data-reset'+(!preset.slots.some(s=>s.ownerStepId===step.id)&&!step.variants?' disabled':'')+'>↺ この文をもどす</button></div>'+(step.variants?'<div class="speech-variants">'+step.variants.map(v=>'<button type="button" data-speech-variant="'+v.id+'" aria-pressed="'+(state.stepVariants[step.id]===v.id)+'">'+esc(v.label)+'</button>').join('')+'</div>':'');
    cards=window.SentenceCards.create({root,resolveImage:t=>t.imageUrl||catalog.card(t.cardId)?.imageUrl||'',iconUrl:speakerIcon,audio:{speak:(text,element)=>audio.speak(text,element.isConnected?element:stage.querySelector('[data-speech-slot="'+CSS.escape(state.ui.slotId)+'"]')),sentence:(text,parts,element)=>audio.sentence(text,parts,element,state.ui.clearSpeech)},contractions:preset.contractions,onSelect:id=>dispatch({type:'ui',patch:{slotId:id}}),onLayout:fit});
-   stage.innerHTML='<div class="speech-sentences">'+window.SpeechModel.stepSentences(preset,state,step.id).map(s=>cards.row(s.tokens,s.punctuation)).join('')+'</div>';
+   const sentences=window.SpeechModel.stepSentences(preset,state,step.id,{includeEmptySlots:true});
+   stage.innerHTML='<div class="speech-sentences">'+sentences.map(s=>cards.row(s.tokens,s.punctuation)).join('')+'</div>';
+   stage.querySelectorAll('.talk-sentence-row').forEach((row,index)=>{const sentence=sentences[index],speaker=row.querySelector('[data-talk-sentence]');speaker.dataset.talkSentence=sentence.text;speaker.dataset.talkParts=JSON.stringify(sentence.parts);
+    const buttons=row.querySelectorAll('.talk-card');sentence.tokens.forEach((token,i)=>{if(token.placeholder){const button=buttons[i];button.dataset.speechPlaceholder='true';button.dataset.talkSpeech='';button.querySelector('.talk-card-word').textContent='何を？';}});
+   });
    stage.querySelectorAll('[data-talk-selection-key]').forEach(b=>{b.dataset.speechSlot=b.dataset.talkSelectionKey;b.setAttribute('aria-pressed',String(b.dataset.speechSlot===state.ui.slotId));b.setAttribute('aria-label',b.textContent.trim()+' を入れ替える');b.closest('[data-talk-token-slot]').classList.add('speech-editable-slot');});
-   stage.querySelectorAll('.talk-card').forEach(b=>{if([...(b.querySelector('.talk-card-word')?.textContent||'')].length>60)b.dataset.longWord='true';});
+   stage.querySelectorAll('.talk-card').forEach(b=>{const word=b.querySelector('.talk-card-word')?.textContent||'';if([...word].length>60)b.dataset.longWord='true';else if(preset.unitId==='nh6:6'&&word.trim().split(/\s+/).length<=2&&[...word].length<=32)b.dataset.fitSingleLine='true';});
    cards.bind(stage);inputs.render(slots.some(s=>s.id===state.ui.slotId)?state.ui.slotId:slots[0]?.id||'');requestAnimationFrame(fit);
   }
   function syncZoom(){
@@ -45,7 +49,10 @@ window.SpeechEditor=(()=>{
    root.querySelector('[data-zoom]').value=value;root.querySelector('[data-zoom-output]').textContent=value+'%'+(state.ui.zoomPercent===null?'（自動）':'');
   }
   function fit(){
-   if(disposed||!cards)return;const scale=cards.fit(stage,state.ui.zoomPercent);
+   if(disposed||!cards)return;let scale=cards.fit(stage,state.ui.zoomPercent),wrap=false;
+   // Long two-word custom phrases must wrap if the one-line fitter reaches its readable limit.
+   stage.querySelectorAll('[data-fit-single-line]').forEach(card=>{const label=card.querySelector('.talk-card-word');if(label.scrollWidth>label.clientWidth){delete card.dataset.fitSingleLine;wrap=true;}});
+   if(wrap)scale=cards.fit(stage,state.ui.zoomPercent);
    // Auto-fit never makes long words microscopic; overflow stays inside the stage.
    if(state.ui.zoomPercent===null){const sizes=[...stage.querySelectorAll('.talk-card-word')].map(el=>parseFloat(getComputedStyle(el).fontSize));const minimum=Math.min(...sizes);if(minimum&&minimum*scale<14)stage.firstElementChild.style.zoom=String(Math.max(scale,14/minimum));}
    syncZoom();

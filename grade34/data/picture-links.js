@@ -27,13 +27,13 @@
     if (/^小文字[a-z]$/.test(item.japanese)) item.pictureUrl = additions + `alphabet/lower-${item.english}.png`;
   }
   // Category illustrations exist in the original dictionary image folder.
-  for (const id of ["weather_000", "school_000"]) {
+  for (const id of ["weather_000", "school_000", "clothes_000"]) {
     const card = cards.get(id);
     if (card) card.pictureUrl = "assets/cards/" + card.image.replace("assets/cards/", "");
   }
   data.letsTryPictureFiles = files;
   // New conservation Plus cards have local originals, like the category pictures above.
-  for (let n=16;n<=25;n++) {
+  for (let n=16;n<=26;n++) {
     const id='living_'+String(n).padStart(3,'0'), card=cards.get(id);
     if(card) card.pictureUrl='assets/cards/living_things/'+id+'.png';
   }
