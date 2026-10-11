@@ -5,6 +5,13 @@ body {font-family:'DEKIRU Andika','Yu Gothic',sans-serif;}
 .app-main:has(.nhe-practice:not([hidden])){padding-top:12px;padding-bottom:12px}
 .nhe-practice-settings{border-top:1px solid #e3ddd7;margin-top:16px;padding-top:10px}
 .nhe-practice-settings>label{font-size:14px;white-space:nowrap}
+/* Reserve space for complete English phrases and optional Japanese labels. */
+.nhe-practice .practice-grid[data-layout="list"]{grid-auto-rows:minmax(160px,1fr)}
+.nhe-practice .practice-grid[data-layout="list"] .practice-art{height:calc(100% - 64px)}
+.nhe-practice .practice-grid[data-layout="list"] .practice-label{height:64px;font-size:clamp(12px,9cqw,18px)}
+.nhe-practice .practice-grid:not([data-layout="list"]) .practice-art{height:60%}
+.nhe-practice .practice-grid:not([data-layout="list"]) .practice-label{top:60%;height:40%;font-size:clamp(12px,8cqw,38px);line-height:1.1}
+.nhe-practice .practice-grid .practice-card.no-picture .practice-label{top:0;height:100%}
 .nhe-practice.fullscreen-content{position:fixed;inset:0;z-index:1000;width:100%;height:100dvh;border-radius:0;background:white}
 @media(max-width:720px){.nhe-practice .practice-grid[data-layout="list"]{grid-template-columns:repeat(3,minmax(0,1fr))}.nhe-practice .feature-heading{flex-wrap:wrap}}
 .nhe-workspace{display:grid;grid-template-columns:300px minmax(0,1fr);gap:24px;align-items:start}
