@@ -19,10 +19,11 @@ window.NhePractice=(()=>{
     const source=CardSet.source(c);
     return `<button class="practice-card ${display.image?'':'no-picture'}" data-speak="${escape(c.speech||c.english)}" aria-label="${escape(c.english)}を発音">${display.image?`<div class="practice-art">${source?`<img src="${escape(source)}" alt="">`:'<span>No image</span>'}</div>`:''}<div class="practice-label">${display.english?`<strong>${escape(c.english)}</strong>`:''}${display.japanese?`<small>${escape(c.japanese)}</small>`:''}</div></button>`;
    }).join('')}</div>`:'<p>左側のメニューで練習する単語を選んでください。</p>'}</div></div>`;
+   CardPractice.fitLabels(app);
   }
   function close(){
    if(document.fullscreenElement===panel)document.exitFullscreen().catch(()=>{});
-   window.speechSynthesis?.cancel();active=false;panel.classList.remove('fullscreen-content');panel.hidden=true;panel.replaceChildren();settings.hidden=true;menu.hidden=false;heading.hidden=false;
+   window.speechSynthesis?.cancel();active=false;panel.classList.remove('fullscreen-content');panel.hidden=true;panel.replaceChildren();settings.hidden=true;menu.hidden=false;heading.hidden=false;CardPractice.fitLabels(app);
   }
   entry.addEventListener('click',()=>{active=true;menu.hidden=true;heading.hidden=true;settings.hidden=false;panel.hidden=false;refresh();panel.querySelector('[data-practice-back]').focus();});
   settings.addEventListener('change',event=>{

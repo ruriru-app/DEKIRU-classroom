@@ -331,6 +331,7 @@ return `<h2>保存したカードセット</h2>${sets.length?sets.map(s=>`<div c
     }
     if (previousSidebar) app.querySelector('.unit-sidebar').scrollTop = sidebarScroll;
     if (state.activeFeature === 'sentences') SentencePlayer.attach({unitKey:`${bookKey}-${unit}`,items:selectedItems(vocabulary,selection),cards:[...DATA.cards,...DATA.expressions],source:pictureSource,labels:DATA.categoryLabels});
+    CardPractice.fitLabels(app);
   }
 
   function displaySettings() {
@@ -806,7 +807,7 @@ return `<h2>保存したカードセット</h2>${sets.length?sets.map(s=>`<div c
 
   app.addEventListener("change", (event) => {
     const practiceSetting=event.target.closest('[data-practice-setting]');
-    if(practiceSetting && state.activeUnit){practice.configure(practiceSetting.dataset.practiceSetting,practiceSetting.value);const {bookKey,unit}=state.activeUnit;const vocabulary=getUnitVocabulary(bookKey,unit);const selection=state.unitSelections.get(`${bookKey}-${unit}`);const panel=document.querySelector('#unit-content .practice-scroll');if(panel&&selection)panel.outerHTML=practiceCards(selectedItems(vocabulary,selection));else renderUnit(bookKey,unit);return;}
+    if(practiceSetting && state.activeUnit){practice.configure(practiceSetting.dataset.practiceSetting,practiceSetting.value);const {bookKey,unit}=state.activeUnit;const vocabulary=getUnitVocabulary(bookKey,unit);const selection=state.unitSelections.get(`${bookKey}-${unit}`);const panel=document.querySelector('#unit-content .practice-scroll');if(panel&&selection){panel.outerHTML=practiceCards(selectedItems(vocabulary,selection));CardPractice.fitLabels(app);}else renderUnit(bookKey,unit);return;}
     const bombSetting = event.target.closest('[data-bomb-setting]');
     if (bombSetting) { BombGame.configure(bombSetting.dataset.bombSetting, bombSetting.type === 'checkbox' ? bombSetting.checked : bombSetting.value); return; }
     const lookSetting = event.target.closest("[data-look-setting]");
