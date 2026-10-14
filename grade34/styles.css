@@ -728,3 +728,17 @@ a.interview-activity-tile:focus-visible{outline:3px solid #5189be;outline-offset
 .personal-interview-tile>.personal-interview-delete{position:absolute;right:14px;bottom:12px;padding:7px 16px;border:1px solid #edb5c6;border-radius:12px;background:#fff2f6;color:#754959;cursor:pointer;font:inherit}
 @media(max-width:1100px){.feature-grid:has(.interview-activity-tile),.catalog-grid:has(.interview-activity-tile){grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:700px){.feature-grid:has(.interview-activity-tile),.catalog-grid:has(.interview-activity-tile){grid-template-columns:1fr}}
+
+/* Temporary official Self Introduction tile; artwork can replace this shell later. */
+.self-introduction-official-tile{display:flex;flex-direction:column;min-width:0;min-height:250px;padding:20px 22px;border:1px solid #e5ddd7;border-left:7px solid #91c8ed;border-radius:16px;background:#fff;color:var(--ink);box-shadow:var(--shadow)}
+.self-introduction-official-heading{display:flex;align-items:center;flex-wrap:wrap;gap:8px 12px}
+.self-introduction-official-heading strong{font-size:20px;line-height:1.4}
+.self-introduction-official-tile>p{margin:10px 0 0;color:var(--muted);font-size:14px;line-height:1.5}
+.self-introduction-official-tile>.self-introduction-official-expression{margin:12px 0 14px;padding:8px 10px;border-radius:10px;background:#f6f2ee;color:var(--ink);font-size:17px;font-weight:700;text-align:center}
+.self-introduction-official-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:auto}
+.self-introduction-official-actions button,.self-introduction-official-actions a{display:grid;place-items:center;min-width:0;min-height:44px;padding:9px 7px;border:1px solid #cbd9e8;border-radius:11px;background:#eef6ff;color:var(--ink);font:inherit;font-size:13px;font-weight:800;line-height:1.25;text-align:center;text-decoration:none;overflow-wrap:anywhere;cursor:pointer}
+.self-introduction-official-actions button:nth-child(2),.self-introduction-official-actions button:nth-child(4){border-color:#efccda;background:#fff0f5}
+.self-introduction-official-actions button:focus-visible,.self-introduction-official-actions a:focus-visible{outline:3px solid #5189be;outline-offset:2px}
+.feature-grid:has(.self-introduction-official-tile){grid-template-columns:repeat(3,minmax(0,1fr))}
+@media(max-width:1100px){.feature-grid:has(.self-introduction-official-tile){grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){.feature-grid:has(.self-introduction-official-tile){grid-template-columns:1fr}.self-introduction-official-tile{min-height:230px}}
