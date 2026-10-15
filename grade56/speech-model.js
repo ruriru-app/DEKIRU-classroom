@@ -31,7 +31,10 @@ window.SpeechModel=(()=>{
   }
   for(const list of Object.values(p.choiceSets)){if(!Array.isArray(list)){errors.push('Invalid choices');continue;}const ids=new Set();for(const c of list){if(!validId(c.id)||ids.has(c.id)||!text(c.insertText))errors.push('Invalid choice '+c.id);ids.add(c.id);}}
   for(const s of p.slots){const rule=s.choiceIdsByParent;if(!rule)continue;const parent=slotFor(p,rule.slotId),all=p.choiceSets[s.choiceSetId]||[];if(!parent||parent.id===s.id||parent.choiceIdsByParent||!rule.ids||typeof rule.ids!=='object'||Array.isArray(rule.ids))errors.push('Invalid dependent slot '+s.id);else for(const [id,ids]of Object.entries(rule.ids))if(!(p.choiceSets[parent.choiceSetId]||[]).some(c=>c.id===id)||!Array.isArray(ids)||ids.some(id=>!all.some(c=>c.id===id)))errors.push('Invalid dependent choices '+s.id);}
-  for(const s of p.steps)for(const sentence of definitions(s)||[])for(const t of sentence.tokens||[])if(t.slotId&&!slots.has(t.slotId))errors.push('Unknown slot '+t.slotId);
+  for(const s of p.steps)for(const sentence of definitions(s)||[])for(const t of sentence.tokens||[]){
+   if(t.slotId&&!slots.has(t.slotId))errors.push('Unknown slot '+t.slotId);
+   if(t.wordByChoice){const rule=t.wordByChoice;if(!slots.has(rule.slotId)||!rule.values||typeof rule.values!=='object'||Array.isArray(rule.values)||Object.values(rule.values).some(v=>!text(v)))errors.push('Invalid choice-linked word '+(t.word||''));}
+  }
   return errors;
  }
  function canonical(p,state,slot,selection,restore=false){
@@ -72,7 +75,7 @@ window.SpeechModel=(()=>{
   return active(step,state).map(sentence=>{
    const tokens=sentence.tokens.filter(t=>!t.slotId||slotActive(slotFor(p,t.slotId),state)).filter(t=>includeEmptySlots||!t.slotId||!slotFor(p,t.slotId)?.optional||state.slotValues[t.slotId]).map((t,index)=>{
     const value=t.slotId?state.slotValues[t.slotId]:null;
-    const raw=value?.insertText??t.word??'',word=index===0?raw.replace(/^./,c=>c.toUpperCase()):raw;
+    const linked=t.wordByChoice?.values?.[state.slotValues[t.wordByChoice.slotId]?.id],raw=value?.insertText??linked??t.word??'',word=index===0?raw.replace(/^./,c=>c.toUpperCase()):raw;
     const placeholder=!!(t.slotId&&slotFor(p,t.slotId)?.optional&&!value);
     return {word,role:t.role||'neutral',speech:value?.speechText||t.speech||word,cardId:value?.cardRef||t.cardRef||'',imageUrl:value?.imageUrl||t.imageUrl||'',symbol:placeholder?'＋':t.symbol||'',selectionKey:t.slotId&&t.editable!==false?t.slotId:'',...(placeholder?{placeholder:true}:{}),...(t.imageTone==='sepia'?{imageTone:'sepia'}:{})};
    });

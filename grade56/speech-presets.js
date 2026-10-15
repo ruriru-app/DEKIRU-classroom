@@ -4,26 +4,24 @@ window.SpeechPresets=(()=>{
  const c=(id,label,insertText=label,category='')=>({id,label,insertText,category});
  const selection=choice=>({kind:'choice',...choice});
  function grade5unit5(catalog){
+  const distances=['number_001','number_002','number_003'].map(id=>catalog.card(id,{category:'ブロック数'})).filter(Boolean);
   const directions=[
    ['direction_004','right'],
    ['direction_005','left']
   ].map(([ref,id])=>catalog.card(ref,{id,label:id,insertText:id,speechText:id,category:'方向'})).filter(Boolean);
-  const choiceSets={directions};
+  const choiceSets={distances,directions};
   const slot=(id,ownerStepId,choiceSetId,initial)=>({id,ownerStepId,inputType:'picture-card',choiceSetId,defaultValue:selection(choiceSets[choiceSetId].find(c=>c.id===initial)),allowMyWords:false});
   const slots=[
+   slot('distance','blocks','distances','number_001'),
    slot('turnDirection','turn','directions','right'),
    slot('sideDirection','side','directions','right')
   ];
-  const fixedPictures={Go:'action5_016',straight:'direction_002',one:'number_001',two:'number_002',three:'number_003',block:'direction_009',blocks:'direction_009',Turn:'direction_003',You:'person_002',see:'action5_018'};
+  const fixedPictures={Go:'action5_016',straight:'direction_002',Turn:'direction_003',You:'person_002',see:'action5_018'};
   const w=(word,role)=>({word,role,cardRef:fixedPictures[word]||''}),s=(slotId,role)=>({slotId,role,editable:true});
   const sentence=(id,tokens)=>({id:id+'.main',tokens,punctuation:'.'});
   const step=(id,label,tokens)=>({id,label,required:true,sentences:[sentence(id,tokens)]});
   const steps=[
-   {id:'blocks',label:'まっすぐ～ブロック進んでください。',required:true,sentences:[],defaultVariantId:'one-block',variants:[
-    {id:'one-block',label:'1 block',sentences:[sentence('blocks',[w('Go','verb'),w('straight','verb'),w('for','place'),w('one','place'),w('block','place')])]},
-    {id:'two-blocks',label:'2 blocks',sentences:[sentence('blocks',[w('Go','verb'),w('straight','verb'),w('for','place'),w('two','place'),w('blocks','place')])]},
-    {id:'three-blocks',label:'3 blocks',sentences:[sentence('blocks',[w('Go','verb'),w('straight','verb'),w('for','place'),w('three','place'),w('blocks','place')])]}
-   ]},
+   step('blocks','まっすぐ～ブロック進んでください。',[w('Go','verb'),w('straight','verb'),w('for','place'),s('distance','place'),{word:'block',role:'place',cardRef:'direction_009',wordByChoice:{slotId:'distance',values:{number_001:'block',number_002:'blocks',number_003:'blocks'}}}]),
    step('little','ほんの少しまっすぐ進んでください。',[w('Go','verb'),w('straight','verb'),w('for','place'),w('just','place'),w('a','place'),w('little','place'),w('bit','place')]),
    step('turn','右/左に曲がってください。',[w('Turn','verb'),s('turnDirection','place')]),
    step('side','あなたの右/左側に見えます。',[w('You','subject'),w('can','verb'),w('see','verb'),w('it','object'),w('on','place'),w('your','place'),s('sideDirection','place')])
