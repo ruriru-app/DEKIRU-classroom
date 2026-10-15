@@ -14,9 +14,14 @@ function fixture(){
   setAttribute(k,v){this.attrs[k]=v;}append(...a){this.children.push(...a);}addEventListener(k,v){this.listeners[k]=v;}
   showModal(){this.open=true;}pause(){this.paused=true;}play(){this.playCount++;this.paused=false;return Promise.resolve();}
  }
- for(const id of ['reset','placeSound','turnSound','walkSound','arrivalSound','confirmDialog','feedback','record','recordLabel','execute','undo','showHint','readHint','voiceState','hintSentence','recognized','sideArrow','success','char','sprite','location','selectedGoal','confirmTitle','confirmNote','successText','markers','starts','destinations','facilityList'])nodes.set(id,new Element(id));
+ for(const id of ['reset','placeSound','turnSound','walkSound','arrivalSound','confirmDialog','feedback','record','recordLabel','execute','undo','showHint','readHint','voiceState','hintSentence','recognized','sideArrow','success','char','sprite','girlSpritePreview','location','selectedGoal','confirmTitle','confirmNote','successText','markers','starts','destinations','facilityList'])nodes.set(id,new Element(id));
+ nodes.get('char').className='character';nodes.get('girlSpritePreview').src='assets/ruriru-town/characters/girl-walk-v1.png';
+ for(const [character,active] of [['boy',true],['girl',false]]){
+  const button=new Element();button.tagName='BUTTON';button.className='character-choice'+(active?' active':'');button.dataset.character=character;button.setAttribute('aria-pressed',String(active));
+ }
  const doc={hidden:false,getElementById:id=>nodes.get(id),createElement(tag){const e=new Element();e.tagName=tag.toUpperCase();return e;},createTextNode:text=>({textContent:text}),
   querySelectorAll(selector){
+   if(selector==='[data-character]')return all.filter(e=>e.dataset.character);
    if(selector==='[data-start]')return all.filter(e=>e.dataset.start);
    if(selector==='[data-goal]')return all.filter(e=>e.dataset.goal);
    if(selector==='.facility-target.indicated')return all.filter(e=>e.className.includes('facility-target')&&e.className.includes('indicated'));
@@ -62,6 +67,20 @@ test('valid detours require explicit execution; impossible movement does not bec
  f.nodes.get('execute').onclick();await tick();assert.ok(f.nodes.get('sprite').src.includes('west-0.png'));assert.equal(f.nodes.get('char').style.top,initialTop);
  f.speech.final('Go straight for one block.');assert.equal(f.nodes.get('execute').disabled,false);f.nodes.get('execute').onclick();await tick();
  assert.ok(f.nodes.get('feedback').textContent.includes('英文は伝わったよ'));assert.equal(f.nodes.get('showHint').disabled,true);
+});
+test('character choice preserves direction while switching between the boy frames and girl sprite sheet',async()=>{
+ const f=fixture(),boy=f.button('character','boy'),girl=f.button('character','girl'),sprite=f.nodes.get('sprite'),char=f.nodes.get('char');
+ f.button('start','A').onclick();
+ assert.equal(boy.attrs['aria-pressed'],'true');assert.ok(sprite.src.includes('south-0.png'));
+ girl.onclick();
+ assert.equal(girl.attrs['aria-pressed'],'true');assert.equal(boy.attrs['aria-pressed'],'false');
+ assert.ok(char.className.includes('sprite-sheet'));assert.ok(sprite.src.includes('girl-walk-v1.png'));assert.equal(sprite.style.transform,'translate(0%,-50%)');assert.equal(sprite.alt,'道案内の女の子');
+ f.button('goal','zoo','facility-target').onclick();await tick();f.confirm();
+ f.speech.final('Turn right.');f.nodes.get('execute').onclick();await tick();
+ assert.ok(sprite.src.includes('girl-walk-v1.png'));assert.equal(sprite.style.transform,'translate(0%,-75%)','west-facing girl uses the fourth sprite row');
+ boy.onclick();
+ assert.equal(boy.attrs['aria-pressed'],'true');assert.equal(girl.attrs['aria-pressed'],'false');assert.equal(char.className.includes('sprite-sheet'),false);
+ assert.ok(sprite.src.includes('west-0.png'));assert.equal(sprite.style.transform,'');assert.equal(sprite.alt,'道案内の男の子');
 });
 test('a full spoken route clears each hint, arrives by relative side and supports undo and reset',async()=>{
  const f=fixture();f.button('start','A').onclick();f.button('goal','zoo','facility-choice').onclick();await tick();f.confirm();

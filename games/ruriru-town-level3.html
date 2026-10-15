@@ -3,11 +3,11 @@
 <head>
  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
  <title>RuRiRu Town LEVEL 3 — 声で道案内</title>
- <link rel="stylesheet" href="ruriru-town-level3.css?v=1">
+ <link rel="stylesheet" href="ruriru-town-level3.css?v=girl-1">
  <script src="ruriru-town-level2-model.js?v=9d8041ba923f" defer></script>
  <script src="ruriru-town-level3-model.js?v=c68ff1cbfee4" defer></script>
  <script src="ruriru-town-level3-speech.js?v=1" defer></script>
- <script src="ruriru-town-level3.js?v=e41a196d1f13" defer></script>
+ <script src="ruriru-town-level3.js?v=girl-1" defer></script>
 </head>
 <body>
 <main class="app">
@@ -36,6 +36,13 @@
  </section>
  <aside class="panel" aria-label="スタート・ヒント・目的地">
   <header class="panel-heading"><div><h1>RuRiRu Town <span>LEVEL 3</span></h1><p>自分の声で、道案内しよう。</p></div><button class="icon-button" id="reset" type="button" aria-label="はじめから">↻</button></header>
+  <section class="character-section" aria-labelledby="character-label">
+   <h2 id="character-label">キャラクター</h2>
+   <div class="character-choices" role="group" aria-labelledby="character-label">
+    <button class="character-choice active" type="button" data-character="boy" aria-pressed="true"><span class="character-preview" aria-hidden="true"><img src="assets/ruriru-town/characters/south-0.png" alt=""></span><span>男の子</span></button>
+    <button class="character-choice" type="button" data-character="girl" aria-pressed="false"><span class="character-preview girl-preview" aria-hidden="true"><img id="girlSpritePreview" src="assets/ruriru-town/characters/girl-walk-v1.png" alt=""></span><span>女の子</span></button>
+   </div>
+  </section>
   <section class="start-section" aria-labelledby="start-label"><h2 id="start-label"><span class="step">1</span> START <span class="section-note">スタート</span></h2><div class="starts" id="starts" role="group" aria-labelledby="start-label"></div></section>
   <section class="hint-section" aria-labelledby="hint-label">
    <div class="section-heading"><h2 id="hint-label">HINT <span class="section-note">こまったときに</span></h2><button class="hint-button" id="showHint" type="button" disabled>ヒントを表示</button></div>

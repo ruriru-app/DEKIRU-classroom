@@ -2,6 +2,9 @@
  'use strict';
  const M=window.TownLevel3,$=id=>document.getElementById(id),directions=['north','east','south','west'];
  const sounds={place:$('placeSound'),turn:$('turnSound'),walk:$('walkSound'),arrival:$('arrivalSound')};
+ const characterButtons=document.querySelectorAll('[data-character]');
+ const girlSpriteUrl=$('girlSpritePreview')?.src||'assets/ruriru-town/characters/girl-walk-v1.png';
+ let characterId='boy';
  let position=null,startLetter=null,goalId=null,pending=null,hintSentence='',hintAllowed=false;
  let completed=false,busy=false,history=[],motionFrame=null,walkTimer=null,actionEpoch=0,confirmAction=null,confirmationEpoch=0,preparingConfirmation=false;
  let speech;
@@ -9,9 +12,15 @@
  const speechBusy=()=>speech&&['listening','processing','speaking','cooldown'].includes(speech.state);
  const spriteUrl=(dir,frame)=>`assets/ruriru-town/characters/${directions[dir]}-${frame}.png`;
  const sprites=directions.flatMap((_,dir)=>Array.from({length:4},(_,frame)=>{const image=new Image();image.src=spriteUrl(dir,frame);return image;}));
+ const girlSpriteImage=new Image();girlSpriteImage.src=girlSpriteUrl;
  function feedback(text,kind=''){$('feedback').textContent=text;$('feedback').className='feedback'+(kind?' '+kind:'');}
  function syncControls(){
   const state=speech?.state||'idle',blocked=speechBusy()||busy;
+  characterButtons.forEach(button=>{
+   const active=button.dataset.character===characterId;
+   button.classList.toggle('active',active);button.setAttribute('aria-pressed',String(active));
+   button.disabled=blocked||preparingConfirmation||$('confirmDialog').open||document.hidden;
+  });
   $('record').disabled=!speech?.supported||!isReady()||['processing','speaking','cooldown'].includes(state);
   $('record').classList.toggle('listening',state==='listening');
   $('recordLabel').textContent=state==='listening'?'聞き取りを終える':'音声入力';
@@ -27,10 +36,17 @@
  function clearIndication(){$('sideArrow').hidden=true;document.querySelectorAll('.facility-target.indicated').forEach(button=>button.classList.remove('indicated'));$('success').hidden=true;}
  function stopSounds(){for(const audio of Object.values(sounds)){audio.pause();try{audio.currentTime=0;}catch{}}}
  function playSound(kind){stopSounds();try{sounds[kind].play()?.catch(()=>{});}catch{}}
+ function drawSprite(dir,frame=0){
+  const girl=characterId==='girl',sprite=$('sprite');
+  $('char').classList.toggle('sprite-sheet',girl);
+  sprite.src=girl?girlSpriteUrl:spriteUrl(dir,frame);
+  sprite.style.transform=girl?`translate(${-frame*25}%,${-dir*25}%)`:'';
+  sprite.alt=girl?'道案内の女の子':'道案内の男の子';
+ }
  function draw(frame=0){
   const char=$('char');if(!position){char.hidden=true;return;}
   const point=M.point(position);char.style.left=point.x/M.size.width*100+'%';char.style.top=point.y/M.size.height*100+'%';char.hidden=false;
-  $('sprite').src=spriteUrl(position.dir,frame);
+  drawSprite(position.dir,frame);
   $('location').textContent=`現在地：横道${1+position.r/2}、縦道${1+position.c/2}。${['北','東','南','西'][position.dir]}向き。`;
  }
  function cancelAction(){
@@ -107,7 +123,7 @@
   if(command.kind!=='forward'){history.push(previous);position=result.state;if(command.kind==='turn')playSound('turn');finishCommand(command);return;}
   const from=M.point(position),to=M.point(result.state),started=performance.now();
   const duration=window.matchMedia('(prefers-reduced-motion: reduce)').matches?0:450*command.steps;
-  playSound('walk');let frame=0;walkTimer=setInterval(()=>{$('sprite').src=spriteUrl(position.dir,++frame%4);},150);
+  playSound('walk');let frame=0;walkTimer=setInterval(()=>{drawSprite(position.dir,++frame%4);},150);
   function tick(now){
    if(token!==actionEpoch)return;
    const t=duration?Math.min(1,(now-started)/duration):1;
@@ -127,6 +143,10 @@
   const button=document.createElement('button');button.type='button';button.className='facility-choice';button.dataset.goal=facility.id;button.setAttribute('aria-pressed','false');button.append(document.createTextNode(facility.english));
   const translation=document.createElement('span');translation.textContent=facility.japanese;button.append(translation);button.onclick=()=>chooseGoal(facility);$('facilityList').append(button);
  }
+ characterButtons.forEach(button=>{button.onclick=()=>{
+  if(speechBusy()||busy||preparingConfirmation||$('confirmDialog').open||document.hidden)return;
+  characterId=button.dataset.character;draw();syncControls();
+ };});
  $('record').onclick=()=>{
   if(speech.state==='listening'){speech.finish();return;}
   if(!isReady())return;
