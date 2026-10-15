@@ -13,34 +13,36 @@
   if(hundred){const rest=hundred[2]?numberValue(hundred[2]):0;if(rest>=0&&rest<100)return numberWords.indexOf(hundred[1])*100+rest;}
   return NaN;
  }
- const spot=(r,c,toward)=>({r,c,toward});
- const around=(r,c)=>[spot(r,c+1,2),spot(r+2,c+1,0),spot(r+1,c,1),spot(r+1,c+2,3)];
- // Arrival spots are on the existing half-block road grid. Quarter-size facilities
- // use their outer side street so neighbouring facilities have distinct stops.
+ // Logical bounds use the same half-block grid as movement. The nearest
+ // half-block square ahead-left/right identifies the visible facility.
  const facilities=[
-  ['hospital','Hospital','病院',[82,162,272,140],[spot(0,1,2)]],
-  ['church','Church','教会',[77,300,139,122],[spot(1,0,1)]],
-  ['zoo','Zoo','動物園',[416,174,296,249],around(0,2)],
-  ['park','Park','公園',[769,170,266,133],[spot(0,5,2)]],
-  ['police-station','Police Station','警察署',[751,305,150,119],[spot(1,4,1)]],
-  ['junior-high-school','Junior High School','中学校',[1108,164,266,138],[spot(0,7,2)]],
-  ['fire-station','Fire Station','消防署',[1102,305,151,120],[spot(1,6,1)]],
-  ['station','Station','駅',[78,452,289,133],[spot(2,1,2)]],
-  ['bus-stop','Bus Stop','バス停',[65,591,147,118],[spot(3,0,1)]],
-  ['post-office','Post Office','郵便局',[235,591,126,118],[spot(3,2,3)]],
-  ['castle','Castle','城',[418,456,291,253],around(2,2)],
-  ['supermarket','Supermarket','スーパー',[771,453,260,132],[spot(2,5,2)]],
-  ['restaurant','Restaurant','レストラン',[751,591,148,118],[spot(3,4,1)]],
-  ['aquarium','Aquarium','水族館',[1101,452,294,135],[spot(2,7,2)]],
-  ['shrine','Shrine','神社',[1103,592,146,117],[spot(3,6,1)]],
-  ['amusement-park','Amusement Park','遊園地',[64,745,305,238],around(4,0)],
-  ['elementary-school','Elementary School','小学校',[425,744,278,122],[spot(4,3,2)]],
-  ['bookstore','Bookstore','本屋',[416,870,146,114],[spot(5,2,1)]],
-  ['stadium','Stadium','スタジアム',[756,744,289,240],around(4,4)],
-  ['library','Library','図書館',[1110,744,278,125],[spot(4,7,2)]],
-  ['convenience-store','Convenience Store','コンビニ',[1092,875,168,108],[spot(5,6,1)]],
-  ['temple','Temple','寺',[1268,873,130,111],[spot(5,8,3)]]
- ].map(([id,english,japanese,rect,spots])=>({id,english,japanese,rect,spots}));
+  ['hospital','Hospital','病院',[82,162,272,140],[0,0,1,2]],
+  ['church','Church','教会',[77,300,139,122],[1,0,2,1]],
+  ['zoo','Zoo','動物園',[416,174,296,249],[0,2,2,4]],
+  ['park','Park','公園',[769,170,266,133],[0,4,1,6]],
+  ['police-station','Police Station','警察署',[751,305,150,119],[1,4,2,5]],
+  ['junior-high-school','Junior High School','中学校',[1108,164,266,138],[0,6,1,8]],
+  ['fire-station','Fire Station','消防署',[1102,305,151,120],[1,6,2,7]],
+  ['station','Station','駅',[78,452,289,133],[2,0,3,2]],
+  ['bus-stop','Bus Stop','バス停',[65,591,147,118],[3,0,4,1]],
+  ['post-office','Post Office','郵便局',[235,591,126,118],[3,1,4,2]],
+  ['castle','Castle','城',[418,456,291,253],[2,2,4,4]],
+  ['supermarket','Supermarket','スーパー',[771,453,260,132],[2,4,3,6]],
+  ['restaurant','Restaurant','レストラン',[751,591,148,118],[3,4,4,5]],
+  ['aquarium','Aquarium','水族館',[1101,452,294,135],[2,6,3,8]],
+  ['shrine','Shrine','神社',[1103,592,146,117],[3,6,4,7]],
+  ['amusement-park','Amusement Park','遊園地',[64,745,305,238],[4,0,6,2]],
+  ['elementary-school','Elementary School','小学校',[425,744,278,122],[4,2,5,4]],
+  ['bookstore','Bookstore','本屋',[416,870,146,114],[5,2,6,3]],
+  ['stadium','Stadium','スタジアム',[756,744,289,240],[4,4,6,6]],
+  ['library','Library','図書館',[1110,744,278,125],[4,6,5,8]],
+  ['convenience-store','Convenience Store','コンビニ',[1092,875,168,108],[5,6,6,7]],
+  ['temple','Temple','寺',[1268,873,130,111],[5,7,6,8]]
+ ].map(([id,english,japanese,rect,bounds])=>({id,english,japanese,rect,bounds,spots:[]}));
+ const contains=(facility,r,c)=>r>facility.bounds[0]&&r<facility.bounds[2]&&c>facility.bounds[1]&&c<facility.bounds[3];
+ for(const facility of facilities)for(let r=0;r<=6;r++)for(let c=0;c<=8;c++){
+  if(base.point({r,c})&&[[-1,-1],[-1,1],[1,-1],[1,1]].some(([dr,dc])=>contains(facility,r+dr/2,c+dc/2)))facility.spots.push({r,c});
+ }
  function validState(p){return !!base.point(p)&&Number.isInteger(p.dir)&&p.dir>=0&&p.dir<4;}
  function advance(p,dir,steps){
   if(!Number.isInteger(steps)||steps<1||steps>40)return null;
@@ -83,8 +85,13 @@
  }
  function seenFacilities(state,side){
   if(!validState(state)||!['left','right'].includes(side))return [];
-  const toward=(state.dir+(side==='right'?1:3))%4;
-  return facilities.filter(f=>f.spots.some(s=>s.r===state.r&&s.c===state.c&&s.toward===toward));
+  const [dr,dc]=indicationVector(state.dir,side);
+  return facilities.filter(f=>contains(f,state.r+dr/2,state.c+dc/2));
+ }
+ function indicationVector(dir,side){
+  if(!vectors[dir]||!['left','right'].includes(side))return null;
+  const ahead=vectors[dir],lateral=vectors[(dir+(side==='right'?1:3))%4];
+  return [ahead[0]+lateral[0],ahead[1]+lateral[1]];
  }
  function isArrival(state,goalId,side){return seenFacilities(state,side).some(f=>f.id===goalId);}
  const key=p=>`${p.r},${p.c},${p.dir}`;
@@ -111,6 +118,6 @@
   }
   return null;
  }
- const api={size:base.size,starts:base.starts,point:base.point,facilities,vectors,advance,parseCommand,formatCommand,transition,seenFacilities,isArrival,nextHint};
+ const api={size:base.size,starts:base.starts,point:base.point,facilities,vectors,advance,parseCommand,formatCommand,transition,indicationVector,seenFacilities,isArrival,nextHint};
  if(typeof module==='object')module.exports=api;else root.TownLevel3=api;
 })(typeof window==='object'?window:globalThis);

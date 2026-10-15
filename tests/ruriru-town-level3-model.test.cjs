@@ -23,12 +23,30 @@ test('large positive block counts remain valid language and impossible travel is
  }
 });
 test('arrival checks goal position and character-relative side without moving',()=>{
- const goal=M.facilities.find(f=>f.id==='zoo'),spot=goal.spots[0];
- const state={r:spot.r,c:spot.c,dir:(spot.toward+3)%4};
+ const state={r:0,c:2,dir:1};
  assert.ok(M.isArrival(state,'zoo','right'));
  assert.equal(M.isArrival(state,'zoo','left'),false);
  assert.deepEqual(M.transition(state,M.parseCommand('You can see it on your right.')).state,state);
  assert.equal(M.isArrival({...state,r:6,c:0},'zoo','right'),false);
+});
+test('A to Restaurant accepts the forward-left corner after two blocks, left, two blocks',()=>{
+ let state={...M.starts.A};
+ for(const sentence of ['Go straight for 2 blocks.','Turn left.','Go straight for 2 blocks.'])state=M.transition(state,M.parseCommand(sentence)).state;
+ assert.deepEqual(state,{r:4,c:4,dir:1});
+ assert.equal(M.isArrival(state,'restaurant','left'),true);
+ assert.equal(M.isArrival(state,'restaurant','right'),false);
+ assert.equal(M.nextHint(state,'restaurant'),'You can see it on your left.');
+ assert.deepEqual(M.seenFacilities(state,'left').map(f=>f.id),['restaurant']);
+ assert.deepEqual(M.transition(state,M.parseCommand('You can see it on your left.')).state,state);
+});
+test('indications point to forward diagonals for all four headings and exclude rear or distant goals',()=>{
+ for(const [dir,left,right] of [[0,[-1,-1],[-1,1]],[1,[-1,1],[1,1]],[2,[1,1],[1,-1]],[3,[1,-1],[-1,-1]]]){
+  assert.deepEqual(M.indicationVector(dir,'left'),left);assert.deepEqual(M.indicationVector(dir,'right'),right);
+ }
+ assert.equal(M.isArrival({r:4,c:4,dir:3},'restaurant','right'),false,'restaurant is behind when facing west');
+ assert.equal(M.isArrival(M.starts.A,'restaurant','left'),false,'a distant goal cannot be reached by pointing');
+ assert.equal(M.isArrival({r:3,c:4,dir:1},'restaurant','right'),true,'forward-right also reaches the restaurant');
+ assert.equal(M.isArrival({r:3,c:4,dir:0},'restaurant','right'),false,'a goal behind the player must not count');
 });
 function oracleDistance(start,goal){
  const queue=[[start,0]],seen=new Set([`${start.r},${start.c}`]);

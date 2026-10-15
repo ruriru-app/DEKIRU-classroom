@@ -80,9 +80,9 @@
   onError:text=>{pending=null;feedback(text,'warn');syncControls();}
  });
  function showSide(side){
-  const toward=(position.dir+(side==='right'?1:3))%4,point=M.point(position),[dr,dc]=M.vectors[toward],arrow=$('sideArrow');
+  const point=M.point(position),[dr,dc]=M.indicationVector(position.dir,side),arrow=$('sideArrow');
   arrow.style.left=(point.x+dc*44)/M.size.width*100+'%';arrow.style.top=(point.y+dr*44-30)/M.size.height*100+'%';
-  arrow.style.transform=`translate(-50%,-50%) rotate(${toward*90-90}deg)`;arrow.hidden=false;
+  arrow.style.transform=`translate(-50%,-50%) rotate(${Math.atan2(dr,dc)*180/Math.PI}deg)`;arrow.hidden=false;
   for(const facility of M.seenFacilities(position,side))document.querySelector(`.facility-target[data-goal="${facility.id}"]`).classList.add('indicated');
  }
  function finishCommand(command){
@@ -90,9 +90,9 @@
   if(command.kind==='arrival'){
    showSide(command.side);
    if(M.isArrival(position,goalId,command.side)){
-    completed=true;const goal=M.facilities.find(f=>f.id===goalId);$('successText').textContent=goal.english+' に到着！';$('success').hidden=false;
-    feedback('道案内できたね！「1つ戻る」でもう一度試せます。','accepted');
-   }else feedback('その表現は伝わったよ。目的地の場所と、キャラクターから見た左右を確かめよう。');
+    completed=true;const goal=M.facilities.find(f=>f.id===goalId);$('successText').textContent='無事に到着しました！';$('success').hidden=false;
+    feedback(goal.english+' まで道案内できたね！「1つ戻る」でもう一度試せます。','accepted');
+   }else feedback('その表現は伝わったよ。目的地がキャラクターの左前方・右前方のどちらにあるか、確かめよう。');
   }else feedback('次の一文を、自分で話してみよう。');
   syncControls();
  }

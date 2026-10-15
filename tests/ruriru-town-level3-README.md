@@ -7,9 +7,9 @@ The A–N starts, sprites and effects reuse LEVEL 2; LEVEL 3 has its own map and
 2. Press 音声入力 and speak one of the four unit expressions.
 3. Inspect the recognized sentence; press 動かす to execute an accepted sentence.
 4. If the expression is rejected, optionally press ヒントを表示. Only the next instruction is shown. 🔊 reads it after capture has stopped and resumes capture after a short pause.
-5. End with You can see it on your right/left at a configured roadside arrival spot.
+5. End with You can see it on your right/left when the selected goal is immediately ahead on that side. The character stays in place and shows a diagonal indication; a matching goal displays 無事に到着しました！.
 
-Named quarter-size facilities use their outer side street as the arrival spot; large full-block facilities can be approached from all four sides. Destination borders and highlights identify the selected facility.
+Each facility has logical bounds on the half-block grid. The nearest half-block square ahead-left or ahead-right determines which facility is indicated, so corner arrivals work as well as approaches from a side street. Goal highlighting and shortest-route hints use this same arrival rule.
 
 Run core checks with:
 

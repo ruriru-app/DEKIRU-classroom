@@ -72,3 +72,16 @@ test('a full spoken route clears each hint, arrives by relative side and support
  f.nodes.get('undo').onclick();assert.equal(f.nodes.get('success').hidden,true);assert.equal(f.nodes.get('record').disabled,false);
  f.nodes.get('reset').onclick();await tick();f.confirm();assert.equal(f.nodes.get('record').disabled,true);assert.equal(f.nodes.get('char').hidden,true);
 });
+test('Restaurant route ends with a forward-left indication and explicit arrival message without rotating',async()=>{
+ const f=fixture();f.button('start','A').onclick();f.button('goal','restaurant','facility-choice').onclick();await tick();f.confirm();
+ for(const sentence of ['Go straight for 2 blocks.','Turn left.','Go straight for 2 blocks.']){
+  f.speech.final(sentence);f.nodes.get('execute').onclick();await tick();
+ }
+ const before={left:f.nodes.get('char').style.left,top:f.nodes.get('char').style.top,sprite:f.nodes.get('sprite').src};
+ f.speech.final('You can see it on your right.');f.nodes.get('execute').onclick();await tick();assert.equal(f.nodes.get('success').hidden,true,'wrong side cannot finish the selected goal');
+ f.speech.final('You can see it on your left.');f.nodes.get('execute').onclick();await tick();
+ assert.equal(f.nodes.get('success').hidden,false);assert.equal(f.nodes.get('successText').textContent,'無事に到着しました！');
+ assert.ok(f.nodes.get('sideArrow').style.transform.includes('rotate(-45deg)'));
+ assert.ok(f.button('goal','restaurant','facility-target').className.includes('indicated'));
+ assert.deepEqual({left:f.nodes.get('char').style.left,top:f.nodes.get('char').style.top,sprite:f.nodes.get('sprite').src},before);
+});
