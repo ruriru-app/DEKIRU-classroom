@@ -1,7 +1,7 @@
 (()=>{
  'use strict';
  const M=window.TownLevel3,$=id=>document.getElementById(id),directions=['north','east','south','west'];
- const sounds={place:$('placeSound'),turn:$('turnSound'),walk:$('walkSound')};
+ const sounds={place:$('placeSound'),turn:$('turnSound'),walk:$('walkSound'),arrival:$('arrivalSound')};
  let position=null,startLetter=null,goalId=null,pending=null,hintSentence='',hintAllowed=false;
  let completed=false,busy=false,history=[],motionFrame=null,walkTimer=null,actionEpoch=0,confirmAction=null,confirmationEpoch=0,preparingConfirmation=false;
  let speech;
@@ -90,7 +90,7 @@
   if(command.kind==='arrival'){
    showSide(command.side);
    if(M.isArrival(position,goalId,command.side)){
-    completed=true;const goal=M.facilities.find(f=>f.id===goalId);$('successText').textContent='無事に到着しました！';$('success').hidden=false;
+    completed=true;const goal=M.facilities.find(f=>f.id===goalId);$('successText').textContent='無事に到着しました！';$('success').hidden=false;playSound('arrival');
     feedback(goal.english+' まで道案内できたね！「1つ戻る」でもう一度試せます。','accepted');
    }else feedback('その表現は伝わったよ。目的地がキャラクターの左前方・右前方のどちらにあるか、確かめよう。');
   }else feedback('次の一文を、自分で話してみよう。');
