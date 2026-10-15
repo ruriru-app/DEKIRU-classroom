@@ -3,6 +3,34 @@ window.SpeechPresets=(()=>{
  'use strict';
  const c=(id,label,insertText=label,category='')=>({id,label,insertText,category});
  const selection=choice=>({kind:'choice',...choice});
+ function grade5unit5(catalog){
+  const distances=[
+   ['number_001','one-block','one block'],
+   ['number_002','two-blocks','two blocks'],
+   ['number_003','three-blocks','three blocks']
+  ].map(([ref,id,text])=>catalog.card(ref,{id,label:text,insertText:text,speechText:text,category:'ブロック数'})).filter(Boolean);
+  const directions=[
+   ['direction_004','right'],
+   ['direction_005','left']
+  ].map(([ref,id])=>catalog.card(ref,{id,label:id,insertText:id,speechText:id,category:'方向'})).filter(Boolean);
+  const choiceSets={distances,directions};
+  const slot=(id,ownerStepId,choiceSetId,initial)=>({id,ownerStepId,inputType:'picture-card',choiceSetId,defaultValue:selection(choiceSets[choiceSetId].find(c=>c.id===initial)),allowMyWords:false});
+  const slots=[
+   slot('distance','blocks','distances','one-block'),
+   slot('turnDirection','turn','directions','right'),
+   slot('sideDirection','side','directions','right')
+  ];
+  const fixedPictures={Go:'action5_016',straight:'direction_002',Turn:'direction_003',You:'person_002',see:'action5_018'};
+  const w=(word,role)=>({word,role,cardRef:fixedPictures[word]||''}),s=(slotId,role)=>({slotId,role,editable:true});
+  const step=(id,label,tokens)=>({id,label,required:true,sentences:[{id:id+'.main',tokens,punctuation:'.'}]});
+  const steps=[
+   step('blocks','まっすぐ～ブロック進んでください。',[w('Go','verb'),w('straight','verb'),w('for','place'),s('distance','place')]),
+   step('little','ほんの少しまっすぐ進んでください。',[w('Go','verb'),w('straight','verb'),w('for','place'),w('just','place'),w('a','place'),w('little','place'),w('bit','place')]),
+   step('turn','右/左に曲がってください。',[w('Turn','verb'),s('turnDirection','place')]),
+   step('side','あなたの右/左側に見えます。',[w('You','subject'),w('can','verb'),w('see','verb'),w('it','object'),w('on','place'),w('your','place'),s('sideDirection','place')])
+  ];
+  return {schemaVersion:1,unitId:'nh5:5',book:'nh5',unit:5,title:"Let's go to the zoo.",steps,slots,choiceSets,contractions:{}};
+ }
  function unit5(catalog){
   const pairs={clothes_006:'pair of pants',clothes_007:'pair of jeans',clothes_010:'pair of gloves',clothes_011:'pair of socks',clothes_012:'pair of shoes',clothes_018:'pair of boots',clothes_019:'pair of glasses',stationery_009:'pair of scissors',item_005:'pair of soccer shoes'};
   const groups=[['clothes',20,'衣類'],['stationery',16,'文房具'],['item',61,'身の回りのもの']];
@@ -90,6 +118,6 @@ window.SpeechPresets=(()=>{
   ];
   return {schemaVersion:1,unitId:'nh6:6',book:'nh6',unit:6,title:'Save the animals.',steps,slots,choiceSets,contractions:{"let's":['Let','us']}};
  }
- const registry=[{book:'nh6',unit:5,title:'Where is it from?',factory:unit5},{book:'nh6',unit:6,title:'Save the animals.',factory:unit6}];
+ const registry=[{book:'nh5',unit:5,title:"Let's go to the zoo.",factory:grade5unit5},{book:'nh6',unit:5,title:'Where is it from?',factory:unit5},{book:'nh6',unit:6,title:'Save the animals.',factory:unit6}];
  return {get(book,unit,catalog){return registry.find(r=>r.book===book&&String(r.unit)===String(unit))?.factory(catalog)||null;},list(){return registry.map(({book,unit,title})=>({book,unit,title}));}};
 })();
