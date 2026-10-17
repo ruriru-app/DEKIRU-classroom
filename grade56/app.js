@@ -43,12 +43,12 @@
     pronunciation=window.NhePractice.mount(app,()=>vocabulary.groups.flatMap(g=>g.cards).filter(c=>vocabulary.selected.has(c.id)));
   }
   function renderUnitMakeSentences(book,unit){
-    if(!window.SpeechPresets?.list().some(p=>p.book===book&&p.unit===unit))return;
+    const hasBuild=window.SpeechPresets?.list().some(p=>p.book===book&&p.unit===unit);
+    const entries=window.NheSpeechLinks?.entries(hasBuild,book,unit)||[];
+    if(!entries.length)return;
     const section=[...app.querySelectorAll('.nhe-sections details')].find(el=>el.querySelector('summary')?.textContent==='Make Sentences');
     const body=section?.querySelector('.nhe-section-body');
-    const path='build-my-speech.html?book='+encodeURIComponent(book)+'&unit='+unit;
-    const publicUrl=new URL(path,'https://ruriru-app.github.io/DEKIRU-classroom/grade56/').href;
-    if(body)body.innerHTML='<div class="feature-grid"><div class="feature-tile speech-entry-tile"><a class="speech-entry-open" data-speech-open href="'+escape(path)+'" target="_blank" rel="noopener noreferrer"><strong>BUILD MY SPEECH</strong><p>カードで文を作り、まとめてスピーチを練習しよう</p></a><div class="speech-entry-actions"><small>別ウインドウで開く ↗</small><button type="button" class="secondary-button" data-speech-copy="'+escape(publicUrl)+'">URLをコピー</button></div><p class="speech-entry-status" role="status" hidden></p><input class="speech-entry-url" aria-label="配信用URL" readonly hidden></div></div>';
+    if(body)body.innerHTML='<div class="feature-grid make-sentences-grid">'+entries.map(entry=>'<div class="feature-tile speech-entry-tile" data-speech-kind="'+escape(entry.id)+'"><a class="speech-entry-open" data-speech-open href="'+escape(entry.path)+'" target="_blank" rel="noopener noreferrer"><strong>'+escape(entry.title)+'</strong><p>'+escape(entry.description)+'</p></a><div class="speech-entry-actions"><small>別ウインドウで開く ↗</small><button type="button" class="secondary-button" data-speech-copy="'+escape(entry.publicUrl)+'">URLをコピー</button></div><p class="speech-entry-status" role="status" hidden></p><input class="speech-entry-url" aria-label="配信用URL" readonly hidden></div>').join('')+'</div>';
   }
   async function copyActivityUrl(button){
     const tile=button.closest('.speech-entry-tile,.town-entry-tile'),status=tile.querySelector('[role="status"]'),field=tile.querySelector('input[readonly]'),url=button.dataset.speechCopy||button.dataset.townCopy||button.dataset.activityCopy;

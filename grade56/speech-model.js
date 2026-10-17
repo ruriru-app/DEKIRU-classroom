@@ -83,6 +83,7 @@ window.SpeechModel=(()=>{
   });
  }
  function summary(p,state){const map=new Map(p.steps.filter(s=>s.required||state.optionalEnabled[s.id]).flatMap(s=>stepSentences(p,state,s.id)).map(s=>[s.id,s]));return state.sentenceOrder.filter(id=>map.has(id)).map(id=>map.get(id));}
+ function summaryText(p,state){return summary(p,state).map(({text})=>text).join('\n');}
  function setUi(p,state,patch={}){
   const ui=state.ui;
   if(own(patch,'stepId')&&(patch.stepId==='summary'||stepFor(p,patch.stepId))){ui.stepId=patch.stepId;ui.slotId=editableSlots(p,state,ui.stepId)[0]?.id||'';ui.inputOpen=false;}
@@ -150,5 +151,5 @@ window.SpeechModel=(()=>{
   for(const slot of p.slots)for(const field of ['text','search']){const value=saved.drafts?.[slot.id]?.[field];if(typeof value==='string'&&value.length<=10000){state.drafts[slot.id]||={};state.drafts[slot.id][field]=value;}}
   setUi(p,state,saved.ui);normalizeDependentSlots(p,state);return {state,warnings};
  }
- return {validatePreset,initialState,reduce,stepSentences,summary,editableSlots,reconcile,choicesFor};
+ return {validatePreset,initialState,reduce,stepSentences,summary,summaryText,editableSlots,reconcile,choicesFor};
 })();

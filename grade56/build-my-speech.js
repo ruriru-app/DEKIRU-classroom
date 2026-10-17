@@ -23,9 +23,15 @@ window.SpeechEditor=(()=>{
    // Drafts save without replacing focused/composing inputs.
    if(action.type!=='draft'){render();if(focusAttribute)root.querySelector('['+focusAttribute.name+'="'+CSS.escape(focusAttribute.value)+'"]')?.focus({preventScroll:true});}return result;
   }
+  async function copySpeech(){
+   const text=window.SpeechModel.summaryText(preset,state),message=menu.querySelector('[data-speech-copy-status]'),fallback=menu.querySelector('[data-speech-copy-fallback]');
+   fallback.hidden=true;message.hidden=false;message.textContent='コピーしています…';
+   try{await navigator.clipboard.writeText(text);message.textContent='スピーチをコピーしました。MEMORIZE MY SPEECHの原稿欄に貼り付けてください。';notify('スピーチをコピーしました。');}
+   catch{fallback.value=text;fallback.hidden=false;fallback.focus();fallback.select();message.textContent='文章を選択しました。手動でコピーしてください。';notify('自動コピーできなかったため、文章を選択しました。');}
+  }
   function render(){
    if(disposed)return;audio.stop();cards?.dispose();cards=null;summaryView?.dispose();summaryView=null;
-   let number=0;menu.innerHTML=preset.steps.map(s=>'<div class="speech-menu-item">'+(s.required?'<span class="speech-required-number">'+(++number)+'</span>':'<input type="checkbox" data-speech-optional="'+s.id+'" aria-label="'+esc(s.label)+'をまとめに入れる"'+(state.optionalEnabled[s.id]?' checked':'')+'>')+'<button type="button" data-speech-step="'+s.id+'" aria-current="'+(state.ui.stepId===s.id?'step':'false')+'">'+esc(s.label)+'</button></div>').join('')+'<button type="button" class="speech-summary-entry" data-speech-step="summary" aria-current="'+(state.ui.stepId==='summary'?'step':'false')+'">まとめ</button>';
+   let number=0;menu.innerHTML=preset.steps.map(s=>'<div class="speech-menu-item">'+(s.required?'<span class="speech-required-number">'+(++number)+'</span>':'<input type="checkbox" data-speech-optional="'+s.id+'" aria-label="'+esc(s.label)+'をまとめに入れる"'+(state.optionalEnabled[s.id]?' checked':'')+'>')+'<button type="button" data-speech-step="'+s.id+'" aria-current="'+(state.ui.stepId===s.id?'step':'false')+'">'+esc(s.label)+'</button></div>').join('')+'<button type="button" class="speech-summary-entry" data-speech-step="summary" aria-current="'+(state.ui.stepId==='summary'?'step':'false')+'">まとめ</button><button type="button" class="speech-copy-entry" data-copy-speech>スピーチをコピーする</button><p class="speech-copy-status" data-speech-copy-status role="status" hidden></p><textarea class="speech-copy-fallback" data-speech-copy-fallback aria-label="コピーするスピーチ" rows="5" readonly hidden></textarea>';
    const step=preset.steps.find(s=>s.id===state.ui.stepId);
    stage.classList.toggle('speech-summary-stage',!step);
    root.querySelector('.talk-stage-wrap').classList.toggle('speech-summary-wrap',!step);
@@ -59,6 +65,7 @@ window.SpeechEditor=(()=>{
   }
   function click(e){const b=e.target.closest('button');if(!b||!root.contains(b))return;
    if(b.dataset.speechStep){zoomOpen=false;dispatch({type:'ui',patch:{stepId:b.dataset.speechStep}});}
+   else if(b.hasAttribute('data-copy-speech'))copySpeech();
    else if(b.dataset.speechVariant)dispatch({type:'variant',stepId:state.ui.stepId,variantId:b.dataset.speechVariant});
    else if(b.hasAttribute('data-sound'))dispatch({type:'ui',patch:{sound:!state.ui.sound}});
    else if(b.hasAttribute('data-clear'))dispatch({type:'ui',patch:{clearSpeech:!state.ui.clearSpeech}});

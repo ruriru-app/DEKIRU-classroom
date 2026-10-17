@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>MEMORIZE MY SPEECH | DEKIRU Classroom</title>
+  <link rel="stylesheet" href="memorize-my-speech.css?v=060a15c8f1af">
+</head>
+<body>
+  <main id="memorize-app" class="memorize-app" aria-label="MEMORIZE MY SPEECH">
+    <header class="memorize-top">
+      <div class="header-first-row">
+        <div class="title-copy">
+          <div class="title-heading">
+            <p class="brand-kicker">DEKIRU Classroom</p>
+            <h1>MEMORIZE MY SPEECH</h1>
+          </div>
+          <p id="practice-instructions" class="practice-instructions">
+            英文を見ずに話します。間違えたあとだけ英文を確認できます。
+          </p>
+        </div>
+        <form id="manuscript-form" class="manuscript-panel" data-collapsed="false">
+          <div class="manuscript-heading">
+            <label for="manuscript-input">
+              <span class="manuscript-label-expanded">練習する英文を貼り付ける</span>
+              <span class="manuscript-label-collapsed">原稿</span>
+            </label>
+            <span id="manuscript-summary" class="manuscript-summary" hidden></span>
+            <button id="manuscript-toggle" class="quiet-button" type="button" aria-label="原稿を編集" hidden>編集</button>
+          </div>
+          <p id="manuscript-help" class="manuscript-help">
+            BUILD MY SPEECH以外の英文も使えます。1文ずつ改行すると文の区切りが確実です。日本語の施設名・料理名は自動でゆるく判定します。ローマ字の固有名詞は [[Sushiro]] のように囲んでください。
+          </p>
+          <textarea id="manuscript-input" lang="en" aria-describedby="manuscript-help" rows="3" spellcheck="false" placeholder="例：&#10;I went to イオンモール.&#10;I ate [[okonomiyaki]].&#10;It was delicious!"></textarea>
+          <div class="manuscript-actions">
+            <button id="manuscript-import" class="primary-button" type="submit">この英文を取り込む</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="header-second-row">
+        <div class="status-group">
+          <p id="app-status" class="app-status" role="status" aria-live="polite">英文を貼り付けてください。</p>
+          <button id="repractice-button" class="quiet-button" type="button" hidden>再練習</button>
+        </div>
+        <nav id="stage-progress" class="stage-progress" aria-label="練習ステージ"></nav>
+        <div id="difficulty-picker" class="difficulty-picker" role="group" aria-label="難易度">
+          <button type="button" data-difficulty="beginner" aria-pressed="true">初級</button>
+          <button type="button" data-difficulty="intermediate" aria-pressed="false">中級</button>
+          <button type="button" data-difficulty="advanced" aria-pressed="false">上級</button>
+        </div>
+      </div>
+    </header>
+
+    <section id="practice-scroller" class="practice-scroller" aria-label="現在の練習範囲">
+      <div id="practice-empty" class="practice-empty">
+        <span aria-hidden="true">🎤</span>
+        <p>英文を取り込むと、ここに練習範囲が表示されます。</p>
+      </div>
+      <div id="practice-range" class="practice-range" hidden>
+        <div id="sentence-grid" class="sentence-grid"></div>
+      </div>
+    </section>
+
+    <footer class="memorize-bottom">
+      <section class="recognition-result" aria-labelledby="recognition-heading">
+        <h2 id="recognition-heading">音声認識結果</h2>
+        <p id="recognition-text" class="recognition-text">まだ記録はありません。</p>
+        <p id="recognition-message" class="recognition-message" role="status" aria-live="polite"></p>
+      </section>
+      <div class="practice-controls">
+        <button id="practice-action-button" class="practice-action-button" type="button" data-mode="start" disabled>スタート</button>
+        <button id="hint-button" class="hint-button" type="button" disabled>英文を確認する</button>
+      </div>
+    </footer>
+  </main>
+
+  <noscript><p class="fatal-message">この教材を使うにはJavaScriptを有効にしてください。</p></noscript>
+  <script src="memorize-core.js?v=abe3939e2ca8"></script>
+  <script src="memorize-my-speech.js?v=97ecb4a1b75c"></script>
+</body>
+</html>
