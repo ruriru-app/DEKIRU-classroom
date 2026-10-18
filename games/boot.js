@@ -14,7 +14,8 @@ if(!openSharedGameFromHash()){
 }
 // Keep direct links and browser hash navigation in sync with the visible page.
 window.addEventListener('hashchange',()=>{
-  if(location.hash==='#/createInterview')window.InterviewCreator.open();
+  if(location.hash==='#/alphabetTouch')openAlphabetTouch({returnPage:'home'});
+  else if(location.hash==='#/createInterview')window.InterviewCreator.open();
   else if(location.hash==='#/createInterviewBingo')window.InterviewBingoCreator.open();
   else if(location.hash==='#/createSelfIntroduction')window.SelfIntroductionCreator.open();
   else if(['#/createGames','#/createActivities','#/'].includes(location.hash))show(location.hash.slice(2)||'home');

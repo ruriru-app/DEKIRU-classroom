@@ -1,0 +1,16 @@
+{
+  "source": "grade56_site/assets/RuRiRuFontv2.ttf",
+  "sourceSha256": "0fb7c3e241b39c6faa87ff4aafce13734d59c837c3242fb0f6b7bd73209699e5",
+  "derived": "RuRiRuFontv2-Bold.ttf",
+  "derivedSha256": "859446ebc662bc9e19feb07d87d74e820eda5ce636d1ab403399958dbbfbd98c",
+  "method": "TrueType glyph silhouette union with a 36/1000 em round outline stroke; 18 units outward per boundary",
+  "generator": {
+    "fonttools": "4.67.0",
+    "skia-pathops": "0.9.2"
+  },
+  "unitsPerEm": 1000,
+  "weightClass": 700,
+  "advanceWidthsAndVerticalMetrics": "preserved",
+  "original": "unchanged",
+  "scope": "ALPHABET TOUCH card levels Easy, Normal and Hard only; existing BUILD MY SPEECH unchanged"
+}

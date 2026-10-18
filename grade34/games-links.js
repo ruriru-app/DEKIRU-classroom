@@ -2,7 +2,7 @@
 window.GamesLinks=(()=>{
   const base=new URL(location.protocol==='file:'?'../games/':'../games/',location.href);
   const encode=value=>btoa(Array.from(new TextEncoder().encode(JSON.stringify(value)),b=>String.fromCharCode(b)).join('')).replaceAll('+','-').replaceAll('/','_').replace(/=+$/,'');
-  const alphabet=()=>new URL('#alphabet='+encode({v:1,g:'at',m:'upper',l:'easy'}),base).href;
+  const alphabet=(mode='upper')=>new URL('#alphabet='+encode({v:1,g:'at',m:mode==='lower'?'lower':'upper',l:'easy'}),base).href;
   function assigned(book,unit){
     let saved=[];
     try{const value=JSON.parse(localStorage.getItem('dekiru-created-games-v1')||'[]');if(Array.isArray(value))saved=value;}catch{}

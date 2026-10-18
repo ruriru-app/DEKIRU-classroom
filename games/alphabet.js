@@ -2,6 +2,45 @@ function normalizeAlphabetLevel(level){
   const value=String(level||'easy').toLowerCase();
   return ALPHABET_LEVELS.has(value)?value:'easy';
 }
+function normalizeAlphabetMode(mode){
+  return mode==='lower'?'lower':'upper';
+}
+function alphabetLetters(){
+  return alphabetMode==='lower'?ALPHABET_LETTERS.map(letter=>letter.toLowerCase()):ALPHABET_LETTERS;
+}
+function alphabetBestKey(){
+  return 'dekiru-alphabet-best-v1:'+alphabetMode+':'+alphabetLevel;
+}
+function readAlphabetBest(){
+  try{
+    const seconds=JSON.parse(localStorage.getItem(alphabetBestKey()));
+    return typeof seconds==='number'&&Number.isFinite(seconds)&&seconds>0?seconds:null;
+  }catch(error){return null}
+}
+function updateAlphabetBestDisplay(){
+  const seconds=readAlphabetBest();
+  const text=seconds===null?'--:--':seconds.toFixed(2)+' sec';
+  for(const id of ['alphabetBest','alphabetSetupBest','alphabetFinishBest']){
+    const element=document.getElementById(id);if(element)element.textContent=text;
+  }
+}
+function saveAlphabetBest(){
+  if(!Number.isFinite(alphabetElapsed)||alphabetElapsed<=0)return;
+  const previous=readAlphabetBest();
+  if(previous!==null&&previous<=alphabetElapsed)return;
+  try{localStorage.setItem(alphabetBestKey(),JSON.stringify(alphabetElapsed))}
+  catch(error){
+    const notice=document.getElementById('alphabetStorageNotice');
+    if(notice){notice.textContent='BESTを保存できませんでした。このブラウザの保存設定をご確認ください。';notice.hidden=false}
+  }
+}
+function updateAlphabetModeButtons(){
+  document.querySelectorAll('[data-alphabet-mode]').forEach(button=>{
+    const selected=button.dataset.alphabetMode===alphabetMode;
+    button.classList.toggle('selected',selected);
+    button.setAttribute('aria-pressed',String(selected));
+  });
+}
 function shuffleAlphabet(items){
   const copy=[...items];
   for(let index=copy.length-1;index>0;index--){
@@ -20,7 +59,7 @@ function cancelAlphabetSpeech(){
 function speakAlphabetPrompt(letter){
   if(!alphabetSoundEnabled||alphabetLevel!=='easy'||alphabetPhase!=='play'||!letter||!('speechSynthesis' in window))return;
   cancelAlphabetSpeech();
-  const utterance=new SpeechSynthesisUtterance(letter);
+  const utterance=new SpeechSynthesisUtterance(letter.toUpperCase());
   utterance.lang='en-US';utterance.rate=.72;utterance.pitch=1;
   window.speechSynthesis.speak(utterance);
 }
@@ -61,6 +100,7 @@ function alphabetTone(kind){
 }
 function setAlphabetPhase(phase){
   alphabetPhase=phase;
+  updateAlphabetBestDisplay();
   const setup=document.getElementById('alphabetSetup');
   const play=document.getElementById('alphabetPlay');
   const clock=document.getElementById('alphabetClock');
@@ -178,7 +218,8 @@ function renderAlphabetBoard(){
   if(!board)return;
   const aligned=alphabetLevel==='easy'||alphabetLevel==='normal';
   const moving=alphabetLevel==='legend';
-  board.className='alphabet-board '+(aligned?'aligned':moving?'legend':'scattered')+(alphabetLevel==='hard'?' hard':'')+(alphabetLevel==='extra'?' extra':'')+(alphabetLevel==='normal'?' no-hint':'');
+  const ruled=aligned||alphabetLevel==='hard';
+  board.className='alphabet-board '+(aligned?'aligned':moving?'legend':'scattered')+(alphabetLevel==='hard'?' hard':'')+(alphabetLevel==='extra'?' extra':'')+(alphabetLevel==='normal'?' no-hint':'')+(ruled?' ruled':'');
   if(next)next.hidden=alphabetLevel!=='easy';
   const positions=aligned||moving?[]:alphabetScatteredPositions(alphabetLevel);
   const sizes=moving?ALPHABET_MOTION_CONFIG.legend.sizes:[30,38,46,54];
@@ -187,8 +228,14 @@ function renderAlphabetBoard(){
     const button=document.createElement('button');
     button.type='button';button.className='alphabet-letter';button.dataset.alphabetLetter=letter;button.textContent=letter;
     button.setAttribute('aria-label',letter);
+    if(ruled){
+      const guide=document.createElement('span');guide.className='alphabet-guide';guide.setAttribute('aria-hidden','true');
+      const glyph=document.createElement('span');glyph.className='alphabet-glyph';glyph.textContent=letter;
+      guide.append(glyph);button.textContent='';button.append(guide);
+    }
     if(moving){
       button.style.fontSize=sizes[Math.floor(Math.random()*sizes.length)]+'px';
+      button.style.zIndex=String(ALPHABET_LETTERS.length-ALPHABET_LETTERS.indexOf(letter.toUpperCase()));
     }else if(!aligned){
       button.style.left=positions[index].left+'%';button.style.top=positions[index].top+'%';
       if(alphabetLevel==='extra')button.style.fontSize=sizes[Math.floor(Math.random()*sizes.length)]+'px';
@@ -198,17 +245,20 @@ function renderAlphabetBoard(){
 }
 function startAlphabetGame(){
   stopAlphabetTimer();stopAlphabetMotion();cancelAlphabetSpeech();
+  const notice=document.getElementById('alphabetStorageNotice');
+  if(notice){notice.textContent='';notice.hidden=true}
   const finish=document.getElementById('alphabetFinish');
   if(finish)finish.hidden=true;
-  alphabetExpectedIndex=0;alphabetElapsed=0;alphabetLastOrder=shuffleAlphabet(ALPHABET_LETTERS);
+  const letters=alphabetLetters();
+  alphabetExpectedIndex=0;alphabetElapsed=0;alphabetLastOrder=shuffleAlphabet(letters);
   const time=document.getElementById('alphabetTime');
   if(time)time.textContent='0.00';
   const nextLetter=document.getElementById('alphabetNextLetter');
-  if(nextLetter)nextLetter.textContent='A';
+  if(nextLetter)nextLetter.textContent=letters[0];
   setAlphabetPhase('play');renderAlphabetBoard();
   alphabetStartedAt=performance.now();alphabetTimerFrame=requestAnimationFrame(updateAlphabetTimer);
   if(alphabetLevel==='legend')requestAnimationFrame(()=>startAlphabetMotion());
-  if(alphabetLevel==='easy')setTimeout(()=>speakAlphabetPrompt('A'),140);
+  if(alphabetLevel==='easy')setTimeout(()=>speakAlphabetPrompt(letters[0]),140);
 }
 function showAlphabetWrong(event){
   const board=document.getElementById('alphabetBoard');
@@ -221,6 +271,7 @@ function showAlphabetWrong(event){
 }
 function finishAlphabetGame(){
   alphabetElapsed=(performance.now()-alphabetStartedAt)/1000;stopAlphabetTimer();stopAlphabetMotion();cancelAlphabetSpeech();alphabetPhase='finished';
+  saveAlphabetBest();updateAlphabetBestDisplay();
   const time=document.getElementById('alphabetTime');
   if(time)time.textContent=alphabetElapsed.toFixed(2);
   const result=document.getElementById('alphabetFinishTime');
@@ -231,21 +282,27 @@ function finishAlphabetGame(){
 }
 function chooseAlphabetLetter(letter,button,event){
   if(alphabetPhase!=='play')return;
-  const expected=ALPHABET_LETTERS[alphabetExpectedIndex];
+  const letters=alphabetLetters();
+  const expected=letters[alphabetExpectedIndex];
   if(letter!==expected){alphabetTone('wrong');showAlphabetWrong(event);return}
   alphabetTone('correct');button.classList.add('gone');alphabetExpectedIndex++;
-  if(alphabetExpectedIndex>=ALPHABET_LETTERS.length){finishAlphabetGame();return}
+  if(alphabetExpectedIndex>=letters.length){finishAlphabetGame();return}
   const nextLetter=document.getElementById('alphabetNextLetter');
-  const next=ALPHABET_LETTERS[alphabetExpectedIndex];
+  const next=letters[alphabetExpectedIndex];
   if(nextLetter)nextLetter.textContent=next;
   if(alphabetLevel==='easy')setTimeout(()=>{
-    if(alphabetPhase==='play'&&ALPHABET_LETTERS[alphabetExpectedIndex]===next)speakAlphabetPrompt(next);
+    if(alphabetPhase==='play'&&alphabetLetters()[alphabetExpectedIndex]===next)speakAlphabetPrompt(next);
   },140);
 }
 function openAlphabetTouch(options={}){
+  closeRouletteShare();
   alphabetLevel=normalizeAlphabetLevel(options.level||alphabetLevel);
+  alphabetMode=normalizeAlphabetMode(options.mode||alphabetMode);
   alphabetSharedMode=Boolean(options.shared);
   alphabetReturnPage=options.returnPage||'lt1unit';
+  document.getElementById('alphabetShareError').hidden=true;
+  document.getElementById('alphabetOptions').hidden=false;
+  updateAlphabetModeButtons();
   document.querySelectorAll('[data-alphabet-level]').forEach(button=>button.classList.toggle('selected',button.dataset.alphabetLevel===alphabetLevel));
   updateAlphabetSoundButton();setAlphabetPhase('setup');show('alphabetTouch');
 }
@@ -255,13 +312,13 @@ function backFromAlphabet(){
   show(alphabetReturnPage||'lt1unit');
 }
 function encodeAlphabetShare(){
-  const payload={v:1,g:'at',m:'upper',l:alphabetLevel};
+  const payload={v:1,g:'at',m:alphabetMode,l:alphabetLevel};
   return bytesToBase64Url(new TextEncoder().encode(JSON.stringify(payload)));
 }
 function decodeAlphabetShare(value){
   const payload=JSON.parse(new TextDecoder().decode(base64UrlToBytes(value)));
   if(payload?.v!==1||payload?.g!=='at')throw new Error('未対応の配布URLです');
-  return {level:normalizeAlphabetLevel(payload.l),mode:'upper'};
+  return {level:normalizeAlphabetLevel(payload.l),mode:normalizeAlphabetMode(payload.m)};
 }
 function buildAlphabetShareUrl(){
   const base=location.origin&&location.origin!=='null'?location.origin+location.pathname:location.href.split('#')[0];
@@ -272,7 +329,7 @@ function openAlphabetShare(){
   const qrRoot=document.getElementById('rouletteShareQr');
   if(!modal||!qrRoot)return;
   currentRouletteShareUrl=buildAlphabetShareUrl();
-  document.getElementById('rouletteShareGameName').textContent='ALPHABET TOUCH';
+  document.getElementById('rouletteShareGameName').textContent='ALPHABET TOUCH（'+(alphabetMode==='lower'?'小文字':'大文字')+'）';
   document.getElementById('rouletteShareStatus').textContent='';
   try{
     if(typeof qrcode!=='function')throw new Error('QRコード機能を読み込めませんでした');
@@ -281,14 +338,18 @@ function openAlphabetShare(){
   modal.hidden=false;requestAnimationFrame(()=>document.getElementById('rouletteCopyUrl')?.focus());
 }
 function openSharedAlphabetFromHash(){
-  const match=location.hash.match(/^#alphabet=([A-Za-z0-9_-]+)$/);
-  if(!match)return false;
+  if(!location.hash.startsWith('#alphabet='))return false;
   try{
+    const match=location.hash.match(/^#alphabet=([A-Za-z0-9_-]+)$/);
+    if(!match)throw new Error('配布URLを読み込めませんでした');
     const config=decodeAlphabetShare(match[1]);
-    openAlphabetTouch({level:config.level,shared:true,returnPage:'home'});return true;
+    openAlphabetTouch({level:config.level,mode:config.mode,shared:true});return true;
   }catch(error){
     console.warn('ALPHABET TOUCHの配布URLを読み込めませんでした',error);
-    history.replaceState(null,'',location.pathname+location.search);alphabetSharedMode=false;return false;
+    openAlphabetTouch({shared:true});
+    document.getElementById('alphabetShareError').hidden=false;
+    document.getElementById('alphabetOptions').hidden=true;
+    return true;
   }
 }
 function openSharedGameFromHash(){
@@ -296,16 +357,21 @@ function openSharedGameFromHash(){
   if(location.hash.startsWith('#alphabet='))return openSharedAlphabetFromHash();
   return false;
 }
+document.querySelectorAll('[data-alphabet-mode]').forEach(button=>button.addEventListener('click',()=>{
+  alphabetMode=normalizeAlphabetMode(button.dataset.alphabetMode);
+  updateAlphabetModeButtons();updateAlphabetBestDisplay();
+}));
 document.querySelectorAll('[data-alphabet-level]').forEach(button=>button.addEventListener('click',()=>{
   alphabetLevel=normalizeAlphabetLevel(button.dataset.alphabetLevel);
   document.querySelectorAll('[data-alphabet-level]').forEach(option=>option.classList.toggle('selected',option===button));
+  updateAlphabetBestDisplay();
 }));
 document.getElementById('alphabetStart')?.addEventListener('click',startAlphabetGame);
 document.getElementById('alphabetBack')?.addEventListener('click',backFromAlphabet);
 document.getElementById('alphabetSound')?.addEventListener('click',()=>{
   alphabetSoundEnabled=!alphabetSoundEnabled;updateAlphabetSoundButton();
   if(!alphabetSoundEnabled)cancelAlphabetSpeech();
-  else if(alphabetLevel==='easy'&&alphabetPhase==='play')speakAlphabetPrompt(ALPHABET_LETTERS[alphabetExpectedIndex]);
+  else if(alphabetLevel==='easy'&&alphabetPhase==='play')speakAlphabetPrompt(alphabetLetters()[alphabetExpectedIndex]);
 });
 document.getElementById('alphabetBoard')?.addEventListener('click',event=>{
   const button=event.target.closest('[data-alphabet-letter]');if(button)chooseAlphabetLetter(button.dataset.alphabetLetter,button,event);

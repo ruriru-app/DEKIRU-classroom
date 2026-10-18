@@ -8,6 +8,7 @@ const ALPHABET_MOTION_CONFIG=Object.freeze({
   legend:{sizes:[30,38,46,54],speedMin:30,speedMax:52,area:{left:0,top:0,width:1,height:1}},
 });
 let alphabetLevel='easy';
+let alphabetMode='upper';
 let alphabetSoundEnabled=true;
 let alphabetPhase='setup';
 let alphabetExpectedIndex=0;

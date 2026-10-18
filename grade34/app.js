@@ -376,8 +376,8 @@ return `<h2>保存したカードセット</h2>${sets.length?sets.map(s=>`<div c
     </details>`;
   }
 
-  function externalGameTile(name,url,personalId=''){
-    if (!personalId && name === 'ALPHABET TOUCH') return illustratedTile('alphabet-touch-tile.svg', name, 'アルファベット', url, `data-game-share="${escapeHtml(url)}" data-game-name="${escapeHtml(name)}"`, 'ゲームを配る');
+  function externalGameTile(name,url,personalId='',words='アルファベット'){
+    if (!personalId && name === 'ALPHABET TOUCH') return illustratedTile('alphabet-touch-tile.svg', name, words, url, `data-game-share="${escapeHtml(url)}" data-game-name="${escapeHtml(name)}"`, 'ゲームを配る');
     return `<article class="feature-tile personal" ${personalId?`data-personal-game="${escapeHtml(personalId)}"`:''}><div class="feature-tile-heading"><span class="tile-mark">${personalId?'個人保存':'DEKIRU Games'}</span><strong>${escapeHtml(name)}</strong></div><p class="feature-tile-description">別タブでゲームを開きます</p><div class="share-actions"><a class="primary-button" href="${escapeHtml(url)}" target="_blank" rel="noopener">あそぶ</a><button class="secondary-button" data-game-share="${escapeHtml(url)}" data-game-name="${escapeHtml(name)}">配信</button>${personalId?`<button class="secondary-button" data-delete-personal-game="${escapeHtml(personalId)}" data-game-name="${escapeHtml(name)}">削除</button>`:''}</div></article>`;
   }
   function assignedGameTile(game){
@@ -387,8 +387,8 @@ return `<h2>保存したカードセット</h2>${sets.length?sets.map(s=>`<div c
     const activities = ACTIVITIES.filter((activity) => activity.units.includes(`${bookKey}-${unit}`));
     const interviewTiles=(window.InterviewLinks?.tiles(bookKey,unit)||'')+(window.InterviewBingoLinks?.tiles(bookKey,unit)||'');
     const selfIntroductionTiles=window.SelfIntroductionOfficial?.tiles(bookKey,unit)||'';
-    const alphabetTile = bookKey === "lt1" && unit === 6
-      ? externalGameTile('ALPHABET TOUCH',GamesLinks.alphabet())
+    const alphabetTile = ["lt1","lt2"].includes(bookKey) && unit === 6
+      ? externalGameTile('ALPHABET TOUCH',GamesLinks.alphabet(bookKey==='lt2'?'lower':'upper'),'',bookKey==='lt2'?'小文字 a〜z':'大文字 A〜Z')
       : "";
     const linkedGames=GamesLinks.assigned(bookKey,unit);
     const individualGames=alphabetTile+linkedGames.filter(g=>g.audiences.includes('individual')).map(assignedGameTile).join('');
