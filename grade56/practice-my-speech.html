@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PRACTICE MY SPEECH | DEKIRU Classroom</title>
+<link rel="stylesheet" href="practice-my-speech.css">
+</head>
+<body>
+<main>
+<header><p class="brand">DEKIRU Classroom</p><h1>PRACTICE MY SPEECH</h1><p>お手本を聞いて、1語ずつはっきり伝えよう。</p></header>
+<form id="import-form">
+<label for="manuscript">練習する英文を貼り付ける</label>
+<p id="input-help">BUILD MY SPEECHでコピーした英文を使えます。1文ずつ改行してください。</p>
+<textarea id="manuscript" lang="en" rows="4" spellcheck="false" aria-describedby="input-help" required maxlength="20000"></textarea>
+<button class="primary">この英文で練習する</button>
+</form>
+<section id="practice" hidden aria-label="発音練習">
+<div class="toolbar"><button id="previous" type="button">前の文へ</button><p id="position"></p><button id="edit" type="button">原稿を編集</button></div>
+<p id="sentence" lang="en" class="sentence"></p>
+<div class="controls"><button id="listen" type="button">🔊 文のお手本</button><button id="record" type="button" class="primary">🎤 文を読む</button></div>
+<section id="word-panel" hidden aria-label="単語だけ練習">
+<h2>この単語を練習しよう</h2><p id="selected-word" lang="en"></p>
+<div class="controls"><button id="listen-word" type="button">🔊 単語のお手本</button><button id="record-word" type="button" class="primary">🎤 この単語を読む</button><button id="skip-word" type="button">いったん次へ</button></div>
+<p id="word-feedback" role="status" aria-live="polite"></p>
+</section>
+<p id="feedback" role="status" aria-live="polite"></p>
+<button id="next" type="button" class="primary" hidden>次の文へ</button>
+</section>
+<p id="system-message" role="status" aria-live="polite"></p>
+<p class="note">色の付いた単語は、音声入力で確認できなかった言葉です。単語を押して練習できます。</p>
+</main>
+<script src="memorize-core.js"></script><script src="practice-speech-core.js"></script><script src="practice-my-speech.js"></script>
+</body></html>
+
+
