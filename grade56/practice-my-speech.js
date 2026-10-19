@@ -5,6 +5,7 @@ const Recognition=window.SpeechRecognition||window.webkitSpeechRecognition;
 let sentences=[],index=0,result=null,selected=-1,practiced=new Set(),visited=new Set(),recognizer=null,mode='',busy=false,session=0;
 const current=()=>sentences[index]?.text||'';
 function message(text){$('system-message').textContent=text;}
+function clearHeardWord(){ $('word-heard').hidden=true; $('word-heard-text').textContent=''; }
 function lock(value){
  busy=value;
  document.querySelectorAll('button,textarea').forEach(el=>el.disabled=value);
@@ -33,9 +34,10 @@ function render(){
  $('next').textContent=index===sentences.length-1?'練習を終える':'次の文へ';
  lock(busy);
 }
-function selectWord(i){if(busy)return;window.speechSynthesis?.cancel();selected=i;$('word-feedback').textContent=practiced.has(i)?'この単語は伝わりました。もう一度練習することもできます。':'お手本を聞いて、この単語だけ読もう。';render();}
-function resetSentence(){result=null;selected=-1;practiced.clear();visited.clear();$('feedback').textContent='文のお手本を聞いて、マイクボタンで読もう。';$('word-feedback').textContent='';message('');render();}
+function selectWord(i){if(busy)return;clearHeardWord();window.speechSynthesis?.cancel();selected=i;$('word-feedback').textContent=practiced.has(i)?'この単語は伝わりました。もう一度練習することもできます。':'お手本を聞いて、この単語だけ読もう。';render();}
+function resetSentence(){clearHeardWord();result=null;selected=-1;practiced.clear();visited.clear();$('feedback').textContent='文のお手本を聞いて、マイクボタンで読もう。';$('word-feedback').textContent='';message('');render();}
 function nextWord(){
+ clearHeardWord();
  if(selected>=0)visited.add(selected);
  const next=result.flags.findIndex((matched,i)=>!matched&&!practiced.has(i)&&!visited.has(i));
  selected=next;
@@ -52,6 +54,8 @@ function speak(text){
 }
 function assess(transcript){
  if(mode==='word'){
+  $('word-heard-text').textContent=transcript.trim();
+  $('word-heard').hidden=false;
   const word=Core.words(current())[selected].text;
   if(Core.assess(word,transcript,normalize).complete){
    practiced.add(selected);visited.add(selected);
@@ -60,6 +64,7 @@ function assess(transcript){
    $('feedback').textContent=remaining?'この単語は伝わりました。「いったん次へ」で次の単語を練習できます。':'単語の練習が終わりました。「文を読む」で文全体をもう一度読もう。';
   }else $('word-feedback').textContent='まだ確認できませんでした。お手本を聞いて、もう一度はっきり読もう。';
  }else{
+  clearHeardWord();
   result=Core.assess(current(),transcript,normalize);practiced.clear();visited.clear();selected=-1;
   $('feedback').textContent=result.complete?'全部伝わりました！':result.extra?'単語は伝わりました。表示された文だけを、もう一度読もう。':'オレンジの単語を押して、単語だけ練習しよう。';
  }
@@ -67,6 +72,7 @@ function assess(transcript){
 }
 function record(kind){
  if(busy){try{recognizer?.stop();}catch{}return;}
+ clearHeardWord();
  if(!Recognition){message('このブラウザでは音声入力を使えません。Chromeなど音声入力に対応したブラウザで開いてください。');return;}
  window.speechSynthesis?.cancel();mode=kind;
  const token=++session;let transcript='',error='',timer;
