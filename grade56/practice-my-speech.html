@@ -17,7 +17,7 @@
 <section id="practice" hidden aria-label="発音練習">
 <div class="toolbar"><button id="previous" type="button">前の文へ</button><p id="position"></p><button id="edit" type="button">原稿を編集</button></div>
 <p id="sentence" lang="en" class="sentence"></p>
-<div class="controls"><button id="listen" type="button">🔊 文のお手本</button><button id="record" type="button" class="primary">🎤 文を読む</button></div>
+<div class="controls"><button id="listen" type="button">🔊 文のお手本</button><button id="record" type="button" class="primary">🎤 文を読む</button><button id="next" type="button" class="primary" hidden>次の文へ</button></div>
 <section id="word-panel" hidden aria-label="単語だけ練習">
 <h2>この単語を練習しよう</h2><p id="selected-word" lang="en"></p>
 <div class="controls"><button id="listen-word" type="button">🔊 単語のお手本</button><button id="record-word" type="button" class="primary">🎤 この単語を読む</button><button id="skip-word" type="button">いったん次へ</button></div>
@@ -25,7 +25,6 @@
 <p id="word-heard" role="status" aria-live="polite" hidden>聞き取った言葉：<bdi id="word-heard-text" lang="en"></bdi></p>
 </section>
 <p id="feedback" role="status" aria-live="polite"></p>
-<button id="next" type="button" class="primary" hidden>次の文へ</button>
 </section>
 <p id="system-message" role="status" aria-live="polite"></p>
 <p class="note">色の付いた単語は、音声入力で確認できなかった言葉です。単語を押して練習できます。</p>
