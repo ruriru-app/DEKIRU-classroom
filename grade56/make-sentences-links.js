@@ -19,6 +19,13 @@
         path: buildPath,
         publicUrl: `${publicBase}${buildPath}`,
       },
+      ...((book === 'nh5' || book === 'nh6') && Number(unit) === 5 ? [{
+        id: 'practice',
+        title: 'PRACTICE MY SPEECH',
+        description: '英文を見ながら読み、伝わらなかった単語を練習しよう',
+        path: 'practice-my-speech.html',
+        publicUrl: `${publicBase}practice-my-speech.html`,
+      }] : []),
       {
         id: 'memorize',
         title: 'MEMORIZE MY SPEECH',
