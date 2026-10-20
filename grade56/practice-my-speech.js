@@ -6,6 +6,7 @@ let sentences=[],index=0,result=null,selected=-1,practiced=new Set(),visited=new
 const current=()=>sentences[index]?.text||'';
 function message(text){$('system-message').textContent=text;}
 function clearHeardWord(){ $('word-heard').hidden=true; $('word-heard-text').textContent=''; }
+function showHeardWord(text){$('word-heard-text').textContent=text;$('word-heard').hidden=false;}
 function lock(value){
  busy=value;
  document.querySelectorAll('button,textarea').forEach(el=>el.disabled=value);
@@ -20,6 +21,8 @@ function render(){
   $('sentence').append(document.createTextNode(current().slice(cursor,word.start)));
   const span=document.createElement(result&&!result.flags[i]?'button':'span');
   span.textContent=word.text;span.className='word';
+  const flexible=Core.nameRanges(sentences[index]).some(r=>word.start>=r.start&&word.end<=r.end);
+  if(flexible)span.title='固有名詞：読み方の違いを柔軟に扱います';
   if(result&&!result.flags[i]){
    span.type='button';span.classList.add('missed');span.classList.toggle('practiced',practiced.has(i));
    span.setAttribute('aria-pressed',String(selected===i));span.setAttribute('aria-label',word.text+' を練習'+(practiced.has(i)?'、単語は伝わりました':''));
@@ -56,8 +59,9 @@ function assess(transcript){
  if(mode==='word'){
   $('word-heard-text').textContent=transcript.trim();
   $('word-heard').hidden=false;
-  const word=Core.words(current())[selected].text;
-  if(Core.assess(word,transcript,normalize).complete){
+  const wordInfo=Core.words(current())[selected],word=wordInfo.text;
+  const flexible=Core.nameRanges(sentences[index]).some(r=>wordInfo.start>=r.start&&wordInfo.end<=r.end);
+  if(Core.assess(word,transcript,normalize,flexible?[{start:0,end:word.length}]:[]).complete){
    practiced.add(selected);visited.add(selected);
    const remaining=result.flags.some((flag,i)=>!flag&&!practiced.has(i)&&!visited.has(i));
    $('word-feedback').textContent='伝わりました！';
@@ -65,7 +69,7 @@ function assess(transcript){
   }else $('word-feedback').textContent='まだ確認できませんでした。お手本を聞いて、もう一度はっきり読もう。';
  }else{
   clearHeardWord();
-  result=Core.assess(current(),transcript,normalize);practiced.clear();visited.clear();selected=-1;
+  result=Core.assess(current(),transcript,normalize,Core.nameRanges(sentences[index]));practiced.clear();visited.clear();selected=-1;
   $('feedback').textContent=result.complete?'全部伝わりました！':result.extra?'単語は伝わりました。表示された文だけを、もう一度読もう。':'オレンジの単語を押して、単語だけ練習しよう。';
  }
  render();
@@ -77,18 +81,24 @@ function record(kind){
  window.speechSynthesis?.cancel();mode=kind;
  const token=++session;let transcript='',error='',timer;
  const instance=new Recognition();recognizer=instance;
- instance.lang='en-US';instance.continuous=true;instance.interimResults=false;instance.maxAlternatives=1;
- instance.onresult=event=>{transcript=Array.from(event.results).filter(r=>r.isFinal).map(r=>r[0].transcript).join(' ');};
+ instance.lang='en-US';instance.continuous=kind!=='word';instance.interimResults=kind==='word';instance.maxAlternatives=1;
+ instance.onresult=event=>{
+  if(token!==session)return;
+  const results=Array.from(event.results);
+  transcript=results.filter(r=>r.isFinal).map(r=>r[0].transcript).join(' ');
+  if(kind==='word')showHeardWord(results.map(r=>r[0].transcript).join(' ').trim()||'（まだ聞き取れていません）');
+ };
  instance.onerror=event=>{error=event.error||'unknown';};
  instance.onend=()=>{
   clearTimeout(timer);if(token!==session)return;recognizer=null;lock(false);
   if(error||!transcript.trim()){
+   if(kind==='word')showHeardWord(transcript.trim()||'（聞き取れませんでした）');
    const errors={'not-allowed':'マイクの使用を許可してから、もう一度押してください。','service-not-allowed':'音声入力が許可されていません。ブラウザの設定を確認してください。','audio-capture':'マイクが見つかりません。接続を確認してください。',network:'音声入力に接続できませんでした。通信を確認して再挑戦してください。'};
    message(errors[error]||'声を確認できませんでした。マイクボタンを押して、もう一度読もう。');return;
   }
   message('');assess(transcript);
  };
- try{instance.start();lock(true);message('聞いています。読み終わったら「読み終わった」を押してください。');timer=setTimeout(()=>{if(token===session)try{instance.stop();}catch{}},30000);}
+ try{instance.start();lock(true);if(kind==='word')showHeardWord('（聞いています…）');message('聞いています。読み終わったら「読み終わった」を押してください。');timer=setTimeout(()=>{if(token===session)try{instance.stop();}catch{}},30000);}
  catch{recognizer=null;lock(false);message('音声入力を開始できませんでした。もう一度押してください。');}
 }
 $('import-form').addEventListener('submit',event=>{
@@ -97,6 +107,11 @@ $('import-form').addEventListener('submit',event=>{
  if(parsed.some(s=>Core.words(s.text).length>100)){message('1文を100語以内に分けてください。');return;}
  sentences=parsed;index=0;$('import-form').hidden=true;$('practice').hidden=false;resetSentence();
 });
+$('skip-sentence').onclick=()=>{
+ window.speechSynthesis?.cancel();
+ if(index<sentences.length-1){index++;resetSentence();}
+ else{clearHeardWord();selected=-1;render();$('feedback').textContent='最後の文をスキップしました。「原稿を編集」や「前の文へ」から練習を続けられます。';}
+};
 $('edit').onclick=()=>{window.speechSynthesis?.cancel();$('import-form').hidden=false;$('practice').hidden=true;$('manuscript').focus();};
 $('previous').onclick=()=>{window.speechSynthesis?.cancel();if(index>0){index--;resetSentence();}};
 $('next').onclick=()=>{window.speechSynthesis?.cancel();if(index<sentences.length-1){index++;resetSentence();}else{$('feedback').textContent='すべての文の練習が終わりました！';$('next').hidden=true;}};
