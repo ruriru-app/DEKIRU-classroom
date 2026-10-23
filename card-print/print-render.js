@@ -39,8 +39,8 @@ function caption(ctx,text,x,y,w,h,font,scaleToCard=false){
  lines.forEach((line,i)=>{
   const lineTop=top+i*lineHeight;
   if(font==='ruriru'){
-   ctx.lineWidth=.12*MM;ctx.setLineDash([]);
-   [6,22,38,54].forEach((position,j)=>{ctx.strokeStyle=j===2?'#cc5787':'#83bad8';ctx.beginPath();ctx.moveTo(x,lineTop+position/32*size);ctx.lineTo(x+w,lineTop+position/32*size);ctx.stroke();});
+   ctx.lineWidth=scaleToCard?Math.max(.3*MM,size*.012):.24*MM;ctx.setLineDash([]);
+   [6,22,38,54].forEach((position,j)=>{ctx.strokeStyle=j===2?'#bc3e78':'#579cc2';ctx.beginPath();ctx.moveTo(x,lineTop+position/32*size);ctx.lineTo(x+w,lineTop+position/32*size);ctx.stroke();});
    ctx.textBaseline='alphabetic';ctx.fillText(line,x+w/2,lineTop+38/32*size);
   }else{ctx.textBaseline='middle';ctx.fillText(line,x+w/2,lineTop+lineHeight/2);}
  });
