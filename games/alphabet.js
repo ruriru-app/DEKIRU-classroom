@@ -25,13 +25,14 @@ function updateAlphabetBestDisplay(){
   }
 }
 function saveAlphabetBest(){
-  if(!Number.isFinite(alphabetElapsed)||alphabetElapsed<=0)return;
+  if(!Number.isFinite(alphabetElapsed)||alphabetElapsed<=0)return false;
   const previous=readAlphabetBest();
-  if(previous!==null&&previous<=alphabetElapsed)return;
-  try{localStorage.setItem(alphabetBestKey(),JSON.stringify(alphabetElapsed))}
+  if(previous!==null&&previous<=alphabetElapsed)return false;
+  try{localStorage.setItem(alphabetBestKey(),JSON.stringify(alphabetElapsed));return true}
   catch(error){
     const notice=document.getElementById('alphabetStorageNotice');
     if(notice){notice.textContent='BESTを保存できませんでした。このブラウザの保存設定をご確認ください。';notice.hidden=false}
+    return false;
   }
 }
 function updateAlphabetModeButtons(){
@@ -245,6 +246,8 @@ function renderAlphabetBoard(){
 }
 function startAlphabetGame(){
   stopAlphabetTimer();stopAlphabetMotion();cancelAlphabetSpeech();
+  const newRecord=document.getElementById('alphabetNewRecord');
+  if(newRecord)newRecord.hidden=true;
   const notice=document.getElementById('alphabetStorageNotice');
   if(notice){notice.textContent='';notice.hidden=true}
   const finish=document.getElementById('alphabetFinish');
@@ -271,7 +274,11 @@ function showAlphabetWrong(event){
 }
 function finishAlphabetGame(){
   alphabetElapsed=(performance.now()-alphabetStartedAt)/1000;stopAlphabetTimer();stopAlphabetMotion();cancelAlphabetSpeech();alphabetPhase='finished';
-  saveAlphabetBest();updateAlphabetBestDisplay();
+  const isNewRecord=saveAlphabetBest();updateAlphabetBestDisplay();
+  const level=document.getElementById('alphabetFinishLevel');
+  if(level)level.textContent={easy:'Easy',normal:'Normal',hard:'Hard',extra:'Extra Hard',legend:'Legend'}[alphabetLevel];
+  const newRecord=document.getElementById('alphabetNewRecord');
+  if(newRecord)newRecord.hidden=!isNewRecord;
   const time=document.getElementById('alphabetTime');
   if(time)time.textContent=alphabetElapsed.toFixed(2);
   const result=document.getElementById('alphabetFinishTime');
