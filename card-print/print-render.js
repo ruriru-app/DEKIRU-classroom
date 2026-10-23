@@ -30,9 +30,9 @@ function wrapped(ctx,text,max){
  for(const word of parts){const next=line?line+' '+word:word;if(line&&ctx.measureText(next).width>max){lines.push(line);line=word;}else line=next;}
  if(line)lines.push(line);return lines;
 }
-function caption(ctx,text,x,y,w,h,font){
+function caption(ctx,text,x,y,w,h,font,scaleToCard=false){
  const family=font==='ruriru'?'PrintRuRiRu':'PrintAndika';
- let size=Math.min(12*MM,h/(font==='ruriru'?1.875:1.4)),lines;
+ let size=Math.min(scaleToCard?h:12*MM,h/(font==='ruriru'?1.875:1.4)),lines;
  for(;;){ctx.font=size+'px '+family;lines=wrapped(ctx,text,w-2*MM);if((lines.length*(font==='ruriru'?1.875:1.35)*size<=h&&lines.every(l=>ctx.measureText(l).width<=w-2*MM))||size<1.5*MM)break;size*=.93;}
  const lineHeight=size*(font==='ruriru'?1.875:1.35),top=y+(h-lineHeight*lines.length)/2;
  ctx.textAlign='center';ctx.fillStyle='#242424';
@@ -61,9 +61,9 @@ function draw(page,config,artwork,catalog){
   const cellW=(innerW-(cols-1)*gap)/cols,cellH=(innerH-header-(rows-1)*gap)/rows;
   ids.forEach((id,i)=>{
    const card=catalog.get(id),image=artwork.get(id),cx=innerX+(i%cols)*(cellW+gap),cy=innerY+header+Math.floor(i/cols)*(cellH+gap);
-   const labelH=config.font==='none'?0:Math.min(cellH*.36,(config.kind==='pictures'?18:12)*MM);
+   const labelH=config.font==='none'?0:config.kind==='pictures'?cellH*.28:Math.min(cellH*.36,12*MM);
    contain(ctx,image,cx,cy,cellW,cellH-labelH);
-   if(labelH)caption(ctx,card.english,cx,cy+cellH-labelH,cellW,labelH,config.font);
+   if(labelH)caption(ctx,card.english,cx,cy+cellH-labelH,cellW,labelH,config.font,config.kind==='pictures');
   });
   ctx.restore();
  });
