@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>カード印刷 | DEKIRU Classroom</title><link rel="stylesheet" href="print.css?v=20261023"></head>
+<body>
+<header><a href="../index.html">DEKIRU Classroom</a><h1>カード印刷</h1><p>授業で使う絵を選んで、配布用カード・ピクチャーカードをPDFに。</p></header>
+<main>
+<section class="settings">
+<h2>1. 印刷の種類とサイズ</h2>
+<div class="fields">
+<label>印刷するもの<select id="kind"><option value="activity">活動用の配布カード（複数の絵）</option><option value="pictures">ピクチャーカード（1枚に1つの絵）</option></select></label>
+<label id="count-field">配るカードの枚数<input id="count" type="number" value="36" min="1" max="200"></label>
+<label id="copies-field" hidden>各ピクチャーカードの枚数<input id="copies" type="number" value="1" min="1" max="30"></label>
+<label>サイズ<select id="size"><option value="nine">A4を９等分・70×99mm（９面）</option><option value="business">名刺用・50×89mm（12面／Interview Bingoと同じ）</option></select></label>
+<label>英語の文字<select id="font"><option value="none">文字なし（絵だけ）</option><option value="andika">Andika</option><option value="ruriru">４線付きRuRiRuフォント</option></select></label>
+<label id="duplex-field">印刷する面<select id="duplex"><option value="single">片面</option><option value="duplex">両面（表と裏で別の内容）</option></select></label>
+<label id="flip-field" hidden>両面のとじ方向<select id="flip"><option value="long">長辺とじ（裏面を左右反転して配置）</option><option value="short">短辺とじ（裏面を上下反転して配置）</option></select></label>
+<label class="wide">カードの見出し（任意）<input id="title" type="text" maxlength="45" placeholder="例：What do you like?"></label>
+</div>
+<p class="help">児童用カードは１番から順に配ってください。配った範囲でも、単語の登場回数ができるだけそろうように作ります。同じカード内で同じ絵は重複しません。</p>
+<h2>2. 絵を選ぶ</h2>
+<div id="front-side" class="side" data-side="front"></div>
+<div id="back-side" class="side" data-side="back" hidden></div>
+<div class="actions"><button id="generate" class="primary" type="button">プレビューを作る</button><button id="regenerate" type="button" hidden>組み合わせを作り直す</button></div>
+<p id="status" role="status" aria-live="polite">使うカテゴリと絵を選んでください。</p>
+</section>
+<section class="output" aria-label="印刷プレビュー">
+<div class="output-head"><h2>3. 確認してPDFを保存</h2><span id="summary"></span></div>
+<div class="actions">
+<button id="download" type="button" class="primary" disabled>PDFを保存</button>
+<button id="front-pdf" type="button" hidden disabled>表だけのPDFを保存</button>
+<button id="back-pdf" type="button" hidden disabled>裏だけのPDFを保存</button>
+</div>
+<p id="output-note" class="help">PDFには絵と文字が含まれます。保存後は、PDFを開くだけで印刷できます。</p>
+<p class="print-note">印刷はA4・実際のサイズ（100％）。「用紙に合わせる」をOFFにしてください。９等分は用紙の端まで使います。表裏の番号が合うよう、PDFと同じとじ方向をプリンタで選んでください。</p>
+<nav class="preview-nav" aria-label="プレビューのページ"><button id="prev-page" type="button" disabled>前のページ</button><span id="page-label">まだ原稿はありません</span><button id="next-page" type="button" disabled>次のページ</button></nav>
+<div id="preview" class="preview"><p>「プレビューを作る」を押すと、印刷するページを確認できます。</p></div>
+<details id="frequency-panel" hidden><summary>単語の登場回数を確認</summary><label>先頭から何番まで配るか<input id="prefix" type="number" min="1" value="36"></label><p class="help">表裏を合計した回数です。カテゴリごとの指定数によって、カテゴリ間の回数は異なります。</p><div id="frequencies"></div></details>
+</section>
+</main>
+<script src="../grade34/data/app-data.js"></script>
+<script src="print-core.js?v=20261023"></script><script src="print-render.js?v=20261023"></script><script src="print-app.js?v=20261023"></script>
+</body></html>
+
+
