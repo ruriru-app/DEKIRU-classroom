@@ -12,8 +12,6 @@
   };
 
   const ASSET_BASE = "../";
-  // Let’s Try additions are independent of the Grade 5/6 Standard/Plus grouping.
-  const LETS_TRY_ADVANCE_ADDITIONS = new Set(["sport_022"]); // dancing
   const app = document.getElementById("app");
   const toast = document.getElementById("toast");
   const practice = globalThis.CardPractice?.create();
@@ -217,7 +215,12 @@
     const basicIds = new Set(basicCards.map((card) => card.id));
     const advanceCards = DATA.cards.filter((card) =>
       categories.has(card.category)
-      && (card.displayGroup === "standard" || LETS_TRY_ADVANCE_ADDITIONS.has(card.id))
+      && card.displayGroup === "standard"
+      && !basicIds.has(card.id)
+    );
+    const plusCards = DATA.cards.filter((card) =>
+      categories.has(card.category)
+      && card.displayGroup === "plus"
       && !basicIds.has(card.id)
     );
 
@@ -225,7 +228,10 @@
       ...directExpressions.map((item) => ({ ...item, kind: "expression", ref: `expr:${item.id}`, level: "Basic", category: "expressions" })),
       ...basicCards.map((item) => ({ ...item, kind: "card", ref: `card:${item.id}`, level: "Basic" })),
     ];
-    const advance = advanceCards.map((item) => ({ ...item, kind: "card", ref: `card:${item.id}`, level: "Advance" }));
+    const advance = [
+      ...advanceCards.map((item) => ({ ...item, kind: "card", ref: `card:${item.id}`, level: "高学年Basic" })),
+      ...plusCards.map((item) => ({ ...item, kind: "card", ref: `card:${item.id}`, level: "高学年Plus" })),
+    ];
     const groups = buildVocabularyGroups(basic, advance);
     return { basic, advance, groups, categories, mapped: directMappings.length > 0 };
   }
@@ -252,9 +258,11 @@
     categories.forEach((category) => {
       const label = DATA.categoryLabels[category] || category;
       const basicItems = basic.filter((item) => item.kind === "card" && item.category === category);
-      const advanceItems = advance.filter((item) => item.category === category);
+      const advanceItems = advance.filter((item) => item.category === category && item.level === "高学年Basic");
+      const plusItems = advance.filter((item) => item.category === category && item.level === "高学年Plus");
       if (basicItems.length) groups.push({ key: `${category}-basic`, label, level: "Basic", items: basicItems });
-      if (advanceItems.length) groups.push({ key: `${category}-advance`, label, level: "Advance", items: advanceItems });
+      if (advanceItems.length) groups.push({ key: `${category}-advance`, label, level: "高学年Basic", items: advanceItems });
+      if (plusItems.length) groups.push({ key: `${category}-upper-plus`, label, level: "高学年Plus", items: plusItems });
     });
     return groups;
   }
