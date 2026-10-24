@@ -12,6 +12,8 @@
   };
 
   const ASSET_BASE = "../";
+  // Let’s Try additions are independent of the Grade 5/6 Standard/Plus grouping.
+  const LETS_TRY_ADVANCE_ADDITIONS = new Set(["sport_022"]); // dancing
   const app = document.getElementById("app");
   const toast = document.getElementById("toast");
   const practice = globalThis.CardPractice?.create();
@@ -215,7 +217,7 @@
     const basicIds = new Set(basicCards.map((card) => card.id));
     const advanceCards = DATA.cards.filter((card) =>
       categories.has(card.category)
-      && card.displayGroup === "standard"
+      && (card.displayGroup === "standard" || LETS_TRY_ADVANCE_ADDITIONS.has(card.id))
       && !basicIds.has(card.id)
     );
 
