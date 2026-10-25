@@ -35,6 +35,22 @@
 
   const ACTIVITIES = [
     {
+      id: "alphabet-touch",
+      title: "ALPHABET TOUCH",
+      subtitle: "大文字・小文字のアルファベットを順番にタッチしよう",
+      units: [],
+      href: `${ASSET_BASE}games/index.html#/alphabetTouch`,
+    },
+    {
+      id: "card-print",
+      title: "カード類印刷",
+      subtitle: "ピクチャーカード・活動用配布カードを選んで、片面・両面のPDFを保存",
+      units: [],
+      href: `${ASSET_BASE}card-print/index.html`,
+      teacherOnly: true,
+      openLabel: "印刷ページをひらく",
+    },
+    {
       id: "dekiru-clock",
       title: "DEKIRU CLOCK",
       subtitle: "時計と窓の景色で時刻を読み、英語で話そう",
@@ -174,6 +190,7 @@
   }
 
   function activityTile(activity) {
+    if (activity.id === "alphabet-touch") return externalGameTile(activity.title, activity.href);
     if (activityArtwork(activity)) return activityUnitTile(activity);
     return `<article class="activity-catalog-tile">
       <div>
@@ -182,8 +199,8 @@
         <p>${escapeHtml(activity.subtitle)}</p>
       </div>
       <div class="tile-actions">
-        <a class="primary-button" href="${escapeHtml(activity.href)}" target="_blank" rel="noopener">ひらく</a>
-        <button class="secondary-button" data-share="${escapeHtml(activity.id)}">配布</button>
+        <a class="primary-button" href="${escapeHtml(activity.href)}" target="_blank" rel="noopener">${escapeHtml(activity.openLabel || "ひらく")}</a>
+        ${activity.teacherOnly ? "" : `<button class="secondary-button" data-share="${escapeHtml(activity.id)}">配布</button>`}
       </div>
     </article>`;
   }
