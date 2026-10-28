@@ -58,7 +58,7 @@ function draw(page,config,artwork,catalog){
   let header=0;
   if(config.title){ctx.font=3*MM+'px sans-serif';ctx.textAlign='center';ctx.textBaseline='top';ctx.fillStyle='#333';ctx.fillText(config.title,innerX+innerW/2,innerY,innerW);header+=4.5*MM;}
   if(config.kind==='activity'){ctx.font=3.3*MM+'px sans-serif';ctx.textAlign='center';ctx.textBaseline='top';ctx.fillStyle='#333';ctx.fillText('No. '+slot.number,innerX+innerW/2,innerY+header);header+=5*MM;}
-  const ids=slot[page.side],cols=ids.length===1?1:ids.length<=4?2:3,rows=Math.ceil(ids.length/cols),gap=2*MM;
+  const ids=slot[page.side],cols=config.orientation==='landscape'&&ids.length<=4?ids.length:ids.length===1?1:ids.length<=4?2:3,rows=Math.ceil(ids.length/cols),gap=2*MM;
   const cellW=(innerW-(cols-1)*gap)/cols,cellH=(innerH-header-(rows-1)*gap)/rows;
   ids.forEach((id,i)=>{
    const card=catalog.get(id),image=artwork.get(id),cx=innerX+(i%cols)*(cellW+gap),cy=innerY+header+Math.floor(i/cols)*(cellH+gap);
