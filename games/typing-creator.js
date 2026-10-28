@@ -4,8 +4,9 @@ const $=id=>document.getElementById(id),C=TypingCore,S=TypingStore.create(localS
 const data=window.GAMES_DATA,completed=new Set(data.completedPictureCardIds||[]),cards=data.cards.filter(c=>completed.has(c.id)&&c.image&&['standard','plus','lets-try'].includes(c.displayGroup));
 let entries=[],editing='',chosen=new Set(),dirty=false;
 const status=text=>$('status').textContent=text;
-function changed(){dirty=true;$('share-panel').hidden=true;}
+function changed(){dirty=true;$('share-panel').hidden=true;$('copy-current-url').hidden=true;}
 function renderEntries(){
+ $('copy-current-url').hidden=true;
  $('entry-heading').textContent='問題一覧（'+entries.length+'問）';
  $('entries').innerHTML=entries.map((e,i)=>'<div class="entry"><span>'+(i+1)+'</span><input data-index="'+i+'" data-field="japanese" aria-label="'+(i+1)+'問目の日本語" value="'+esc(e.japanese)+'"><input data-index="'+i+'" data-field="english" lang="en" spellcheck="false" aria-label="'+(i+1)+'問目の英語" value="'+esc(e.english)+'"><button type="button" data-remove="'+i+'">外す</button></div>').join('');
 }
@@ -56,6 +57,15 @@ $('library').onclick=event=>{
  }catch(error){status(error.message);}
 };
 $('copy-url').onclick=async()=>{try{await navigator.clipboard.writeText($('share-url').value);status('児童用URLをコピーしました。');}catch{$('share-url').focus();$('share-url').select();status('URLを選択しました。手動でコピーしてください。');}};
+$('copy-current').onclick=async()=>{
+ const button=$('copy-current'),field=$('copy-current-url');button.disabled=true;field.hidden=true;
+ try{
+  const url=urlFor(payload());field.value=url;
+  try{await navigator.clipboard.writeText(url);status('現在の教材の児童用URLをコピーしました。端末内に残す場合は「教材を保存」も押してください。');}
+  catch{field.hidden=false;field.focus();field.select();status('URLを選択しました。手動でコピーしてください。');}
+ }catch(error){status(error.message);}
+ finally{button.disabled=false;}
+};
 const requested=new URLSearchParams(location.search).get('edit');
 renderWords();renderEntries();library();
 if(requested){try{const p=S.list().find(x=>x.id===requested);if(!p)throw Error('指定した教材が見つかりません。同じブラウザで開いてください。');load(p);}catch(error){status(error.message);}}
