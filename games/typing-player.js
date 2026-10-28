@@ -2,11 +2,57 @@
 'use strict';const $=id=>document.getElementById(id),C=TypingCore;
 let activity,queue=[],cursor=0,showModel=true,last=null,statuses=[],correct=false,soundEnabled=true;
 let failed=[],started=0,elapsed=0,running=false,clock=null,wordByWord=false,speechRate=.55,speechLanguage='en-US',speechGeneration=0,speechPause=null;
+let mode='easy',phase='setup',recordEligible=true,audioContext=null,tones=[];
+const modeNames={easy:'Easy',normal:'Normal',hard:'Hard'};
 const cards=new Map((window.GAMES_DATA?.cards||[]).map(c=>[c.id,c]));
 const current=()=>activity.entries[queue[cursor]];
+function tone(kind){
+ if(!soundEnabled)return;
+ try{
+  const Audio=window.AudioContext||window.webkitAudioContext;if(!Audio)return;
+  audioContext=audioContext||new Audio();if(audioContext.state==='suspended')audioContext.resume().catch(()=>{});
+  const notes=kind==='record'?[[523,0,.14],[659,.14,.14],[784,.28,.3],[1047,.58,.4]]:[[880,0,.13],[660,.14,.22]];
+  tones=tones.filter(x=>!x.ended);
+  notes.forEach(([frequency,delay,duration])=>{
+   const osc=audioContext.createOscillator(),gain=audioContext.createGain(),t=audioContext.currentTime+delay;
+   osc.frequency.value=frequency;gain.gain.setValueAtTime(.0001,t);gain.gain.exponentialRampToValueAtTime(.12,t+.01);gain.gain.exponentialRampToValueAtTime(.0001,t+duration);
+   osc.connect(gain);gain.connect(audioContext.destination);const item={osc,ended:false};tones.push(item);
+   osc.onended=()=>{item.ended=true;osc.disconnect();gain.disconnect();};osc.start(t);osc.stop(t+duration+.03);
+  });
+ }catch{}
+}
+function recordData(){const signature=JSON.stringify(activity.entries.map(e=>[e.english,e.japanese]));let hash=2166136261;for(let i=0;i<signature.length;i++)hash=Math.imul(hash^signature.charCodeAt(i),16777619);return {signature,key:'dekiru-typing-best-v1:'+mode+':'+(hash>>>0).toString(16)};}
+function readBest(){try{const {signature,key}=recordData(),saved=JSON.parse(localStorage.getItem(key));return saved?.signature===signature&&Number.isFinite(saved.ms)&&saved.ms>0?saved.ms:null;}catch{return null;}}
+function bestDisplay(){const best=readBest(),text=modeNames[mode]+' BEST：'+(best===null?'まだ記録がありません':(best/1000).toFixed(2)+'秒');$('best-time').textContent=text;$('finish-best').textContent=text;}
+function saveBest(){
+ $('new-record').hidden=true;$('record-notice').textContent='';
+ if(!recordEligible||statuses.some(s=>s!=='correct')){$('record-notice').textContent='スキップや練習設定の変更があったため、今回は記録の対象外です。';return;}
+ const best=readBest();if(elapsed<=0||(best!==null&&best<=elapsed)){bestDisplay();return;}
+ try{const {signature,key}=recordData();localStorage.setItem(key,JSON.stringify({signature,ms:elapsed}));$('new-record').hidden=false;tone('record');}
+ catch{$('record-notice').textContent='このブラウザに記録を保存できませんでした。';}
+ bestDisplay();
+}
+function selectMode(value){
+ mode=value;for(const name of Object.keys(modeNames))$('mode-'+name).setAttribute('aria-pressed',String(name===mode));
+ const missing=mode==='hard'&&activity.entries.some(e=>!e.japanese);
+ $('start').disabled=missing;$('setup-message').textContent=missing?'日本語が未登録の問題があるため、Hardでは開始できません。':'';
+ bestDisplay();
+}
+function setup(){
+ phase='setup';stopSpeech();clearInterval(clock);running=false;
+ $('setup').hidden=false;$('practice').hidden=true;$('complete').hidden=true;$('practice-stats').hidden=true;$('audio-settings').hidden=true;$('new-record').hidden=true;
+ $('progress').textContent=activity.entries.length+'問';selectMode(mode);$('start').focus();
+}
+function begin(){
+ if($('start').disabled)return;
+ phase='play';recordEligible=true;statuses=activity.entries.map(()=>null);queue=activity.entries.map((_,i)=>i);cursor=0;
+ showModel=mode==='easy';speechLanguage=mode==='hard'?'ja-JP':'en-US';$('speech-language').value=speechLanguage;
+ $('setup').hidden=true;$('audio-settings').hidden=false;$('practice-stats').hidden=false;$('timer').hidden=true;$('meaning').hidden=mode==='normal';
+ $('mode-label').textContent=modeNames[mode];$('new-record').hidden=true;startClock(true);load();
+}
 function stopSpeech(){speechGeneration++;clearTimeout(speechPause);window.speechSynthesis?.cancel();}
 function stats(){
- const seconds=Math.floor((elapsed+(running?Date.now()-started:0))/1000),time=Math.floor(seconds/60)+'分'+String(seconds%60).padStart(2,'0')+'秒';
+ const ms=elapsed+(running?Date.now()-started:0),seconds=Math.floor(ms/1000),time=Math.floor(seconds/60)+'分'+String(seconds%60).padStart(2,'0')+(running?'':'.'+String(Math.floor(ms%1000/10)).padStart(2,'0'))+'秒';
  const count=statuses.filter((value,i)=>value==='correct'&&!failed[i]).length;
  $('first-pass').textContent='初回正解 '+count+' / '+activity.entries.length+'問';$('timer').textContent='タイム '+time;
  $('result-stats').textContent='間違いなしで入力できた問題：'+count+' / '+activity.entries.length+'問　タイム：'+time;
@@ -46,13 +92,15 @@ function load(){
  $('feedback').classList.remove('success');$('feedback').textContent='音声や綴りを確認して、最後まで入力してから答え合わせをしよう。';model();previous();stats();$('answer').focus();speak();
 }
 function finish(){
+ phase='complete';
  stopSpeech();if(running){elapsed+=Date.now()-started;running=false;}clearInterval(clock);stats();$('practice').hidden=true;$('complete').hidden=false;
  const count=statuses.filter(x=>x==='correct').length,skipped=statuses.filter(x=>x!=='correct').length;
  $('result').textContent='正しく入力できた問題：'+count+' / '+activity.entries.length+'問'+(skipped?'　後回し：'+skipped+'問':'');
  $('retry-skipped').hidden=!skipped;$('progress').textContent='練習終了';
+ $('timer').hidden=false;saveBest();$('complete').focus();
 }
 function next(skip=false){
- if(skip&&!correct){statuses[queue[cursor]]='skipped';failed[queue[cursor]]=true;}
+ if(skip&&!correct){statuses[queue[cursor]]='skipped';failed[queue[cursor]]=true;recordEligible=false;}
  if(cursor+1<queue.length){cursor++;load();}else finish();
 }
 function speak(){
@@ -70,29 +118,31 @@ function speak(){
  }play(0);
 }
 $('answer-form').onsubmit=event=>{
- event.preventDefault();if(correct)return;
+ event.preventDefault();if(correct||phase!=='play')return;
  if(!C.normalize($('answer').value)){$('feedback').textContent='英語を入力してから答え合わせをしよう。';$('answer').focus();return;}
  try{
   last=C.compare(current().english,$('answer').value);
-  if(last.correct){correct=true;statuses[queue[cursor]]='correct';last=null;previous();next();}
+  if(last.correct){correct=true;statuses[queue[cursor]]='correct';tone('correct');last=null;previous();next();}
   else{failed[queue[cursor]]=true;previous();model();$('feedback').textContent='下の「あなたの入力」を確認して、この入力欄に全体をもう一度入力しよう。';$('feedback').classList.remove('success');$('answer').value='';$('answer').focus();}
  }catch(error){$('feedback').textContent=error.message;}
 };
-$('toggle-model').onclick=()=>{showModel=!showModel;model();previous();$('answer').focus();};
+$('toggle-model').onclick=()=>{showModel=!showModel;if(showModel&&mode!=='easy')recordEligible=false;model();previous();$('answer').focus();};
 $('listen').onclick=()=>speak();
 $('sound-toggle').onclick=()=>{
  soundEnabled=!soundEnabled;
  $('sound-toggle').setAttribute('aria-pressed',String(soundEnabled));
  $('sound-toggle').setAttribute('aria-label',soundEnabled?'音声をオフにする':'音声をオンにする');
  $('listen').disabled=!soundEnabled;
- if(soundEnabled)speak();else stopSpeech();
+ if(soundEnabled)speak();else{stopSpeech();tones.forEach(x=>{try{x.osc.stop();}catch{}});}
 };
 $('word-toggle').onclick=()=>{wordByWord=!wordByWord;$('word-toggle').setAttribute('aria-pressed',String(wordByWord));speak();};
 $('speech-rate').onchange=()=>{const value=Number($('speech-rate').value);if([.55,.85,1.2].includes(value)){speechRate=value;speak();}};
-$('speech-language').onchange=()=>{speechLanguage=$('speech-language').value==='ja-JP'?'ja-JP':'en-US';speak();};
+$('speech-language').onchange=()=>{speechLanguage=$('speech-language').value==='ja-JP'?'ja-JP':'en-US';recordEligible=false;speak();};
 $('next').onclick=()=>next();$('skip').onclick=()=>next(true);
-$('restart').onclick=()=>{statuses=activity.entries.map(()=>null);queue=activity.entries.map((_,i)=>i);cursor=0;startClock(true);load();};
-$('retry-skipped').onclick=()=>{queue=activity.entries.map((_,i)=>i).filter(i=>statuses[i]!=='correct');cursor=0;startClock();load();};
+$('restart').onclick=begin;
+$('choose-mode').onclick=setup;$('start').onclick=begin;
+for(const value of Object.keys(modeNames))$('mode-'+value).onclick=()=>selectMode(value);
+$('retry-skipped').onclick=()=>{phase='play';queue=activity.entries.map((_,i)=>i).filter(i=>statuses[i]!=='correct');cursor=0;startClock();load();};
 window.addEventListener('pagehide',()=>{stopSpeech();clearInterval(clock);});
 document.addEventListener('visibilitychange',()=>{if(document.hidden)stopSpeech();});
 try{
@@ -100,7 +150,7 @@ try{
  activity=C.activity(ShareCodec.decodeJson(token));$('title').textContent=activity.title;$('instructions').textContent=activity.instructions;
  const params=new URLSearchParams(location.search),book=params.get('book'),unit=params.get('unit');
  $('unit-label').textContent=/^nh[56]$/.test(book)&&/^[1-8]$/.test(unit)?(book==='nh5'?'５':'６')+'年生Unit'+unit:activity.title;
- queue=activity.entries.map((_,i)=>i);statuses=activity.entries.map(()=>null);startClock(true);load();
-}catch(error){$('practice').hidden=true;$('complete').hidden=true;$('fatal').textContent=error.message;}
+ queue=activity.entries.map((_,i)=>i);statuses=activity.entries.map(()=>null);setup();
+}catch(error){$('setup').hidden=true;$('practice').hidden=true;$('complete').hidden=true;$('fatal').textContent=error.message;}
 })();
 
