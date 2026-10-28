@@ -17,7 +17,7 @@ function renderWords(){
 function payload(){
  return C.preset({version:1,type:'english-typing',id:editing||C.newId(),title:$('title').value,instructions:$('instructions').value,entries,assignedUnits:[...document.querySelectorAll('[data-unit]:checked')].map(x=>x.dataset.unit)});
 }
-function urlFor(value){const url=new URL('typing.html',location.href);url.hash='d='+ShareCodec.encodeJson(C.activity(value));return url.href;}
+function urlFor(value){const url=new URL('typing.html',location.href),unit=value.assignedUnits?.[0];if(unit){const [book,number]=unit.split(':');url.searchParams.set('book',book);url.searchParams.set('unit',number);}url.hash='d='+ShareCodec.encodeJson(C.activity(value));return url.href;}
 function showShare(value){$('share-url').value=urlFor(value);$('open-player').href=$('share-url').value;$('share-panel').hidden=false;}
 function library(){
  try{

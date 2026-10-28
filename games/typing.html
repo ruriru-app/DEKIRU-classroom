@@ -1,14 +1,16 @@
-<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>英語タイピング | DEKIRU Classroom</title><link rel="stylesheet" href="typing.css?v=20261028a"></head><body>
-<main class="player-layout"><header class="player-header"><button id="sound-toggle" type="button" aria-pressed="true" aria-label="音声をオフにする">🔊 音声オン</button><p class="eyebrow">ENGLISH TYPING</p><h1 id="title">英語タイピング</h1><p id="instructions"></p><p id="progress"></p></header>
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>英語タイピング | DEKIRU Classroom</title><link rel="stylesheet" href="typing.css?v=20261028c"></head><body>
+<main class="player-layout"><header class="player-header compact-header"><div class="heading-line"><span class="eyebrow">ENGLISH TYPING</span><span id="unit-label"></span><span id="progress"></span></div><h1 id="title" class="visually-hidden">英語タイピング</h1><p id="instructions"></p>
+<div class="typing-audio-controls" aria-label="音声設定"><div class="typing-icon-row"><button id="sound-toggle" type="button" class="typing-icon" aria-pressed="true" aria-label="音声をオフにする" title="音声オン／オフ"><span class="typing-svg-crop"><img src="../grade34/assets/ui/originals/音声ONOFFと読み方.svg" alt=""></span></button><button id="word-toggle" type="button" class="typing-icon" aria-pressed="false" aria-label="１語ずつ読む" title="１語ずつ読む"><span class="typing-svg-crop second"><img src="../grade34/assets/ui/originals/音声ONOFFと読み方.svg" alt=""></span></button></div><label class="typing-speed">速さ<select id="speech-rate" aria-label="読み上げ速度"><option value="0.55">ゆっくり</option><option value="0.85">ふつう</option><option value="1.2">はやめ</option></select></label><select id="speech-language" aria-label="読み上げ言語"><option value="en-US">英語</option><option value="ja-JP">日本語</option></select></div>
+<div class="practice-stats"><span id="first-pass"></span><span id="timer"></span></div></header>
 <section id="practice" class="panel" hidden>
 <div class="meaning"><img id="picture" alt="" hidden><p id="japanese"></p></div>
-<div class="actions"><button id="listen" type="button">🔊 発音を聞く</button><button id="listen-slow" type="button">🔊 ゆっくり聞く</button><button id="toggle-model" type="button" aria-pressed="true">綴りを隠す</button></div>
+<div class="actions"><button id="listen" type="button">🔊 発音を聞く</button><button id="toggle-model" type="button" aria-pressed="true">綴りを隠す</button></div>
 <section class="model-section" aria-label="お手本"><h2>お手本</h2><p id="model" lang="en" class="spelling"></p></section>
-<section id="previous-attempt" hidden aria-label="あなたの入力"><h2>あなたの入力</h2><p id="previous" class="spelling" lang="en"></p><p id="error-detail" role="status" style="white-space:pre-line;font-size:20px;font-weight:bold;color:#a51d31"></p><p class="help">赤い文字・□のところを確認して、全体をもう一度入力しよう。</p></section>
 <form id="answer-form"><label for="answer">英語を入力する</label><input id="answer" lang="en" type="text" maxlength="500" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-describedby="feedback"><div class="actions"><button id="check" class="primary" type="submit">答え合わせ</button><button id="next" type="button" hidden>次へ</button><button id="skip" type="button">いったん次へ</button></div></form>
 <p id="feedback" role="status" aria-live="polite"></p>
+<section id="previous-attempt" hidden aria-label="あなたの入力"><h2>あなたの入力</h2><p id="previous" class="spelling" lang="en"></p><p id="error-detail" role="status"></p><p class="help">上の入力欄に、単語・文の全体をもう一度入力しよう。</p></section>
 </section>
-<section id="complete" class="panel" hidden><h2>練習が終わりました</h2><p id="result"></p><div class="actions"><button id="retry-skipped" type="button" hidden>後回しにした問題を練習</button><button id="restart" type="button">もう一度はじめから</button></div></section>
+<section id="complete" class="panel" hidden><h2>練習が終わりました</h2><p id="result"></p><p id="result-stats"></p><div class="actions"><button id="retry-skipped" type="button" hidden>後回しにした問題を練習</button><button id="restart" type="button">もう一度はじめから</button></div></section>
 <p id="fatal" role="status" aria-live="polite"></p>
-</main><script src="catalog.js"></script><script src="../grade34/share-codec.js"></script><script src="typing-core.js?v=20261028"></script><script src="typing-player.js?v=20261028b"></script></body></html>
+</main><script src="catalog.js"></script><script src="../grade34/share-codec.js"></script><script src="typing-core.js?v=20261028"></script><script src="typing-player.js?v=20261028c"></script></body></html>
 
