@@ -27,6 +27,26 @@ test('correct first answer immediately opens next problem without previous attem
 test('Easy shows pasted Japanese even without a picture dictionary card',()=>{
  const p=player();assert.equal(p.get('meaning').hidden,false);assert.equal(p.get('japanese').textContent,'ねこ');assert.equal(p.get('picture').hidden,true);
 });
+test('Easy prevents a wrong letter before insertion and marks the attempt as not first-pass',()=>{
+ const p=player();p.get('answer').value='c';p.get('answer').selectionStart=p.get('answer').selectionEnd=1;
+ let prevented=false;
+ assert.equal(typeof p.get('answer').onbeforeinput,'function');
+ p.get('answer').onbeforeinput({inputType:'insertText',data:'u',isComposing:false,preventDefault(){prevented=true;}});
+ assert.equal(prevented,true);assert.equal(p.get('answer').value,'c');
+ p.submit('cat');p.submit('dog');assert.match(p.get('result-stats').textContent,/1 \/ 2問/);
+});
+test('Easy allows the correct next letter and deletion; invalid paste is reverted',()=>{
+ const p=player(),input=p.get('answer');input.value='c';input.oninput({isComposing:false});
+ input.selectionStart=input.selectionEnd=1;let prevented=false;
+ input.onbeforeinput({inputType:'insertText',data:'a',preventDefault(){prevented=true;}});
+ assert.equal(prevented,false);
+ input.value='cu';input.oninput({isComposing:false});assert.equal(input.value,'c');
+ input.value='';input.oninput({isComposing:false});assert.equal(input.value,'');
+});
+test('Normal retains unrestricted typing',()=>{
+ const p=player('cat',false);p.get('mode-normal').onclick();p.get('start').onclick();p.countdown();
+ const input=p.get('answer');input.value='wrong';input.oninput({isComposing:false});assert.equal(input.value,'wrong');
+});
 test('setup audio controls are visible and selected language speed and word mode survive Start',()=>{
  const p=player('I like cats.',false);
  assert.equal(p.get('audio-settings').hidden,false);

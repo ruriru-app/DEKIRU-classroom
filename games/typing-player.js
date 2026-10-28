@@ -4,6 +4,7 @@ let activity,queue=[],cursor=0,showModel=true,last=null,statuses=[],correct=fals
 let failed=[],started=0,elapsed=0,running=false,clock=null,wordByWord=false,speechRate=.55,speechLanguage='en-US',speechGeneration=0,speechPause=null;
 let mode='easy',phase='setup',recordEligible=true,audioContext=null,tones=[];
 let questionOrder='ordered',countdownTimer=null;
+let easyValue='',easyCaret=0;
 const modeNames={easy:'Easy',normal:'Normal',hard:'Hard'};
 const cards=new Map((window.GAMES_DATA?.cards||[]).map(c=>[c.id,c]));
 const current=()=>activity.entries[queue[cursor]];
@@ -12,7 +13,7 @@ function tone(kind){
  try{
   const Audio=window.AudioContext||window.webkitAudioContext;if(!Audio)return;
   audioContext=audioContext||new Audio();if(audioContext.state==='suspended')audioContext.resume().catch(()=>{});
-  const notes=kind==='record'?[[523,0,.14],[659,.14,.14],[784,.28,.3],[1047,.58,.4]]:[[880,0,.13],[660,.14,.22]];
+  const notes=kind==='wrong'?[[190,0,.13]]:kind==='record'?[[523,0,.14],[659,.14,.14],[784,.28,.3],[1047,.58,.4]]:[[880,0,.13],[660,.14,.22]];
   tones=tones.filter(x=>!x.ended);
   notes.forEach(([frequency,delay,duration])=>{
    const osc=audioContext.createOscillator(),gain=audioContext.createGain(),t=audioContext.currentTime+delay;
@@ -100,6 +101,7 @@ function previous(){
  $('error-detail').textContent=details.join('\n');
 }
 function load(speechDelay=0){
+ easyValue='';easyCaret=0;
  stopSpeech();last=null;correct=false;$('practice').hidden=false;$('complete').hidden=true;$('answer').value='';$('answer').disabled=false;$('check').disabled=false;$('next').hidden=true;$('skip').hidden=false;
  const item=current();$('japanese').textContent=item.japanese||'音声を聞いて英語を入力しよう。';$('progress').textContent=(cursor+1)+' / '+queue.length+'問';
  const card=cards.get(item.cardId),picture=$('picture');picture.hidden=true;picture.removeAttribute('src');picture.onerror=()=>picture.hidden=true;
@@ -133,6 +135,30 @@ function speak(){
   speechSynthesis.speak(utterance);
  }play(0);
 }
+function warnEasy(){
+ failed[queue[cursor]]=true;tone('wrong');
+ $('feedback').textContent='違う文字です。もう一度、正しい文字を入力しよう。';stats();
+}
+function typingPrefix(value){return value.normalize('NFKC').replace(/[‘’]/g,"'").replace(/[“”]/g,'"').replace(/[‐‑–—]/g,'-');}
+function easyInput(event){
+ if(mode!=='easy'||phase!=='play'||event.isComposing)return;
+ const input=$('answer'),value=input.value;
+ // Deletion is always allowed; additions must match the expected spelling from the beginning.
+ const deletion=event.inputType?.startsWith('delete')||value==='';
+ if(!deletion&&!typingPrefix(current().english).startsWith(typingPrefix(value))){
+  input.value=easyValue;input.setSelectionRange?.(easyCaret,easyCaret);warnEasy();return;
+ }
+ easyValue=value;easyCaret=input.selectionStart??value.length;
+ $('feedback').textContent='最後まで入力したら、答え合わせをしよう。';
+}
+$('answer').onbeforeinput=event=>{
+ if(mode!=='easy'||phase!=='play'||event.isComposing||!event.inputType?.startsWith('insert')||typeof event.data!=='string')return;
+ const input=$('answer'),start=input.selectionStart??input.value.length,end=input.selectionEnd??start;
+ const value=input.value.slice(0,start)+event.data+input.value.slice(end);
+ if(!typingPrefix(current().english).startsWith(typingPrefix(value))){event.preventDefault();warnEasy();}
+};
+$('answer').oninput=easyInput;
+$('answer').oncompositionend=()=>easyInput({isComposing:false});
 $('answer-form').onsubmit=event=>{
  event.preventDefault();if(correct||phase!=='play')return;
  if(!C.normalize($('answer').value)){$('feedback').textContent='英語を入力してから答え合わせをしよう。';$('answer').focus();return;}
