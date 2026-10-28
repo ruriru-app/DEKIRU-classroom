@@ -46,9 +46,10 @@ function caption(ctx,text,x,y,w,h,font,scaleToCard=false){
  });
 }
 function draw(page,config,artwork,catalog){
+ const {width:W,height:H}=dimensions(config.orientation);
  const canvas=document.createElement('canvas');canvas.width=W;canvas.height=H;const ctx=canvas.getContext('2d');
  ctx.fillStyle='white';ctx.fillRect(0,0,W,H);
- const l=CardPrintCore.layout(config.size),pad=config.size==='business'?3:5;
+ const l=CardPrintCore.layout(config.size,config.orientation),pad=config.size==='business'?3:5;
  page.slots.forEach((slot,index)=>{
   if(!slot)return;
   const x=(l.x+(index%l.cols)*l.w)*MM,y=(l.y+Math.floor(index/l.cols)*l.h)*MM,w=l.w*MM,h=l.h*MM;
@@ -77,7 +78,8 @@ async function jpeg(canvas){
  if(!blob)throw Error('PDF用の画像を作れません。');
  return new Uint8Array(await blob.arrayBuffer());
 }
-return {prepare,draw,jpeg,width:W,height:H};
+function dimensions(orientation){return orientation==='landscape'?{width:H,height:W}:{width:W,height:H};}
+return {prepare,draw,jpeg,dimensions,width:W,height:H};
 })();
 
 

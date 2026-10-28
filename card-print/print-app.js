@@ -84,7 +84,14 @@ function updateMode(){
  $('front-pdf').hidden=$('back-pdf').hidden=!duplex;
  $('download').textContent=duplex?'表裏交互のPDFを保存':'PDFを保存';
  $('output-note').textContent=duplex?'表１→裏１→表２→裏２…のPDF、または表用・裏用それぞれのPDFを保存できます。同じ番号が表裏で重なるよう裏の位置を調整しています。':'PDFには絵と文字が含まれます。保存後はPDFを開くだけで印刷できます。';
- syncSide('front');syncSide('back');invalidate();
+ syncOrientation();syncSide('front');syncSide('back');invalidate();
+}
+function syncOrientation(){
+ const pictures=$('kind').value==='pictures',landscape=!pictures&&$('orientation').value==='landscape';
+ $('orientation-field').hidden=pictures;
+ if(!pictures){$('size').options[0].textContent=landscape?'A4横を９等分・99×70mm（９面）':'A4を９等分・70×99mm（９面）';$('size').options[1].textContent=landscape?'名刺用・89×50mm（12面／A4横）':'名刺用・50×89mm（12面／Interview Bingoと同じ）';}
+ $('flip').options[0].textContent=landscape?'長辺とじ（裏面を上下反転して配置）':'長辺とじ（裏面を左右反転して配置）';
+ $('flip').options[1].textContent=landscape?'短辺とじ（裏面を左右反転して配置）':'短辺とじ（裏面を上下反転して配置）';
 }
 function sideConfig(side){
  const state=sides[side];
@@ -125,9 +132,10 @@ async function generate(){
   $('status').textContent='絵とフォントを読み込んでいます…';
   const usedIds=[...new Set(batch.flatMap(card=>[...card.front,...card.back]))];
   const artwork=await R.prepare(usedIds.map(id=>catalog.get(id)),config.font);
-  const pages=C.pages(batch,config.size,config.duplex,config.flip);
+  config.orientation=config.kind==='activity'?$('orientation').value:'portrait';
+  const pages=C.pages(batch,config.size,config.duplex,config.flip,config.orientation);
   documentState={cards:batch,config,artwork,pages,usedIds:eligible};previewIndex=0;
-  $('summary').textContent=batch.length+'枚・A4 '+pages.interleaved.length+'ページ';
+  $('summary').textContent=batch.length+'枚・A4'+(config.orientation==='landscape'?'横':'縦')+' '+pages.interleaved.length+'ページ';
   $('prefix').max=String(batch.length);$('prefix').value=String(batch.length);$('frequency-panel').hidden=config.kind!=='activity';
   $('regenerate').hidden=config.kind!=='activity';
   showPage();frequencies();$('status').textContent='原稿ができました。ページを確認してPDFを保存してください。';
@@ -144,7 +152,8 @@ async function download(which){
    const canvas=R.draw(pages[i],state.config,state.artwork,catalog);
    jpegs.push(await R.jpeg(canvas));canvas.width=canvas.height=1;
   }
-  const bytes=C.pdf(jpegs,R.width,R.height),blob=new Blob([bytes],{type:'application/pdf'}),url=URL.createObjectURL(blob);
+  const dimensions=R.dimensions(state.config.orientation);
+  const bytes=C.pdf(jpegs,dimensions.width,dimensions.height,state.config.orientation),blob=new Blob([bytes],{type:'application/pdf'}),url=URL.createObjectURL(blob);
   const link=document.createElement('a');link.href=url;link.download='dekiru-'+(state.config.kind==='activity'?'activity-cards':'picture-cards')+'-'+({front:'front',back:'back',interleaved:state.config.duplex?'front-back':'single'}[which])+'.pdf';
   document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
   $('status').textContent='PDFを保存しました。印刷時は「実際のサイズ（100％）」を選んでください。';
@@ -154,6 +163,7 @@ renderSide('front');renderSide('back');
 $('kind').onchange=updateMode;
 $('duplex').onchange=()=>{const value=$('size').value;updateMode();if([...$('size').options].some(o=>o.value===value))$('size').value=value;};
 for(const id of ['count','copies','size','font','flip','title'])$(id).addEventListener(id==='title'?'input':'change',invalidate);
+$('orientation').onchange=()=>{syncOrientation();invalidate();};
 $('generate').onclick=$('regenerate').onclick=generate;
 $('download').onclick=()=>download('interleaved');$('front-pdf').onclick=()=>download('front');$('back-pdf').onclick=()=>download('back');
 $('prev-page').onclick=()=>{if(!busy&&documentState&&previewIndex>0){previewIndex--;showPage();}};

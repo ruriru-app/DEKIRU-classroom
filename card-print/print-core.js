@@ -33,26 +33,28 @@ function pictureCards(ids,copies){
  if(ids.length*copies>500)throw Error('一度に印刷するピクチャーカードは500枚以内にしてください。');
  return ids.flatMap(id=>Array.from({length:copies},()=>id)).map((id,i)=>({number:i+1,front:[id],back:[]}));
 }
-function layout(size){
+function layout(size,orientation='portrait'){
+ if(orientation==='landscape'){const l=layout(size);return {cols:l.rows,rows:l.cols,w:l.h,h:l.w,x:l.y,y:l.x};}
  if(size==='business')return {cols:4,rows:3,w:50,h:89,x:5,y:15};
  if(size==='nine')return {cols:3,rows:3,w:70,h:99,x:0,y:0};
  const configs={picture1:[1,1],picture2:[1,2],picture4:[2,2],picture6:[2,3],picture9:[3,3]};
  const dimensions=configs[size];if(!dimensions)throw Error('カードサイズが正しくありません。');
  const [cols,rows]=dimensions;return {cols,rows,w:200/cols,h:287/rows,x:5,y:5};
 }
-function pages(cards,size,duplex,flip='long'){
- const l=layout(size),per=l.cols*l.rows,front=[],back=[];
+function pages(cards,size,duplex,flip='long',orientation='portrait'){
+ const l=layout(size,orientation),per=l.cols*l.rows,front=[],back=[],mirrorRows=orientation==='landscape'?flip==='long':flip==='short';
  for(let offset=0;offset<cards.length;offset+=per){
   const f=Array.from({length:per},(_,slot)=>cards[offset+slot]||null),b=new Array(per).fill(null);
-  for(let i=0;i<per;i++){const row=Math.floor(i/l.cols),col=i%l.cols;const target=flip==='short'?(l.rows-1-row)*l.cols+col:row*l.cols+(l.cols-1-col);b[target]=f[i];}
+  for(let i=0;i<per;i++){const row=Math.floor(i/l.cols),col=i%l.cols;const target=mirrorRows?(l.rows-1-row)*l.cols+col:row*l.cols+(l.cols-1-col);b[target]=f[i];}
   front.push({side:'front',slots:f,sheet:front.length+1});
   if(duplex)back.push({side:'back',slots:b,sheet:back.length+1});
  }
  return {front,back,interleaved:front.flatMap((page,i)=>duplex?[page,back[i]]:[page])};
 }
 // Self-contained PDF: one high-resolution JPEG per A4 page. Fonts and artwork are baked in.
-function pdf(jpegs,width,height){
+function pdf(jpegs,width,height,orientation='portrait'){
  if(!jpegs.length)throw Error('PDFに保存するページがありません。');
+ const pageW=orientation==='landscape'?'841.88976':'595.27559',pageH=orientation==='landscape'?'595.27559':'841.88976';
  const encoder=new TextEncoder(),chunks=[],offsets=[0];let length=0;
  const add=value=>{const bytes=typeof value==='string'?encoder.encode(value):value;chunks.push(bytes);length+=bytes.length;};
  const object=(id,content)=>{offsets[id]=length;add(id+' 0 obj\n');add(content);add('\nendobj\n');};
@@ -61,9 +63,9 @@ function pdf(jpegs,width,height){
  object(2,'<< /Type /Pages /Count '+jpegs.length+' /Kids ['+jpegs.map((_,i)=>(3+i*3)+' 0 R').join(' ')+'] >>');
  jpegs.forEach((bytes,i)=>{
   const page=3+i*3,image=page+1,stream=page+2;
-  object(page,'<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.27559 841.88976] /Resources << /XObject << /Im '+image+' 0 R >> >> /Contents '+stream+' 0 R >>');
+  object(page,'<< /Type /Page /Parent 2 0 R /MediaBox [0 0 '+pageW+' '+pageH+'] /Resources << /XObject << /Im '+image+' 0 R >> >> /Contents '+stream+' 0 R >>');
   offsets[image]=length;add(image+' 0 obj\n<< /Type /XObject /Subtype /Image /Width '+width+' /Height '+height+' /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length '+bytes.length+' >>\nstream\n');add(bytes);add('\nendstream\nendobj\n');
-  const commands='q\n595.27559 0 0 841.88976 0 0 cm\n/Im Do\nQ\n';
+  const commands='q\n'+pageW+' 0 0 '+pageH+' 0 0 cm\n/Im Do\nQ\n';
   object(stream,'<< /Length '+encoder.encode(commands).length+' >>\nstream\n'+commands+'endstream');
  });
  const start=length,count=3+jpegs.length*3;add('xref\n0 '+count+'\n0000000000 65535 f \n');

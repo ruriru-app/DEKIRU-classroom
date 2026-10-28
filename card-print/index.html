@@ -10,6 +10,7 @@
 <label id="count-field">配るカードの枚数<input id="count" type="number" value="36" min="1" max="200"></label>
 <label id="copies-field" hidden>各ピクチャーカードの枚数<input id="copies" type="number" value="1" min="1" max="30"></label>
 <label>サイズ<select id="size"><option value="nine">A4を９等分・70×99mm（９面）</option><option value="business">名刺用・50×89mm（12面／Interview Bingoと同じ）</option></select></label>
+<label id="orientation-field">カードの向き<select id="orientation"><option value="portrait">縦向き（従来のレイアウト）</option><option value="landscape">横向き（名札に入れる向き／A4横）</option></select></label>
 <label>英語の文字<select id="font"><option value="none">文字なし（絵だけ）</option><option value="andika">Andika</option><option value="ruriru">４線付きRuRiRuフォント</option></select></label>
 <label id="duplex-field">印刷する面<select id="duplex"><option value="single">片面</option><option value="duplex">両面（表と裏で別の内容）</option></select></label>
 <label id="flip-field" hidden>両面のとじ方向<select id="flip"><option value="long">長辺とじ（裏面を左右反転して配置）</option><option value="short">短辺とじ（裏面を上下反転して配置）</option></select></label>
@@ -30,14 +31,14 @@
 <button id="back-pdf" type="button" hidden disabled>裏だけのPDFを保存</button>
 </div>
 <p id="output-note" class="help">PDFには絵と文字が含まれます。保存後は、PDFを開くだけで印刷できます。</p>
-<p class="print-note">印刷はA4・実際のサイズ（100％）。「用紙に合わせる」をOFFにしてください。９等分は用紙の端まで使います。表裏の番号が合うよう、PDFと同じとじ方向をプリンタで選んでください。</p>
+<p class="print-note">印刷はA4・実際のサイズ（100％）。「用紙に合わせる」をOFFにしてください。横向きのカードはA4横のPDFになります。用紙の向きはPDFに合わせてください。９等分は用紙の端まで使います。表裏の番号が合うよう、PDFと同じとじ方向をプリンタで選んでください。</p>
 <nav class="preview-nav" aria-label="プレビューのページ"><button id="prev-page" type="button" disabled>前のページ</button><span id="page-label">まだ原稿はありません</span><button id="next-page" type="button" disabled>次のページ</button></nav>
 <div id="preview" class="preview"><p>「プレビューを作る」を押すと、印刷するページを確認できます。</p></div>
 <details id="frequency-panel" hidden><summary>単語の登場回数を確認</summary><label>先頭から何番まで配るか<input id="prefix" type="number" min="1" value="36"></label><p class="help">表裏を合計した回数です。カテゴリごとの指定数によって、カテゴリ間の回数は異なります。</p><div id="frequencies"></div></details>
 </section>
 </main>
 <script src="../grade34/data/app-data.js"></script>
-<script src="print-core.js?v=20261023"></script><script src="print-render.js?v=clear-lines-20261023"></script><script src="print-app.js?v=20261023"></script>
+<script src="print-core.js?v=landscape-20261028"></script><script src="print-render.js?v=landscape-20261028"></script><script src="print-app.js?v=landscape-20261028"></script>
 </body></html>
 
 
