@@ -3,6 +3,7 @@
 let activity,queue=[],cursor=0,showModel=true,last=null,statuses=[],correct=false,soundEnabled=true;
 let failed=[],started=0,elapsed=0,running=false,clock=null,wordByWord=false,speechRate=.55,speechLanguage='en-US',speechGeneration=0,speechPause=null;
 let mode='easy',phase='setup',recordEligible=true,audioContext=null,tones=[];
+let questionOrder='ordered',countdownTimer=null;
 const modeNames={easy:'Easy',normal:'Normal',hard:'Hard'};
 const cards=new Map((window.GAMES_DATA?.cards||[]).map(c=>[c.id,c]));
 const current=()=>activity.entries[queue[cursor]];
@@ -21,7 +22,7 @@ function tone(kind){
   });
  }catch{}
 }
-function recordData(){const signature=JSON.stringify(activity.entries.map(e=>[e.english,e.japanese]));let hash=2166136261;for(let i=0;i<signature.length;i++)hash=Math.imul(hash^signature.charCodeAt(i),16777619);return {signature,key:'dekiru-typing-best-v1:'+mode+':'+(hash>>>0).toString(16)};}
+function recordData(){const signature=JSON.stringify(activity.entries.map(e=>[e.english,e.japanese]));let hash=2166136261;for(let i=0;i<signature.length;i++)hash=Math.imul(hash^signature.charCodeAt(i),16777619);return {signature,key:'dekiru-typing-best-v1:'+mode+':'+(hash>>>0).toString(16)+(questionOrder==='random'?':random':'')};}
 function readBest(){try{const {signature,key}=recordData(),saved=JSON.parse(localStorage.getItem(key));return saved?.signature===signature&&Number.isFinite(saved.ms)&&saved.ms>0?saved.ms:null;}catch{return null;}}
 function bestDisplay(){const best=readBest(),text=modeNames[mode]+' BEST：'+(best===null?'まだ記録がありません':(best/1000).toFixed(2)+'秒');$('best-time').textContent=text;$('finish-best').textContent=text;}
 function saveBest(){
@@ -39,16 +40,28 @@ function selectMode(value){
  bestDisplay();
 }
 function setup(){
- phase='setup';stopSpeech();clearInterval(clock);running=false;
+ phase='setup';stopSpeech();clearInterval(clock);clearTimeout(countdownTimer);running=false;$('countdown').hidden=true;
  $('setup').hidden=false;$('practice').hidden=true;$('complete').hidden=true;$('practice-stats').hidden=true;$('audio-settings').hidden=true;$('new-record').hidden=true;
  $('progress').textContent=activity.entries.length+'問';selectMode(mode);$('start').focus();
 }
 function begin(){
  if($('start').disabled)return;
- phase='play';recordEligible=true;statuses=activity.entries.map(()=>null);queue=activity.entries.map((_,i)=>i);cursor=0;
+ clearInterval(clock);clearTimeout(countdownTimer);stopSpeech();running=false;phase='countdown';recordEligible=true;statuses=activity.entries.map(()=>null);queue=activity.entries.map((_,i)=>i);cursor=0;
+ questionOrder=$('question-order').value==='random'?'random':'ordered';
+ if(questionOrder==='random')for(let i=queue.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[queue[i],queue[j]]=[queue[j],queue[i]];}
  showModel=mode==='easy';speechLanguage=mode==='hard'?'ja-JP':'en-US';$('speech-language').value=speechLanguage;
- $('setup').hidden=true;$('audio-settings').hidden=false;$('practice-stats').hidden=false;$('timer').hidden=true;$('meaning').hidden=mode==='normal';
- $('mode-label').textContent=modeNames[mode];$('new-record').hidden=true;startClock(true);load();
+ $('setup').hidden=true;$('practice').hidden=true;$('complete').hidden=true;$('audio-settings').hidden=true;$('practice-stats').hidden=true;$('timer').hidden=true;$('meaning').hidden=false;
+ $('mode-label').textContent=modeNames[mode];$('new-record').hidden=true;$('countdown').hidden=false;$('countdown-value').textContent='3';
+ // Prime speech from the Start gesture while the visible countdown gives voices time to initialize.
+ if(soundEnabled&&window.speechSynthesis&&window.SpeechSynthesisUtterance)try{
+  window.speechSynthesis.getVoices?.();const warmup=new SpeechSynthesisUtterance(speechLanguage==='ja-JP'?current().japanese:current().english);warmup.lang=speechLanguage;warmup.volume=0;window.speechSynthesis.speak(warmup);
+ }catch{}
+ let remaining=3;
+ function tick(){
+  if(phase!=='countdown')return;
+  remaining--;if(remaining){$('countdown-value').textContent=String(remaining);countdownTimer=setTimeout(tick,1000);return;}
+  stopSpeech();$('countdown').hidden=true;$('audio-settings').hidden=false;$('practice-stats').hidden=false;phase='play';startClock(true);load();
+ }countdownTimer=setTimeout(tick,1000);
 }
 function stopSpeech(){speechGeneration++;clearTimeout(speechPause);window.speechSynthesis?.cancel();}
 function stats(){
@@ -141,11 +154,14 @@ $('speech-rate').onchange=()=>{const value=Number($('speech-rate').value);if([.5
 $('speech-language').onchange=()=>{speechLanguage=$('speech-language').value==='ja-JP'?'ja-JP':'en-US';recordEligible=false;speak();};
 $('next').onclick=()=>next();$('skip').onclick=()=>next(true);
 $('restart').onclick=begin;
+$('restart-current').onclick=()=>{if(phase==='play'&&!window.confirm('今の練習を終えて、最初からやり直しますか？'))return;begin();};
+$('cancel-countdown').onclick=setup;
+$('question-order').onchange=()=>{questionOrder=$('question-order').value==='random'?'random':'ordered';bestDisplay();};
 $('choose-mode').onclick=setup;$('start').onclick=begin;
 for(const value of Object.keys(modeNames))$('mode-'+value).onclick=()=>selectMode(value);
 $('retry-skipped').onclick=()=>{phase='play';queue=activity.entries.map((_,i)=>i).filter(i=>statuses[i]!=='correct');cursor=0;startClock();load();};
-window.addEventListener('pagehide',()=>{stopSpeech();clearInterval(clock);});
-document.addEventListener('visibilitychange',()=>{if(document.hidden)stopSpeech();});
+window.addEventListener('pagehide',()=>{stopSpeech();clearInterval(clock);clearTimeout(countdownTimer);});
+document.addEventListener('visibilitychange',()=>{if(document.hidden){stopSpeech();if(phase==='countdown')setup();}});
 try{
  const token=new URLSearchParams(location.hash.slice(1)).get('d');if(!token)throw Error('教材のURLを確認してください。先生から配られたURLで開いてください。');
  activity=C.activity(ShareCodec.decodeJson(token));$('title').textContent=activity.title;$('instructions').textContent=activity.instructions;

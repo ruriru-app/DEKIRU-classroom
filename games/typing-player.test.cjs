@@ -1,15 +1,20 @@
 const test=require('node:test'),assert=require('node:assert/strict'),vm=require('node:vm'),fs=require('node:fs'),C=require('./typing-core.js');
 // Run the real player; only the browser DOM and speech engine are replaced.
 function player(first='cat',autoStart=true,storage=new Map()){
- const nodes=new Map(),spoken=[],utterances=[];let now=1000;
+ const nodes=new Map(),spoken=[],utterances=[],countdownJobs=new Map();let now=1000,job=0;
+ const schedule=(fn,ms)=>{if(ms===1000){const id=++job;countdownJobs.set(id,fn);return id;}return setTimeout(fn,ms);};
+ const cancel=id=>{if(countdownJobs.has(id))countdownJobs.delete(id);else clearTimeout(id);};
+ const tick=()=>{const item=countdownJobs.entries().next().value;if(item){countdownJobs.delete(item[0]);item[1]();}};
+ const countdown=()=>{for(let i=0;i<4&&countdownJobs.size;i++)tick();};
  const node=()=>({hidden:false,value:'',textContent:'',disabled:false,children:[],attrs:{},classList:{add(){},remove(){},toggle(){}},setAttribute(k,v){this.attrs[k]=v;},removeAttribute(){},replaceChildren(){this.children=[];},append(x){this.children.push(x);},focus(){}});
  const get=id=>{if(!nodes.has(id))nodes.set(id,node());return nodes.get(id);};
- const synthesis={cancel(){},speak(u){spoken.push(u.text);utterances.push(u);}};
+ const synthesis={cancel(){},speak(u){if(u.volume!==0){spoken.push(u.text);utterances.push(u);}}};
  class Utterance{constructor(text){this.text=text;}}
- const context={localStorage:{getItem:k=>storage.get(k)??null,setItem:(k,v)=>storage.set(k,v)},TypingCore:C,Date:{now:()=>now},setInterval:()=>1,clearInterval(){},setTimeout,clearTimeout,document:{getElementById:get,createElement:node,addEventListener(){},hidden:false},window:{speechSynthesis:synthesis,SpeechSynthesisUtterance:Utterance,addEventListener(){}},speechSynthesis:synthesis,SpeechSynthesisUtterance:Utterance,location:{hash:'#d=test',search:'?book=nh6&unit=6',origin:'https://example.test'},URL,URLSearchParams,ShareCodec:{decodeJson:()=>({version:1,type:'english-typing',title:'Test',entries:[{english:first,japanese:'ねこ'},{english:'dog'}]})}};
+ const mockMath=Object.create(Math);mockMath.random=()=>0;
+ const context={Math:mockMath,localStorage:{getItem:k=>storage.get(k)??null,setItem:(k,v)=>storage.set(k,v)},TypingCore:C,Date:{now:()=>now},setInterval:()=>1,clearInterval(){},setTimeout:schedule,clearTimeout:cancel,document:{getElementById:get,createElement:node,addEventListener(){},hidden:false},window:{speechSynthesis:synthesis,SpeechSynthesisUtterance:Utterance,addEventListener(){}},speechSynthesis:synthesis,SpeechSynthesisUtterance:Utterance,location:{hash:'#d=test',search:'?book=nh6&unit=6',origin:'https://example.test'},URL,URLSearchParams,ShareCodec:{decodeJson:()=>({version:1,type:'english-typing',title:'Test',entries:[{english:first,japanese:'ねこ'},{english:'dog'}]})}};
  vm.createContext(context);vm.runInContext(fs.readFileSync(require.resolve('./typing-player.js'),'utf8'),context);
- if(autoStart&&get('start').onclick)get('start').onclick();
- return {get,spoken,utterances,advanceTime(ms){now+=ms;},submit(value){get('answer').value=value;get('answer-form').onsubmit({preventDefault(){}});}};
+ if(autoStart&&get('start').onclick){get('start').onclick();countdown();}
+ return {get,spoken,utterances,tick,countdown,advanceTime(ms){now+=ms;},submit(value){get('answer').value=value;get('answer-form').onsubmit({preventDefault(){}});}};
 }
 test('correct first answer immediately opens next problem without previous attempt',()=>{
  const p=player();p.submit('cat');
@@ -24,7 +29,7 @@ test('Easy shows pasted Japanese even without a picture dictionary card',()=>{
 });
 test('setup waits for start and Normal hides spelling; waiting time is not timed',()=>{
  const p=player('cat',false);assert.equal(p.get('practice').hidden,true);assert.deepEqual(p.spoken,[]);
- p.advanceTime(60000);p.get('mode-normal').onclick();p.get('start').onclick();
+ p.advanceTime(60000);p.get('mode-normal').onclick();p.get('start').onclick();p.countdown();
  assert.match(p.get('model').textContent,/綴りを隠しています/);
  p.advanceTime(2000);p.submit('cat');p.submit('dog');
  assert.match(p.get('result-stats').textContent,/0分02\.00秒/);
@@ -43,9 +48,19 @@ test('first pass count excludes corrected answers and shows elapsed time',()=>{
  const p=player();p.submit('cut');p.submit('cat');p.advanceTime(65000);p.submit('dog');
  assert.match(p.get('result-stats').textContent,/1 \/ 2問/);
  assert.match(p.get('result-stats').textContent,/1分05\.00秒/);
- p.get('restart').onclick();p.submit('cat');p.submit('dog');
+ p.get('restart').onclick();p.countdown();p.submit('cat');p.submit('dog');
  assert.match(p.get('result-stats').textContent,/2 \/ 2問/);
  assert.match(p.get('result-stats').textContent,/0分00\.00秒/);
+});
+test('countdown precedes timing and Normal now shows Japanese',()=>{
+ const p=player('cat',false);p.get('mode-normal').onclick();p.get('start').onclick();
+ assert.equal(p.get('countdown-value').textContent,'3');assert.equal(p.get('practice').hidden,true);
+ p.advanceTime(3000);p.countdown();assert.equal(p.get('meaning').hidden,false);
+ p.advanceTime(2000);p.submit('cat');p.submit('dog');assert.match(p.get('result-stats').textContent,/0分02\.00秒/);
+});
+test('random order changes the queue without losing questions',()=>{
+ const p=player('cat',false);p.get('question-order').value='random';p.get('start').onclick();p.countdown();
+ assert.equal(p.get('model').textContent,'dog');p.submit('dog');assert.equal(p.get('model').textContent,'cat');p.submit('cat');assert.equal(p.get('complete').hidden,false);
 });
 test('URL context is displayed without guessing grade and unit',()=>{
  const p=player();assert.equal(p.get('unit-label').textContent,'６年生Unit6');
