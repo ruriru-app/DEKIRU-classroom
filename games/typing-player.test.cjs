@@ -47,11 +47,12 @@ test('first pass count excludes corrected answers and shows elapsed time',()=>{
 test('URL context is displayed without guessing grade and unit',()=>{
  const p=player();assert.equal(p.get('unit-label').textContent,'６年生Unit6');
 });
-test('Japanese speech and speed settings do not change English answer checking',()=>{
+test('Japanese speech and speed settings do not change English answer checking',async()=>{
  const p=player();p.get('speech-language').value='ja-JP';p.get('speech-language').onchange();
  assert.equal(p.utterances.at(-1).lang,'ja-JP');assert.equal(p.spoken.at(-1),'ねこ');
  p.get('speech-rate').value='1.2';p.get('speech-rate').onchange();assert.equal(p.utterances.at(-1).rate,1.2);
  p.submit('cat');assert.equal(p.get('progress').textContent,'2 / 2問');
+ await new Promise(resolve=>setTimeout(resolve,680));
  assert.match(p.get('feedback').textContent,/日本語が登録されていません/);
 });
 test('word by word speech starts with the first word rather than the whole sentence',()=>{
@@ -66,9 +67,16 @@ test('wrong answer stays for comparison; corrected answer advances',()=>{
  assert.equal(p.get('previous').children.find(x=>x.className==='error').textContent,'u');
  p.submit('cat');assert.equal(p.get('progress').textContent,'2 / 2問');
 });
-test('each new problem speaks automatically',()=>{
+test('next problem speaks only after the correct chime gap',async()=>{
  const p=player();assert.deepEqual(p.spoken,['cat']);
- p.submit('cat');assert.deepEqual(p.spoken,['cat','dog']);
+ p.submit('cat');assert.deepEqual(p.spoken,['cat']);
+ await new Promise(resolve=>setTimeout(resolve,680));
+ assert.deepEqual(p.spoken,['cat','dog']);
+});
+test('muting during the correct chime gap cancels queued pronunciation',async()=>{
+ const p=player();p.submit('cat');p.get('sound-toggle').onclick();
+ await new Promise(resolve=>setTimeout(resolve,680));
+ assert.deepEqual(p.spoken,['cat']);
 });
 test('speaker off silences automatic and manual speech; on reads current word',()=>{
  const p=player();

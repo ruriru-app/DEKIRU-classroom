@@ -84,12 +84,13 @@ function previous(){
  });
  $('error-detail').textContent=details.join('\n');
 }
-function load(){
+function load(speechDelay=0){
  stopSpeech();last=null;correct=false;$('practice').hidden=false;$('complete').hidden=true;$('answer').value='';$('answer').disabled=false;$('check').disabled=false;$('next').hidden=true;$('skip').hidden=false;
  const item=current();$('japanese').textContent=item.japanese||'音声を聞いて英語を入力しよう。';$('progress').textContent=(cursor+1)+' / '+queue.length+'問';
  const card=cards.get(item.cardId),picture=$('picture');picture.hidden=true;picture.removeAttribute('src');picture.onerror=()=>picture.hidden=true;
  if(card?.image){const url=new URL(card.image,document.baseURI);if(url.origin===location.origin){picture.src=url.href;picture.hidden=false;}}
- $('feedback').classList.remove('success');$('feedback').textContent='音声や綴りを確認して、最後まで入力してから答え合わせをしよう。';model();previous();stats();$('answer').focus();speak();
+ $('feedback').classList.remove('success');$('feedback').textContent='音声や綴りを確認して、最後まで入力してから答え合わせをしよう。';model();previous();stats();$('answer').focus();
+ if(speechDelay)speechPause=setTimeout(()=>speak(),speechDelay);else speak();
 }
 function finish(){
  phase='complete';
@@ -101,7 +102,7 @@ function finish(){
 }
 function next(skip=false){
  if(skip&&!correct){statuses[queue[cursor]]='skipped';failed[queue[cursor]]=true;recordEligible=false;}
- if(cursor+1<queue.length){cursor++;load();}else finish();
+ if(cursor+1<queue.length){cursor++;load(correct?600:0);}else finish();
 }
 function speak(){
  if(!soundEnabled||!activity||$('practice').hidden)return;
