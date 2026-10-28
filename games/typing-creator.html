@@ -1,0 +1,18 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>英語タイピングを作る | DEKIRU Games</title><link rel="stylesheet" href="typing.css?v=20261028"></head><body>
+<header><a href="index.html#/createGames">DEKIRU Games</a><h1>英語タイピングを作る</h1><p>音・意味・綴りを結び付ける、５・６年生のための練習教材。</p></header>
+<main class="creator-layout">
+<section class="panel"><h2>教材の設定</h2>
+<label>教材名<input id="title" maxlength="80" value="英語タイピング"></label>
+<label>児童への説明（任意）<textarea id="instructions" maxlength="500" rows="2" placeholder="例：発音を聞き、綴りを見ながら入力してみよう。"></textarea></label>
+<details open><summary>日本語と英語を貼り付ける</summary><p class="help">１行に「日本語 TAB 英語」の２列で貼り付けます。表計算ソフトの２列をコピーできます。日本語→英語を交互に改行しても使えます。</p>
+<textarea id="paste" rows="6" spellcheck="false" placeholder="りんご&#9;apple&#10;私はりんごが好きです。&#9;I like apples."></textarea><button id="add-paste" type="button">貼り付けた問題を追加</button></details>
+<details><summary>DEKIRUの単語から選ぶ</summary><p class="help">登録済みの綴り・意味・絵を使います。選んだ問題は下の一覧で編集できます。</p>
+<label>カテゴリ<select id="category"></select></label><label>単語を探す<input id="search" type="search"></label><div class="actions"><button id="add-selected" type="button">選んだ単語を問題に追加</button><button id="clear-selected" type="button">単語の選択を解除</button></div><div id="vocabulary" class="vocabulary"></div></details>
+<h2 id="entry-heading">問題一覧（0問）</h2><div id="entries"></div>
+<h2>Classroomでの配置先</h2><p class="help">同じブラウザの各UnitのActivitiesに表示されます。児童へは「児童用URL」を配布してください。保存先はこの端末のブラウザです。</p><div id="units" class="unit-options"></div>
+<div class="actions"><button id="save" type="button" class="primary">教材を保存</button><button id="preview" type="button">児童画面で試す</button><button id="new" type="button">新しい教材</button></div><p id="status" role="status" aria-live="polite"></p>
+</section>
+<aside class="panel"><h2>保存したタイピング教材</h2><div id="library"></div><section id="share-panel" hidden><h3>児童用URL</h3><p class="help">別の端末でも開けます。問題の内容はURLに含まれます。</p><input id="share-url" readonly aria-label="児童用URL"><div class="actions"><button id="copy-url" type="button">URLをコピー</button><a id="open-player" target="_blank" rel="noopener">児童画面を開く</a></div></section></aside>
+</main>
+<script src="catalog.js"></script><script src="../grade34/share-codec.js"></script><script src="typing-core.js?v=20261028"></script><script src="typing-store.js?v=20261028"></script><script src="typing-creator.js?v=20261028"></script></body></html>
+

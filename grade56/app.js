@@ -15,7 +15,7 @@
     const townLevel2=key==='nh5'&&unit===5?'<div class="feature-tile town-entry-tile"><a class="town-entry-open" data-town-open href="../games/ruriru-town-level2.html" target="_blank" rel="noopener noreferrer"><strong>RuRiRu Town LEVEL 2<br>道案内 ― 少しだけ進もう</strong><p>Go straight for just a little bit. 半区画ずつ進み、交差点で曲がろう</p></a><div class="town-entry-actions"><small>別ウインドウで開く ↗</small><button type="button" class="secondary-button" data-town-copy="https://ruriru-app.github.io/DEKIRU-classroom/games/ruriru-town-level2.html">児童用URLをコピー</button></div><p class="town-entry-status" role="status" hidden></p><input class="town-entry-url" aria-label="配信用URL" readonly hidden></div>':'';
     const animals=key==='nh6'&&unit===6?'<div class="feature-tile town-entry-tile"><a class="town-entry-open" href="https://ruriru-app.github.io/DEKIRU-Endangered-Animals/" target="_blank" rel="noopener noreferrer"><strong>Endangered Animals<br>絶滅危惧種デジタル図鑑</strong><p>50種類の写真から、すむ場所・減っている理由・できることを調べよう</p></a><div class="town-entry-actions"><small>別タブで開く ↗</small><button type="button" class="secondary-button" data-activity-copy="https://ruriru-app.github.io/DEKIRU-Endangered-Animals/">児童用URLをコピー</button></div><p class="town-entry-status" role="status" hidden></p><input class="town-entry-url" aria-label="配信用URL" readonly hidden></div>':'';
     const townLevel3=key==='nh5'&&unit===5?'<div class="feature-tile town-entry-tile"><a class="town-entry-open" data-town-open href="../games/ruriru-town-level3.html" target="_blank" rel="noopener noreferrer"><strong>RuRiRu Town LEVEL 3<br>道案内 ― 声で案内しよう</strong><p>英語で一文ずつ話し、キャラクターを目的地まで案内しよう</p></a><div class="town-entry-actions"><small>別ウインドウで開く ↗</small><button type="button" class="secondary-button" data-town-copy="https://ruriru-app.github.io/DEKIRU-classroom/games/ruriru-town-level3.html">児童用URLをコピー</button></div><p class="town-entry-status" role="status" hidden></p><input class="town-entry-url" aria-label="配信用URL" readonly hidden></div>':'';
-    return world+restaurant+town+townLevel2+townLevel3+animals+(window.InterviewLinks?.tiles(key,unit)||'')+(window.InterviewBingoLinks?.tiles(key,unit)||'');
+    return world+restaurant+town+townLevel2+townLevel3+animals+(window.InterviewLinks?.tiles(key,unit)||'')+(window.InterviewBingoLinks?.tiles(key,unit)||'')+(window.TypingActivities?.tiles(key,unit)||'');
   }
   function renderUnit(key,book,unit) {
     const data=window.DEKIRU_DATA;
@@ -132,7 +132,9 @@
       else{app.innerHTML='<section class="hero"><h1>安全な移行のため、対応ブラウザーで開いてください</h1><p>ChromeまたはEdgeの新しいバージョンで、公開サイトを開き直してください。保存済みデータは変更していません。</p></section>';return;}
     }catch(error){result={ok:false};}
     if(!result.ok){app.innerHTML='<section class="hero"><h1>保存データの移行を完了できませんでした</h1><p>元データを保護するため、編集を停止しています。ブラウザーの保存領域を確認してから、この画面を再読み込みしてください。</p><button onclick="location.reload()">再読み込み</button></section>';return;}
-    window.addEventListener('hashchange',render);render();
+    window.addEventListener('hashchange',render);
+    window.addEventListener('storage',event=>{if(event.key===window.TypingStore?.KEY)render();});
+    render();
   }
   start();
 })();
