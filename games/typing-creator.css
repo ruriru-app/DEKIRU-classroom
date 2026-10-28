@@ -1,0 +1,26 @@
+/* Creator-only theme: match DEKIRU Games without changing distributed student pages. */
+body.typing-creator{background:#fafaf8;color:#554d48;font-family:"Yu Gothic","Noto Sans JP",sans-serif}
+body.typing-creator>header.creator-brand-header{height:84px;padding:0 28px;background:#fff;border-bottom:3px solid #8bb7e8;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:5;gap:20px}
+.typing-creator .creator-brand{display:flex;align-items:center;padding:0}
+.typing-creator .creator-brand img{display:block;width:min(520px,55vw);max-height:54px;object-fit:contain}
+.typing-creator .creator-home{font-size:13px;font-weight:700;color:#554d48;text-decoration:none;white-space:nowrap;padding:12px}
+.typing-creator .creator-intro{max-width:1380px;margin:40px auto 0;padding:0 20px}
+.typing-creator .creator-heading{display:flex;align-items:center;gap:18px}
+.typing-creator .creator-heading h1{font-size:clamp(24px,3vw,34px);margin:8px 0}
+.typing-creator .creator-back{display:grid;place-items:center;flex:0 0 42px;width:42px;height:42px;border-radius:13px;background:#c5ddf1}
+.typing-creator .creator-back img{width:32px;height:32px;display:block}
+.typing-creator .creator-intro>p{font-size:14px;color:#7a6e65;margin:24px 0 0}
+.typing-creator .creator-layout{margin-top:22px}
+.typing-creator .panel{border:1px solid #e4dbd4;border-radius:22px;box-shadow:0 5px 16px #554d4809}
+.typing-creator h2{color:#554d48;font-size:21px}
+.typing-creator label,.typing-creator summary{font-weight:600}
+.typing-creator input,.typing-creator textarea,.typing-creator select{border-color:#ded3cb;border-radius:12px;font-weight:400}
+.typing-creator input::placeholder,.typing-creator textarea::placeholder{color:#8b837d}
+.typing-creator details{border-color:#e4dbd4;border-radius:14px}
+.typing-creator button,.typing-creator .actions a{border-color:#c4dbf0;background:#edf6ff;color:#365c7e;border-radius:12px}
+.typing-creator button.primary{background:#dcecff;border-color:#dcecff;color:#365c7e;font-weight:700}
+.typing-creator button:hover,.typing-creator .actions a:hover{background:#deedfc}
+.typing-creator .help{color:#8b7b70}
+.typing-creator .vocabulary label{border-color:#e4dbd4;font-weight:400}
+.typing-creator .library-item{border-color:#e4dbd4}
+@media(max-width:550px){body.typing-creator>header.creator-brand-header{padding:0 14px;height:76px}.typing-creator .creator-brand img{width:65vw;max-height:48px}.typing-creator .creator-home{padding:6px}.typing-creator .creator-intro{padding:0 14px;margin-top:24px}.typing-creator .creator-heading{gap:12px}.typing-creator .creator-layout{padding:0 14px}}
