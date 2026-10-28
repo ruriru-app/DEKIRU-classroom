@@ -19,6 +19,9 @@ test('correct first answer immediately opens next problem without previous attem
  assert.equal(p.get('answer').value,'');
  p.submit('dog');assert.equal(p.get('complete').hidden,false);
 });
+test('Easy shows pasted Japanese even without a picture dictionary card',()=>{
+ const p=player();assert.equal(p.get('meaning').hidden,false);assert.equal(p.get('japanese').textContent,'ねこ');assert.equal(p.get('picture').hidden,true);
+});
 test('setup waits for start and Normal hides spelling; waiting time is not timed',()=>{
  const p=player('cat',false);assert.equal(p.get('practice').hidden,true);assert.deepEqual(p.spoken,[]);
  p.advanceTime(60000);p.get('mode-normal').onclick();p.get('start').onclick();
