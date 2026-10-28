@@ -1,6 +1,6 @@
 (()=>{
 'use strict';const $=id=>document.getElementById(id),C=TypingCore;
-let activity,queue=[],cursor=0,showModel=true,last=null,statuses=[],correct=false;
+let activity,queue=[],cursor=0,showModel=true,last=null,statuses=[],correct=false,soundEnabled=true;
 const cards=new Map((window.GAMES_DATA?.cards||[]).map(c=>[c.id,c]));
 const current=()=>activity.entries[queue[cursor]];
 function model(){
@@ -31,7 +31,7 @@ function load(){
  const item=current();$('japanese').textContent=item.japanese||'音声を聞いて英語を入力しよう。';$('progress').textContent=(cursor+1)+' / '+queue.length+'問';
  const card=cards.get(item.cardId),picture=$('picture');picture.hidden=true;picture.removeAttribute('src');picture.onerror=()=>picture.hidden=true;
  if(card?.image){const url=new URL(card.image,document.baseURI);if(url.origin===location.origin){picture.src=url.href;picture.hidden=false;}}
- $('feedback').classList.remove('success');$('feedback').textContent='音声や綴りを確認して、最後まで入力してから答え合わせをしよう。';model();previous();$('answer').focus();
+ $('feedback').classList.remove('success');$('feedback').textContent='音声や綴りを確認して、最後まで入力してから答え合わせをしよう。';model();previous();$('answer').focus();speak(.8);
 }
 function finish(){
  window.speechSynthesis?.cancel();$('practice').hidden=true;$('complete').hidden=false;
@@ -44,21 +44,30 @@ function next(skip=false){
  if(cursor+1<queue.length){cursor++;load();}else finish();
 }
 function speak(rate){
+ if(!soundEnabled||!activity||$('practice').hidden)return;
  if(!window.speechSynthesis||!window.SpeechSynthesisUtterance){$('feedback').textContent='このブラウザでは音声を再生できません。綴りを見ながら練習できます。';return;}
  speechSynthesis.cancel();const utterance=new SpeechSynthesisUtterance(current().english);utterance.lang='en-US';utterance.rate=rate;
- utterance.onerror=()=>{$('feedback').textContent='音声を再生できませんでした。もう一度押してください。';};speechSynthesis.speak(utterance);
+ utterance.onerror=event=>{if(!soundEnabled||['canceled','interrupted'].includes(event.error))return;$('feedback').textContent=event.error==='not-allowed'?'音声を始めるには「発音を聞く」を押してください。':'音声を再生できませんでした。「発音を聞く」をもう一度押してください。';};speechSynthesis.speak(utterance);
 }
 $('answer-form').onsubmit=event=>{
  event.preventDefault();if(correct)return;
  if(!C.normalize($('answer').value)){$('feedback').textContent='英語を入力してから答え合わせをしよう。';$('answer').focus();return;}
  try{
-  last=C.compare(current().english,$('answer').value);previous();model();
-  if(last.correct){correct=true;statuses[queue[cursor]]='correct';$('feedback').textContent='正しく入力できました！';$('feedback').classList.add('success');$('answer').disabled=true;$('check').disabled=true;$('next').hidden=false;$('skip').hidden=true;$('next').focus();}
-  else{$('feedback').textContent='赤い部分を確認して、もう一度、全体を入力しよう。';$('feedback').classList.remove('success');$('answer').value='';$('answer').focus();}
+  last=C.compare(current().english,$('answer').value);
+  if(last.correct){correct=true;statuses[queue[cursor]]='correct';last=null;previous();next();}
+  else{previous();model();$('feedback').textContent='赤い部分を確認して、もう一度、全体を入力しよう。';$('feedback').classList.remove('success');$('answer').value='';$('answer').focus();}
  }catch(error){$('feedback').textContent=error.message;}
 };
 $('toggle-model').onclick=()=>{showModel=!showModel;model();$('answer').focus();};
 $('listen').onclick=()=>speak(.8);$('listen-slow').onclick=()=>speak(.55);
+$('sound-toggle').onclick=()=>{
+ soundEnabled=!soundEnabled;
+ $('sound-toggle').setAttribute('aria-pressed',String(soundEnabled));
+ $('sound-toggle').setAttribute('aria-label',soundEnabled?'音声をオフにする':'音声をオンにする');
+ $('sound-toggle').textContent=soundEnabled?'🔊 音声オン':'🔇 音声オフ';
+ $('listen').disabled=$('listen-slow').disabled=!soundEnabled;
+ if(soundEnabled)speak(.8);else window.speechSynthesis?.cancel();
+};
 $('next').onclick=()=>next();$('skip').onclick=()=>next(true);
 $('restart').onclick=()=>{statuses=activity.entries.map(()=>null);queue=activity.entries.map((_,i)=>i);cursor=0;load();};
 $('retry-skipped').onclick=()=>{queue=activity.entries.map((_,i)=>i).filter(i=>statuses[i]!=='correct');cursor=0;load();};
