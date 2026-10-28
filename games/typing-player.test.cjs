@@ -1,6 +1,6 @@
 const test=require('node:test'),assert=require('node:assert/strict'),vm=require('node:vm'),fs=require('node:fs'),C=require('./typing-core.js');
 // Run the real player; only the browser DOM and speech engine are replaced.
-function player(first='cat',autoStart=true,storage=new Map()){
+function player(first='cat',autoStart=true,storage=new Map(),dogJapanese=''){
  const nodes=new Map(),spoken=[],utterances=[],countdownJobs=new Map();let now=1000,job=0;
  const schedule=(fn,ms)=>{if(ms===1000){const id=++job;countdownJobs.set(id,fn);return id;}return setTimeout(fn,ms);};
  const cancel=id=>{if(countdownJobs.has(id))countdownJobs.delete(id);else clearTimeout(id);};
@@ -11,7 +11,7 @@ function player(first='cat',autoStart=true,storage=new Map()){
  const synthesis={cancel(){},speak(u){if(u.volume!==0){spoken.push(u.text);utterances.push(u);}}};
  class Utterance{constructor(text){this.text=text;}}
  const mockMath=Object.create(Math);mockMath.random=()=>0;
- const context={Math:mockMath,localStorage:{getItem:k=>storage.get(k)??null,setItem:(k,v)=>storage.set(k,v)},TypingCore:C,Date:{now:()=>now},setInterval:()=>1,clearInterval(){},setTimeout:schedule,clearTimeout:cancel,document:{getElementById:get,createElement:node,addEventListener(){},hidden:false},window:{speechSynthesis:synthesis,SpeechSynthesisUtterance:Utterance,addEventListener(){}},speechSynthesis:synthesis,SpeechSynthesisUtterance:Utterance,location:{hash:'#d=test',search:'?book=nh6&unit=6',origin:'https://example.test'},URL,URLSearchParams,ShareCodec:{decodeJson:()=>({version:1,type:'english-typing',title:'Test',entries:[{english:first,japanese:'ねこ'},{english:'dog'}]})}};
+ const context={Math:mockMath,localStorage:{getItem:k=>storage.get(k)??null,setItem:(k,v)=>storage.set(k,v)},TypingCore:C,Date:{now:()=>now},setInterval:()=>1,clearInterval(){},setTimeout:schedule,clearTimeout:cancel,document:{getElementById:get,createElement:node,addEventListener(){},hidden:false},window:{speechSynthesis:synthesis,SpeechSynthesisUtterance:Utterance,addEventListener(){}},speechSynthesis:synthesis,SpeechSynthesisUtterance:Utterance,location:{hash:'#d=test',search:'?book=nh6&unit=6',origin:'https://example.test'},URL,URLSearchParams,ShareCodec:{decodeJson:()=>({version:1,type:'english-typing',title:'Test',entries:[{english:first,japanese:'ねこ'},{english:'dog',japanese:dogJapanese}]})}};
  vm.createContext(context);vm.runInContext(fs.readFileSync(require.resolve('./typing-player.js'),'utf8'),context);
  if(autoStart&&get('start').onclick){get('start').onclick();countdown();}
  return {get,spoken,utterances,tick,countdown,advanceTime(ms){now+=ms;},submit(value){get('answer').value=value;get('answer-form').onsubmit({preventDefault(){}});}};
@@ -47,14 +47,14 @@ test('Normal retains unrestricted typing',()=>{
  const p=player('cat',false);p.get('mode-normal').onclick();p.get('start').onclick();p.countdown();
  const input=p.get('answer');input.value='wrong';input.oninput({isComposing:false});assert.equal(input.value,'wrong');
 });
-test('setup audio controls are visible and selected language speed and word mode survive Start',()=>{
+test('setup audio controls retain speed and word mode without a manual language selector',()=>{
  const p=player('I like cats.',false);
  assert.equal(p.get('audio-settings').hidden,false);
- p.get('speech-language').value='ja-JP';p.get('speech-language').onchange();
+ assert.equal(p.get('speech-language').onchange,undefined);
  p.get('speech-rate').value='1.2';p.get('speech-rate').onchange();p.get('word-toggle').onclick();
  assert.deepEqual(p.spoken,[]);
  p.get('start').onclick();p.countdown();
- assert.equal(p.utterances.at(-1).lang,'ja-JP');assert.equal(p.utterances.at(-1).rate,1.2);
+ assert.equal(p.utterances.at(-1).lang,'en-US');assert.equal(p.utterances.at(-1).rate,1.2);
  assert.equal(p.get('word-toggle').attrs['aria-pressed'],'true');
 });
 test('muting on setup remains muted after Start',()=>{
@@ -99,13 +99,13 @@ test('random order changes the queue without losing questions',()=>{
 test('URL context is displayed without guessing grade and unit',()=>{
  const p=player();assert.equal(p.get('unit-label').textContent,'６年生Unit6');
 });
-test('Japanese speech and speed settings do not change English answer checking',async()=>{
- const p=player();p.get('speech-language').value='ja-JP';p.get('speech-language').onchange();
+test('Hard selects Japanese automatically while still checking English answers',async()=>{
+ const p=player('cat',false,new Map(),'いぬ');p.get('mode-hard').onclick();p.get('start').onclick();p.countdown();
  assert.equal(p.utterances.at(-1).lang,'ja-JP');assert.equal(p.spoken.at(-1),'ねこ');
  p.get('speech-rate').value='1.2';p.get('speech-rate').onchange();assert.equal(p.utterances.at(-1).rate,1.2);
  p.submit('cat');assert.equal(p.get('progress').textContent,'2 / 2問');
  await new Promise(resolve=>setTimeout(resolve,680));
- assert.match(p.get('feedback').textContent,/日本語が登録されていません/);
+ assert.equal(p.spoken.at(-1),'いぬ');
 });
 test('word by word speech starts with the first word rather than the whole sentence',()=>{
  const p=player('I like cats.');p.get('word-toggle').onclick();

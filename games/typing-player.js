@@ -37,7 +37,6 @@ function saveBest(){
 function selectMode(value,resetLanguage=true){
  mode=value;for(const name of Object.keys(modeNames))$('mode-'+name).setAttribute('aria-pressed',String(name===mode));
  if(resetLanguage)speechLanguage=mode==='hard'?'ja-JP':'en-US';
- $('speech-language').value=speechLanguage;
  const missing=mode==='hard'&&activity.entries.some(e=>!e.japanese);
  $('start').disabled=missing;$('setup-message').textContent=missing?'日本語が未登録の問題があるため、Hardでは開始できません。':'';
  bestDisplay();
@@ -179,7 +178,6 @@ $('sound-toggle').onclick=()=>{
 };
 $('word-toggle').onclick=()=>{wordByWord=!wordByWord;$('word-toggle').setAttribute('aria-pressed',String(wordByWord));speak();};
 $('speech-rate').onchange=()=>{const value=Number($('speech-rate').value);if([.55,.85,1.2].includes(value)){speechRate=value;speak();}};
-$('speech-language').onchange=()=>{speechLanguage=$('speech-language').value==='ja-JP'?'ja-JP':'en-US';recordEligible=false;speak();};
 $('next').onclick=()=>next();$('skip').onclick=()=>next(true);
 $('restart').onclick=begin;
 $('restart-current').onclick=()=>{if(phase==='play'&&!window.confirm('今の練習を終えて、最初からやり直しますか？'))return;begin();};
@@ -194,7 +192,7 @@ try{
  const token=new URLSearchParams(location.hash.slice(1)).get('d');if(!token)throw Error('教材のURLを確認してください。先生から配られたURLで開いてください。');
  activity=C.activity(ShareCodec.decodeJson(token));$('title').textContent=activity.title;$('instructions').textContent=activity.instructions;
  const params=new URLSearchParams(location.search),book=params.get('book'),unit=params.get('unit');
- $('unit-label').textContent=/^nh[56]$/.test(book)&&/^[1-8]$/.test(unit)?(book==='nh5'?'５':'６')+'年生Unit'+unit:activity.title;
+ $('unit-label').textContent=/^nh[56]$/.test(book)&&/^[1-8]$/.test(unit)?(book==='nh5'?'５':'６')+'年生Unit'+unit:'';
  queue=activity.entries.map((_,i)=>i);statuses=activity.entries.map(()=>null);setup();
 }catch(error){$('setup').hidden=true;$('practice').hidden=true;$('complete').hidden=true;$('fatal').textContent=error.message;}
 })();
