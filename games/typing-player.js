@@ -33,23 +33,25 @@ function saveBest(){
  catch{$('record-notice').textContent='このブラウザに記録を保存できませんでした。';}
  bestDisplay();
 }
-function selectMode(value){
+function selectMode(value,resetLanguage=true){
  mode=value;for(const name of Object.keys(modeNames))$('mode-'+name).setAttribute('aria-pressed',String(name===mode));
+ if(resetLanguage)speechLanguage=mode==='hard'?'ja-JP':'en-US';
+ $('speech-language').value=speechLanguage;
  const missing=mode==='hard'&&activity.entries.some(e=>!e.japanese);
  $('start').disabled=missing;$('setup-message').textContent=missing?'日本語が未登録の問題があるため、Hardでは開始できません。':'';
  bestDisplay();
 }
 function setup(){
  phase='setup';stopSpeech();clearInterval(clock);clearTimeout(countdownTimer);running=false;$('countdown').hidden=true;
- $('setup').hidden=false;$('practice').hidden=true;$('complete').hidden=true;$('practice-stats').hidden=true;$('audio-settings').hidden=true;$('new-record').hidden=true;
- $('progress').textContent=activity.entries.length+'問';selectMode(mode);$('start').focus();
+ $('setup').hidden=false;$('practice').hidden=true;$('complete').hidden=true;$('practice-stats').hidden=true;$('audio-settings').hidden=false;$('new-record').hidden=true;
+ $('progress').textContent=activity.entries.length+'問';selectMode(mode,false);$('start').focus();
 }
 function begin(){
  if($('start').disabled)return;
  clearInterval(clock);clearTimeout(countdownTimer);stopSpeech();running=false;phase='countdown';recordEligible=true;statuses=activity.entries.map(()=>null);queue=activity.entries.map((_,i)=>i);cursor=0;
  questionOrder=$('question-order').value==='random'?'random':'ordered';
  if(questionOrder==='random')for(let i=queue.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[queue[i],queue[j]]=[queue[j],queue[i]];}
- showModel=mode==='easy';speechLanguage=mode==='hard'?'ja-JP':'en-US';$('speech-language').value=speechLanguage;
+ showModel=mode==='easy';recordEligible=speechLanguage===(mode==='hard'?'ja-JP':'en-US');
  $('setup').hidden=true;$('practice').hidden=true;$('complete').hidden=true;$('audio-settings').hidden=true;$('practice-stats').hidden=true;$('timer').hidden=true;$('meaning').hidden=false;
  $('mode-label').textContent=modeNames[mode];$('new-record').hidden=true;$('countdown').hidden=false;$('countdown-value').textContent='3';
  // Prime speech from the Start gesture while the visible countdown gives voices time to initialize.
@@ -118,7 +120,7 @@ function next(skip=false){
  if(cursor+1<queue.length){cursor++;load(correct?600:0);}else finish();
 }
 function speak(){
- if(!soundEnabled||!activity||$('practice').hidden)return;
+ if(!soundEnabled||!activity||phase!=='play'||$('practice').hidden)return;
  if(!window.speechSynthesis||!window.SpeechSynthesisUtterance){$('feedback').textContent='このブラウザでは音声を再生できません。綴りを見ながら練習できます。';return;}
  stopSpeech();const generation=speechGeneration,text=speechLanguage==='ja-JP'?current().japanese:current().english;
  if(!text){$('feedback').textContent='この問題には日本語が登録されていません。';return;}

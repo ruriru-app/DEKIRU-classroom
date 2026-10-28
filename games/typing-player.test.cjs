@@ -27,6 +27,20 @@ test('correct first answer immediately opens next problem without previous attem
 test('Easy shows pasted Japanese even without a picture dictionary card',()=>{
  const p=player();assert.equal(p.get('meaning').hidden,false);assert.equal(p.get('japanese').textContent,'ねこ');assert.equal(p.get('picture').hidden,true);
 });
+test('setup audio controls are visible and selected language speed and word mode survive Start',()=>{
+ const p=player('I like cats.',false);
+ assert.equal(p.get('audio-settings').hidden,false);
+ p.get('speech-language').value='ja-JP';p.get('speech-language').onchange();
+ p.get('speech-rate').value='1.2';p.get('speech-rate').onchange();p.get('word-toggle').onclick();
+ assert.deepEqual(p.spoken,[]);
+ p.get('start').onclick();p.countdown();
+ assert.equal(p.utterances.at(-1).lang,'ja-JP');assert.equal(p.utterances.at(-1).rate,1.2);
+ assert.equal(p.get('word-toggle').attrs['aria-pressed'],'true');
+});
+test('muting on setup remains muted after Start',()=>{
+ const p=player('cat',false);p.get('sound-toggle').onclick();p.get('start').onclick();p.countdown();
+ assert.deepEqual(p.spoken,[]);assert.equal(p.get('sound-toggle').attrs['aria-pressed'],'false');
+});
 test('setup waits for start and Normal hides spelling; waiting time is not timed',()=>{
  const p=player('cat',false);assert.equal(p.get('practice').hidden,true);assert.deepEqual(p.spoken,[]);
  p.advanceTime(60000);p.get('mode-normal').onclick();p.get('start').onclick();p.countdown();
