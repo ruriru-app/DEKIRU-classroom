@@ -1,6 +1,13 @@
 (() => {
   const units={
+    'nh5:1':{main:[],sub:[]},
+    'nh5:2':{main:[],sub:[]},
+    'nh5:3':{main:[],sub:[]},
+    'nh5:4':{main:[],sub:[]},
     'nh5:5':{main:['directions','positions','town'],sub:['impressions','animals']},
+    'nh5:6':{main:[],sub:[]},
+    'nh5:7':{main:[],sub:[]},
+    'nh5:8':{main:[],sub:[]},
     'nh6:1':{main:['activities','sports','personal_items'],sub:['months','dates','feelings','colors','people','family']},
     'nh6:2':{main:['daily_life','frequency'],sub:['numbers','days']},
     'nh6:3':{main:['past_actions','town','impressions'],sub:['weather','foods','desserts']},
