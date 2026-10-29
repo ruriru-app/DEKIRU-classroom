@@ -2,17 +2,20 @@
 window.NhePractice=(()=>{
  'use strict';
  const escape=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
- function mount(app,items){
+ function mount(app,items,options={}){
   const practice=CardPractice.create(),display={image:true,english:true,japanese:false};
   const section=app.querySelector('.nhe-content'),menu=section.querySelector('.nhe-sections'),heading=section.querySelector('.page-heading');
-  const entry=document.createElement('button');entry.className='feature-tile';entry.textContent='発音練習';
+  const restaurant=options.book==='nh5'&&Number(options.unit)===6;
+  const entry=document.createElement('button');entry.className='feature-tile';entry.innerHTML=restaurant?'<strong>WORDS</strong><p>発音練習</p>':'発音練習';
   const body=menu.querySelector('.nhe-section-body');body.replaceChildren(entry);
   const settings=document.createElement('section');settings.className='nhe-practice-settings';settings.hidden=true;
   settings.innerHTML='<h2>表示設定</h2>'+Object.entries({image:'絵',english:'英語',japanese:'日本語'}).map(([key,label])=>`<label><input type="checkbox" data-nhe-display="${key}" ${display[key]?'checked':''}> ${label}</label>`).join(' ')+practice.settings(true);
   app.querySelector('.nhe-sidebar').append(settings);
   const panel=document.createElement('section');panel.className='content-panel nhe-practice';panel.dataset.nhePractice='';panel.hidden=true;section.append(panel);
   let active=false;
+  const phrases=restaurant?window.NheRestaurantPhrases?.mount({app,menu,heading,body,items}):null;
   function refresh(){
+   phrases?.refresh();
    if(!active)return;
    const chosen=practice.arrange(items());
    panel.innerHTML=`<div class="feature-heading"><button class="back-button" aria-label="Unitメニューへ戻る" data-practice-back>◀</button><div><p>${escape(heading.querySelector('.eyebrow').textContent)}</p><h1>発音練習</h1></div><div class="feature-toolbar">使用 ${chosen.length}語 <button class="fullscreen-button" aria-label="全画面表示" data-practice-fullscreen>⛶</button></div></div><div class="feature-view"><div class="practice-scroll">${chosen.length?`<div class="practice-grid" data-layout="${practice.layout}">${chosen.map(c=>{
@@ -43,7 +46,7 @@ window.NhePractice=(()=>{
    if(card&&window.speechSynthesis){speechSynthesis.cancel();const utterance=new SpeechSynthesisUtterance(card.dataset.speak);utterance.lang='en-US';utterance.rate=0.78;speechSynthesis.speak(utterance);}
   });
   panel.addEventListener('keydown',event=>{if(event.key==='Escape'&&panel.classList.contains('fullscreen-content'))panel.classList.remove('fullscreen-content');});
-  return {refresh,close};
+  return {refresh,close:()=>{phrases?.close();close();}};
  }
  return {mount};
 })();

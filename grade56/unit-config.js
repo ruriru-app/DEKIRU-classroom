@@ -5,7 +5,7 @@
     'nh5:3':{main:[],sub:[]},
     'nh5:4':{main:[],sub:[]},
     'nh5:5':{main:['directions','positions','town'],sub:['impressions','animals']},
-    'nh5:6':{main:[],sub:[]},
+    'nh5:6':{main:['foods','drinks','desserts','numbers','tastes'],sub:[]},
     'nh5:7':{main:[],sub:[]},
     'nh5:8':{main:[],sub:[]},
     'nh6:1':{main:['activities','sports','personal_items'],sub:['months','dates','feelings','colors','people','family']},

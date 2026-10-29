@@ -40,7 +40,7 @@
       unit:key+':'+unit,groups,getSelected:()=>vocabulary.selected,
       apply:ids=>{vocabulary.selected=new Set(ids.filter(id=>available.has(id)));updateVocabulary();}
     });
-    pronunciation=window.NhePractice.mount(app,()=>vocabulary.groups.flatMap(g=>g.cards).filter(c=>vocabulary.selected.has(c.id)));
+    pronunciation=window.NhePractice.mount(app,()=>vocabulary.groups.flatMap(g=>g.cards).filter(c=>vocabulary.selected.has(c.id)),{book:key,unit});
   }
   function renderUnitMakeSentences(book,unit){
     const hasBuild=window.SpeechPresets?.list().some(p=>p.book===book&&p.unit===unit);
