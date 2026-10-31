@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#edf9f5">
+<title>NUMBER CATCH! | DEKIRU Classroom</title>
+<style>
+:root{--mint:#8CCBC2;--deep:#27665c;--pale:#e9f7f3;--cream:#fffaf0;--ink:#31484b;--muted:#718085;--orange:#FFB463;--pink:#F48BA8;--blue:#8BB7E8;--purple:#B59AD9;--white:#fff;--shadow:0 6px 22px #284d4520;--border:#d9e7e1}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{margin:0;min-height:100%;background:linear-gradient(145deg,#f2fbf7,#fefbf3 70%);font-family:system-ui,-apple-system,"Noto Sans JP",sans-serif;color:var(--ink)}body{min-height:100dvh}button{font:inherit;touch-action:manipulation;cursor:pointer;color:inherit}button:focus-visible{outline:3px solid #428a82;outline-offset:2px}button:disabled{opacity:.4;cursor:not-allowed}button:not(:disabled):active{transform:scale(.985)}.hidden{display:none!important}.app{width:min(1120px,100%);margin:auto;padding:clamp(10px,2vw,22px);min-height:100dvh}.screen{animation:appear .15s ease}@keyframes appear{from{opacity:.7}to{opacity:1}}.card{background:var(--white);border:1px solid var(--border);border-radius:22px;box-shadow:var(--shadow)}.app-title{font-weight:950;letter-spacing:.045em;color:var(--deep)}.subtext{font-size:.82rem;color:var(--muted)}.kicker{font-size:.72rem;font-weight:800;letter-spacing:.08em;color:var(--muted)}.primary{background:var(--mint);border:0;border-radius:14px;padding:15px 20px;font-weight:900;color:#163e37;min-height:54px}.secondary{background:white;border:2px solid #c9dfd8;border-radius:14px;padding:11px 15px;font-weight:750}.danger{background:#fff2f1;border:1px solid #e6a6a0;color:#a44140;border-radius:12px;padding:11px 15px;font-weight:750}.chip{display:inline-block;border-radius:999px;padding:5px 10px;background:#f1f5f3;color:#5e7670;font-size:.68rem;font-weight:800}.chip.clear{color:#236c59;background:#dff4e9}.pill-row{display:flex;gap:8px;flex-wrap:wrap}.pill{border:2px solid #dce8e2;background:white;border-radius:12px;padding:11px 16px;font-weight:800;min-width:80px;min-height:45px}.pill.selected{border-color:#71bfb4;background:#e1f5ef;color:#205c51}.muted{color:var(--muted)}
+/* Setup */
+.setup{max-width:1040px;margin:auto}.setup-head{text-align:center;padding:6px 5px 16px}.setup-head h1{font-size:clamp(2rem,6vw,3.5rem);margin:3px 0;color:var(--deep);text-shadow:2px 3px #dbf1e9}.setup-head .kicker{font-size:.78rem}.setup-panel{padding:clamp(14px,3vw,24px)}.heading-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}.heading-row h2{margin:0;font-size:1.13rem}.levels{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.level-card{position:relative;text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px;background:#f7faf7;border:2px solid #e0ebe5;border-radius:17px;padding:14px 8px;min-height:166px}.level-card.active{background:var(--pale);border-color:#6bbaa9;box-shadow:inset 0 0 0 1px #6bbaa9}.level-card.locked{background:#f5f6f6;color:#99a3a3}.level-card .level-title{font-size:1.05rem;font-weight:900}.level-card .range{font-weight:700;font-size:.76rem;white-space:nowrap}.level-card .best-pair{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:3px}.level-card .best-cell{background:#fff;border-radius:10px;padding:7px 4px}.level-card .best-cell strong{display:block;font-size:clamp(.95rem,2vw,1.24rem);font-variant-numeric:tabular-nums}.level-card .best-cell span{display:block;font-size:.65rem;color:var(--muted)}.level-card .locked-icon{font-size:2rem;margin:10px}.settings-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;margin:19px 0 13px}.setting-title{font-size:.78rem;color:#617772;font-weight:850;margin-bottom:8px}.toggle{display:flex;align-items:center;gap:10px;justify-content:flex-start;background:#f8fbf8;padding:10px;border-radius:12px;min-height:47px;font-weight:700}.toggle input{accent-color:#61af9e;width:20px;height:20px}.setup-footer{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:14px}.setup-footer .primary{flex:0 0 min(250px,50%);font-size:1.18rem}.setup-info{font-size:.79rem;color:var(--muted);line-height:1.55}.small-link{border:0;background:none;text-decoration:underline;color:var(--deep);font-weight:750;padding:8px}.top-utilities{display:flex;gap:6px;justify-content:center;margin-top:12px}
+/* Playing */
+.play-header{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px;padding:0 2px}.play-header strong{font-size:clamp(1.15rem,2.6vw,1.65rem);color:var(--deep)}.top-right{display:flex;gap:9px;align-items:center}.icon-button{width:47px;height:44px;border:1px solid var(--border);background:white;border-radius:12px;font-size:1.3rem}.play-grid{display:flex;gap:clamp(10px,2vw,18px);align-items:stretch;min-height:min(76dvh,670px)}.play-grid>.main-pane{flex:1 1 0;min-width:0}.play-grid .voice-feedback{order:1;display:flex;flex-direction:column;gap:12px}.play-grid .input-pane{order:2}.play-grid.left-handed .voice-feedback{order:2}.play-grid.left-handed .input-pane{order:1}.voice-pane{background:var(--pale);border-color:#c8e9de;min-height:205px;padding:18px;flex:0 0 38%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center}.voice-icon{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;background:#a7dad0;font-size:2rem}.voice-controls{display:flex;gap:10px;justify-content:center;width:100%;flex-wrap:wrap}.voice-btn{min-width:118px;min-height:57px;border:2px solid white;background:white;border-radius:13px;font-size:.91rem;font-weight:900}.voice-btn.active{border-color:#6db7ab;background:#d5eee7}.voice-btn small{display:block;font-size:.65rem;font-weight:500;margin-top:3px;color:var(--muted)}.audio-state{font-size:.75rem;color:var(--deep);font-weight:700;min-height:1.1em}.repair-btn{font-size:.7rem;color:#57736c;background:none;border:0;text-decoration:underline}.feedback-pane{flex:1;padding:16px;display:flex;flex-direction:column;gap:12px;min-height:252px}.progress-top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}.progress-top strong{font-size:.93rem}.progress-top .ratio{font-weight:900;color:#2e8074}.progress-track{height:8px;background:#edf0ed;border-radius:30px;overflow:hidden}.progress-fill{height:100%;background:var(--mint);transition:width .2s ease;width:0}.feedback-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:5px;min-height:90px}.feedback-body .big-num{font-size:clamp(1.6rem,3.4vw,2.8rem);font-weight:900;letter-spacing:.02em}.feedback-body .status{font-size:1.14rem;font-weight:900}.feedback-body .status.good{color:#23816b}.feedback-body .status.bad{color:#c35c71}.feedback-body .status.wait{color:#7d9990}.feedback-body .english{font-size:clamp(.82rem,1.8vw,1rem);font-weight:700;line-height:1.45}.feedback-body .hint{font-size:.78rem;color:var(--muted)}.history{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:4px}.hist-cell{height:25px;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:850;border-radius:6px;color:#a3b1aa;background:#f1f5f2}.hist-cell.current{outline:none;box-shadow:inset 0 0 0 1px #70bfb3;color:#5f7f78;background:#eef8f4}.hist-cell.first{background:#bce6d7;color:#1e5f50}.hist-cell.second{background:#f5d8a4;color:#73501b}.hist-cell.wrong{background:#f7c1cd;color:#882e4d}.history-labels{font-size:.67rem;color:var(--muted);display:flex;gap:10px;flex-wrap:wrap}.entry-card{height:100%;padding:clamp(10px,2vw,18px);display:flex;flex-direction:column;gap:12px}.entry-readout{min-height:95px;background:#f7faf8;border:1px solid #e2ece8;border-radius:14px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:4px}.entry-readout .digits{font-size:clamp(1.8rem,4vw,3rem);font-weight:900;min-height:1.2em;font-variant-numeric:tabular-nums}.entry-readout .input-warning{font-size:.68rem;color:#bb5362;min-height:1.1em}.number-pad{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(6px,1.3vw,11px);flex:1}.key{border:1px solid #dce8e2;background:#fbfdfb;border-radius:15px;min-height:clamp(48px,7.2dvh,75px);font-size:clamp(1.1rem,3vw,1.8rem);font-weight:800;box-shadow:0 2px 0 #d3dfd9}.key.clear{color:#b35f73;background:#fff4f6}.key.back{color:#5c83a8;background:#f2f7fd}.check-btn{width:100%;font-size:1.3rem;min-height:57px}.play-next{width:min(260px,100%);margin-top:7px}.feedback-announcement{transition:opacity .2s}
+/* Results */
+.results{max-width:730px;margin:auto}.result-head{text-align:center;padding:16px 10px}.result-head h1{margin:3px 0;font-size:clamp(1.75rem,5vw,2.7rem);color:var(--deep)}.result-summary{padding:20px}.stats3{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.stat{border-radius:13px;background:#f5f8f7;padding:15px 7px;text-align:center}.stat strong{display:block;font-size:clamp(1.65rem,4vw,2.5rem)}.stat span{font-size:.72rem;color:var(--muted)}.comparison{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0}.comparison .compare-cell{border:1px solid var(--border);border-radius:17px;padding:16px;text-align:center;background:#fafdfb}.compare-cell h3{font-size:.86rem;margin:0 0 5px}.compare-cell .pct{font-size:clamp(1.7rem,5vw,2.5rem);font-weight:900}.compare-cell .count{font-size:.79rem;color:var(--muted);margin-bottom:10px}.compare-cell .repeat{font-weight:850}.result-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}.result-actions button{flex:1 1 150px}.review-info{font-size:.81rem;color:var(--muted);text-align:center}.notice{font-size:.82rem;color:#4f7067;background:#e7f6ef;border-radius:12px;padding:10px 13px}.failure{background:#fff1f2;color:#995061}.badge-line{font-size:.76rem;font-weight:900;color:#308271}
+/* overlays */
+.overlay{position:fixed;inset:0;background:#142e2c88;display:flex;align-items:center;justify-content:center;padding:16px;z-index:50}.dialog{width:min(520px,100%);background:white;border-radius:22px;box-shadow:0 14px 48px #15352c55;padding:24px;max-height:90dvh;overflow:auto}.dialog h2{font-size:1.3rem;margin:0 0 12px}.dialog p,.dialog li{font-size:.91rem;line-height:1.7}.dialog ul{padding-left:20px}.dialog-actions{display:flex;gap:9px;justify-content:flex-end;flex-wrap:wrap;margin-top:20px}.dialog-actions button{min-width:110px}.countdown-overlay{background:#dff4edeb;color:#27665c;z-index:80}.countdown-content{text-align:center}.countdown-content .count{font-weight:950;font-size:clamp(7rem,24vw,14rem);line-height:1.1;animation:pop .4s ease}.countdown-content .ready{font-size:clamp(1.5rem,5vw,2.8rem);font-weight:900;letter-spacing:.09em}@keyframes pop{from{transform:scale(.72);opacity:.3}to{transform:scale(1);opacity:1}}.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);padding:12px 18px;border-radius:12px;color:#fff;background:#304f49;z-index:90;font-size:.85rem;box-shadow:var(--shadow);max-width:min(90vw,600px);text-align:center}
+@media (orientation:portrait){.levels{grid-template-columns:repeat(2,minmax(0,1fr))}.settings-grid{grid-template-columns:1fr 1fr}.settings-grid>div:last-child{grid-column:1/-1}.play-grid{display:flex;flex-direction:column;min-height:unset}.play-grid>.main-pane{width:100%;flex:none}.play-grid .voice-feedback,.play-grid.left-handed .voice-feedback{order:1}.play-grid .input-pane,.play-grid.left-handed .input-pane{order:2;width:min(85%,460px)}.play-grid:not(.left-handed) .input-pane{margin-left:auto}.play-grid.left-handed .input-pane{margin-right:auto}.voice-feedback{display:flex!important;gap:9px!important}.voice-pane{min-height:unset;flex:none;padding:12px;gap:6px}.voice-icon{display:none}.voice-controls{gap:6px}.voice-btn{min-height:40px;padding:4px 12px}.feedback-pane{min-height:155px;flex:none;padding:12px;gap:7px}.feedback-body{min-height:48px}.feedback-body .big-num{font-size:1.5rem}.history{gap:3px}.hist-cell{height:22px}.entry-card{height:auto;padding:9px;gap:7px}.entry-readout{min-height:64px}.entry-readout .digits{font-size:2.15rem}.number-pad{gap:5px}.key{min-height:47px;font-size:1.25rem}.check-btn{min-height:48px;font-size:1.1rem}.app{padding:9px}.play-header{margin-bottom:7px}}
+@media (max-width:620px){.setup-panel{padding:12px}.settings-grid{gap:12px}.level-card{padding:10px 6px;min-height:145px}.level-card .best-cell{padding:6px 2px}.pill{min-width:60px;padding:10px}.setup-footer{flex-direction:column}.setup-footer .primary{width:100%;flex:none}.setup-info{text-align:center}.voice-pane{flex:0 0 auto}.feedback-pane{padding:11px}.history-labels{gap:5px}.number-pad{gap:5px}.key{min-height:42px}.app-title{font-size:1.05rem}.play-header strong{font-size:1.12rem}}
+@media (orientation:landscape) and (max-height:600px){.app{padding:7px}.play-header{margin-bottom:7px}.play-grid{min-height:unset}.voice-pane{padding:9px;gap:4px;min-height:135px;flex:0 0 37%}.voice-icon{width:40px;height:40px;font-size:1.3rem}.voice-btn{min-height:35px;padding:5px}.feedback-pane{padding:9px;gap:6px;min-height:145px}.feedback-body{min-height:57px}.feedback-body .big-num{font-size:1.5rem}.entry-card{padding:8px;gap:6px}.entry-readout{min-height:53px}.entry-readout .digits{font-size:1.9rem}.key{min-height:37px;font-size:1.3rem;border-radius:10px}.check-btn{min-height:42px}.hist-cell{height:19px}}
+@media (max-width:480px) and (orientation:landscape){.voice-btn{min-width:90px}.history-labels{font-size:.54rem}.app-title{font-size:1rem}.levels{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <section id="setupScreen" class="screen setup">
+    <header class="setup-head"><div class="kicker">DEKIRU CLASSROOM ・ LISTENING GAME</div><h1>NUMBER CATCH!</h1><div class="subtext">Listen to the number. Catch the right answer!</div></header>
+    <div class="card setup-panel">
+      <div class="heading-row"><h2>SELECT LEVEL</h2><span class="chip" id="progressChip">LEVEL 1 からスタート</span></div>
+      <div class="levels" id="levels"></div>
+      <div class="settings-grid">
+        <div><div class="setting-title">QUESTIONS</div><div class="pill-row" id="countChoices"><button class="pill selected" data-count="10">10問</button><button class="pill" data-count="20">20問</button></div></div>
+        <div><div class="setting-title">利き手 / HANDEDNESS</div><div class="pill-row" id="handChoices"><button class="pill selected" data-hand="right">右利き</button><button class="pill" data-hand="left">左利き</button></div></div>
+        <div><div class="setting-title">音声・効果音</div><label class="toggle"><input type="checkbox" id="soundToggle" checked> 効果音 ON <span class="subtext">（読み上げは常にON）</span></label></div>
+      </div>
+      <div class="notice" id="setupRecord">20問を全問初回正解＋聞き直し5回以内で次のLEVELへ！</div>
+      <div class="setup-footer"><div class="setup-info" id="setupStatus">スタートすると 3・2・1 の後に音声が流れます。</div><button class="primary" id="startBtn">▶ START</button></div>
+    </div>
+    <div class="top-utilities"><button class="small-link" id="helpFromSetup">？ あそびかた</button></div>
+  </section>
+  <section id="playScreen" class="screen hidden">
+    <div class="play-header"><strong class="app-title">NUMBER CATCH!</strong><div class="top-right"><span class="chip" id="levelChip">LEVEL 1</span><button class="icon-button" id="helpFromPlay" title="あそびかた" aria-label="あそびかた">?</button><button class="icon-button" id="pauseBtn" title="一時停止" aria-label="一時停止">☰</button></div></div>
+    <div class="play-grid" id="playGrid">
+      <div class="main-pane voice-feedback">
+        <div class="card voice-pane">
+          <div class="kicker">LISTEN</div><div class="voice-icon" aria-hidden="true">🔊</div>
+          <div class="voice-controls"><button class="voice-btn" id="normalBtn">🔊 NORMAL<small>標準速度</small></button><button class="voice-btn" id="slowBtn">🐌 SLOW<small>ゆっくり</small></button></div>
+          <div class="audio-state" id="audioState" aria-live="polite">音声を聞いてください</div>
+          <button class="repair-btn" id="repairBtn">音声が聞こえない</button>
+        </div>
+        <div class="card feedback-pane">
+          <div class="progress-top"><strong id="questionIndex">QUESTION 1 / 10</strong><div class="ratio" id="currentRate">初回正答率 —</div></div>
+          <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+          <div class="feedback-body feedback-announcement" id="feedbackBody" aria-live="polite"><div class="status wait">Listen &amp; Type!</div><div class="hint">数字を入力して CHECK を押そう</div></div>
+          <div class="history" id="history"></div>
+          <div class="history-labels"><span>○ 初回正解</span><span>△ 2回目正解</span><span>× 不正解</span></div>
+        </div>
+      </div>
+      <div class="main-pane input-pane"><div class="card entry-card">
+        <div class="entry-readout"><div class="kicker">YOUR ANSWER</div><div class="digits" id="inputDigits" aria-live="polite">—</div><div class="input-warning" id="inputWarning"></div></div>
+        <div class="number-pad" id="numberPad"></div>
+        <button class="primary check-btn" id="checkBtn" disabled>CHECK ✓</button>
+      </div></div>
+    </div>
+  </section>
+  <section id="resultScreen" class="screen results hidden">
+    <div class="result-head"><div id="resultIcon" style="font-size:2.7rem">🏆</div><h1 id="resultTitle">RESULT</h1><div class="subtext" id="resultSubtitle">LEVEL 1 ・ 10 QUESTIONS</div><div class="badge-line" id="resultBadge"></div></div>
+    <div class="card result-summary">
+      <div class="stats3" id="resultStats"></div>
+      <div class="comparison" id="resultComparison"></div>
+      <div id="resultNotice" class="notice"></div>
+      <p class="review-info" id="resultReviewInfo"></p>
+      <div class="result-actions"><button class="secondary" id="retryBtn">↻ RETRY</button><button class="secondary" id="againBtn">PLAY AGAIN</button><button class="primary" id="nextLevelBtn">NEXT LEVEL ▶</button><button class="secondary" id="backLevelsBtn">LEVEL SELECT</button></div>
+    </div>
+  </section>
+</div>
+<div class="overlay hidden" id="dialogOverlay" role="dialog" aria-modal="true"><div class="dialog"><h2 id="dialogTitle"></h2><div id="dialogContent"></div><div class="dialog-actions" id="dialogActions"></div></div></div>
+<div class="overlay countdown-overlay hidden" id="countdownOverlay" aria-live="assertive"><div class="countdown-content"><div class="ready">GET READY!</div><div id="countNumber" class="count">3</div></div></div>
+<div class="toast hidden" id="toast" role="status"></div>
+<script>
+(()=>{'use strict';
+const $=id=>document.getElementById(id), KEY='DEKIRU_NUMBER_CATCH_V1';
+const saveDefault={hand:'right',sfx:true,helpSeen:false,unlocked:1,cleared:{},best:{},previous:{}};
+let save={...saveDefault}, level=1,questionCount=10,game=null,voice=null,speechToken=0,phaseTimer=null,countTimer=null,toastTimer=null,audioBusy=false,dialogReturn=null,speechAvailable=('speechSynthesis' in window),audioCtx=null;
+try{save={...saveDefault,...JSON.parse(localStorage.getItem(KEY)||'{}')};save.cleared=save.cleared||{};save.best=save.best||{};save.previous=save.previous||{}}catch(e){}
+function persist(){try{localStorage.setItem(KEY,JSON.stringify(save))}catch(e){}}
+const ones=['','one','two','three','four','five','six','seven','eight','nine'];
+const teens=['ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen'];
+const tens=['','','twenty','thirty','forty','fifty','sixty','seventy','eighty','ninety'];
+function under100(n){return n<10?ones[n]:n<20?teens[n-10]:tens[Math.floor(n/10)]+(n%10?'-'+ones[n%10]:'')}
+function under1000(n){if(n<100)return under100(n);const hundreds=ones[Math.floor(n/100)]+' hundred';return hundreds+(n%100?' and '+under100(n%100):'')}
+function toEnglish(n){if(n===2000)return'two thousand';if(n<1000)return under1000(n);const rem=n%1000;return'one thousand'+(rem?(rem<100?' and ':' ')+under1000(rem):'')}
+function format(n){return Number(n).toLocaleString('en-US')}
+function visibleScreen(which){for(const id of ['setupScreen','playScreen','resultScreen'])$(id).classList.toggle('hidden',id!==which)}
+function toast(msg){$('toast').textContent=msg;$('toast').classList.remove('hidden');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').classList.add('hidden'),2700)}
+function chooseVoice(){if(!speechAvailable)return null;const voices=window.speechSynthesis.getVoices();return voices.find(v=>/^en-US$/i.test(v.lang))||voices.find(v=>/^en([_-]|$)/i.test(v.lang))||null}
+function preloadVoices(){if(speechAvailable){voice=chooseVoice();window.speechSynthesis.getVoices()}}
+if(speechAvailable){speechSynthesis.addEventListener('voiceschanged',()=>{voice=chooseVoice()})}
+function stopSpeech(){speechToken++;audioBusy=false;if(speechAvailable)try{speechSynthesis.cancel()}catch(e){};setVoiceBusy(false)}
+function setVoiceBusy(busy,which=''){audioBusy=busy;$('normalBtn').classList.toggle('active',busy&&which==='normal');$('slowBtn').classList.toggle('active',busy&&which==='slow');const next=$('nextQuestionBtn');if(next)next.disabled=busy;refreshCheck()}
+function playSpeech(text,kind='normal',manual=false,tries=0){
+ if(!game||game.paused)return;
+ stopSpeech();const token=++speechToken;
+ if(!speechAvailable){$('audioState').textContent='この端末では読み上げを利用できません';showAudioError();return}
+ voice=voice||chooseVoice();
+ if(!voice){$('audioState').textContent='英語音声を準備しています…';if(tries<2){setTimeout(()=>{if(token===speechToken)playSpeech(text,kind,manual,tries+1)},450);return}showAudioError();return}
+ const u=new SpeechSynthesisUtterance(text);u.lang=voice.lang||'en-US';u.voice=voice;u.rate=kind==='slow'?.73:.96;u.pitch=1;u.volume=1;
+ let started=false;setVoiceBusy(true,kind);$('audioState').textContent=kind==='slow'?'SLOW 再生準備中…':'NORMAL 再生準備中…';
+ u.onstart=()=>{if(token!==speechToken)return;started=true;setVoiceBusy(true,kind);$('audioState').textContent=kind==='slow'?'ゆっくり読み上げ中…':'読み上げ中…';
+ if(manual&&game.attempt===1&&game.mode==='regular'&&game.phase==='input')game.replays++};
+ u.onend=()=>{if(token!==speechToken)return;setVoiceBusy(false);$('audioState').textContent='もう一度聞くこともできます'};
+ u.onerror=e=>{if(token!==speechToken)return;setVoiceBusy(false);
+  if(e.error==='interrupted'||e.error==='canceled')return;
+  if(tries===0){const v=speechSynthesis.getVoices().filter(x=>/^en([_-]|$)/i.test(x.lang));const idx=v.indexOf(voice);if(v.length>1){voice=v[(idx+1)%v.length];playSpeech(text,kind,manual,tries+1);return}}
+  $('audioState').textContent='再生できません。復旧を試してください';showAudioError()};
+ try{speechSynthesis.speak(u)}catch(e){setVoiceBusy(false);showAudioError()}
+}
+function showAudioError(){if(!game)return;stopSpeech();game.audioError=true;refreshCheck();if(game.phase==='input')toast('英語音声を再生できません。「音声が聞こえない」を押してください。')}
+function resolveSpeech(manual=false){if(!game||game.paused||!['input','review'].includes(game.phase))return;game.audioError=false;playSpeech(toEnglish(currentNumber()),'normal',manual)}
+function repairAudio(){if(!game)return;stopSpeech();preloadVoices();game.audioError=false;if(game.paused)return;const text=toEnglish(currentNumber());playSpeech(text,'normal',false);toast('同じ数字の読み上げを再試行します')}
+function sound(type){if(!save.sfx)return;try{const Ac=window.AudioContext||window.webkitAudioContext;if(!Ac)return;audioCtx=audioCtx||new Ac();if(audioCtx.state==='suspended')audioCtx.resume();let notes=type==='correct'?[660,860]:type==='clear'?[660,880,1100]:type==='wrong'?[280]:[550,750];notes.forEach((freq,i)=>{const oscillator=audioCtx.createOscillator(),gain=audioCtx.createGain(),start=audioCtx.currentTime+i*.11;oscillator.type='sine';oscillator.frequency.value=freq;gain.gain.setValueAtTime(.0001,start);gain.gain.exponentialRampToValueAtTime(.11,start+.02);gain.gain.exponentialRampToValueAtTime(.0001,start+.13);oscillator.connect(gain).connect(audioCtx.destination);oscillator.start(start);oscillator.stop(start+.14)})}catch(e){}}
+function clearTimers(){clearTimeout(phaseTimer);clearInterval(countTimer)}
+function showDialog(title,html,buttons){$('dialogTitle').textContent=title;$('dialogContent').innerHTML=html;$('dialogActions').replaceChildren();for(const b of buttons){const el=document.createElement('button');el.className=b.class||'secondary';el.textContent=b.label;el.addEventListener('click',()=>{closeDialog();b.action&&b.action()});$('dialogActions').append(el)}$('dialogOverlay').classList.remove('hidden')}
+function closeDialog(){$('dialogOverlay').classList.add('hidden')}
+function showHelp(){const wasPlaying=!!game&&game.phase!=='done';if(wasPlaying)pauseGame(false);showDialog('NUMBER CATCH! のあそびかた',`<p>🔊 <strong>英語の数字を聞いて、数字で答えよう！</strong></p><ul><li>NORMAL・SLOWで何度でも聞き直せます。</li><li>数字を入力し、読み上げが終わったらCHECK（またはEnter）を押します。</li><li>間違えてももう1回挑戦できます。○＝1回目正解、△＝2回目正解、×＝不正解。</li><li>20問をすべて1回目で正解し、最初の回答前の手動聞き直しが合計5回以内ならLEVEL CLEAR！</li><li>右上の☰から一時停止・やり直し・終了ができます。</li></ul>`,[{label:'わかった！',class:'primary',action:()=>{save.helpSeen=true;persist();if(wasPlaying&&game?.paused)resumeGame()}}])}
+function selectLevel(n){if(n>save.unlocked)return;level=n;renderSetup()}
+function renderSetup(){visibleScreen('setupScreen');stopSpeech();game=null;const data=[];for(let n=1;n<=4;n++){
+ const unlocked=n<=save.unlocked, cleared=!!save.cleared[n],b10=save.best[`${n}-10`],b20=save.best[`${n}-20`];data.push(`<button class="level-card ${level===n?'active':''} ${unlocked?'':'locked'}" data-level="${n}" ${unlocked?'':'disabled'}><div class="level-title">LEVEL ${n}</div><div class="range">1〜${format([20,100,1000,2000][n-1])}</div>${unlocked?`<span class="chip ${cleared?'clear':''}">${cleared?'✓ CLEAR!':'CHALLENGE'}</span><div class="best-pair"><div class="best-cell"><strong>${b10?Math.round(b10.first/10*100)+'%':'—'}</strong><span>10問 BEST</span></div><div class="best-cell"><strong>${b20?Math.round(b20.first/20*100)+'%':'—'}</strong><span>20問 BEST</span></div></div>`:'<span class="locked-icon">🔒</span><span class="subtext">LOCKED</span>'}</button>`)}
+ $('levels').innerHTML=data.join('');document.querySelectorAll('[data-level]').forEach(b=>b.onclick=()=>selectLevel(Number(b.dataset.level)));
+ document.querySelectorAll('[data-count]').forEach(b=>b.classList.toggle('selected',Number(b.dataset.count)===questionCount));
+ document.querySelectorAll('[data-hand]').forEach(b=>b.classList.toggle('selected',b.dataset.hand===save.hand));$('soundToggle').checked=save.sfx;
+ $('progressChip').textContent=`LEVEL ${save.unlocked} まで挑戦OK`;
+ const b10=save.best[`${level}-10`],b20=save.best[`${level}-20`];
+ $('setupRecord').innerHTML=`<strong>LEVEL ${level} の最高記録</strong>　10問：${b10?Math.round(b10.first/10*100)+'% / 聞き直し '+b10.replays+'回':'未挑戦'}　｜　20問：${b20?Math.round(b20.first/20*100)+'% / 聞き直し '+b20.replays+'回':'未挑戦'}`;
+ $('setupStatus').textContent=`LEVEL ${level} ・ ${questionCount}問 ・ ${save.hand==='right'?'右利き':'左利き'}用。3・2・1 の後スタート。`;
+}
+const difficulties={1:[13,14,15,16,17,18,19],2:[13,14,15,16,17,18,19,30,40,50,60,70,80,90],3:[105,115,150,205,250,305,350,405,450,505,510,550,605,650,705,750,805,850,905,950,999,1000],4:[1001,1005,1010,1050,1100,1105,1150,1200,1250,1300,1400,1500,1600,1700,1800,1900,1950,1999,2000]};
+function shuffled(a){const b=a.slice();for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b}
+function buildQuestions(l,count){if(l===1)return shuffled(Array.from({length:20},(_,i)=>i+1)).slice(0,count);
+ const prev=save.previous[l]||{numbers:[],mistakes:[]},low=[0,20,100,1000][l-1],high=[20,100,1000,2000][l-1];
+ let selected=[];const priorSet=new Set(prev.numbers||[]),used=new Set(),maxMistakes=count===10?2:4;let mistakes=(prev.mistakes||[]).slice().sort((a,b)=>Number(b.wrongTwice)-Number(a.wrongTwice));
+ function pick(min,max,quota){const pool=Array.from({length:max-min+1},(_,i)=>min+i),special=difficulties[l].filter(n=>n>=min&&n<=max),specialTarget=Math.min(special.length,Math.round(quota*.2));let picks=[];
+  function add(n){if(n>=min&&n<=max&&!used.has(n)&&picks.length<quota){used.add(n);picks.push(n)}}
+  for(const item of mistakes){if(selected.length+picks.length>=maxMistakes)break;add(item.number)}
+  const specials=shuffled(special.filter(n=>!used.has(n)&&!priorSet.has(n)));
+  for(const n of specials.slice(0,specialTarget))add(n);
+  let rem=shuffled(pool.filter(n=>!used.has(n)&&!priorSet.has(n)));for(const n of rem)add(n);
+  if(picks.length<quota){rem=shuffled(pool.filter(n=>!used.has(n)));for(const n of rem)add(n)}
+  selected.push(...picks);return picks}
+ pick(1,low,count*.3);pick(low+1,high,count*.7);return shuffled(selected)
+}
+function startGame(mode='regular',retryNumbers=null,source=null){clearTimers();stopSpeech();preloadVoices();const questions=mode==='regular'?buildQuestions(level,questionCount):prepareRetryRound(retryNumbers,source);
+ game={mode,level,count:questions.length,questions,idx:0,attempt:1,typed:'',phase:'countdown',paused:false,pausedFrom:null,audioError:false,replays:0,first:0,second:0,wrong:0,firstAttempts:0,history:[],answers:[],round:mode==='retry'?1:0,source:source||null,retryBank:mode==='retry'?new Set(source.answers.filter(x=>x.status==='first').map(x=>x.number)):new Set(),reviewedNumbers:mode==='retry'?new Set(retryNumbers):new Set(),originalCount:mode==='retry'?retryNumbers.length:0};
+ visibleScreen('playScreen');$('playGrid').classList.toggle('left-handed',save.hand==='left');$('levelChip').textContent=`LEVEL ${level}`;renderPlay();countdown(3)
+}
+function prepareRetryRound(nums,source){if(nums.length>=2)return shuffled(nums);const pool=[...(source?.answers||[]).filter(a=>a.status==='first').map(a=>a.number)];const selected=new Set(nums);for(const n of shuffled(pool)){if(selected.size>=3)break;selected.add(n)}if(selected.size<3){for(const n of shuffled(Array.from({length:[20,100,1000,2000][level-1]},(_,i)=>i+1))){if(selected.size>=3)break;selected.add(n)}}return shuffled([...selected])}
+function countdown(n){if(!game)return;game.phase='countdown';$('countdownOverlay').classList.remove('hidden');$('countNumber').textContent=n;renderPlay();let i=n;clearInterval(countTimer);countTimer=setInterval(()=>{if(!game||game.paused)return;--i;if(i>0){$('countNumber').textContent=i;return}clearInterval(countTimer);$('countNumber').textContent='GO!';phaseTimer=setTimeout(()=>{$('countdownOverlay').classList.add('hidden');if(!game||game.paused)return;game.phase='input';renderPlay();resolveSpeech(false)},350)},950)}
+function currentNumber(){return game.questions[game.idx]}
+function inputKey(k){if(!game||game.paused||game.phase!=='input')return;let s=game.typed;if(k==='C')s='';else if(k==='←')s=s.slice(0,-1);else if(/^\d$/.test(k)&&s.length<4)s=(s+k).replace(/^0+(?=\d)/,'');game.typed=s;renderPlay()}
+function validAnswer(){return !!game&&game.phase==='input'&&!game.paused&&!audioBusy&&!game.audioError&&game.typed!==''&&Number(game.typed)>=1&&Number(game.typed)<=2000}
+function refreshCheck(){const btn=$('checkBtn');if(btn)btn.disabled=!validAnswer()}
+function submit(){if(!validAnswer())return;const number=currentNumber(),answer=Number(game.typed),correct=number===answer;stopSpeech();game.phase='feedback';
+ if(game.attempt===1){game.firstAttempts++;if(correct){game.first++;game.history[game.idx]='first';game.answers.push({number,status:'first'});sound('correct');renderPlay();phaseTimer=setTimeout(nextQuestion,1700)}
+ else{game.firstWrongAnswer=answer;sound('wrong');renderPlay();phaseTimer=setTimeout(()=>{if(!game||game.paused)return;game.attempt=2;game.phase='input';game.typed='';renderPlay();resolveSpeech(false)},1800)}
+ }else{game.history[game.idx]=correct?'second':'wrong';if(correct){game.second++;sound('correct')}else{game.wrong++;sound('wrong')}game.answers.push({number,status:correct?'second':'wrong'});renderPlay();if(correct)phaseTimer=setTimeout(nextQuestion,1700);else{game.phase='review';game.typed='';renderPlay();playSpeech(toEnglish(number),'normal',false)}}
+}
+function nextQuestion(){if(!game||game.paused)return;clearTimeout(phaseTimer);stopSpeech();game.idx++;if(game.idx>=game.questions.length){if(game.mode==='retry')finishRetryRound();else finishRegular();return}game.attempt=1;game.typed='';game.phase='input';game.audioError=false;renderPlay();resolveSpeech(false)}
+function finishRegular(){stopSpeech();clearTimers();const g=game,key=`${g.level}-${g.count}`,old=save.best[key]?{...save.best[key]}:null;
+ const improved=!old||g.first>old.first||(g.first===old.first&&g.replays<old.replays);
+ if(improved)save.best[key]={first:g.first,second:g.second,wrong:g.wrong,replays:g.replays};
+ const perfect=g.count===20&&g.first===20&&g.replays<=5;const newlyUnlocked=perfect&&g.level<4&&save.unlocked===g.level;
+ if(perfect){save.cleared[g.level]=true;if(newlyUnlocked)save.unlocked=Math.min(4,g.level+1)}
+ save.previous[g.level]={numbers:g.questions.slice(),mistakes:g.answers.filter(a=>a.status!=='first').map(a=>({number:a.number,wrongTwice:a.status==='wrong'}))};persist();
+ g.phase='done';g.perfect=perfect;g.improved=improved;g.priorBest=old;g.newUnlock=newlyUnlocked;game=g;sound(perfect?'clear':improved?'clear':'correct');renderResults()}
+function finishRetryRound(){const g=game;if(!g)return;const missed=g.answers.filter(a=>a.status!=='first').map(a=>a.number);for(const a of g.answers){if(a.status==='first')g.retryBank.add(a.number);else g.retryBank.delete(a.number)}
+ if(!missed.length){g.phase='done';g.retryComplete=true;sound('clear');renderResults();return}
+ const pool=[...g.retryBank];const next=new Set(missed);if(next.size===1){for(const n of shuffled(pool)){if(next.size>=3)break;next.add(n)}if(next.size<3){for(const n of shuffled(g.source.answers.filter(a=>a.status==='first').map(a=>a.number))){if(next.size>=3)break;next.add(n)}}if(next.size<3){for(const n of shuffled(Array.from({length:[20,100,1000,2000][level-1]},(_,i)=>i+1))){if(next.size>=3)break;next.add(n)}}}
+ g.round++;g.questions=shuffled([...next]);g.count=g.questions.length;g.idx=0;g.attempt=1;g.typed='';g.phase='input';g.firstAttempts=0;g.first=0;g.second=0;g.wrong=0;g.answers=[];g.history=[];renderPlay();resolveSpeech(false);toast(`RETRY ${g.round}周目：残り${missed.length}種類を練習します`)
+}
+function renderPlay(){if(!game)return;const g=game,enabled=g.phase==='input',n=g.idx+1,history=g.history;const denom=g.firstAttempts;
+ $('questionIndex').textContent=g.mode==='retry'?`RETRY ${g.round}周目 ・ ${Math.min(n,g.count)} / ${g.count}`:`QUESTION ${Math.min(n,g.count)} / ${g.count}`;
+ $('currentRate').textContent=denom?`初回正答率 ${Math.round(g.first/denom*100)}%`:'初回正答率 —';
+ $('progressFill').style.width=`${Math.max(0,Math.min(100,g.idx/g.count*100))}%`;
+ const hist=[];for(let i=0;i<g.count;i++){const status=history[i],isCurrent=i===g.idx;hist.push(`<div class="hist-cell ${status||(isCurrent?'current':'')}">${status?({first:'○',second:'△',wrong:'×'}[status]):i+1}</div>`)}$('history').innerHTML=hist.join('');
+ const invalid=g.typed!==''&&(Number(g.typed)<1||Number(g.typed)>2000);$('inputDigits').textContent=g.typed?format(g.typed):'—';$('inputWarning').textContent=invalid?'1〜2,000で入力してね':'';
+ const digits=$('numberPad');digits.querySelectorAll('[data-key]').forEach(b=>b.disabled=!enabled);refreshCheck();
+ let html='';const current=Number(g.typed||0);if(g.phase==='countdown')html='<div class="status wait">GET READY!</div>';
+ else if(g.phase==='input'&&g.attempt===1)html='<div class="status wait">Listen &amp; Type!</div><div class="hint">数字を入力してCHECKを押そう</div>';
+ else if(g.phase==='input'&&g.attempt===2)html='<div class="status wait">2nd TRY</div><div class="hint">Listen again! もう一度聞いてみよう</div>';
+ else if(g.phase==='feedback'&&g.attempt===1&&g.history[g.idx]!=='first')html=`<div class="big-num">${format(current)}</div><div class="status bad">Try again!</div><div class="hint">もう一度聞いてみよう</div>`;
+ else if(g.phase==='feedback')html=`<div class="big-num">${format(current)}</div><div class="status good">✓ Correct!</div><div class="hint">次の問題に進みます</div>`;
+ else if(g.phase==='review')html=`<div class="kicker">CORRECT ANSWER</div><div class="big-num">${format(currentNumber())}</div><div class="english">${toEnglish(currentNumber())}</div><button class="primary play-next" id="nextQuestionBtn" ${audioBusy?'disabled':''}>NEXT →</button>`;
+ $('feedbackBody').innerHTML=html;if(g.phase==='review')$('nextQuestionBtn').onclick=()=>{if(!audioBusy)nextQuestion()};
+ if(g.phase!=='input'&&g.phase!=='review')$('audioState').textContent=g.phase==='countdown'?'音声を準備しています…':g.phase==='feedback'?'判定中…':'音声を聞いてください';
+ $('normalBtn').disabled=!(g.phase==='input'||g.phase==='review');$('slowBtn').disabled=!(g.phase==='input'||g.phase==='review');$('repairBtn').disabled=!(g.phase==='input'||g.phase==='review');
+}
+function compareMarkup(label,record,count){if(!record)return `<div class="compare-cell"><h3>${label}</h3><div class="pct">—</div><div class="count">記録なし</div><div class="repeat">—</div></div>`;
+ return `<div class="compare-cell"><h3>${label}</h3><div class="pct">${Math.round(record.first/count*100)}%</div><div class="count">1回目正解 ${record.first}/${count}</div><div class="repeat">🔊 ${record.replays}回</div><div class="subtext">聞き直し</div></div>`}
+function renderResults(){const g=game;visibleScreen('resultScreen');$('resultBadge').textContent='';$('resultReviewInfo').textContent='';$('retryBtn').classList.add('hidden');$('againBtn').classList.remove('hidden');$('nextLevelBtn').classList.add('hidden');$('resultComparison').classList.remove('hidden');
+ if(g.mode==='retry'){
+ $('resultIcon').textContent='🌟';$('resultTitle').textContent='RETRY CLEAR!';$('resultSubtitle').textContent=`LEVEL ${g.level} ・ 復習完了`;
+ $('resultStats').innerHTML=`<div class="stat"><strong>${g.originalCount}</strong><span>最初の復習対象</span></div><div class="stat"><strong>${g.round}</strong><span>完了までの周回数</span></div><div class="stat"><strong>✓</strong><span>すべて初回正解</span></div>`;
+ $('resultComparison').classList.add('hidden');$('resultNotice').textContent='苦手な数字をすべて聞き取れました！RETRYの結果は通常の最高記録・レベル解放に影響しません。';$('againBtn').textContent='PLAY AGAIN';$('againBtn').onclick=()=>startGame('regular');$('backLevelsBtn').onclick=renderSetup;return;
+ }
+ const clear=g.perfect,level4=clear&&g.level===4;
+ $('resultIcon').textContent=clear?'🏆':g.improved?'✨':'📋';$('resultTitle').textContent=clear?(level4?'ALL LEVELS CLEARED!':'PERFECT CLEAR!'):g.improved?'NEW RECORD!':'RESULT';
+ $('resultSubtitle').textContent=`LEVEL ${g.level} ・ ${g.count} QUESTIONS`;
+ $('resultBadge').textContent=clear&&g.improved?'★ NEW RECORD!':clear?'20問全問初回正解 ＋ 聞き直し5回以内':g.improved?'自己ベスト更新！':'';
+ $('resultStats').innerHTML=`<div class="stat"><strong style="color:#308e76">${g.first}</strong><span>○ 1回目で正解</span></div><div class="stat"><strong style="color:#bf8e3c">${g.second}</strong><span>△ 2回目で正解</span></div><div class="stat"><strong style="color:#cf7086">${g.wrong}</strong><span>× 不正解</span></div>`;
+ $('resultComparison').innerHTML=compareMarkup('THIS TIME',{first:g.first,replays:g.replays},g.count)+compareMarkup('🏆 BEST',g.improved?g.priorBest:save.best[`${g.level}-${g.count}`],g.count);
+ $('resultNotice').textContent=clear?(g.newUnlock?`LEVEL ${g.level+1} UNLOCKED! 次のレベルに挑戦できます。`:level4?'すべてのレベルをクリアしました！':'PERFECT CLEAR! 以前のクリア状態も維持されます。'):`初回正解率 ${Math.round(g.first/g.count*100)}% ・ 聞き直し ${g.replays}回。レベル解放には20問全問初回正解＋5回以内の聞き直しが必要です。`;
+ $('resultReviewInfo').textContent='聞き直し回数には、各問題の1回目の回答前に手動再生した回数だけを含みます。';
+ const mistakes=g.answers.filter(a=>a.status!=='first').map(a=>a.number);if(mistakes.length){$('retryBtn').classList.remove('hidden');$('retryBtn').textContent=`↻ RETRY（${mistakes.length}問）`;const original=g;$('retryBtn').onclick=()=>{level=original.level;startGame('retry',mistakes,original)}};
+ $('againBtn').textContent='PLAY AGAIN';$('againBtn').onclick=()=>{level=g.level;questionCount=g.count;startGame('regular')};$('backLevelsBtn').onclick=()=>{renderSetup()};
+ if(g.newUnlock){$('nextLevelBtn').classList.remove('hidden');$('nextLevelBtn').onclick=()=>{level=g.level+1;questionCount=20;renderSetup()}}
+}
+function pauseGame(showMenu=true){if(!game||game.paused||game.phase==='done')return;game.pausedFrom=game.phase;game.paused=true;clearTimers();stopSpeech();$('countdownOverlay').classList.add('hidden');if(showMenu)showDialog('PAUSE',`<p>LEVEL ${game.level} ・ ${Math.min(game.idx+1,game.count)}問目で一時停止中です。</p><p>音声を止めています。再開すると同じ問題の読み上げを最初から行います。</p>`,[{label:'RESUME / 再開',class:'primary',action:resumeGame},{label:'RESTART',class:'secondary',action:()=>confirmAbandon('restart')},{label:'EXIT',class:'danger',action:()=>confirmAbandon('exit')}])}
+function resumeGame(){if(!game||!game.paused)return;game.paused=false;const from=game.pausedFrom;game.pausedFrom=null;
+ if(from==='countdown'){countdown(3);return}
+ if(from==='feedback'){game.phase='feedback';renderPlay();phaseTimer=setTimeout(()=>{if(!game||game.paused)return;if(game.attempt===1&&game.history[game.idx]!=='first'){game.attempt=2;game.phase='input';game.typed='';renderPlay();resolveSpeech(false)}else nextQuestion()},1700);return}
+ game.phase=from;renderPlay();if(from==='input'||from==='review')resolveSpeech(false)}
+function confirmAbandon(type){if(!game)return;showDialog(type==='restart'?'最初からやり直しますか？':'ゲームを終了しますか？','<p>現在の挑戦は成績として保存されません。保存済みの最高記録やレベル解放状態は消えません。</p>',[{label:'キャンセル',class:'secondary',action:()=>showPauseAgain()},{label:type==='restart'?'やり直す':'終了する',class:'danger',action:()=>{const g=game;if(type==='restart'){level=g.level;questionCount=g.mode==='regular'?g.count:questionCount;startGame('regular')}else{clearTimers();stopSpeech();renderSetup()}}}])}
+function showPauseAgain(){showDialog('PAUSE','<p>ゲームは一時停止しています。</p>',[{label:'RESUME',class:'primary',action:resumeGame},{label:'RESTART',class:'secondary',action:()=>confirmAbandon('restart')},{label:'EXIT',class:'danger',action:()=>confirmAbandon('exit')}])}
+function init(){for(const key of ['1','2','3','4','5','6','7','8','9','C','0','←']){const b=document.createElement('button');b.className='key '+(key==='C'?'clear':key==='←'?'back':'');b.textContent=key;b.dataset.key=key;b.addEventListener('click',()=>inputKey(key));$('numberPad').append(b)}
+ for(const b of document.querySelectorAll('[data-count]'))b.onclick=()=>{questionCount=Number(b.dataset.count);renderSetup()};for(const b of document.querySelectorAll('[data-hand]'))b.onclick=()=>{save.hand=b.dataset.hand;persist();renderSetup()};
+ $('soundToggle').addEventListener('change',e=>{save.sfx=e.target.checked;persist()});$('startBtn').onclick=()=>startGame();$('helpFromSetup').onclick=showHelp;$('helpFromPlay').onclick=showHelp;$('pauseBtn').onclick=()=>pauseGame();$('checkBtn').onclick=submit;$('normalBtn').onclick=()=>{if(game&&['input','review'].includes(game.phase))playSpeech(toEnglish(currentNumber()),'normal',true)};$('slowBtn').onclick=()=>{if(game&&['input','review'].includes(game.phase))playSpeech(toEnglish(currentNumber()),'slow',true)};$('repairBtn').onclick=repairAudio;
+ window.addEventListener('keydown',e=>{if(!game||game.paused||game.phase==='done'||!$('dialogOverlay').classList.contains('hidden'))return;if(e.ctrlKey||e.metaKey||e.altKey)return;if(/^\d$/.test(e.key)){e.preventDefault();inputKey(e.key)}else if(e.key==='Backspace'){e.preventDefault();inputKey('←')}else if(e.key==='Delete'){e.preventDefault();inputKey('C')}else if(e.key==='Enter'){e.preventDefault();if(game.phase==='review'&&!audioBusy)nextQuestion();else submit()}else if(e.key==='Escape'){e.preventDefault();pauseGame()}});
+ window.addEventListener('blur',()=>{if(game&&!game.paused&&game.phase!=='done')pauseGame(true)});
+ document.addEventListener('visibilitychange',()=>{if(document.hidden&&game&&!game.paused&&game.phase!=='done')pauseGame(true)});
+ renderSetup();preloadVoices();if(!save.helpSeen)setTimeout(showHelp,300)
+}
+init();
+})();
+</script>
+</body>
+</html>
+
