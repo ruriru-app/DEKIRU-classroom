@@ -30,26 +30,57 @@
     return named.length === 1 ? named[0] : named.length === 2 ? named.join(' and ') : `${named.slice(0, -1).join(', ')}, and ${named.at(-1)}`;
   }
 
-  function createServiceSession({ products, order = defaultOrder, now = Date.now, greeting = 'Hello!' } = {}) {
-    if (!Array.isArray(products) || !products.length) throw new TypeError('Product catalog is required');
-    matchOrder(order, []);
-    if (order.some(line => !products.some(product => product.id === line.id))) throw new TypeError('Unknown ordered product');
-    const fixedOrder = clone(order);
-    const expectedTotal = fixedOrder.reduce((sum, line) => sum + products.find(item => item.id === line.id).price * line.quantity, 0);
-    const phrase = orderPhrase(fixedOrder, products);
-    const orderText = `I'd like ${phrase}, please.`;
-    const correctiveText = `I ordered ${phrase}.`;
+  function createServiceSession({ products, customers, order = defaultOrder, now = Date.now, greeting = 'Hello!' } = {}) {
+    if (!Array.isArray(products) || !products.length || products.some(product =>
+      typeof product?.id !== 'string' || !product.id.trim() || typeof product.name !== 'string' || !product.name.trim() ||
+      !Number.isSafeInteger(product.price) || product.price < 0) || new Set(products.map(product => product.id)).size !== products.length) {
+      throw new TypeError('A valid product catalog is required');
+    }
+    function prepareCustomer(customer, explicit) {
+      if (!customer || typeof customer.customerId !== 'string' || !customer.customerId.trim()) throw new TypeError('Customer id is required');
+      matchOrder(customer.order, []);
+      if (customer.order.some(line => !products.some(product => product.id === line.id))) throw new TypeError('Unknown ordered product');
+      const totalQuantity = customer.order.reduce((sum, line) => sum + line.quantity, 0);
+      if (explicit && (customer.order.length < 3 || customer.order.length > 5 || totalQuantity < 6 || totalQuantity > 12 ||
+        customer.order.some(line => line.quantity > 5) || new Set(customer.order.map(line => line.id)).size !== customer.order.length)) {
+        throw new TypeError('Customer order must use 3–5 products, 6–12 items and at most 5 of each product');
+      }
+      const expectedTotal = customer.order.reduce((sum, line) => sum + products.find(item => item.id === line.id).price * line.quantity, 0);
+      if (!Number.isSafeInteger(expectedTotal)) throw new TypeError('Ordered product total is unsafe');
+      if (explicit && (!['Hello!', 'Hi!'].includes(customer.greeting) ||
+        typeof customer.orderText !== 'string' || customer.orderText.length > 2000 ||
+        !/^(?:I'd like .+, please\.|Can I have .+, please\?)$/.test(customer.orderText) ||
+        typeof customer.correctiveText !== 'string' || customer.correctiveText.length > 2000 || !/^I ordered .+\.$/.test(customer.correctiveText))) {
+        throw new TypeError('Customer greeting and order text must use approved phrases');
+      }
+      const phrase = explicit ? null : orderPhrase(customer.order, products);
+      return { customerId: customer.customerId, order: clone(customer.order), expectedTotal,
+        greeting: customer.greeting === 'Hi!' ? 'Hi!' : 'Hello!',
+        orderText: explicit ? customer.orderText : `I'd like ${phrase}, please.`,
+        correctiveText: explicit ? customer.correctiveText : `I ordered ${phrase}.` };
+    }
+    if (customers !== undefined && (!Array.isArray(customers) || !customers.length)) throw new TypeError('Customer plan is required');
+    const customerPlan = customers === undefined ? [prepareCustomer({ customerId: 'sunhat-woman', order, greeting }, false)] :
+      customers.map(customer => prepareCustomer(customer, true));
+    if (new Set(customerPlan.map(customer => customer.customerId)).size !== customerPlan.length) throw new TypeError('Customer ids must be distinct');
     let effects = [], nextAudioId = 0, elapsed = 0, lastTime = now();
     let phase, expression, requestMode, audio, retryPending, remaining, stats;
     let handedOver, cachedPrice, submittedItems, orderIssued, lastOrderText, correctionCleared, attempt, suspended, operation, holdAfter;
+    let customerIndex, completedCustomers, customerReplayCount, fixedOrder, expectedTotal, orderText, correctiveText, currentGreeting, customerId;
 
-    function initialize() {
+    function initializeCustomer(index) {
+      customerIndex = index;
+      ({ order: fixedOrder, expectedTotal, orderText, correctiveText, greeting: currentGreeting, customerId } = customerPlan[index]);
       phase = 'idle'; expression = 'neutral'; requestMode = 'question'; audio = null;
       retryPending = false; remaining = { question: 2, checkout: 2 };
-      stats = { questionMistakes: 0, productMistakes: 0, checkoutMistakes: 0, rescueUses: 0, replayCount: 0, penalty: 0 };
+      customerReplayCount = 0;
       handedOver = false; cachedPrice = false; submittedItems = []; orderIssued = false;
       lastOrderText = orderText; correctionCleared = false; attempt = 'idle'; suspended = null; operation = null;
       holdAfter = null;
+    }
+    function initialize() {
+      stats = { questionMistakes: 0, productMistakes: 0, checkoutMistakes: 0, rescueUses: 0, replayCount: 0, penalty: 0 };
+      completedCustomers = 0; initializeCustomer(0);
       elapsed = 0; lastTime = now(); effects = [];
     }
     initialize();
@@ -118,7 +149,8 @@
       if (!canReplay()) return;
       if (!technical) {
         stats.replayCount++;
-        if (stats.replayCount > 1) stats.penalty += 5;
+        customerReplayCount++;
+        if (customerReplayCount > 1) stats.penalty += 5;
       }
       const after = audio?.kind === 'replay' ? audio.after : {
         replay: true,
@@ -142,7 +174,7 @@
           phase = 'arriving'; emit('arrive', 400); break;
         case 'arrived':
           if (phase !== 'arriving') break;
-          phase = 'greeting'; speak(greeting === 'Hi!' ? greeting : 'Hello!', 'greeting', 'greeting'); break;
+          phase = 'greeting'; speak(currentGreeting, 'greeting', 'greeting'); break;
         case 'audio-started':
           if (!audio || audio.id !== event.id || audio.started) break;
           audio.started = true;
@@ -213,7 +245,13 @@
           holdAfter = null; break;
         case 'departure-finished':
           if (phase !== 'departing') break;
-          phase = 'complete'; operation = null; effects.push({ type: 'complete' }); break;
+          completedCustomers++;
+          if (customerIndex + 1 < customerPlan.length) {
+            initializeCustomer(customerIndex + 1);
+            effects.push({ type: 'clear-products', reason: 'departure', duration: 0 });
+            phase = 'arriving'; emit('arrive', 400);
+          } else { phase = 'complete'; operation = null; effects.push({ type: 'complete' }); }
+          break;
         case 'replay': replay(event.technical === true); break;
         case 'pause': suspend('paused'); break;
         case 'resume': if (phase === 'paused') restore(); break;
@@ -232,6 +270,7 @@
       const elapsedMs = elapsed + (timed() ? Math.max(0, now() - lastTime) : 0);
       const mistakes = stats.questionMistakes + stats.productMistakes + stats.checkoutMistakes;
       return {
+        customerId, customerIndex, customerNumber: customerIndex + 1, customerCount: customerPlan.length, completedCustomers,
         phase, expression, requestMode, requestPhase: suspended?.phase || phase,
         canRecord: ['question', 'checkout'].includes(phase) && !audio && !retryPending && attempt === 'idle',
         canEdit: attempt === 'idle' && (phase === 'checkout' || phase === 'order' || (phase === 'product-feedback' && correctionCleared)),
@@ -239,8 +278,8 @@
         audio: audio ? { id: audio.id, text: audio.text, kind: audio.kind } : null,
         handedOver, order: clone(fixedOrder), expectedTotal, orderText, correctiveText,
         stats: { ...stats }, elapsedMs, timerRunning: timed(), complete: phase === 'complete',
-        score: Math.max(0, 1000 - stats.penalty - Math.min(200, Math.round(elapsedMs / 1000))),
-        stars: mistakes === 0 ? 3 : mistakes <= 1 ? 2 : 1,
+        score: Math.max(0, 1000 - stats.penalty - Math.min(200, Math.round(elapsedMs / 1000 / customerPlan.length))),
+        stars: mistakes === 0 ? 3 : mistakes <= customerPlan.length ? 2 : 1,
       };
     }
     return { dispatch, view, takeEffects() { const result = effects; effects = []; return result; } };

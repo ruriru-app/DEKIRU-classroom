@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#8CCBC2" />
     <title>RuRiRu BURGER SHOP — LEVEL 4</title>
-    <link rel="stylesheet" href="./styles.css?v=20261101d" />
+    <link rel="stylesheet" href="./styles.css?v=20261101e" />
   </head>
   <body>
     <div id="store-background" class="store-background" aria-hidden="true">
@@ -23,7 +23,7 @@
             </span>
             <span class="tile-status">
               <span class="level-pill"><span>LEVEL</span><strong>4</strong></span>
-              <span class="mode-pill">NORMAL</span>
+              <span class="mode-line"><span class="mode-pill">NORMAL</span><span id="customer-progress" class="customer-progress" aria-live="polite">1 / 4 人</span></span>
             </span>
             <div class="service-tools">
               <span id="service-status" class="lesson-label" role="status">接客チャレンジ</span>
@@ -46,6 +46,7 @@
             <img class="customer-image" data-customer-expression="troubled" src="./assets/customer-troubled-v1.png" alt="" aria-hidden="true" draggable="false" />
             <img class="customer-image" data-customer-expression="angry" src="./assets/customer-angry-v1.png" alt="" aria-hidden="true" draggable="false" />
             <img class="customer-image" data-customer-expression="smile" src="./assets/customer-smile-v1.png" alt="" aria-hidden="true" draggable="false" />
+            <span id="customer-image-status" class="customer-image-status" role="status" hidden></span>
           </div>
           <div class="service-counter" aria-label="店員側の受け渡しカウンター">
             <div id="served-items" class="served-items" aria-live="polite"></div>
@@ -78,12 +79,12 @@
       </section>
     </main>
 
-    <div id="prototype-note" class="prototype-note" role="status">確認用：LEVEL 4・NORMAL・固定注文のお客さん１人</div>
+    <div id="prototype-note" class="prototype-note" role="status">確認用：LEVEL 4・NORMAL・お客さん４人（６人からランダム）</div>
     <dialog id="service-trouble" class="service-dialog" aria-labelledby="trouble-title">
       <h2 id="trouble-title">音声を確かめよう</h2>
       <p id="trouble-message">端末の音量と音声の設定を確認してください。</p>
       <label class="voice-choice-label" for="customer-voice-choice">お客さんの声</label>
-      <select id="customer-voice-choice"><option value="">自動（女性の英語音声を優先）</option></select>
+      <select id="customer-voice-choice"><option value="">自動（お客さんに合わせる）</option></select>
       <small id="voice-status" role="status"></small>
       <button id="sound-test" type="button">テスト音声を聞く</button>
       <button id="sound-recovered" type="button">聞こえた！</button>
@@ -99,8 +100,8 @@
       <h2 id="result-title">接客できました！</h2>
       <div id="result-rating" class="result-rating"></div>
       <p id="result-points"></p><p id="result-details"></p>
-      <small>固定注文・お客さん１人での確認結果です。</small>
-      <button id="play-again" type="button">同じ注文でもう一度</button>
+      <small>LEVEL 4・NORMAL・お客さん４人の確認結果です。</small>
+      <button id="play-again" type="button">新しいお客さんでもう一度</button>
     </dialog>
     <dialog id="fullscreen-gate" class="fullscreen-gate" aria-labelledby="fullscreen-title" aria-describedby="fullscreen-message">
       <span class="fullscreen-brand">RuRiRu <small>BURGER SHOP</small></span>
@@ -113,17 +114,19 @@
       <button id="fullscreen-fallback" class="fullscreen-fallback" type="button" hidden>この画面のまま続ける</button>
       <small class="fullscreen-help">全画面は Esc キーで解除できます。</small>
     </dialog>
-    <script src="./store.js"></script>
-    <script src="./counter.js"></script>
-    <script src="./speech.js"></script>
-    <script src="./service-validation.js?v=20261101b"></script>
-    <script src="./customer-voice.js"></script>
-    <script src="./service-session.js?v=20261101d"></script>
-    <script src="./service-effects.js?v=20261101c"></script>
-    <script src="./service-ui.js?v=20261101d"></script>
-    <script src="./app.js?v=20261101c"></script>
-    <script src="./microphone-setup.js"></script>
-    <script src="./fullscreen.js"></script>
+    <script src="./store.js?v=20261101e"></script>
+    <script src="./counter.js?v=20261101e"></script>
+    <script src="./speech.js?v=20261101e"></script>
+    <script src="./service-validation.js?v=20261101e"></script>
+    <script src="./customer-catalog.js?v=20261101e"></script>
+    <script src="./service-plan.js?v=20261101e"></script>
+    <script src="./customer-voice.js?v=20261101e"></script>
+    <script src="./service-session.js?v=20261101e"></script>
+    <script src="./service-effects.js?v=20261101e"></script>
+    <script src="./service-ui.js?v=20261101e"></script>
+    <script src="./app.js?v=20261101e"></script>
+    <script src="./microphone-setup.js?v=20261101e"></script>
+    <script src="./fullscreen.js?v=20261101e"></script>
   </body>
 </html>
 

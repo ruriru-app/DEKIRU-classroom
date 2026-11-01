@@ -14,6 +14,7 @@
     timeoutMs = 20000,
   } = {}) {
     let active = null, preferredVoice = '', listeningForVoices = false, initialVoiceWaitComplete = false;
+    let customerProfile = null;
     const available = () => typeof synthesis?.speak === 'function'
       && typeof synthesis?.cancel === 'function' && typeof Utterance === 'function';
 
@@ -21,6 +22,7 @@
     // SpeechSynthesisVoice exposes no gender field. Prefer identifiable names;
     // the sound check can override this choice for the actual device.
     const feminine = voice => /(?:\bfemale\b|\b(?:zira|aria|jenny|sonia|hazel|samantha|victoria|susan|karen|moira|tessa|serena)\b|^google us english$)/i.test(voice.name || '');
+    const masculine = voice => /(?:\bmale\b|\b(?:david|mark|guy|james|george|daniel|alex|fred|tom|oliver|christopher|ryan|roger|eric|andrew|brian|steffan)\b)/i.test(voice.name || '');
     function readVoices() {
       try {
         if (typeof synthesis?.getVoices !== 'function') return null;
@@ -30,14 +32,18 @@
     const describe = voices => voices.map(voice => ({ name: String(voice.name || ''), lang: String(voice.lang || ''), voiceURI: identifier(voice) }));
     const hasExplicitIndex = () => Number.isInteger(voiceIndex) && voiceIndex >= 0;
     const preferred = voices => preferredVoice ? voices.find(voice => identifier(voice) === preferredVoice || voice.name === preferredVoice) : null;
+    const matchesProfile = voice => customerProfile?.gender === 'masculine' ? masculine(voice) : feminine(voice);
     function choose(voices) {
       if (!voices?.length) return null;
-      return preferred(voices) || (hasExplicitIndex() ? voices[voiceIndex % voices.length] : voices.find(feminine)) || voices[0];
+      const matching = voices.filter(matchesProfile);
+      const automatic = customerProfile ? matching[customerProfile.voiceIndex % matching.length]
+        : hasExplicitIndex() ? voices[voiceIndex % voices.length] : matching[0];
+      return preferred(voices) || automatic || voices[0];
     }
     function desiredVoiceReady(voices) {
       if (!voices?.length) return false;
       if (preferredVoice) return Boolean(preferred(voices));
-      return hasExplicitIndex() || voices.some(feminine);
+      return (!customerProfile && hasExplicitIndex()) || voices.some(matchesProfile);
     }
     function voicesChanged() {
       const voices = readVoices() || [];
@@ -52,6 +58,19 @@
     function selectedVoice() { listenForVoices(); return identifier(choose(readVoices())); }
     function setPreferredVoice(value) {
       preferredVoice = typeof value === 'string' ? value.trim() : '';
+      return selectedVoice();
+    }
+    function setCustomerProfile(value = {}) {
+      const next = {
+        gender: value.gender === 'masculine' ? 'masculine' : 'feminine',
+        voiceIndex: Number.isInteger(value.voiceIndex) && value.voiceIndex >= 0 ? value.voiceIndex : 0,
+        pitch: Number.isFinite(value.pitch) ? Math.min(2, Math.max(.5, value.pitch)) : 1,
+      };
+      if (!customerProfile || Object.keys(next).some(key => next[key] !== customerProfile[key])) {
+        cancel();
+        customerProfile = next;
+        initialVoiceWaitComplete = false;
+      }
       return selectedVoice();
     }
 
@@ -100,6 +119,7 @@
         active = session;
         utterance.lang = 'en-US';
         utterance.rate = Number.isFinite(rate) && rate > 0 ? rate : 1;
+        utterance.pitch = customerProfile?.pitch || 1;
         utterance.onstart = () => {
           if (active !== session || session.started) return;
           session.started = true;
@@ -119,7 +139,7 @@
     }
 
     listenForVoices();
-    return { speak, cancel, busy: () => Boolean(active), available, getVoices, setPreferredVoice, selectedVoice };
+    return { speak, cancel, busy: () => Boolean(active), available, getVoices, setPreferredVoice, setCustomerProfile, selectedVoice };
   }
 
   globalThis.RuRiRuCustomerVoice = Object.freeze({ createCustomerVoice });

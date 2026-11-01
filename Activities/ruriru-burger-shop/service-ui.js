@@ -1,42 +1,73 @@
 (() => {
   // Preserve older trial saves without replaying them under different judgement rules.
-  const storageKey = 'ruriru-level4-fixed-service-v4';
+  const storageKey = 'ruriru-level4-service-v5';
   const voiceChoiceKey = 'ruriru-customer-voice-v1';
   const eventTypes = new Set(['start', 'arrived', 'audio-started', 'audio-ended', 'attempt-start', 'attempt-finish',
     'attempt-cancel', 'submit', 'retry', 'handoff-finished', 'inspection-finished', 'hold-finished', 'correction-wait-finished',
     'departure-finished', 'replay', 'pause', 'resume', 'technical-error', 'recover', 'items-changed', 'reset']);
 
-  function createServiceUI({ products, counter, selectedItems, clearItems, onRender, setExpression, setMicState }) {
+  function createServiceUI({ products, counter, selectedItems, clearItems, onRender, setExpression, setMicState,
+    setCustomer = () => {}, customers, random = Math.random }) {
     const el = id => document.getElementById(id);
     const customer = el('customer-layer'), transcript = el('transcript'), mic = el('mic-action');
     const action = el('service-action'), status = el('service-status');
     const remaining = el('retry-remaining'), trouble = el('service-trouble'), pauseDialog = el('service-pause');
     const result = el('service-result'), servedItems = el('served-items');
-    let greeting = Math.random() < .5 ? 'Hello!' : 'Hi!';
+    const profiles = globalThis.RuRiRuCustomers.CUSTOMERS;
+    const expectedCustomerCount = customers ? customers.length : 4;
+    const clone = value => JSON.parse(JSON.stringify(value));
+    const freshPlan = () => customers ? clone(customers) : globalThis.RuRiRuServicePlan.createLevel4Plan({
+      products, customerIds: profiles.map(profile => profile.id), random,
+    });
+    let saved = readSaved();
+    let customerPlan = saved ? clone(saved.customers) : freshPlan(), renderedCustomerId = '';
     let history = [], clockOffset = 0, replayClock = null;
     const now = () => replayClock === null ? Date.now() - clockOffset : replayClock;
     const canRetry = view => view.retryPending && ['question', 'checkout'].includes(view.phase) && !view.audio;
-    const makeSession = () => globalThis.RuRiRuServiceSession.createServiceSession({ products, greeting, now });
+    const makeSession = () => globalThis.RuRiRuServiceSession.createServiceSession({ products, customers: customerPlan, now });
     let session = makeSession(), runner, speech, stopped = false, suspendedByFullscreen = false;
     let permissionSuspended = false, deferredMicrophoneError = null;
     let previousTranscript = transcript.textContent, attemptItems = [], lastSpeechError = '';
-    let saved = readSaved();
 
     function readSaved() {
       try {
         const value = JSON.parse(localStorage.getItem(storageKey) || 'null');
-        if (!value || value.version !== 4 || !Array.isArray(value.events) || value.events.length > 5000 ||
+        if (!value || value.version !== 5 || !validPlan(value.customers) || !Array.isArray(value.events) || value.events.length > 5000 ||
             !Number.isFinite(value.at) || !Array.isArray(value.items)) return null;
         let previous = -Infinity;
         for (const entry of value.events) {
           if (!Number.isFinite(entry.at) || entry.at < previous || !eventTypes.has(entry.event?.type)) return null;
           previous = entry.at;
         }
-        if (value.at < previous || value.items.some(line => !products.some(p => p.id === line.id) ||
+        if (value.at < previous || new Set(value.items.map(line => line?.id)).size !== value.items.length ||
+          value.items.some(line => !line || !products.some(p => p.id === line.id) ||
           !Number.isInteger(line.quantity) || line.quantity < 1 || line.quantity > 12) ||
           value.items.reduce((n, line) => n + line.quantity, 0) > 12) return null;
+        // Validate history with an isolated clock and session. Effects remain
+        // data here, so a damaged save cannot touch the current UI or counter.
+        let validationClock = value.events[0]?.at ?? value.at;
+        const validator = globalThis.RuRiRuServiceSession.createServiceSession({
+          products, customers: value.customers, now: () => validationClock,
+        });
+        for (const entry of value.events) {
+          validationClock = entry.at;
+          validator.dispatch(entry.event);
+          validator.takeEffects();
+        }
         return value;
       } catch { return null; }
+    }
+    function validPlan(plan) {
+      return Array.isArray(plan) && plan.length === expectedCustomerCount && plan.length > 0 &&
+        new Set(plan.map(entry => entry?.customerId)).size === plan.length && plan.every(entry =>
+          entry && profiles.some(profile => profile.id === entry.customerId) && ['Hello!', 'Hi!'].includes(entry.greeting) &&
+          typeof entry.orderText === 'string' && entry.orderText.length <= 2000 &&
+          /^(?:I'd like .+, please\.|Can I have .+, please\?)$/.test(entry.orderText) &&
+          typeof entry.correctiveText === 'string' && entry.correctiveText.length <= 2000 && /^I ordered .+\.$/.test(entry.correctiveText) &&
+          Array.isArray(entry.order) && entry.order.length >= 3 && entry.order.length <= 5 &&
+          new Set(entry.order.map(line => line?.id)).size === entry.order.length && entry.order.every(line =>
+            line && products.some(product => product.id === line.id) && Number.isInteger(line.quantity) && line.quantity >= 1 && line.quantity <= 5) &&
+          entry.order.reduce((n, line) => n + line.quantity, 0) >= 6 && entry.order.reduce((n, line) => n + line.quantity, 0) <= 12);
     }
     function closeDialogs() {
       for (const dialog of [trouble, pauseDialog, result]) if (dialog.open) dialog.close();
@@ -63,6 +94,16 @@
       document.body.dataset.servicePhase = view.phase;
       document.body.dataset.requestMode = view.requestMode;
       document.body.dataset.timerRunning = String(view.timerRunning);
+      const customerId = view.customerId || customerPlan[0].customerId;
+      customer.dataset.customerId = customerId;
+      if (customerId !== renderedCustomerId) {
+        renderedCustomerId = customerId;
+        const profile = profiles.find(profile => profile.id === customerId) || profiles[0];
+        voice?.setCustomerProfile(profile.voice);
+        setCustomer(profile);
+        refreshVoiceChoices();
+      }
+      el('customer-progress').textContent = `${view.customerNumber || 1} / ${view.customerCount || customerPlan.length} 人`;
       setExpression(view.expression);
       customer.hidden = stopped || ['idle', 'complete'].includes(view.phase);
       const microphoneState = speech?.state() || 'idle';
@@ -89,7 +130,7 @@
     }
     function fadeOldProducts(effect) {
       const original = el('served-items');
-      if (original.children.length) {
+      if (effect.reason !== 'departure' && effect.duration > 0 && original.children.length) {
         const rect = original.getBoundingClientRect(), ghost = original.cloneNode(true);
         ghost.removeAttribute('id');
         ghost.classList.remove('is-presented');
@@ -121,7 +162,7 @@
       if (!voice) return;
       const select = el('customer-voice-choice'), current = requestedVoice;
       const voices = voice.getVoices();
-      select.replaceChildren(new Option('自動（女性の英語音声を優先）', ''));
+      select.replaceChildren(new Option('自動（お客さんに合わせる）', ''));
       for (const item of voices) select.add(new Option(`${item.name} (${item.lang})`, item.voiceURI));
       if (voices.some(item => item.voiceURI === current)) select.value = current;
       const chosen = voices.find(item => item.voiceURI === voice.selectedVoice());
@@ -148,6 +189,7 @@
     runner = globalThis.RuRiRuServiceEffects.createServiceEffects({
       voice, send,
       onArrive: () => {
+        transcript.textContent = ''; previousTranscript = ''; attemptItems = [];
         customer.hidden = false;
         customer.classList.remove('from-left', 'from-right', 'is-departing');
         servedItems.classList.remove('is-departing');
@@ -240,7 +282,7 @@
     });
     function saveAndExit() {
       stopPlatform();
-      const payload = { version: 4, greeting, at: now(), events: history, items: selectedItems(),
+      const payload = { version: 5, customers: clone(customerPlan), at: now(), events: history, items: selectedItems(),
         presented: counter.view().phase === 'presented', transcript: transcript.textContent };
       try {
         localStorage.setItem(storageKey, JSON.stringify(payload));
@@ -252,7 +294,7 @@
     function restoreSaved() {
       if (!saved) return;
       stopPlatform(); closeDialogs(); clearItems();
-      greeting = saved.greeting === 'Hi!' ? 'Hi!' : 'Hello!';
+      customerPlan = clone(saved.customers);
       replayClock = saved.events[0]?.at || saved.at;
       session = makeSession();
       for (const entry of saved.events) { replayClock = entry.at; session.dispatch(entry.event); session.takeEffects(); }
@@ -272,7 +314,7 @@
     el('play-again').addEventListener('click', () => {
       stopPlatform(); closeDialogs(); clearItems(); saved = null; stopped = false;
       servedItems.classList.remove('is-departing');
-      greeting = Math.random() < .5 ? 'Hello!' : 'Hi!';
+      customerPlan = freshPlan(); renderedCustomerId = '';
       clockOffset = 0; history = []; session = makeSession();
       transcript.textContent = 'マイクを押して、お客さんに英語で接客してみよう！';
       send({ type: 'start' });

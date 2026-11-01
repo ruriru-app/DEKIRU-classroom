@@ -18,9 +18,19 @@ const transcript = document.querySelector('#transcript');
 const micAction = document.querySelector('#mic-action');
 const servedItems = document.querySelector('#served-items');
 const customerLayer = document.querySelector('#customer-layer');
+const customerImages = [...document.querySelectorAll('[data-customer-expression]')];
 const preparedItems = document.querySelector('#prepared-items');
 const preparationStatus = document.querySelector('#preparation-status');
 let lastCounterMarkupKey = '';
+let customerProfile = globalThis.RuRiRuCustomers.CUSTOMERS[0];
+let portraitGeneration = 0, lastLoadedExpression = '';
+const portraitStates = new Map();
+// Warm all expressions before their customer arrives; retain the four layered
+// images so expression changes never replace the character element.
+const customerPreloads = globalThis.RuRiRuCustomers.CUSTOMERS.flatMap(profile =>
+  Object.values(profile.expressions).map(src => {
+    const image = document.createElement('img'); image.src = src; return image;
+  }));
 
 function artworkMarkup(product, surface = 'menu') {
   const artwork = productArtwork(product, surface);
@@ -47,6 +57,13 @@ function syncCustomerToCounter() {
   const geometry = counterGeometry(window.innerWidth, window.innerHeight, speechTop, menuBottom);
   const tray = document.querySelector('#tray').getBoundingClientRect();
   const service = document.querySelector('#service-window').getBoundingClientRect();
+  const neutral = customerImages.find(image => image.dataset.customerExpression === 'neutral');
+  const portrait = globalThis.RuRiRuCustomers.customerGeometry({
+    profile: customerProfile, counterY: counterLine,
+    topLimit: document.querySelector('#main-menu').getBoundingClientRect().bottom + 10,
+    gapLeft: service.left, gapRight: service.right, viewportHeight: window.innerHeight,
+    aspectRatio: neutral?.naturalWidth && neutral.naturalHeight ? neutral.naturalWidth / neutral.naturalHeight : undefined,
+  });
   const preparationLeft = tray.left + 78;
   const preparationWidth = Math.max(0, tray.right - preparationLeft - 8);
   const serviceWidth = Math.max(0, service.width - 16);
@@ -67,13 +84,62 @@ function syncCustomerToCounter() {
     '--service-depth': geometry.serviceFront - geometry.counterRear,
     '--service-unit-size': Math.min(76, serviceWidth / 7.2),
     '--handoff-lift': geometry.workFront - geometry.serviceFront,
+    '--customer-left': portrait.left,
+    '--customer-width': portrait.width,
+    '--customer-height': portrait.height,
   };
   for (const [name, value] of Object.entries(values)) document.documentElement.style.setProperty(name, `${value}px`);
+  document.documentElement.style.setProperty('--customer-visible-offset', `${-100 * portrait.visibleFraction}%`);
+}
+
+function setCustomerProfile(profile) {
+  customerProfile = profile;
+  customerLayer.dataset.customerId = profile.id;
+  const generation = ++portraitGeneration;
+  portraitStates.clear(); lastLoadedExpression = '';
+  for (const image of customerImages) {
+    portraitStates.set(image.dataset.customerExpression, { image, attempts: 0, status: 'loading' });
+  }
+  refreshCustomerPortrait();
+  for (const [expression, state] of portraitStates) loadCustomerPortrait(expression, state, profile, generation);
+  syncCustomerToCounter();
+}
+
+function loadCustomerPortrait(expression, state, profile, generation) {
+  const attempt = ++state.attempts;
+  const current = () => generation === portraitGeneration && portraitStates.get(expression) === state &&
+    state.attempts === attempt && state.status === 'loading';
+  state.image.onload = () => {
+    if (!current()) return;
+    state.status = 'loaded'; lastLoadedExpression = expression;
+    refreshCustomerPortrait(); syncCustomerToCounter();
+  };
+  state.image.onerror = () => {
+    if (!current()) return;
+    if (state.attempts < 2) loadCustomerPortrait(expression, state, profile, generation);
+    else { state.status = 'failed'; refreshCustomerPortrait(); }
+  };
+  const src = profile.expressions[expression];
+  state.image.src = attempt === 1 ? src : `${src}?portrait-retry=1`;
+}
+
+function refreshCustomerPortrait() {
+  const requested = customerLayer.dataset.expression || 'neutral';
+  const loaded = expression => portraitStates.get(expression)?.status === 'loaded';
+  const visible = loaded(requested) ? requested : loaded('neutral') ? 'neutral' : loaded(lastLoadedExpression) ? lastLoadedExpression : '';
+  const unavailable = portraitStates.size > 0 && [...portraitStates.values()].every(state => state.status === 'failed');
+  customerLayer.dataset.visibleExpression = visible;
+  customerLayer.dataset.portraitState = visible ? visible === requested ? 'ready' : 'fallback' : unavailable ? 'unavailable' : 'loading';
+  customerLayer.setAttribute('aria-busy', String(!visible && !unavailable));
+  const status = document.querySelector('#customer-image-status');
+  status.hidden = Boolean(visible);
+  status.textContent = unavailable ? 'お客さんの画像を読み込めませんでした。' : 'お客さんの画像を読み込んでいます…';
 }
 
 function setCustomerExpression(expression) {
   const allowed = customerLayer.dataset.expressionOptions.split(' ');
   customerLayer.dataset.expression = allowed.includes(expression) ? expression : 'neutral';
+  refreshCustomerPortrait();
 }
 
 function makeCounterRow(row, surface) {
@@ -218,6 +284,6 @@ serviceUI = globalThis.RuRiRuServiceUI.createServiceUI({
   products: PRODUCTS, counter,
   selectedItems: () => store.items().map(({ id, quantity }) => ({ id, quantity })),
   clearItems: () => { for (const { id, quantity } of store.items()) for (let n = 0; n < quantity; n++) counter.remove(id); },
-  onRender: renderTray, setExpression: setCustomerExpression, setMicState,
+  onRender: renderTray, setExpression: setCustomerExpression, setMicState, setCustomer: setCustomerProfile,
 });
 renderTray();
