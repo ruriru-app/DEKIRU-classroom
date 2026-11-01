@@ -47,7 +47,7 @@
           if (!isCurrent(request)) return;
           request.attempts++;
           let playback;
-          try { playback = voice.speak(effect.text); }
+          try { playback = voice.speak(effect.text, { kind: effect.kind }); }
           catch { playback = false; }
           const finished = ok => {
             if (!isCurrent(request)) return;

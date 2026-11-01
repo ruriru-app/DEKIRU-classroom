@@ -7,7 +7,7 @@
     'departure-finished', 'replay', 'pause', 'resume', 'technical-error', 'recover', 'items-changed', 'reset']);
 
   function createServiceUI({ products, counter, selectedItems, clearItems, onRender, setExpression, setMicState,
-    setCustomer = () => {}, customers, random = Math.random }) {
+    setCustomer = () => {}, customers, random = Math.random, level = 4 }) {
     const el = id => document.getElementById(id);
     const customer = el('customer-layer'), transcript = el('transcript'), mic = el('mic-action');
     const action = el('service-action'), status = el('service-status');
@@ -28,6 +28,9 @@
     let session = makeSession(), runner, speech, stopped = false, suspendedByFullscreen = false;
     let permissionSuspended = false, deferredMicrophoneError = null;
     let previousTranscript = transcript.textContent, attemptItems = [], lastSpeechError = '';
+    let lastVoiceError = '';
+    const voiceErrorMessage = () => lastVoiceError === 'american-voice-unavailable'
+      ? 'この端末でアメリカ英語の音声を利用できません。端末やブラウザーの音声設定でアメリカ英語を追加して、もう一度試してください。' : '';
 
     function readSaved() {
       try {
@@ -84,8 +87,8 @@
       for (const effect of session.takeEffects()) runner.run(effect);
       if (previous !== 'technical' && session.view().phase === 'technical') {
         stopPlatform();
-        el('trouble-message').textContent = lastSpeechError || '音声を再生できませんでした。端末の音量や音声設定を確認してください。';
-        el('sound-recovered').textContent = lastSpeechError ? 'もう一度試す' : '聞こえた！';
+        el('trouble-message').textContent = lastSpeechError || voiceErrorMessage() || '音声を再生できませんでした。端末の音量や音声設定を確認してください。';
+        el('sound-recovered').textContent = lastSpeechError || voiceErrorMessage() ? 'もう一度試す' : '聞こえた！';
         if (!trouble.open) trouble.showModal();
       }
     }
@@ -162,15 +165,16 @@
       if (!voice) return;
       const select = el('customer-voice-choice'), current = requestedVoice;
       const voices = voice.getVoices();
-      select.replaceChildren(new Option('自動（お客さんに合わせる）', ''));
+      select.replaceChildren(new Option([1, 2, 3].includes(level) ? '自動（アメリカ英語）' : '自動（お客さんに合わせる）', ''));
       for (const item of voices) select.add(new Option(`${item.name} (${item.lang})`, item.voiceURI));
       if (voices.some(item => item.voiceURI === current)) select.value = current;
       const chosen = voices.find(item => item.voiceURI === voice.selectedVoice());
       el('voice-status').textContent = chosen ? `現在の声：${chosen.name}` : '英語の音声候補を読み込んでいます。';
     }
     voice = globalThis.RuRiRuCustomerVoice.createCustomerVoice({
-      rate: 1,
-      onStart: () => runner?.audioStarted(),
+      level,
+      onStart: () => { lastVoiceError = ''; runner?.audioStarted(); },
+      onError: error => { lastVoiceError = error; },
       onVoicesChanged: refreshVoiceChoices,
     });
     try {
@@ -270,13 +274,15 @@
     });
     el('sound-test').addEventListener('click', async () => {
       el('sound-test').disabled = true;
+      lastVoiceError = '';
       const ok = await voice.speak('Hello!');
       el('sound-test').disabled = false;
-      el('trouble-message').textContent = ok ? '聞こえたら「聞こえた！」を押してください。' : '端末の音量・出力先・英語音声の設定を確認し、もう一度試してください。';
+      el('trouble-message').textContent = ok ? '聞こえたら「聞こえた！」を押してください。'
+        : voiceErrorMessage() || '端末の音量・出力先・英語音声の設定を確認し、もう一度試してください。';
     });
     el('sound-recovered').addEventListener('click', () => {
       voice.cancel(); trouble.close();
-      lastSpeechError = '';
+      lastSpeechError = ''; lastVoiceError = '';
       send({ type: 'recover' });
       if (!session.view().audio && session.view().canReplay) send({ type: 'replay', technical: true });
     });

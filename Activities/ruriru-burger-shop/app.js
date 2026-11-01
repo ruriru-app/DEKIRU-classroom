@@ -20,7 +20,6 @@ const servedItems = document.querySelector('#served-items');
 const customerLayer = document.querySelector('#customer-layer');
 const customerImages = [...document.querySelectorAll('[data-customer-expression]')];
 const preparedItems = document.querySelector('#prepared-items');
-const preparationStatus = document.querySelector('#preparation-status');
 let lastCounterMarkupKey = '';
 let customerProfile = globalThis.RuRiRuCustomers.CUSTOMERS[0];
 let portraitGeneration = 0, lastLoadedExpression = '';
@@ -239,8 +238,6 @@ function renderTray() {
   const view = counter.view();
   syncMenuQuantities(view.items);
   document.body.dataset.counterPhase = view.phase;
-  preparationStatus.textContent = view.phase === 'presented'
-    ? `受け渡し中 ${view.count}個` : `準備中 ${view.count}/${view.capacity}個`;
   const markupKey = JSON.stringify([view.phase, view.items.map(({ id, quantity }) => [id, quantity])]);
   if (markupKey !== lastCounterMarkupKey) {
     lastCounterMarkupKey = markupKey;
@@ -281,7 +278,7 @@ setMicState('idle');
 renderProducts();
 renderTray();
 serviceUI = globalThis.RuRiRuServiceUI.createServiceUI({
-  products: PRODUCTS, counter,
+  level: 4, products: PRODUCTS, counter,
   selectedItems: () => store.items().map(({ id, quantity }) => ({ id, quantity })),
   clearItems: () => { for (const { id, quantity } of store.items()) for (let n = 0; n < quantity; n++) counter.remove(id); },
   onRender: renderTray, setExpression: setCustomerExpression, setMicState, setCustomer: setCustomerProfile,

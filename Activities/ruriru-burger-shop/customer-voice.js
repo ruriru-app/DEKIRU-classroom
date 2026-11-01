@@ -6,7 +6,8 @@
     onError = () => {},
     onStart = () => {},
     onVoicesChanged = () => {},
-    rate = 1,
+    level = 4,
+    rate,
     voiceIndex,
     voiceWaitMs = 1000,
     setTimer = (callback, delay) => globalThis.setTimeout(callback, delay),
@@ -15,6 +16,13 @@
   } = {}) {
     let active = null, preferredVoice = '', listeningForVoices = false, initialVoiceWaitComplete = false;
     let customerProfile = null;
+    const americanOnly = [1, 2, 3].includes(level);
+    const defaultRate = level === 1 ? .8 : level === 2 ? .9 : 1;
+    const productGap = level === 1 ? 600 : level === 2 ? 300 : 0;
+    const quantity = '(?:one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|an?|\\d+)\\b';
+    const productBoundary = new RegExp(`(?<=,)\\s+(?=(?:and\\s+)?${quantity})|\\s+(?=and\\s+${quantity})`, 'i');
+    const speechParts = (text, kind) => productGap && ['order', 'replay', 'corrective'].includes(kind)
+      ? text.split(productBoundary) : [text];
     const available = () => typeof synthesis?.speak === 'function'
       && typeof synthesis?.cancel === 'function' && typeof Utterance === 'function';
 
@@ -26,7 +34,9 @@
     function readVoices() {
       try {
         if (typeof synthesis?.getVoices !== 'function') return null;
-        return Array.from(synthesis.getVoices() || []).filter(voice => /^en(?:[-_]|$)/i.test(voice?.lang));
+        return Array.from(synthesis.getVoices() || []).filter(voice => americanOnly
+          ? String(voice?.lang || '').replace(/_/g, '-').toLowerCase() === 'en-us'
+          : /^en(?:[-_]|$)/i.test(voice?.lang));
       } catch { return null; }
     }
     const describe = voices => voices.map(voice => ({ name: String(voice.name || ''), lang: String(voice.lang || ''), voiceURI: identifier(voice) }));
@@ -42,7 +52,7 @@
     }
     function desiredVoiceReady(voices) {
       if (!voices?.length) return false;
-      if (preferredVoice) return Boolean(preferred(voices));
+      if (preferredVoice && (!americanOnly || preferred(voices))) return Boolean(preferred(voices));
       return (!customerProfile && hasExplicitIndex()) || voices.some(matchesProfile);
     }
     function voicesChanged() {
@@ -79,6 +89,7 @@
       active = null;
       if (session.timer !== null) clearTimer(session.timer);
       if (session.waitTimer !== null) clearTimer(session.waitTimer);
+      if (session.gapTimer !== null) clearTimer(session.gapTimer);
       // Invalidate first: cancel() may dispatch end/error synchronously.
       if (stop) {
         try { synthesis.cancel(); } catch { /* Playback is already invalidated. */ }
@@ -92,41 +103,73 @@
       if (active) complete(active, false, null, true);
     }
 
+    function playPart(session, index = 0) {
+      if (active !== session) return;
+      let utterance = session.utterance;
+      if (index > 0) {
+        try { utterance = new Utterance(session.parts[index]); }
+        catch { complete(session, false, 'start-failed', true); return; }
+      }
+      session.partIndex = index;
+      session.utterance = utterance;
+      const current = () => active === session && session.utterance === utterance;
+      utterance.lang = americanOnly ? 'en-US' : session.voice?.lang || 'en-US';
+      if (session.voice) utterance.voice = session.voice;
+      utterance.rate = Number.isFinite(rate) && rate > 0 ? rate : defaultRate;
+      utterance.pitch = customerProfile?.pitch || 1;
+      utterance.onstart = () => {
+        if (!current() || session.started) return;
+        session.started = true;
+        onStart(session.text);
+      };
+      utterance.onend = () => {
+        if (!current()) return;
+        // Invalidate this segment before the gap so repeated end/error events
+        // cannot finish the order or skip its next product.
+        session.utterance = null;
+        if (session.timer !== null) { clearTimer(session.timer); session.timer = null; }
+        if (index === session.parts.length - 1) { complete(session, true); return; }
+        session.gapTimer = setTimer(() => {
+          if (active !== session || session.partIndex !== index || session.utterance !== null) return;
+          clearTimer(session.gapTimer); session.gapTimer = null;
+          playPart(session, index + 1);
+        }, productGap);
+      };
+      utterance.onerror = event => {
+        if (current()) complete(session, false, event?.error || 'synthesis-error');
+      };
+      const delay = Number.isFinite(timeoutMs) && timeoutMs > 0 ? timeoutMs : 20000;
+      session.timer = setTimer(() => {
+        if (current()) complete(session, false, 'playback-timeout', true);
+      }, delay);
+      try { synthesis.speak(utterance); }
+      catch { if (current()) complete(session, false, 'start-failed', true); }
+    }
+
     function beginPlayback(session) {
       if (active !== session || session.playbackRequested) return;
       session.playbackRequested = true;
       session.waiting = false;
       initialVoiceWaitComplete = true;
       if (session.waitTimer !== null) { clearTimer(session.waitTimer); session.waitTimer = null; }
-      const voice = choose(readVoices());
-      if (voice) { session.utterance.voice = voice; session.utterance.lang = voice.lang; }
-      const delay = Number.isFinite(timeoutMs) && timeoutMs > 0 ? timeoutMs : 20000;
-      session.timer = setTimer(() => complete(session, false, 'playback-timeout', true), delay);
-      try { synthesis.speak(session.utterance); }
-      catch { complete(session, false, 'start-failed', true); }
+      session.voice = choose(readVoices());
+      if (americanOnly && !session.voice) { complete(session, false, 'american-voice-unavailable'); return; }
+      playPart(session);
     }
 
-    function speak(text) {
+    function speak(text, { kind } = {}) {
       cancel();
       return new Promise(resolve => {
         const value = typeof text === 'string' ? text.trim() : '';
         if (!value) { resolve(false); onError('empty-text'); return; }
         if (!available()) { resolve(false); onError('not-supported'); return; }
+        const parts = speechParts(value, kind);
         let utterance;
-        try { utterance = new Utterance(value); }
+        try { utterance = new Utterance(parts[0]); }
         catch { resolve(false); onError('start-failed'); return; }
-        const session = { utterance, resolve, timer: null, waitTimer: null, started: false, waiting: false, playbackRequested: false };
+        const session = { utterance, text: value, parts, partIndex: 0, voice: null, resolve,
+          timer: null, waitTimer: null, gapTimer: null, started: false, waiting: false, playbackRequested: false };
         active = session;
-        utterance.lang = 'en-US';
-        utterance.rate = Number.isFinite(rate) && rate > 0 ? rate : 1;
-        utterance.pitch = customerProfile?.pitch || 1;
-        utterance.onstart = () => {
-          if (active !== session || session.started) return;
-          session.started = true;
-          onStart(value);
-        };
-        utterance.onend = () => complete(session, true);
-        utterance.onerror = event => complete(session, false, event?.error || 'synthesis-error');
         onState('speaking');
         listenForVoices();
         const voices = readVoices();
