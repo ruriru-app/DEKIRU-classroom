@@ -23,14 +23,23 @@
   function orderPhrase(order, products) {
     const named = order.map(({ id, quantity }) => {
       const product = products.find(item => item.id === id);
-      const singular = id === 'french-fries' ? 'fries' : product.name.toLowerCase();
-      const plural = id === 'french-fries' || /s$/.test(singular) ? singular : `${singular}s`;
+      const serving = {
+        'french-fries': ['fries', 'fries'],
+        'chicken-nuggets': ['box of nuggets', 'boxes of nuggets'],
+        'onion-rings': ['order of onion rings', 'orders of onion rings'],
+        'water': ['cup of water', 'cups of water'],
+      }[id];
+      const singular = serving ? serving[0] : product.name.toLowerCase();
+      const plural = serving ? serving[1] : /s$/.test(singular) ? singular : `${singular}s`;
       return `${counts[quantity] || quantity} ${quantity === 1 ? singular : plural}`;
     });
     return named.length === 1 ? named[0] : named.length === 2 ? named.join(' and ') : `${named.slice(0, -1).join(', ')}, and ${named.at(-1)}`;
   }
 
-  function createServiceSession({ products, customers, order = defaultOrder, now = Date.now, greeting = 'Hello!' } = {}) {
+  function createServiceSession({ level = 4, products, customers, order = defaultOrder, now = Date.now, greeting = 'Hello!' } = {}) {
+    const rules = globalThis.RuRiRuLevels ? globalThis.RuRiRuLevels.getLevelRules(level) : level === 4 ?
+      { typeMin: 3, typeMax: 5, totalMin: 6, totalMax: 12, perTypeMax: 5 } : null;
+    if (!rules) throw new RangeError('LEVEL must be an integer from 1 to 4; load level-config.js for all levels');
     if (!Array.isArray(products) || !products.length || products.some(product =>
       typeof product?.id !== 'string' || !product.id.trim() || typeof product.name !== 'string' || !product.name.trim() ||
       !Number.isSafeInteger(product.price) || product.price < 0) || new Set(products.map(product => product.id)).size !== products.length) {
@@ -41,15 +50,15 @@
       matchOrder(customer.order, []);
       if (customer.order.some(line => !products.some(product => product.id === line.id))) throw new TypeError('Unknown ordered product');
       const totalQuantity = customer.order.reduce((sum, line) => sum + line.quantity, 0);
-      if (explicit && (customer.order.length < 3 || customer.order.length > 5 || totalQuantity < 6 || totalQuantity > 12 ||
-        customer.order.some(line => line.quantity > 5) || new Set(customer.order.map(line => line.id)).size !== customer.order.length)) {
-        throw new TypeError('Customer order must use 3–5 products, 6–12 items and at most 5 of each product');
+      if (customer.order.length < rules.typeMin || customer.order.length > rules.typeMax || totalQuantity < rules.totalMin || totalQuantity > rules.totalMax ||
+        customer.order.some(line => line.quantity > rules.perTypeMax) || new Set(customer.order.map(line => line.id)).size !== customer.order.length) {
+        throw new TypeError(`Customer order must use ${rules.typeMin}–${rules.typeMax} products, ${rules.totalMin}–${rules.totalMax} items and at most ${rules.perTypeMax} of each product`);
       }
       const expectedTotal = customer.order.reduce((sum, line) => sum + products.find(item => item.id === line.id).price * line.quantity, 0);
       if (!Number.isSafeInteger(expectedTotal)) throw new TypeError('Ordered product total is unsafe');
       if (explicit && (!['Hello!', 'Hi!'].includes(customer.greeting) ||
         typeof customer.orderText !== 'string' || customer.orderText.length > 2000 ||
-        !/^(?:I'd like .+, please\.|Can I have .+, please\?)$/.test(customer.orderText) ||
+        !(level < 4 ? /^I'd like .+, please\.$/ : /^(?:I'd like .+, please\.|Can I have .+, please\?)$/).test(customer.orderText) ||
         typeof customer.correctiveText !== 'string' || customer.correctiveText.length > 2000 || !/^I ordered .+\.$/.test(customer.correctiveText))) {
         throw new TypeError('Customer greeting and order text must use approved phrases');
       }
@@ -67,6 +76,7 @@
     let phase, expression, requestMode, audio, retryPending, remaining, stats;
     let handedOver, cachedPrice, submittedItems, orderIssued, lastOrderText, correctionCleared, attempt, suspended, operation, holdAfter;
     let customerIndex, completedCustomers, customerReplayCount, fixedOrder, expectedTotal, orderText, correctiveText, currentGreeting, customerId;
+    let hintUsed, hintVisible, errorReaction;
 
     function initializeCustomer(index) {
       customerIndex = index;
@@ -74,12 +84,13 @@
       phase = 'idle'; expression = 'neutral'; requestMode = 'question'; audio = null;
       retryPending = false; remaining = { question: 2, checkout: 2 };
       customerReplayCount = 0;
+      hintUsed = false; hintVisible = false; errorReaction = '';
       handedOver = false; cachedPrice = false; submittedItems = []; orderIssued = false;
       lastOrderText = orderText; correctionCleared = false; attempt = 'idle'; suspended = null; operation = null;
       holdAfter = null;
     }
     function initialize() {
-      stats = { questionMistakes: 0, productMistakes: 0, checkoutMistakes: 0, rescueUses: 0, replayCount: 0, penalty: 0 };
+      stats = { questionMistakes: 0, productMistakes: 0, checkoutMistakes: 0, rescueUses: 0, replayCount: 0, hintUses: 0, penalty: 0 };
       completedCustomers = 0; initializeCustomer(0);
       elapsed = 0; lastTime = now(); effects = [];
     }
@@ -117,9 +128,11 @@
       requestMode = kind === 'question' ? 'question' : kind === 'handoff' ? 'handoff' : 'price';
       expression = 'troubled';
       phase = `${kind}-feedback`;
-      speak(kind === 'question' ? 'Pardon?' : kind === 'handoff' ? "Where's my order?" : 'Really?', `${kind}-error`, kind);
+      errorReaction = kind === 'question' ? 'Pardon?' : kind === 'handoff' ? "Where's my order?" : 'Really?';
+      speak(errorReaction, `${kind}-error`, kind);
     }
     function success() {
+      hintVisible = false; errorReaction = '';
       phase = 'hold'; expression = 'neutral'; audio = null; attempt = 'idle';
       holdAfter = 'thanks';
       emit('hold', 1200);
@@ -128,6 +141,7 @@
       if (!matchOrder(fixedOrder, submittedItems).matches) {
         stats.productMistakes++; stats.penalty += 200;
         phase = 'product-feedback'; expression = 'angry';
+        hintVisible = false; errorReaction = '';
         cachedPrice = false; correctionCleared = false; lastOrderText = correctiveText;
         speak('This is not what I ordered.', 'product-complaint', 'product-complaint');
       } else if (!cachedPrice) mistake('price');
@@ -136,6 +150,7 @@
     function suspend(target, source) {
       if (['idle', 'complete', 'paused', 'technical'].includes(phase)) return;
       suspended = { phase, audio: audio ? { ...audio } : null, operation: operation ? { ...operation } : null };
+      hintVisible = false;
       phase = target; audio = null; operation = null; attempt = 'idle';
       if (source) suspended.source = source;
     }
@@ -164,6 +179,16 @@
       return orderIssued && attempt === 'idle' &&
         (phase === 'checkout' || phase === 'order' ||
           (phase === 'product-feedback' && audio?.kind === 'corrective' && audio.started));
+    }
+    function canHint() {
+      return level <= 2 && orderIssued && attempt === 'idle' &&
+        (phase === 'checkout' || phase === 'order' || (phase === 'product-feedback' && correctionCleared));
+    }
+    function reactionText() {
+      if (level === 4 || attempt !== 'idle' || ['paused', 'technical'].includes(phase)) return '';
+      if (errorReaction && (['question', 'checkout'].includes(phase) || /^(question|handoff|price)-feedback$/.test(phase))) return errorReaction;
+      if (level <= 2 && ['greeting', 'thanking'].includes(phase)) return audio?.text || '';
+      return '';
     }
     function dispatch(event = {}) {
       settleTime();
@@ -198,7 +223,7 @@
           break;
         }
         case 'attempt-start':
-          if (['question', 'checkout'].includes(phase) && !audio && !retryPending && attempt === 'idle') attempt = 'recording';
+          if (['question', 'checkout'].includes(phase) && !audio && !retryPending && attempt === 'idle') { attempt = 'recording'; hintVisible = false; }
           break;
         case 'attempt-finish': if (attempt === 'recording') attempt = 'processing'; break;
         case 'attempt-cancel': if (['question', 'checkout'].includes(phase)) attempt = 'idle'; break;
@@ -210,6 +235,7 @@
           if (phase === 'question') {
             if (normalizedQuestion(text) !== 'what would you like') mistake('question');
             else {
+              errorReaction = '';
               phase = 'hold'; holdAfter = 'order'; expression = 'neutral';
               emit('hold', 1200);
             }
@@ -219,6 +245,7 @@
           } else {
             if (requestMode === 'checkout') cachedPrice = correctPrice(text, expectedTotal);
             if (!hasHandoff(text)) { mistake('handoff'); break; }
+            errorReaction = ''; hintVisible = false;
             submittedItems = clone(Array.isArray(event.items) ? event.items : []);
             handedOver = true; phase = 'handoff'; expression = 'neutral'; emit('present', 550);
           }
@@ -253,6 +280,12 @@
           } else { phase = 'complete'; operation = null; effects.push({ type: 'complete' }); }
           break;
         case 'replay': replay(event.technical === true); break;
+        case 'hint-start':
+          if (!canHint()) break;
+          hintVisible = true;
+          if (!hintUsed) { hintUsed = true; stats.hintUses++; stats.penalty += 50; }
+          break;
+        case 'hint-end': hintVisible = false; break;
         case 'pause': suspend('paused'); break;
         case 'resume': if (phase === 'paused') restore(); break;
         case 'technical-error': suspend('technical', event.source || 'unknown'); break;
@@ -270,16 +303,17 @@
       const elapsedMs = elapsed + (timed() ? Math.max(0, now() - lastTime) : 0);
       const mistakes = stats.questionMistakes + stats.productMistakes + stats.checkoutMistakes;
       return {
-        customerId, customerIndex, customerNumber: customerIndex + 1, customerCount: customerPlan.length, completedCustomers,
+        level, customerId, customerIndex, customerNumber: customerIndex + 1, customerCount: customerPlan.length, completedCustomers,
         phase, expression, requestMode, requestPhase: suspended?.phase || phase,
         canRecord: ['question', 'checkout'].includes(phase) && !audio && !retryPending && attempt === 'idle',
         canEdit: attempt === 'idle' && (phase === 'checkout' || phase === 'order' || (phase === 'product-feedback' && correctionCleared)),
         canReplay: canReplay(), retryPending, remaining: { ...remaining },
+        canHint: canHint(), hintUsed, hintVisible: hintVisible && canHint(), reactionText: reactionText(),
         audio: audio ? { id: audio.id, text: audio.text, kind: audio.kind } : null,
-        handedOver, order: clone(fixedOrder), expectedTotal, orderText, correctiveText,
+        handedOver, order: clone(fixedOrder), expectedTotal, orderText: lastOrderText, initialOrderText: orderText, correctiveText,
         stats: { ...stats }, elapsedMs, timerRunning: timed(), complete: phase === 'complete',
         score: Math.max(0, 1000 - stats.penalty - Math.min(200, Math.round(elapsedMs / 1000 / customerPlan.length))),
-        stars: mistakes === 0 ? 3 : mistakes <= customerPlan.length ? 2 : 1,
+        stars: mistakes === 0 && stats.hintUses === 0 ? 3 : mistakes <= customerPlan.length ? 2 : 1,
       };
     }
     return { dispatch, view, takeEffects() { const result = effects; effects = []; return result; } };

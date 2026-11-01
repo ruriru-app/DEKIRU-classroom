@@ -1,5 +1,5 @@
 const {
-  PRODUCTS,
+  PRODUCTS: ALL_PRODUCTS,
   createOrderStore,
   formatYen,
   productArtwork,
@@ -7,7 +7,9 @@ const {
 } = globalThis.RuRiRu;
 const { createCounterSession, counterGeometry } = globalThis.RuRiRuCounter;
 let serviceUI;
-
+const level = globalThis.RuRiRuNormalRuntime?.level || 4;
+const PRODUCTS = globalThis.RuRiRuNormalRuntime?.products || ALL_PRODUCTS;
+const customerProfiles = globalThis.RuRiRuNormalRuntime?.profiles || globalThis.RuRiRuCustomers.CUSTOMERS;
 const store = createOrderStore(PRODUCTS);
 const counter = createCounterSession(store);
 const mainGrid = document.querySelector('#main-grid');
@@ -21,15 +23,11 @@ const customerLayer = document.querySelector('#customer-layer');
 const customerImages = [...document.querySelectorAll('[data-customer-expression]')];
 const preparedItems = document.querySelector('#prepared-items');
 let lastCounterMarkupKey = '';
-let customerProfile = globalThis.RuRiRuCustomers.CUSTOMERS[0];
+let customerProfile = customerProfiles[0];
 let portraitGeneration = 0, lastLoadedExpression = '';
 const portraitStates = new Map();
-// Warm all expressions before their customer arrives; retain the four layered
-// images so expression changes never replace the character element.
-const customerPreloads = globalThis.RuRiRuCustomers.CUSTOMERS.flatMap(profile =>
-  Object.values(profile.expressions).map(src => {
-    const image = document.createElement('img'); image.src = src; return image;
-  }));
+// The active customer's four expressions load together in setCustomerProfile.
+// Other candidates load only when selected, avoiding a full cast download at entry.
 
 function artworkMarkup(product, surface = 'menu') {
   const artwork = productArtwork(product, surface);
@@ -218,6 +216,10 @@ function renderProducts() {
   const desserts = PRODUCTS.filter(({ category }) => category === 'dessert');
   const drinks = PRODUCTS.filter(({ category }) => category === 'drink');
 
+  document.documentElement.style.setProperty('--main-count', main.length);
+  document.documentElement.style.setProperty('--left-rows', level < 4 ? Math.max(sides.length, desserts.length, 1) : 4);
+  document.documentElement.style.setProperty('--drink-rows', level < 4 ? 1 : 4);
+
   main.forEach((product) => mainGrid.append(makeCard(product)));
   sides.forEach((product, index) => {
     const card = makeCard(product, true);
@@ -278,7 +280,7 @@ setMicState('idle');
 renderProducts();
 renderTray();
 serviceUI = globalThis.RuRiRuServiceUI.createServiceUI({
-  level: 4, products: PRODUCTS, counter,
+  level, products: PRODUCTS, counter,
   selectedItems: () => store.items().map(({ id, quantity }) => ({ id, quantity })),
   clearItems: () => { for (const { id, quantity } of store.items()) for (let n = 0; n < quantity; n++) counter.remove(id); },
   onRender: renderTray, setExpression: setCustomerExpression, setMicState, setCustomer: setCustomerProfile,

@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#8CCBC2" />
+    <title>RuRiRu BURGER SHOP — LEVEL 4</title>
+    <link rel="stylesheet" href="./styles.css?v=20261102a" />
+  </head>
+  <body>
+    <div id="store-background" class="store-background" aria-hidden="true">
+      <img class="store-background-art" alt="" />
+    </div>
+    <img id="counter-art-layer" class="counter-art-layer" alt="" aria-hidden="true" />
+
+    <main class="game-shell" aria-label="RuRiRu BURGER SHOP LEVEL 4">
+      <div class="top-row">
+          <aside id="shop-info-tile" class="shop-info-tile" aria-label="RuRiRu BURGER SHOP LEVEL 4 NORMAL 接客チャレンジ">
+            <span class="brand" aria-label="RuRiRu BURGER SHOP">
+          <img class="packaging-logo" src="./assets/brand-ruriru-burger-logo-v1.png" alt="RuRiRu BURGER SHOP" />
+            </span>
+            <span class="tile-status">
+              <span class="level-pill"><span>LEVEL</span><strong>4</strong></span>
+              <span class="mode-line"><span class="mode-pill">NORMAL</span><span id="customer-progress" class="customer-progress" aria-live="polite">1 / 4 人</span></span>
+            </span>
+            <div class="service-tools">
+              <span id="service-status" class="lesson-label" role="status">接客チャレンジ</span>
+              <button id="service-action" type="button">接客スタート</button>
+              <button id="sound-action" type="button" aria-label="音声が聞こえない" title="音声が聞こえない">🔈?</button>
+              <button id="pause-action" type="button" aria-label="一時停止" title="一時停止">Ⅱ</button>
+            </div>
+          </aside>
+        <section id="main-menu" class="menu-section main-section" aria-label="MAIN商品メニュー">
+          <div id="main-grid" class="main-grid"></div>
+        </section>
+      </div>
+
+      <div class="middle-grid">
+        <section id="side-dessert-menu" class="menu-section compact-menu" aria-label="サイドとデザートの商品メニュー">
+          <div id="side-dessert-grid" class="compact-grid split-grid"></div>
+        </section>
+
+        <section id="service-window" class="service-window" aria-label="南国リゾート店の接客窓口">
+          <div id="reaction-bubble" class="reaction-bubble" hidden aria-live="polite"></div>
+          <div id="customer-layer" class="character customer-facing customer-sprite from-right" data-expression="neutral" data-expression-options="neutral troubled angry smile" aria-label="店員の方を向いているお客さん">
+            <img class="customer-image" data-customer-expression="neutral" alt="" aria-hidden="true" draggable="false" />
+            <img class="customer-image" data-customer-expression="troubled" alt="" aria-hidden="true" draggable="false" />
+            <img class="customer-image" data-customer-expression="angry" alt="" aria-hidden="true" draggable="false" />
+            <img class="customer-image" data-customer-expression="smile" alt="" aria-hidden="true" draggable="false" />
+            <span id="customer-image-status" class="customer-image-status" role="status" hidden></span>
+          </div>
+          <div class="service-counter" aria-label="店員側の受け渡しカウンター">
+            <div id="served-items" class="served-items" aria-live="polite"></div>
+          </div>
+        </section>
+
+        <section id="drink-menu" class="menu-section compact-menu" aria-label="ドリンクの商品メニュー">
+          <div id="drink-grid" class="compact-grid"></div>
+        </section>
+      </div>
+
+      <section class="checkout-panel" aria-label="接客と音声認識">
+        <div class="learning-aids"><div id="service-pattern" class="service-pattern" hidden></div><button id="order-hint" class="order-hint" type="button" hidden>注文を表示（長押し）</button><div id="order-hint-text" class="order-hint-text" hidden></div></div>
+        <div id="tray" class="tray-box">
+          <div id="prepared-items" class="preparation-items" aria-label="作業用カウンターの商品" hidden></div>
+        </div>
+
+        <div id="total" class="total-box" aria-live="polite">
+          <span>TOTAL</span><strong id="total-value">¥0</strong>
+        </div>
+
+        <div id="you-said" class="said-box">
+          <div class="panel-label"><strong>YOU SAID</strong><small>きこえた英語</small><span id="retry-remaining" hidden></span></div>
+          <div id="transcript" class="transcript" tabindex="0" aria-live="polite">マイクを押して、お客さんに英語で接客してみよう！</div>
+        </div>
+
+        <div id="mic-controls" class="mic-box">
+          <button id="mic-action" class="mic-button start" type="button" data-state="idle" aria-pressed="false"><span aria-hidden="true">🎙</span>マイクスタート</button>
+        </div>
+      </section>
+    </main>
+
+    <div id="prototype-note" class="prototype-note" role="status" hidden></div>
+    <dialog id="service-trouble" class="service-dialog" aria-labelledby="trouble-title">
+      <h2 id="trouble-title">音声を確かめよう</h2>
+      <p id="trouble-message">端末の音量と音声の設定を確認してください。</p>
+      <label class="voice-choice-label" for="customer-voice-choice">お客さんの声</label>
+      <select id="customer-voice-choice"><option value="">自動（お客さんに合わせる）</option></select>
+      <small id="voice-status" role="status"></small>
+      <button id="sound-test" type="button">テスト音声を聞く</button>
+      <button id="sound-recovered" type="button">聞こえた！</button>
+      <button id="save-exit" type="button" class="subtle-action">状態を保存して終了</button>
+    </dialog>
+    <dialog id="service-pause" class="service-dialog" aria-labelledby="pause-title">
+      <h2 id="pause-title">ひと休みしましょう</h2>
+      <p>準備した商品と接客の状態を保っています。</p>
+      <button id="resume-action" type="button">接客を再開</button>
+      <button id="pause-save" type="button" class="subtle-action">状態を保存して終了</button>
+    </dialog>
+    <dialog id="service-result" class="service-dialog" aria-labelledby="result-title">
+      <h2 id="result-title">接客できました！</h2>
+      <div id="result-rating" class="result-rating"></div>
+      <p id="result-points"></p><p id="result-details"></p>
+      <small id="result-context">LEVEL 4 NORMAL · 4人</small>
+      <button id="next-level" type="button" hidden>次のLEVELへ</button>
+      <button id="play-again" type="button">新しいお客さんでもう一度</button>
+      <button id="choose-level" type="button" class="subtle-action">LEVELを選ぶ</button>
+    </dialog>
+    <dialog id="fullscreen-gate" class="fullscreen-gate" aria-labelledby="fullscreen-title" aria-describedby="fullscreen-message">
+      <span class="fullscreen-brand">RuRiRu <small>BURGER SHOP</small></span>
+      <span class="fullscreen-level">LEVEL 4 · NORMAL</span>
+      <h1 id="fullscreen-title">お店を開きましょう</h1>
+      <p id="fullscreen-message" aria-live="polite">商品やお客さんが見やすい全画面で遊びましょう。</p>
+      <button id="microphone-check" class="fullscreen-start microphone-check" type="button" autofocus>マイクを確認する</button>
+      <p id="microphone-status" class="microphone-status" role="status">最初に通常画面でマイクを確認してから、全画面で始めます。</p>
+      <button id="fullscreen-start" class="fullscreen-start" type="button" disabled>全画面で始める</button>
+      <button id="fullscreen-fallback" class="fullscreen-fallback" type="button" hidden>この画面のまま続ける</button>
+      <small class="fullscreen-help">全画面は Esc キーで解除できます。</small>
+    </dialog>
+    <script src="./store.js?v=20261102a"></script>
+    <script src="./counter.js?v=20261102a"></script>
+    <script src="./level-config.js?v=20261102a"></script>
+    <script src="./level-menus.js?v=20261102a"></script>
+    <script src="./normal-progression.js?v=20261102a"></script>
+    <script src="./speech.js?v=20261102a"></script>
+    <script src="./service-validation.js?v=20261102a"></script>
+    <script src="./customer-catalog.js?v=20261102a"></script>
+    <script src="./normal-runtime.js?v=20261102a"></script>
+    <script src="./service-plan.js?v=20261102a"></script>
+    <script src="./customer-voice.js?v=20261102a"></script>
+    <script src="./service-session.js?v=20261102a"></script>
+    <script src="./service-effects.js?v=20261102a"></script>
+    <script src="./service-ui.js?v=20261102a"></script>
+    <script src="./app.js?v=20261102a"></script>
+    <script src="./microphone-setup.js?v=20261102a"></script>
+    <script src="./fullscreen.js?v=20261102a"></script>
+  </body>
+</html>

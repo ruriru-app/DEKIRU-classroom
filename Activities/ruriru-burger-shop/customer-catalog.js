@@ -16,6 +16,44 @@
     voice: Object.freeze({ gender, voiceIndex, pitch }),
   })));
 
+  const lowerDefinitions = {
+    1: [
+      ['cyclist-boy', .72, 88, 1160, 514, 'masculine', 0, 1.12],
+      ['commuter-woman', 1, 11, 905, 508, 'feminine', 0, 1],
+      ['senior-man', .90, 31, 965, 512, 'masculine', 1, .90],
+    ],
+    2: [
+      ['family-father', 1.08, 79, 950, 430, 'masculine', 0, .97],
+      ['shopper-woman', .82, 109, 786, 515, 'feminine', 1, 1.02],
+      ['school-girl', 1, 101, 1000, 520, 'feminine', 0, 1.10],
+      ['school-boy', 1.13, 50, 1145, 500, 'masculine', 1, 1.02],
+    ],
+    3: [
+      ['copper-woman', .96, 22, 940, 513, 'feminine', 0, 1.04],
+      ['silver-woman', .81, 32, 940, 508, 'feminine', 1, .94],
+      ['charcoal-man', 1.12, 38, 1150, 509, 'masculine', 0, .94],
+      ['campus-man', 1.18, 45, 1190, 507, 'masculine', 1, 1.06],
+      ['olive-woman', .88, 11, 927, 507, 'feminine', 2, 1],
+    ],
+  };
+  const pools = {4:CUSTOMERS};
+  for (const [level, records] of Object.entries(lowerDefinitions)) {
+    pools[level]=Object.freeze(records.map(([id,stature,headTop,waist,centerX,gender,voiceIndex,pitch])=>Object.freeze({
+      id:`level${level}-${id}`,level:Number(level),
+      expressions:Object.freeze(Object.fromEntries(expressions.map(expression=>{
+        const revision=Number(level)===3&&((id==='campus-man'&&expression==='smile')||(id==='charcoal-man'&&['smile','angry'].includes(expression)))?2:1;
+        return [expression,`./assets/customer-level${level}-${id}-${expression}-v${revision}.png`];
+      }))),
+      layout:Object.freeze({aspectRatio:2/3,scale:stature*waist/(waist-headTop),visibleFraction:waist/1536,headTop:headTop/1536,centerFraction:centerX/1024}),
+      voice:Object.freeze({gender,voiceIndex,pitch}),
+    })));
+  }
+  Object.freeze(pools);
+  function getCustomers(level=4) {
+    if(!Number.isInteger(level)||!Object.hasOwn(pools,level))throw new RangeError('LEVEL must be an integer from 1 to 4');
+    return pools[level];
+  }
+
   function customerGeometry({ profile = CUSTOMERS[0], counterY, topLimit, gapLeft, gapRight, viewportHeight, aspectRatio } = {}) {
     const layout = profile.layout;
     const ratio = Number.isFinite(aspectRatio) && aspectRatio > 0 ? aspectRatio : layout.aspectRatio;
@@ -27,15 +65,17 @@
     const reference = CUSTOMERS[0].layout;
     const preferredWidth = viewportHeight <= 610 ? 340 : viewportHeight <= 700 ? 380 : 420;
     const preferredUnit = preferredWidth / reference.aspectRatio * reference.visibleFraction;
-    const bodies = CUSTOMERS.includes(profile) ? CUSTOMERS : [...CUSTOMERS, profile];
+    const pool = profile.level ? getCustomers(profile.level) : CUSTOMERS;
+    const bodies = pool.includes(profile) ? pool : [...pool, profile];
     const tallest = Math.max(...bodies.map(body => body.layout.scale));
     const widest = Math.max(...bodies.map(body => body.layout.scale /
       body.layout.visibleFraction * (body === profile ? ratio : body.layout.aspectRatio)));
     const unit = Math.max(0, Math.min(preferredUnit,
       (counterY - topLimit) / tallest, (gapRight - gapLeft - 24) / widest));
     const width = unit * layout.scale / visibleFraction * ratio;
-    return { left: (gapLeft + gapRight) / 2, top: counterY, width, height: width / ratio, visibleFraction };
+    return { left: (gapLeft + gapRight) / 2 + (.5-(layout.centerFraction ?? .5))*width,
+      top: counterY, width, height: width / ratio, visibleFraction };
   }
 
-  globalThis.RuRiRuCustomers = Object.freeze({ CUSTOMERS, customerGeometry });
+  globalThis.RuRiRuCustomers = Object.freeze({ CUSTOMERS, getCustomers, customerGeometry });
 })();

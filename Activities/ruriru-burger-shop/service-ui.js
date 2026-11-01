@@ -1,10 +1,9 @@
 (() => {
   // Preserve older trial saves without replaying them under different judgement rules.
-  const storageKey = 'ruriru-level4-service-v6';
   const voiceChoiceKey = 'ruriru-customer-voice-v1';
   const eventTypes = new Set(['start', 'arrived', 'audio-started', 'audio-ended', 'attempt-start', 'attempt-finish',
     'attempt-cancel', 'submit', 'retry', 'handoff-finished', 'inspection-finished', 'hold-finished', 'correction-wait-finished',
-    'departure-finished', 'replay', 'pause', 'resume', 'technical-error', 'recover', 'items-changed', 'reset']);
+    'departure-finished', 'replay', 'hint-start', 'hint-end', 'pause', 'resume', 'technical-error', 'recover', 'items-changed', 'reset']);
 
   function createServiceUI({ products, counter, selectedItems, clearItems, onRender, setExpression, setMicState,
     setCustomer = () => {}, customers, random = Math.random, level = 4 }) {
@@ -13,29 +12,35 @@
     const action = el('service-action'), status = el('service-status');
     const remaining = el('retry-remaining'), trouble = el('service-trouble'), pauseDialog = el('service-pause');
     const result = el('service-result'), servedItems = el('served-items');
-    const profiles = globalThis.RuRiRuCustomers.CUSTOMERS;
-    const expectedCustomerCount = customers ? customers.length : 4;
+    const hint = el('order-hint'), hintText = el('order-hint-text'), bubble = el('reaction-bubble'), pattern = el('service-pattern');
+    const storageKey = level === 4 ? 'ruriru-level4-service-v6' : `ruriru-level${level}-service-v1`;
+    const rules = globalThis.RuRiRuLevels?.getLevelRules(level) ||
+      { customerCount: 4, typeMin: 3, typeMax: 5, totalMin: 6, totalMax: 12, perTypeMax: 5 };
+    const profiles = globalThis.RuRiRuCustomers.getCustomers?.(level) || globalThis.RuRiRuCustomers.CUSTOMERS;
+    const expectedCustomerCount = customers ? customers.length : rules.customerCount;
     const clone = value => JSON.parse(JSON.stringify(value));
-    const freshPlan = () => customers ? clone(customers) : globalThis.RuRiRuServicePlan.createLevel4Plan({
-      products, customerIds: profiles.map(profile => profile.id), random,
+    const freshPlan = () => customers ? clone(customers) : (globalThis.RuRiRuServicePlan.createNormalPlan || globalThis.RuRiRuServicePlan.createLevel4Plan)({
+      level, products, customerIds: profiles.map(profile => profile.id), random,
     });
     let saved = readSaved();
     let customerPlan = saved ? clone(saved.customers) : freshPlan(), renderedCustomerId = '';
     let history = [], clockOffset = 0, replayClock = null;
     const now = () => replayClock === null ? Date.now() - clockOffset : replayClock;
     const canRetry = view => view.retryPending && ['question', 'checkout'].includes(view.phase) && !view.audio;
-    const makeSession = () => globalThis.RuRiRuServiceSession.createServiceSession({ products, customers: customerPlan, now });
+    const makeSession = () => globalThis.RuRiRuServiceSession.createServiceSession({ level, products, customers: customerPlan, now });
     let session = makeSession(), runner, speech, stopped = false, suspendedByFullscreen = false;
     let permissionSuspended = false, deferredMicrophoneError = null;
     let previousTranscript = transcript.textContent, attemptItems = [], lastSpeechError = '';
     let lastVoiceError = '';
+    let greetingText = '', greetingTimer = null, previousBubblePhase = '', hintHeld = false;
     const voiceErrorMessage = () => lastVoiceError === 'american-voice-unavailable'
       ? 'この端末でアメリカ英語の音声を利用できません。端末やブラウザーの音声設定でアメリカ英語を追加して、もう一度試してください。' : '';
 
     function readSaved() {
       try {
         const value = JSON.parse(localStorage.getItem(storageKey) || 'null');
-        if (!value || value.version !== 6 || !validPlan(value.customers) || !Array.isArray(value.events) || value.events.length > 5000 ||
+        if (!value || value.version !== 6 || (level < 4 ? value.level !== level : value.level !== undefined && value.level !== 4) ||
+            !validPlan(value.customers) || !Array.isArray(value.events) || value.events.length > 5000 ||
             !Number.isFinite(value.at) || !Array.isArray(value.items)) return null;
         let previous = -Infinity;
         for (const entry of value.events) {
@@ -44,13 +49,13 @@
         }
         if (value.at < previous || new Set(value.items.map(line => line?.id)).size !== value.items.length ||
           value.items.some(line => !line || !products.some(p => p.id === line.id) ||
-          !Number.isInteger(line.quantity) || line.quantity < 1 || line.quantity > 12) ||
-          value.items.reduce((n, line) => n + line.quantity, 0) > 12) return null;
+          !Number.isInteger(line.quantity) || line.quantity < 1 || line.quantity > rules.totalMax) ||
+          value.items.reduce((n, line) => n + line.quantity, 0) > rules.totalMax) return null;
         // Validate history with an isolated clock and session. Effects remain
         // data here, so a damaged save cannot touch the current UI or counter.
         let validationClock = value.events[0]?.at ?? value.at;
         const validator = globalThis.RuRiRuServiceSession.createServiceSession({
-          products, customers: value.customers, now: () => validationClock,
+          level, products, customers: value.customers, now: () => validationClock,
         });
         for (const entry of value.events) {
           validationClock = entry.at;
@@ -65,12 +70,12 @@
         new Set(plan.map(entry => entry?.customerId)).size === plan.length && plan.every(entry =>
           entry && profiles.some(profile => profile.id === entry.customerId) && ['Hello!', 'Hi!'].includes(entry.greeting) &&
           typeof entry.orderText === 'string' && entry.orderText.length <= 2000 &&
-          /^(?:I'd like .+, please\.|Can I have .+, please\?)$/.test(entry.orderText) &&
+          (level < 4 ? /^I'd like .+, please\.$/ : /^(?:I'd like .+, please\.|Can I have .+, please\?)$/).test(entry.orderText) &&
           typeof entry.correctiveText === 'string' && entry.correctiveText.length <= 2000 && /^I ordered .+\.$/.test(entry.correctiveText) &&
-          Array.isArray(entry.order) && entry.order.length >= 3 && entry.order.length <= 5 &&
+          Array.isArray(entry.order) && entry.order.length >= rules.typeMin && entry.order.length <= rules.typeMax &&
           new Set(entry.order.map(line => line?.id)).size === entry.order.length && entry.order.every(line =>
-            line && products.some(product => product.id === line.id) && Number.isInteger(line.quantity) && line.quantity >= 1 && line.quantity <= 5) &&
-          entry.order.reduce((n, line) => n + line.quantity, 0) >= 6 && entry.order.reduce((n, line) => n + line.quantity, 0) <= 12);
+            line && products.some(product => product.id === line.id) && Number.isInteger(line.quantity) && line.quantity >= 1 && line.quantity <= rules.perTypeMax) &&
+          entry.order.reduce((n, line) => n + line.quantity, 0) >= rules.totalMin && entry.order.reduce((n, line) => n + line.quantity, 0) <= rules.totalMax);
     }
     function closeDialogs() {
       for (const dialog of [trouble, pauseDialog, result]) if (dialog.open) dialog.close();
@@ -110,6 +115,7 @@
       setExpression(view.expression);
       customer.hidden = stopped || ['idle', 'complete'].includes(view.phase);
       const microphoneState = speech?.state() || 'idle';
+      renderEnglishAids(view, microphoneState);
       const retrySuggested = view.retryPending || (view.expression === 'troubled' && ['question', 'checkout'].includes(view.phase));
       setMicState(microphoneState, retrySuggested);
       mic.disabled = stopped || (microphoneState === 'idle' ? !(view.canRecord || canRetry(view)) : false);
@@ -130,6 +136,33 @@
       remaining.textContent = `やり直し あと${view.remaining[view.requestMode === 'question' ? 'question' : 'checkout']}回`;
       el('pause-action').disabled = stopped || ['idle', 'complete', 'paused', 'technical'].includes(view.phase);
       onRender();
+    }
+    function renderEnglishAids(view, microphoneState) {
+      if (view.phase === 'greeting' && level <= 2) {
+        greetingText = view.reactionText || '';
+        if (greetingTimer !== null) clearTimeout(greetingTimer);
+        greetingTimer = null;
+      } else if (previousBubblePhase === 'greeting' && view.phase === 'question' && greetingText) {
+        greetingTimer = setTimeout(() => { greetingText = ''; greetingTimer = null; render(); }, 1000);
+      } else if (view.phase !== 'question' || view.reactionText || microphoneState !== 'idle' || !view.canRecord) {
+        greetingText = '';
+        if (greetingTimer !== null) clearTimeout(greetingTimer);
+        greetingTimer = null;
+      }
+      previousBubblePhase = view.phase;
+      if (bubble) {
+        const text = view.reactionText || (view.phase === 'question' ? greetingText : '');
+        bubble.textContent = text;
+        bubble.hidden = stopped || !text || microphoneState !== 'idle';
+      }
+      if (pattern) {
+        const text = view.requestMode === 'question' ? 'What would you like?' : view.requestMode === 'handoff' ? 'Here you are.' :
+          view.requestMode === 'price' ? "It's ～ yen." : "Here you are. It's ～ yen.";
+        pattern.textContent = text;
+        pattern.hidden = stopped || level > 2 || microphoneState !== 'idle' || !(view.canRecord || canRetry(view));
+      }
+      if (hint) { hint.hidden = level > 2; hint.disabled = stopped || !view.canHint; }
+      if (hintText) { hintText.textContent = view.hintVisible ? view.orderText : ''; hintText.hidden = stopped || !view.hintVisible; }
     }
     function fadeOldProducts(effect) {
       const original = el('served-items');
@@ -158,6 +191,9 @@
       el('result-points').textContent = `${view.score} 点`;
       const s = view.stats;
       el('result-details').textContent = `接客 ${Math.round(view.elapsedMs / 1000)}秒 ／ 質問ミス ${s.questionMistakes}・商品ミス ${s.productMistakes}・会計ミス ${s.checkoutMistakes}回`;
+      if (el('result-context')) el('result-context').textContent = `LEVEL ${level} NORMAL · ${view.customerCount}人`;
+      if (el('next-level')) el('next-level').hidden = view.stars !== 3 || level >= 4;
+      globalThis.RuRiRuProgress?.recordResult(level, { stars: view.stars, score: view.score, elapsedMs: view.elapsedMs, stats: view.stats });
       if (!result.open) result.showModal();
     }
     let voice, requestedVoice = '';
@@ -257,6 +293,26 @@
     document.addEventListener('keydown', event => {
       if (event.key === 'Escape' && speech.state() !== 'idle') { event.preventDefault(); cancelAttempt(); }
     });
+    function startHint(event) {
+      if (!hint || hint.disabled || hint.hidden || !session.view().canHint) return;
+      event.preventDefault();
+      if (hintHeld) return;
+      hintHeld = true;
+      if (event.pointerId !== undefined) hint.setPointerCapture?.(event.pointerId);
+      send({ type: 'hint-start' });
+    }
+    function endHint() {
+      if (!hintHeld && !session.view().hintVisible) return;
+      hintHeld = false; send({ type: 'hint-end' });
+    }
+    hint?.addEventListener('pointerdown', startHint);
+    for (const type of ['pointerup', 'pointercancel', 'lostpointercapture', 'blur']) hint?.addEventListener(type, endHint);
+    hint?.addEventListener('keydown', event => { if ([' ', 'Enter'].includes(event.key)) startHint(event); });
+    hint?.addEventListener('keyup', event => { if ([' ', 'Enter'].includes(event.key)) { event.preventDefault(); endHint(); } });
+    document.addEventListener('pointerup', endHint);
+    document.addEventListener('pointercancel', endHint);
+    window.addEventListener?.('blur', endHint);
+    document.addEventListener('visibilitychange', () => { if (document.hidden) endHint(); });
     action.addEventListener('click', () => {
       if (saved && (stopped || session.view().phase === 'idle')) restoreSaved();
       else if (session.view().phase === 'idle') send({ type: 'start' });
@@ -288,11 +344,13 @@
     });
     function saveAndExit() {
       stopPlatform();
-      const payload = { version: 6, customers: clone(customerPlan), at: now(), events: history, items: selectedItems(),
+      endHint();
+      const payload = { version: 6, ...(level < 4 ? { level } : {}), customers: clone(customerPlan), at: now(), events: history, items: selectedItems(),
         presented: counter.view().phase === 'presented', transcript: transcript.textContent };
       try {
         localStorage.setItem(storageKey, JSON.stringify(payload));
         saved = payload; stopped = true; closeDialogs(); render();
+        window.location.assign('./index.html');
       } catch { el('trouble-message').textContent = 'このブラウザーでは保存できません。接客を再開するか、この画面を開いたままにしてください。'; }
     }
     el('save-exit').addEventListener('click', saveAndExit);
@@ -325,6 +383,10 @@
       transcript.textContent = 'マイクを押して、お客さんに英語で接客してみよう！';
       send({ type: 'start' });
     });
+    el('next-level')?.addEventListener('click', () => {
+      if (session.view().complete && session.view().stars === 3 && level < 4) window.location.assign(`./play.html?level=${level + 1}`);
+    });
+    el('choose-level')?.addEventListener('click', () => window.location.assign('./index.html'));
     document.addEventListener('ruriru-fullscreen', event => {
       if (!event.detail.playing && event.detail.microphonePending && speech.waitingForStart()) {
         if (!suspendedByFullscreen) {
