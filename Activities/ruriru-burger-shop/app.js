@@ -196,9 +196,9 @@ function renderTray() {
   syncCustomerToCounter();
 }
 
-function setMicState(state) {
+function setMicState(state, retrySuggested = false) {
   const views = {
-    idle: { className: 'start', label: '<span aria-hidden="true">🎙</span>マイクスタート' },
+    idle: { className: retrySuggested ? 'start retry' : 'start', label: retrySuggested ? 'もう一度' : '<span aria-hidden="true">🎙</span>マイクスタート' },
     listening: { className: 'done', label: 'できた！' },
     review: { className: 'cancel', label: 'キャンセル' },
   };

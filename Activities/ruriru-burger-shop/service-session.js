@@ -91,7 +91,7 @@
         stats.productMistakes++; stats.penalty += 200;
         phase = 'product-feedback'; expression = 'angry';
         cachedPrice = false; correctionCleared = false; lastOrderText = correctiveText;
-        speak(correctiveText, 'corrective', 'corrective');
+        speak('This is not what I ordered.', 'product-complaint', 'product-complaint');
       } else if (!cachedPrice) mistake('price');
       else success();
     }
@@ -123,7 +123,8 @@
     }
     function canReplay() {
       return orderIssued && attempt === 'idle' &&
-        (phase === 'checkout' || phase === 'order' || (phase === 'product-feedback' && audio?.started));
+        (phase === 'checkout' || phase === 'order' ||
+          (phase === 'product-feedback' && audio?.kind === 'corrective' && audio.started));
     }
     function dispatch(event = {}) {
       settleTime();
@@ -138,10 +139,6 @@
         case 'audio-started':
           if (!audio || audio.id !== event.id || audio.started) break;
           audio.started = true;
-          if (audio.kind === 'corrective' && !correctionCleared) {
-            correctionCleared = true; handedOver = false;
-            effects.push({ type: 'clear-products', duration: 300 });
-          }
           break;
         case 'audio-ended': {
           if (!audio || audio.id !== event.id) break;
@@ -150,6 +147,11 @@
           if (after?.replay) { expression = after.expression; ready(after.mode); }
           else if (after === 'greeting' || after === 'question') ready('question');
           else if (after === 'order') ready('checkout');
+          else if (after === 'product-complaint') {
+            correctionCleared = true; handedOver = false;
+            effects.push({ type: 'clear-products', duration: 300 });
+            emit('correction-wait', 2300);
+          }
           else if (after === 'corrective') { expression = 'troubled'; ready('checkout'); cachedPrice = false; }
           else if (after === 'handoff') ready('handoff');
           else if (after === 'price') ready('price');
@@ -192,6 +194,9 @@
         case 'inspection-finished':
           if (phase !== 'inspection') break;
           operation = null; judgeItems(); break;
+        case 'correction-wait-finished':
+          if (phase !== 'product-feedback' || operation?.type !== 'correction-wait' || !correctionCleared || audio) break;
+          operation = null; speak(correctiveText, 'corrective', 'corrective'); break;
         case 'hold-finished':
           if (phase !== 'hold') break;
           if (holdAfter === 'order') {

@@ -1,20 +1,21 @@
 (() => {
   // Preserve older trial saves without replaying them under different judgement rules.
-  const storageKey = 'ruriru-level4-fixed-service-v2';
+  const storageKey = 'ruriru-level4-fixed-service-v3';
   const voiceChoiceKey = 'ruriru-customer-voice-v1';
   const eventTypes = new Set(['start', 'arrived', 'audio-started', 'audio-ended', 'attempt-start', 'attempt-finish',
-    'attempt-cancel', 'submit', 'retry', 'handoff-finished', 'inspection-finished', 'hold-finished',
+    'attempt-cancel', 'submit', 'retry', 'handoff-finished', 'inspection-finished', 'hold-finished', 'correction-wait-finished',
     'departure-finished', 'replay', 'pause', 'resume', 'technical-error', 'recover', 'items-changed', 'reset']);
 
   function createServiceUI({ products, counter, selectedItems, clearItems, onRender, setExpression, setMicState }) {
     const el = id => document.getElementById(id);
     const customer = el('customer-layer'), transcript = el('transcript'), mic = el('mic-action');
-    const action = el('service-action'), status = el('service-status'), retry = el('retry-action');
+    const action = el('service-action'), status = el('service-status');
     const remaining = el('retry-remaining'), trouble = el('service-trouble'), pauseDialog = el('service-pause');
     const result = el('service-result');
     let greeting = Math.random() < .5 ? 'Hello!' : 'Hi!';
     let history = [], clockOffset = 0, replayClock = null;
     const now = () => replayClock === null ? Date.now() - clockOffset : replayClock;
+    const canRetry = view => view.retryPending && ['question', 'checkout'].includes(view.phase) && !view.audio;
     const makeSession = () => globalThis.RuRiRuServiceSession.createServiceSession({ products, greeting, now });
     let session = makeSession(), runner, speech, stopped = false, suspendedByFullscreen = false;
     let permissionSuspended = false, deferredMicrophoneError = null;
@@ -24,7 +25,7 @@
     function readSaved() {
       try {
         const value = JSON.parse(localStorage.getItem(storageKey) || 'null');
-        if (!value || value.version !== 2 || !Array.isArray(value.events) || value.events.length > 5000 ||
+        if (!value || value.version !== 3 || !Array.isArray(value.events) || value.events.length > 5000 ||
             !Number.isFinite(value.at) || !Array.isArray(value.items)) return null;
         let previous = -Infinity;
         for (const entry of value.events) {
@@ -64,7 +65,10 @@
       document.body.dataset.timerRunning = String(view.timerRunning);
       setExpression(view.expression);
       customer.hidden = stopped || ['idle', 'complete'].includes(view.phase);
-      mic.disabled = stopped || (speech?.state() === 'idle' ? !view.canRecord : false);
+      const microphoneState = speech?.state() || 'idle';
+      const retrySuggested = view.retryPending || (view.expression === 'troubled' && ['question', 'checkout'].includes(view.phase));
+      setMicState(microphoneState, retrySuggested);
+      mic.disabled = stopped || (microphoneState === 'idle' ? !(view.canRecord || canRetry(view)) : false);
       const labels = {
         idle: '接客チャレンジ', arriving: 'お客さんが来たよ', greeting: 'あいさつを聞こう',
         question: '英語で質問しよう', order: '注文を聞こう', handoff: '受け渡しています', inspection: '商品を確認中',
@@ -78,8 +82,6 @@
         : labels[view.phase] || '英語で接客しよう';
       action.textContent = stopped || (saved && view.phase === 'idle') ? '保存した接客を再開' : view.phase === 'idle' ? '接客スタート' : 'もう一度聞く';
       action.disabled = !stopped && !(saved && view.phase === 'idle') && view.phase !== 'idle' && !view.canReplay;
-      retry.hidden = !view.retryPending;
-      retry.disabled = !['question', 'checkout'].includes(view.phase);
       remaining.hidden = ['idle', 'complete'].includes(view.phase);
       remaining.textContent = `やり直し あと${view.remaining[view.requestMode === 'question' ? 'question' : 'checkout']}回`;
       el('pause-action').disabled = stopped || ['idle', 'complete', 'paused', 'technical'].includes(view.phase);
@@ -166,7 +168,7 @@
     }
     speech = globalThis.RuRiRuSpeech.createSpeechController({
       Recognition: window.SpeechRecognition || window.webkitSpeechRecognition,
-      onState: state => { setMicState(state); render(); },
+      onState: () => render(),
       onTranscript: heard => { transcript.textContent = heard; },
       onComplete: text => { speech.cancel(); send({ type: 'submit', text, items: attemptItems }); },
       onError: handleSpeechError,
@@ -185,6 +187,8 @@
     }
     mic.addEventListener('click', () => {
       if (speech.state() === 'idle') {
+        if (stopped) return;
+        if (canRetry(session.view())) send({ type: 'retry' });
         if (!session.view().canRecord || stopped) return;
         previousTranscript = transcript.textContent;
         attemptItems = selectedItems();
@@ -200,7 +204,6 @@
     document.addEventListener('keydown', event => {
       if (event.key === 'Escape' && speech.state() !== 'idle') { event.preventDefault(); cancelAttempt(); }
     });
-    retry.addEventListener('click', () => send({ type: 'retry' }));
     action.addEventListener('click', () => {
       if (saved && (stopped || session.view().phase === 'idle')) restoreSaved();
       else if (session.view().phase === 'idle') send({ type: 'start' });
@@ -230,7 +233,7 @@
     });
     function saveAndExit() {
       stopPlatform();
-      const payload = { version: 2, greeting, at: now(), events: history, items: selectedItems(),
+      const payload = { version: 3, greeting, at: now(), events: history, items: selectedItems(),
         presented: counter.view().phase === 'presented', transcript: transcript.textContent };
       try {
         localStorage.setItem(storageKey, JSON.stringify(payload));

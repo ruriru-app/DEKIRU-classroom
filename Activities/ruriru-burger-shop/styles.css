@@ -95,7 +95,6 @@ button { font: inherit; }
 .service-tools button { min-width: 0; min-height: 21px; padding: 2px; border: 1px solid white; border-radius: 6px; color: #426e67; background: #fffaf0; font-size: 8px; line-height: 1.1; cursor: pointer; }
 .service-tools button:disabled { opacity: .55; cursor: default; }
 #retry-remaining { margin-top: 2px; font-size: 8px; white-space: nowrap; }
-#retry-action { margin-top: 2px; padding: 2px 8px; border: 1px solid white; border-radius: 6px; color: white; background: #a489c1; font-size: 10px; cursor: pointer; }
 .mic-button:disabled { opacity: .5; cursor: default; }
 .service-dialog { width: min(440px, calc(100vw - 28px)); max-height: calc(100dvh - 28px); padding: 24px; overflow-y: auto; border: 3px solid white; border-radius: 22px; background: #fffaf0; color: var(--ink); text-align: center; box-shadow: 0 12px 48px #41332355; }
 .service-dialog::backdrop { background: #413b3377; backdrop-filter: blur(2px); }
@@ -420,7 +419,7 @@ button { font: inherit; }
   box-shadow: var(--shadow);
 }
 .tray-box { grid-area: tray; display: grid; grid-template-columns: 76px minmax(0,1fr); padding: 4px 7px; border-top-color: #b57b43; background: linear-gradient(180deg, #e5f5f1, #d5eee9); }
-.total-box { grid-area: total; display: grid; place-items: center; align-content: center; color: white; background: linear-gradient(145deg, #ec7e9e, var(--pink)); }
+.total-box { grid-area: total; display: grid; place-items: center; align-content: center; transform: translateY(-75%); color: white; background: linear-gradient(145deg, #ec7e9e, var(--pink)); }
 .said-box { grid-area: said; display: grid; grid-template-columns: 98px minmax(0,1fr); align-items: stretch; padding: 4px 7px; background: linear-gradient(180deg, #f0e9f8, #e8ddf5); }
 .mic-box { grid-area: mic; display: grid; padding: 4px; background: linear-gradient(145deg, #8fcdbf, var(--mint)); }
 
@@ -438,8 +437,6 @@ button { font: inherit; }
 .decrement { width: 22px; height: 22px; padding: 0; color: white; border: 0; border-radius: 50%; background: var(--brown); cursor: pointer; }
 .decrement:hover, .decrement:focus-visible { background: #574e48; outline: 2px solid var(--orange); }
 #tray.tray-box { position: relative; grid-template-columns: 72px minmax(0, 1fr); padding: 0; border: 0; background: transparent; box-shadow: none; }
-#tray .panel-label { align-self: end; margin-bottom: 19px; padding: 3px 1px; border-radius: 7px; background: rgba(255, 250, 237, .78); }
-#tray .panel-label strong { font-size: 12px; }
 .preparation-status { position: absolute; left: 0; bottom: 3px; width: 72px; color: #5e5146; text-align: center; font-size: 8px; }
 .total-box span { font-size: 11px; letter-spacing: .16em; }
 .total-box strong { font-size: 25px; line-height: 1.05; text-shadow: 0 2px 0 rgba(122,110,101,.16); }
@@ -451,6 +448,7 @@ button { font: inherit; }
 .mic-button[aria-pressed="true"] { outline: 2px solid white; outline-offset: 1px; box-shadow: 0 0 0 3px rgba(82,159,150,.28); }
 .mic-button.start { display: flex; align-items: center; justify-content: center; gap: 5px; background: #529f96; font-size: 11px; }
 .mic-button.start span { font-size: 18px; }
+.mic-button.retry { font-size: 16px; font-weight: 800; }
 .mic-button.done { background: #70ae5d; font-size: 13px; }
 .mic-button.cancel { background: #d8788f; font-size: 11px; }
 

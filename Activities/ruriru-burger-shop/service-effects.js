@@ -17,6 +17,7 @@
       hold: { delay: 1200, event: 'hold-finished' },
       present: { delay: 550, event: 'handoff-finished', hook: onPresent },
       inspect: { delay: 500, event: 'inspection-finished' },
+      'correction-wait': { delay: 2300, event: 'correction-wait-finished' },
       depart: { delay: 350, event: 'departure-finished', hook: onDepart },
     };
 
