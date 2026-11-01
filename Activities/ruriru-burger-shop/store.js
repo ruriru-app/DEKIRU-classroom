@@ -103,7 +103,7 @@ function isHereYouAre(value = '') {
     .toLowerCase()
     .replace(/[^a-z]+/g, ' ')
     .trim();
-  return /\bhere you are\b/.test(normalized);
+  return /\b(?:here|hear) you are\b/.test(normalized);
 }
 
 function customerReactionForSpeech(value = '', hasPreparedItems = false) {

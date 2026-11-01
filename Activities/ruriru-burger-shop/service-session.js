@@ -7,14 +7,14 @@
   const counts = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve'];
   const clone = value => JSON.parse(JSON.stringify(value));
   const normalizedQuestion = text => String(text).normalize('NFKC').toLowerCase().replace(/[^a-z\s]/g, '').replace(/\s+/g, ' ').trim();
-  const hasHandoff = text => /\bhere\s+you\s+are\b/i.test(String(text).replace(/[^a-z\s]/gi, ' '));
+  const hasHandoff = text => /\b(?:here|hear)\s+you\s+are\b/i.test(String(text).replace(/[^a-z\s]/gi, ' '));
   function correctPrice(text, total) {
     const value = String(text).normalize('NFKC').replace(/’/g, "'");
-    const amount = readSpokenYen(value);
+    const amount = readSpokenYen(value, { allowOmittedCurrency: true });
     const canonicalPrefix = /\b(?:it's|it\s+is)\s+(?!not\b)/i.test(value);
     // ASR often drops the short /t/ or apostrophe in It's. Keep this tolerance
     // at the price-clause boundary, followed by an amount, rather than any "is".
-    const clause = value.trim().replace(/^here\s+you\s+are\b[\s.,!?;:]*/i, '');
+    const clause = value.trim().replace(/^(?:here|hear)\s+you\s+are\b[\s.,!?;:]*/i, '');
     const asrPrefix = /^(?:its|it\s+s|is)\s+(.+)$/i.exec(clause);
     const amountStart = /^\$?\s*(?:\d|(?:zero|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety)\b|a\s+(?:hundred|thousand)\b)/i;
     return (canonicalPrefix || Boolean(asrPrefix && amountStart.test(asrPrefix[1]))) &&

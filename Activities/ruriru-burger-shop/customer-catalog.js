@@ -2,11 +2,11 @@
   const expressions = ['neutral', 'troubled', 'angry', 'smile'];
   const definitions = [
     ['sunhat-woman', 1218 / 1292, 1, .79, 'feminine', 0, 1.05],
-    ['mint-man', 1218 / 1292, 1.04, .73, 'masculine', 0, .96],
-    ['lavender-woman', 1218 / 1292, .88, .70, 'feminine', 1, 1.12],
-    ['orange-man', 1218 / 1292, 1.08, .60, 'masculine', 1, 1.04],
-    ['coral-woman', 1218 / 1292, .96, .75, 'feminine', 2, .98],
-    ['blue-senior-man', 1218 / 1292, .99, .64, 'masculine', 2, .89],
+    ['mint-man', 1218 / 1292, 1.08, .73, 'masculine', 0, .96],
+    ['lavender-woman', 1218 / 1292, .80, .70, 'feminine', 1, 1.12],
+    ['orange-man', 1218 / 1292, 1.14, .60, 'masculine', 1, 1.04],
+    ['coral-woman', 1218 / 1292, .92, .75, 'feminine', 2, .98],
+    ['blue-senior-man', 1218 / 1292, 1.01, .64, 'masculine', 2, .89],
   ];
   const CUSTOMERS = Object.freeze(definitions.map(([id, aspectRatio, scale, visibleFraction, gender, voiceIndex, pitch]) => Object.freeze({
     id,

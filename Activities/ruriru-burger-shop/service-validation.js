@@ -92,10 +92,13 @@
     return amount === null ? null : { amount, start };
   }
 
-  function readSpokenYen(value = '') {
+  function readSpokenYen(value = '', { allowOmittedCurrency = false } = {}) {
     const normalized = String(value ?? '').normalize('NFKC').toLowerCase()
-      .replace(/([a-z])[-‐‑–—]([a-z])/g, '$1 $2').replace(/−/g, '-');
+      .replace(/’/g, "'").replace(/([a-z])[-‐‑–—]([a-z])/g, '$1 $2').replace(/−/g, '-');
     const tokens = normalized.match(/-?(?:\d[\d,.]*|\.\d+)|[a-z]+|円|[^\s]/g) || [];
+    if (allowOmittedCurrency && /\b(?:dollars?|usd|pounds?|gbp|euros?|eur|cents?|pence)\b/.test(normalized)) {
+      return { status: 'invalid', amount: null };
+    }
     const amounts = [], consumed = new Set();
     for (let index = 0; index < tokens.length; index++) {
       if (!['yen', 'yens', '円'].includes(tokens[index])) continue;
@@ -104,7 +107,19 @@
       for (let part = parsed.start; part < index; part++) consumed.add(part);
       amounts.push(parsed.amount);
     }
-    if (!amounts.length) return { status: 'missing', amount: null };
+    if (!amounts.length) {
+      // The game uses yen throughout. ASR may omit its short final word, so
+      // checkout callers can infer it only from a complete price sentence.
+      // Parse the entire amount through the same strict parser; do not pick a
+      // matching number out of an order count or a self-correction.
+      const clause = normalized.replace(/\b(?:here|hear)\s+you\s+are\b/g, ' ')
+        .replace(/^[\s.,!?;:]+|[\s.,!?;:]+$/g, '');
+      const price = /^(?:it's|it\s+is|its|it\s+s|is)\s+(.+)$/.exec(clause);
+      if (!allowOmittedCurrency || !price || /[$€£]/.test(price[1])) return { status: 'missing', amount: null };
+      const parts = price[1].match(/-?(?:\d[\d,.]*|\.\d+)|[a-z]+|[^\s]/g) || [];
+      if (parts.some(token => token !== ',' && !expressionPart(token))) return { status: 'invalid', amount: null };
+      return readSpokenYen(`${price[1]} yen`);
+    }
     // An unmarked alternative/correction must not be silently dropped.
     if (tokens.some((token, index) => !consumed.has(index) &&
       (numericToken(token) || (numberWords.has(token) && !['a', 'and', 'minus', 'negative'].includes(token))))) {

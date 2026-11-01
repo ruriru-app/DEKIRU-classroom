@@ -52,15 +52,16 @@ button { font: inherit; }
   margin: 0 auto;
   padding: 6px 10px;
   display: grid;
-  grid-template-rows: 148px minmax(0, 1fr) 140px;
+  grid-template-rows: 180px minmax(0, 1fr) 140px;
   gap: 5px;
   overflow: hidden;
 }
 
+.top-row { min-width: 0; min-height: 0; display: grid; grid-template-columns: clamp(164px, 15vw, 196px) minmax(0, 1fr); gap: 10px; }
 .shop-info-tile {
   min-width: 0;
   min-height: 0;
-  padding: 6px 8px;
+  padding: 8px 10px;
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto;
   align-items: center;
@@ -73,29 +74,29 @@ button { font: inherit; }
 }
 .brand { display: flex; align-items: center; gap: 6px; justify-self: center; min-width: 0; }
 .brand-mark {
-  flex: 0 0 auto; width: 32px; height: 32px; display: grid; place-items: center;
-  border-radius: 50%; color: var(--pink); background: white; font-size: 22px;
+  flex: 0 0 auto; width: 40px; height: 40px; display: grid; place-items: center;
+  border-radius: 50%; color: var(--pink); background: white; font-size: 28px;
   border: 2px solid rgba(244,139,168,.55); transform: rotate(-6deg);
 }
 .brand-copy { display: grid; line-height: .92; letter-spacing: .04em; }
-.brand-copy strong { font-size: 15px; white-space: nowrap; }
-.brand-copy small { font-size: 7px; letter-spacing: .12em; white-space: nowrap; }
+.brand-copy strong { font-size: clamp(18px, 1.6vw, 22px); white-space: nowrap; }
+.brand-copy small { font-size: 9px; letter-spacing: .12em; white-space: nowrap; }
 
 .tile-status { align-self: center; display: grid; justify-items: center; gap: 4px; }
 .level-pill {
-  display: flex; align-items: center; gap: 6px; height: 29px; padding: 0 12px;
+  display: flex; align-items: center; gap: 6px; height: 34px; padding: 0 14px;
   color: var(--brown); background: white; border-radius: 999px; box-shadow: 0 2px 0 rgba(122,110,101,.14);
 }
-.level-pill span { font-size: 10px; letter-spacing: .11em; }
-.level-pill strong { color: var(--pink); font-size: 21px; line-height: 1; }
+.level-pill span { font-size: 12px; letter-spacing: .11em; }
+.level-pill strong { color: var(--pink); font-size: 26px; line-height: 1; }
 .mode-pill { padding: 3px 13px; color: white; background: var(--purple); border: 2px solid rgba(255,255,255,.65); border-radius: 999px; font-size: 10px; letter-spacing: .1em; }
 .mode-line { display: flex; align-items: center; justify-content: center; gap: 5px; white-space: nowrap; }
-.mode-line .mode-pill { padding-inline: 7px; font-size: 9px; }
-.customer-progress { font-size: 9px; line-height: 1; letter-spacing: .04em; }
+.mode-line .mode-pill { padding-inline: 8px; font-size: 11px; }
+.customer-progress { font-size: 11px; line-height: 1; letter-spacing: .04em; }
 .lesson-label { justify-self: center; font-size: 9px; opacity: .97; white-space: nowrap; }
-.service-tools { display: grid; grid-template-columns: minmax(0, 1fr) 22px 22px; gap: 3px; align-items: center; }
-.service-tools .lesson-label { grid-column: 1 / -1; min-height: 11px; max-width: 100%; white-space: normal; text-align: center; font-size: 8px; line-height: 1.1; }
-.service-tools button { min-width: 0; min-height: 21px; padding: 2px; border: 1px solid white; border-radius: 6px; color: #426e67; background: #fffaf0; font-size: 8px; line-height: 1.1; cursor: pointer; }
+.service-tools { display: grid; grid-template-columns: minmax(0, 1fr) 28px 28px; gap: 4px; align-items: center; }
+.service-tools .lesson-label { grid-column: 1 / -1; min-height: 12px; max-width: 100%; white-space: normal; text-align: center; font-size: 10px; line-height: 1.1; }
+.service-tools button { min-width: 0; min-height: 26px; padding: 2px; border: 1px solid white; border-radius: 6px; color: #426e67; background: #fffaf0; font-size: 10px; line-height: 1.1; cursor: pointer; }
 .service-tools button:disabled { opacity: .55; cursor: default; }
 #retry-remaining { margin-top: 2px; font-size: 8px; white-space: nowrap; }
 .mic-button:disabled { opacity: .5; cursor: default; }
@@ -147,7 +148,7 @@ button { font: inherit; }
 .main-grid {
   height: 100%;
   display: grid;
-  grid-template-columns: minmax(132px, .9fr) repeat(8, minmax(0, 1fr));
+  grid-template-columns: repeat(8, minmax(0, 1fr));
   gap: 5px;
 }
 
@@ -174,11 +175,14 @@ button { font: inherit; }
 .product-card.just-added { animation: card-pop .28s ease; }
 @keyframes card-pop { 50% { transform: scale(1.06) rotate(-1deg); } }
 
-.main-card { display: grid; grid-template-rows: minmax(0, 1fr) var(--copy-height); }
+.main-card { --copy-height: 76px; --step-center: 16px; --remove-left: calc(27% - var(--step-size) / 2); display: grid; grid-template-rows: minmax(0, 1fr) var(--copy-height); }
 .main-card .product-art { border-radius: 9px 9px 5px 5px; font-size: clamp(28px, 3.5vh, 38px); background: linear-gradient(180deg, #fff9ee, #fffdf8); }
 .card-copy { min-width: 0; min-height: 0; display: grid; align-content: center; padding: 2px 32px 3px; text-align: center; line-height: 1.15; }
 .card-copy strong { min-width: 0; font-size: 11px; white-space: normal; overflow-wrap: normal; }
 .card-copy span { color: #a66543; font-size: 12px; }
+.main-card .card-copy { padding: 3px 3px 31px; }
+.main-card .card-copy strong { font-size: 12px; }
+.main-card .menu-plus { left: calc(73% - var(--step-size) / 2); right: auto; }
 .product-add { position: absolute; z-index: 1; inset: 0; width: 100%; height: 100%; padding: 0; color: inherit; border: 0; border-radius: 10px; background: transparent; cursor: pointer; }
 .product-add:focus-visible { outline: 3px solid #bd7848; outline-offset: -3px; }
 .menu-plus, .product-remove { position: absolute; bottom: calc(var(--step-center) - var(--step-size) / 2); display: grid; place-items: center; width: var(--step-size); height: var(--step-size); padding: 0; border: 0; border-radius: 50%; color: #fff; font-size: 18px; line-height: 1; }
@@ -450,7 +454,7 @@ button { font: inherit; }
 .total-box span { font-size: 11px; letter-spacing: .16em; }
 .total-box strong { font-size: 25px; line-height: 1.05; text-shadow: 0 2px 0 rgba(122,110,101,.16); }
 
-.transcript { min-width: 0; height: 54px; max-height: 54px; margin: 1px 0 1px 6px; padding: 7px 10px; align-self: center; color: #5b4e65; border: 2px solid white; border-radius: 10px; background: rgba(255,255,255,.85); font-family: "Trebuchet MS", Arial, sans-serif; font-size: 14px; line-height: 18px; font-weight: 700; overflow-y: auto; overflow-x: hidden; }
+.transcript { min-width: 0; height: 70px; max-height: 70px; margin: 1px 0 1px 6px; padding: 7px 10px; align-self: center; color: #5b4e65; border: 2px solid white; border-radius: 10px; background: rgba(255,255,255,.85); font-family: "Trebuchet MS", Arial, sans-serif; font-size: 20px; line-height: 26px; font-weight: 700; overflow-y: auto; overflow-x: hidden; }
 .transcript.listening { color: #a5526b; box-shadow: inset 0 0 0 2px rgba(244,139,168,.23); }
 .mic-button { width: 100%; height: 100%; min-height: 0; padding: 3px 5px; color: white; border: 2px solid rgba(255,255,255,.78); border-radius: 10px; cursor: pointer; box-shadow: 0 2px 0 rgba(122,110,101,.18); }
 .mic-button:hover, .mic-button:focus-visible { filter: brightness(1.05); outline: 2px solid white; outline-offset: 1px; }
@@ -497,8 +501,6 @@ button { font: inherit; }
 
 @media (min-width: 1121px) and (max-width: 1300px) {
   .main-card { --step-size: 22px; }
-  .main-card .card-copy { padding-inline: 28px; }
-  .main-card .card-copy strong { font-size: 10px; }
   .compact-card { --remove-left: 36px; grid-template-columns: 34px minmax(0, 1fr); }
   .compact-card .card-copy strong { font-size: 9px; }
 }
@@ -513,9 +515,10 @@ button { font: inherit; }
 }
 
 @media (max-height: 610px) {
-  .game-shell { grid-template-rows: 136px minmax(0, 1fr) 128px; padding-block: 4px; gap: 4px; }
+  .game-shell { grid-template-rows: 164px minmax(0, 1fr) 128px; padding-block: 4px; gap: 4px; }
   .brand-mark { width: 27px; height: 27px; }
-  .main-card { --copy-height: 50px; }
+  .main-card { --copy-height: 72px; }
+  .transcript { height: 64px; max-height: 64px; font-size: 18px; line-height: 23px; }
   .compact-card .product-art { font-size: 21px; }
 }
 
