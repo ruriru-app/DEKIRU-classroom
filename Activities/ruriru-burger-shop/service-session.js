@@ -11,7 +11,14 @@
   function correctPrice(text, total) {
     const value = String(text).normalize('NFKC').replace(/’/g, "'");
     const amount = readSpokenYen(value);
-    return /\b(?:it's|it\s+is)\s+(?!not\b)/i.test(value) && amount.status === 'valid' && amount.amount === total;
+    const canonicalPrefix = /\b(?:it's|it\s+is)\s+(?!not\b)/i.test(value);
+    // ASR often drops the short /t/ or apostrophe in It's. Keep this tolerance
+    // at the price-clause boundary, followed by an amount, rather than any "is".
+    const clause = value.trim().replace(/^here\s+you\s+are\b[\s.,!?;:]*/i, '');
+    const asrPrefix = /^(?:its|it\s+s|is)\s+(.+)$/i.exec(clause);
+    const amountStart = /^\$?\s*(?:\d|(?:zero|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety)\b|a\s+(?:hundred|thousand)\b)/i;
+    return (canonicalPrefix || Boolean(asrPrefix && amountStart.test(asrPrefix[1]))) &&
+      amount.status === 'valid' && amount.amount === total;
   }
   function orderPhrase(order, products) {
     const named = order.map(({ id, quantity }) => {

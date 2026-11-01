@@ -395,8 +395,12 @@ button { font: inherit; }
 .service-tray .counter-row { width: 72%; bottom: calc(var(--service-depth) * .08); }
 .service-tray .counter-row.is-back { bottom: calc(var(--service-depth) * .4); }
 .served-items.is-presented .service-tray { animation: lift-to-counter .55s cubic-bezier(.2,.8,.25,1) both; }
+.served-items.is-departing { animation: leave-customer .35s ease both; }
 @keyframes lift-to-counter { from { opacity: 0; transform: translateY(var(--handoff-lift)) scale(.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
-@media (prefers-reduced-motion: reduce) { .served-items.is-presented .service-tray { animation: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .served-items.is-presented .service-tray { animation: none; }
+  .served-items.is-departing { animation: none; opacity: 0; }
+}
 
 .checkout-panel {
   min-width: 0;

@@ -1,6 +1,6 @@
 (() => {
   // Preserve older trial saves without replaying them under different judgement rules.
-  const storageKey = 'ruriru-level4-fixed-service-v3';
+  const storageKey = 'ruriru-level4-fixed-service-v4';
   const voiceChoiceKey = 'ruriru-customer-voice-v1';
   const eventTypes = new Set(['start', 'arrived', 'audio-started', 'audio-ended', 'attempt-start', 'attempt-finish',
     'attempt-cancel', 'submit', 'retry', 'handoff-finished', 'inspection-finished', 'hold-finished', 'correction-wait-finished',
@@ -11,7 +11,7 @@
     const customer = el('customer-layer'), transcript = el('transcript'), mic = el('mic-action');
     const action = el('service-action'), status = el('service-status');
     const remaining = el('retry-remaining'), trouble = el('service-trouble'), pauseDialog = el('service-pause');
-    const result = el('service-result');
+    const result = el('service-result'), servedItems = el('served-items');
     let greeting = Math.random() < .5 ? 'Hello!' : 'Hi!';
     let history = [], clockOffset = 0, replayClock = null;
     const now = () => replayClock === null ? Date.now() - clockOffset : replayClock;
@@ -25,7 +25,7 @@
     function readSaved() {
       try {
         const value = JSON.parse(localStorage.getItem(storageKey) || 'null');
-        if (!value || value.version !== 3 || !Array.isArray(value.events) || value.events.length > 5000 ||
+        if (!value || value.version !== 4 || !Array.isArray(value.events) || value.events.length > 5000 ||
             !Number.isFinite(value.at) || !Array.isArray(value.items)) return null;
         let previous = -Infinity;
         for (const entry of value.events) {
@@ -105,6 +105,9 @@
     }
     function showResult() {
       const view = session.view();
+      clearItems();
+      servedItems.classList.remove('is-departing');
+      onRender();
       try { localStorage.removeItem(storageKey); } catch { /* Local persistence is optional on this browser. */ }
       saved = null;
       el('result-rating').textContent = '★'.repeat(view.stars);
@@ -147,12 +150,16 @@
       onArrive: () => {
         customer.hidden = false;
         customer.classList.remove('from-left', 'from-right', 'is-departing');
+        servedItems.classList.remove('is-departing');
         void customer.offsetWidth;
         customer.classList.add(Math.random() < .5 ? 'from-left' : 'from-right');
       },
-      onPresent: () => { counter.present('Here you are.'); onRender(); },
+      onPresent: () => { servedItems.classList.remove('is-departing'); counter.present('Here you are.'); onRender(); },
       onClearProducts: fadeOldProducts,
-      onDepart: () => { customer.classList.remove('from-left', 'from-right'); customer.classList.add('is-departing'); },
+      onDepart: () => {
+        customer.classList.remove('from-left', 'from-right'); customer.classList.add('is-departing');
+        servedItems.classList.add('is-departing');
+      },
       onComplete: showResult,
     });
     function handleSpeechError(error) {
@@ -233,7 +240,7 @@
     });
     function saveAndExit() {
       stopPlatform();
-      const payload = { version: 3, greeting, at: now(), events: history, items: selectedItems(),
+      const payload = { version: 4, greeting, at: now(), events: history, items: selectedItems(),
         presented: counter.view().phase === 'presented', transcript: transcript.textContent };
       try {
         localStorage.setItem(storageKey, JSON.stringify(payload));
@@ -256,6 +263,7 @@
       transcript.textContent = saved.transcript || '';
       stopped = false;
       customer.classList.remove('from-left', 'from-right', 'is-departing');
+      servedItems.classList.remove('is-departing');
       const phase = session.view().phase;
       if (phase === 'technical') send({ type: 'recover' });
       else if (phase === 'paused') send({ type: 'resume' });
@@ -263,6 +271,7 @@
     }
     el('play-again').addEventListener('click', () => {
       stopPlatform(); closeDialogs(); clearItems(); saved = null; stopped = false;
+      servedItems.classList.remove('is-departing');
       greeting = Math.random() < .5 ? 'Hello!' : 'Hi!';
       clockOffset = 0; history = []; session = makeSession();
       transcript.textContent = 'マイクを押して、お客さんに英語で接客してみよう！';
