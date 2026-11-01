@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#fff9ec" />
     <title>RuRiRu BURGER SHOP — LEVEL SELECTION</title>
-    <link rel="stylesheet" href="./level-select.css?v=20261102a" />
+    <link rel="stylesheet" href="./level-select.css?v=20261102b" />
   </head>
   <body>
     <main class="selection-shell">
@@ -25,17 +25,17 @@
             <span class="card-picture"><img src="./assets/level1-background.png" alt="" width="1536" height="1024" /><span class="selection-marker" aria-hidden="true">✓<span>えらんでいるお店</span></span></span>
             <span class="card-content"><span class="card-heading"><span class="level-label" id="level-label-1">LEVEL <b>1</b></span><span class="availability" id="level-availability-1">遊べる</span></span><strong class="store-name" id="level-name-1">屋台</strong><span class="card-rules" id="level-rules-1"><span>お客さん <b>1</b> 人</span><span>注文 <b>1〜2</b> 種類 · 合計 <b>1〜3</b> 個</span></span></span>
           </button>
-          <button class="level-card level-2" id="level-option-2" type="button" role="radio" aria-checked="false" aria-labelledby="level-label-2 level-name-2" aria-describedby="level-rules-2 level-availability-2" tabindex="-1" data-level="2">
+          <button class="level-card level-2 is-locked" id="level-option-2" type="button" disabled aria-disabled="true" role="radio" aria-checked="false" aria-labelledby="level-label-2 level-name-2" aria-describedby="level-rules-2 level-availability-2 level-unlock-2" tabindex="-1" data-level="2">
             <span class="card-picture"><img src="./assets/level2-background.png" alt="" width="1536" height="1024" /><span class="selection-marker" aria-hidden="true">✓<span>えらんでいるお店</span></span></span>
-            <span class="card-content"><span class="card-heading"><span class="level-label" id="level-label-2">LEVEL <b>2</b></span><span class="availability" id="level-availability-2">未解放</span></span><strong class="store-name" id="level-name-2">フードコート</strong><span class="card-rules" id="level-rules-2"><span>お客さん <b>2</b> 人</span><span>注文 <b>2〜3</b> 種類 · 合計 <b>2〜6</b> 個</span></span></span>
+            <span class="card-content"><span class="card-heading"><span class="level-label" id="level-label-2">LEVEL <b>2</b></span><span class="availability" id="level-availability-2">未解放</span><span class="visually-hidden" id="level-unlock-2">LEVEL1の★★★で選べます。</span></span><strong class="store-name" id="level-name-2">フードコート</strong><span class="card-rules" id="level-rules-2"><span>お客さん <b>2</b> 人</span><span>注文 <b>2〜3</b> 種類 · 合計 <b>2〜6</b> 個</span></span></span>
           </button>
-          <button class="level-card level-3" id="level-option-3" type="button" role="radio" aria-checked="false" aria-labelledby="level-label-3 level-name-3" aria-describedby="level-rules-3 level-availability-3" tabindex="-1" data-level="3">
+          <button class="level-card level-3 is-locked" id="level-option-3" type="button" disabled aria-disabled="true" role="radio" aria-checked="false" aria-labelledby="level-label-3 level-name-3" aria-describedby="level-rules-3 level-availability-3 level-unlock-3" tabindex="-1" data-level="3">
             <span class="card-picture"><img src="./assets/level3-background.png" alt="" width="1536" height="1024" /><span class="selection-marker" aria-hidden="true">✓<span>えらんでいるお店</span></span></span>
-            <span class="card-content"><span class="card-heading"><span class="level-label" id="level-label-3">LEVEL <b>3</b></span><span class="availability" id="level-availability-3">未解放</span></span><strong class="store-name" id="level-name-3">独立店舗</strong><span class="card-rules" id="level-rules-3"><span>お客さん <b>3</b> 人</span><span>注文 <b>3〜4</b> 種類 · 合計 <b>4〜9</b> 個</span></span></span>
+            <span class="card-content"><span class="card-heading"><span class="level-label" id="level-label-3">LEVEL <b>3</b></span><span class="availability" id="level-availability-3">未解放</span><span class="visually-hidden" id="level-unlock-3">LEVEL2の★★★で選べます。</span></span><strong class="store-name" id="level-name-3">独立店舗</strong><span class="card-rules" id="level-rules-3"><span>お客さん <b>3</b> 人</span><span>注文 <b>3〜4</b> 種類 · 合計 <b>4〜9</b> 個</span></span></span>
           </button>
-          <button class="level-card level-4" id="level-option-4" type="button" role="radio" aria-checked="false" aria-labelledby="level-label-4 level-name-4" aria-describedby="level-rules-4 level-availability-4" tabindex="-1" data-level="4">
+          <button class="level-card level-4 is-locked" id="level-option-4" type="button" disabled aria-disabled="true" role="radio" aria-checked="false" aria-labelledby="level-label-4 level-name-4" aria-describedby="level-rules-4 level-availability-4 level-unlock-4" tabindex="-1" data-level="4">
             <span class="card-picture"><img src="./assets/level4-background.png" alt="" width="1536" height="1024" /><span class="selection-marker" aria-hidden="true">✓<span>えらんでいるお店</span></span></span>
-            <span class="card-content"><span class="card-heading"><span class="level-label" id="level-label-4">LEVEL <b>4</b></span><span class="availability" id="level-availability-4">未解放</span></span><strong class="store-name" id="level-name-4">リゾート</strong><span class="card-rules" id="level-rules-4"><span>お客さん <b>4</b> 人</span><span>注文 <b>3〜5</b> 種類 · 合計 <b>6〜12</b> 個</span></span></span>
+            <span class="card-content"><span class="card-heading"><span class="level-label" id="level-label-4">LEVEL <b>4</b></span><span class="availability" id="level-availability-4">未解放</span><span class="visually-hidden" id="level-unlock-4">LEVEL3の★★★で選べます。</span></span><strong class="store-name" id="level-name-4">リゾート</strong><span class="card-rules" id="level-rules-4"><span>お客さん <b>4</b> 人</span><span>注文 <b>3〜5</b> 種類 · 合計 <b>6〜12</b> 個</span></span></span>
           </button>
         </div>
 
@@ -54,7 +54,7 @@
       </section>
       <footer class="preview-footer">★★★で次のLEVELが開きます。記録はこのブラウザーに保存されます。</footer>
     </main>
-    <script src="./normal-progression.js?v=20261102a"></script>
-    <script src="./level-select.js?v=20261102a"></script>
+    <script src="./normal-progression.js?v=20261102b"></script>
+    <script src="./level-select.js?v=20261102b"></script>
   </body>
 </html>

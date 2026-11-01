@@ -131,4 +131,3 @@ globalThis.RuRiRu = Object.freeze({
   counterTopY,
 });
 })();
-

@@ -12,7 +12,7 @@
 }
 
 * { box-sizing: border-box; }
-.level-card.is-locked .card-picture img { filter:saturate(.55); }
+.visually-hidden { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; border:0; }
 body { margin: 0; min-width: 320px; background: radial-gradient(ellipse at 8% 0%, #e7f2e3 0, transparent 32%), radial-gradient(ellipse at 98% 100%, #fce5d8 0, transparent 34%), var(--cream); }
 button, a { -webkit-tap-highlight-color: transparent; }
 button { font: inherit; color: inherit; }
@@ -35,6 +35,9 @@ h1 { margin: 0; font-size: clamp(23px, 2.3vw, 29px); letter-spacing: .06em; line
 .level-4 { --card-tint: #dff0f2; }
 .level-card:hover { border-color: #a6bfb1; transform: translateY(-2px); }
 .level-card.is-selected { border-color: var(--teal); box-shadow: 0 0 0 3px #b6dbbf70, 0 5px 0 #91b9a540; }
+.level-card.is-locked { --card-tint:#e2e2e2; filter:grayscale(1); opacity:.68; color:#777; background:#e8e8e8; border-color:#cdcdcd; box-shadow:0 3px 0 #cecece66; cursor:not-allowed; }
+.level-card.is-locked .card-content { background:linear-gradient(180deg,#e3e3e3,#f0f0f0 86%); }
+.level-card.is-locked:hover { border-color:#cdcdcd; box-shadow:0 3px 0 #cecece66; transform:none; }
 .level-card:focus-visible, .play-button:focus-visible { outline: 3px solid var(--focus); outline-offset: 5px; }
 .card-picture { position: relative; display: block; width: 100%; aspect-ratio: 1.9; overflow: hidden; background: var(--card-tint); border-bottom: 1px solid #e3dbc7; }
 .card-picture img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center 42%; }

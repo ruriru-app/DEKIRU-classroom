@@ -248,12 +248,22 @@
       if (session.view().phase === 'paused' && suspendedByFullscreen) { deferredMicrophoneError = error; return; }
       send({ type: 'attempt-cancel' });
       transcript.textContent = previousTranscript;
-      lastSpeechError = error === 'no-speech' ? '音声が確認できませんでした。マイクを確認し、「もう一度試す」の後にスタートを押してください。'
-        : error === 'not-allowed' ? 'マイクが許可されていません。ブラウザーのマイク設定を確認してください。'
-        : error === 'not-supported' ? 'このブラウザーでは音声認識を利用できません。対応ブラウザーで開いてください。'
-        : 'マイクを確認しています。接続や設定を確認して、もう一度試してください。';
+      const messages = {
+        'no-speech': '音声が確認できませんでした。マイクを確認し、「もう一度試す」の後にスタートを押してください。',
+        'not-allowed': 'マイクが許可されていません。ブラウザーのマイク設定を確認してください。',
+        'not-supported': 'このブラウザーでは音声認識を利用できません。対応ブラウザーで開いてください。',
+        network: '音声認識サービスとの通信が途切れました。インターネット接続を確認し、「もう一度試す」を押してください。',
+        'audio-capture': 'マイクから音声を受け取れませんでした。マイクの接続や、ほかのアプリで使用中でないかを確認してください。',
+        aborted: '音声入力が途中で停止しました。「もう一度試す」を押してから、マイクスタートで話し直してください。',
+        'start-failed': '音声入力を開始できませんでした。マイクの接続や使用許可を確認して、もう一度試してください。',
+        'stop-failed': '音声入力の終了処理に失敗しました。「もう一度試す」を押してから、マイクスタートで話し直してください。',
+        'service-not-allowed': 'このブラウザーの音声認識サービスを利用できません。ブラウザーや端末の音声入力の設定を確認してください。',
+        'language-not-supported': '英語の音声入力を利用できません。ブラウザーや端末の音声入力の設定を確認してください。',
+      };
+      const code = Object.hasOwn(messages, error) ? error : 'recognition-error';
+      lastSpeechError = messages[code] || '音声入力を完了できませんでした。マイクの接続や通信状態を確認して、もう一度試してください。';
       runner.cancel();
-      send({ type: 'technical-error', source: 'recognition' });
+      send({ type: 'technical-error', source: 'recognition', code });
     }
     speech = globalThis.RuRiRuSpeech.createSpeechController({
       Recognition: window.SpeechRecognition || window.webkitSpeechRecognition,
@@ -337,10 +347,11 @@
         : voiceErrorMessage() || '端末の音量・出力先・英語音声の設定を確認し、もう一度試してください。';
     });
     el('sound-recovered').addEventListener('click', () => {
+      const microphoneFailure = Boolean(lastSpeechError);
       voice.cancel(); trouble.close();
       lastSpeechError = ''; lastVoiceError = '';
       send({ type: 'recover' });
-      if (!session.view().audio && session.view().canReplay) send({ type: 'replay', technical: true });
+      if (!microphoneFailure && !session.view().audio && session.view().canReplay) send({ type: 'replay', technical: true });
     });
     function saveAndExit() {
       stopPlatform();

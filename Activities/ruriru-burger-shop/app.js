@@ -47,17 +47,24 @@ function artworkMarkup(product, surface = 'menu') {
 function syncCustomerToCounter() {
   const counterLine = counterTopY(window.innerWidth, window.innerHeight);
   const speechTop = document.querySelector('#you-said').getBoundingClientRect().top;
-  const menuBottom = Math.max(
+  if (level <= 2) {
+    const totalTop = document.querySelector('#total').getBoundingClientRect().top;
+    const menuHeight = Math.min(PRODUCTS.length * 125, counterLine + 38 - 6, speechTop - 55 - 6, totalTop - 8 - 6);
+    document.documentElement.style.setProperty('--low-menu-height', `${Math.max(0, menuHeight)}px`);
+  }
+  // The first two levels' right-hand board is outside the centered work area.
+  const menuBottom = level <= 2 ? 0 : Math.max(
     document.querySelector('#side-dessert-menu').getBoundingClientRect().bottom,
     document.querySelector('#drink-menu').getBoundingClientRect().bottom,
   );
   const geometry = counterGeometry(window.innerWidth, window.innerHeight, speechTop, menuBottom);
   const tray = document.querySelector('#tray').getBoundingClientRect();
   const service = document.querySelector('#service-window').getBoundingClientRect();
+  const mainMenu = document.querySelector('#main-menu');
   const neutral = customerImages.find(image => image.dataset.customerExpression === 'neutral');
   const portrait = globalThis.RuRiRuCustomers.customerGeometry({
     profile: customerProfile, counterY: counterLine,
-    topLimit: document.querySelector('#main-menu').getBoundingClientRect().bottom + 10,
+    topLimit: level <= 2 ? 10 : mainMenu.getBoundingClientRect().bottom + 10,
     gapLeft: service.left, gapRight: service.right, viewportHeight: window.innerHeight,
     aspectRatio: neutral?.naturalWidth && neutral.naturalHeight ? neutral.naturalWidth / neutral.naturalHeight : undefined,
   });
@@ -160,7 +167,7 @@ function makeCounterRow(row, surface) {
 function makeCard(product, compact = false) {
   const artwork = productArtwork(product, 'menu');
   const artworkContent = artworkMarkup(product);
-  const cardName = ['french-fries', 'onion-rings'].includes(product.id)
+  const cardName = level !== 2 && ['french-fries', 'onion-rings'].includes(product.id)
     ? product.name.replace(' ', '<br>')
     : product.name;
   const card = document.createElement('div');
@@ -217,8 +224,20 @@ function renderProducts() {
   const drinks = PRODUCTS.filter(({ category }) => category === 'drink');
 
   document.documentElement.style.setProperty('--main-count', main.length);
-  document.documentElement.style.setProperty('--left-rows', level < 4 ? Math.max(sides.length, desserts.length, 1) : 4);
-  document.documentElement.style.setProperty('--drink-rows', level < 4 ? 1 : 4);
+  document.documentElement.style.setProperty('--left-rows', level === 3 ? sides.length + desserts.length : level < 4 ? sides.length : 4);
+  document.documentElement.style.setProperty('--drink-rows', level <= 2 ? PRODUCTS.length : level === 3 ? drinks.length : 4);
+
+  document.querySelector('#main-menu').hidden = level <= 2;
+  document.querySelector('#side-dessert-menu').hidden = level <= 2;
+  document.querySelector('#drink-menu').setAttribute('aria-label', level <= 2 ? '商品メニュー' : 'ドリンクの商品メニュー');
+  if (level <= 2) {
+    PRODUCTS.forEach((product, index) => {
+      const card = makeCard(product, true);
+      card.style.gridColumn = '1'; card.style.gridRow = String(index + 1);
+      drinkGrid.append(card);
+    });
+    return;
+  }
 
   main.forEach((product) => mainGrid.append(makeCard(product)));
   sides.forEach((product, index) => {
@@ -229,11 +248,15 @@ function renderProducts() {
   });
   desserts.forEach((product, index) => {
     const card = makeCard(product, true);
-    card.style.gridColumn = '2';
-    card.style.gridRow = String(index + 1);
+    card.style.gridColumn = level === 3 ? '1' : '2';
+    card.style.gridRow = String(index + 1 + (level === 3 ? sides.length : 0));
     sideDessertGrid.append(card);
   });
-  drinks.forEach((product) => drinkGrid.append(makeCard(product, true)));
+  drinks.forEach((product, index) => {
+    const card = makeCard(product, true);
+    if (level === 3) { card.style.gridColumn = '1'; card.style.gridRow = String(index + 1); }
+    drinkGrid.append(card);
+  });
 }
 
 function renderTray() {

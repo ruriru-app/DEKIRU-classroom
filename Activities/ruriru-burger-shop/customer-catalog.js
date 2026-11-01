@@ -18,15 +18,15 @@
 
   const lowerDefinitions = {
     1: [
-      ['cyclist-boy', .72, 88, 1160, 514, 'masculine', 0, 1.12],
-      ['commuter-woman', 1, 11, 905, 508, 'feminine', 0, 1],
-      ['senior-man', .90, 31, 965, 512, 'masculine', 1, .90],
+      ['cyclist-boy', .88, 88, 800, 514, 'masculine', 0, 1.12],
+      ['commuter-woman', 1, 11, 710, 508, 'feminine', 0, 1],
+      ['senior-man', .95, 31, 735, 512, 'masculine', 1, .90],
     ],
     2: [
-      ['family-father', 1.08, 79, 950, 430, 'masculine', 0, .97],
-      ['shopper-woman', .82, 109, 786, 515, 'feminine', 1, 1.02],
-      ['school-girl', 1, 101, 1000, 520, 'feminine', 0, 1.10],
-      ['school-boy', 1.13, 50, 1145, 500, 'masculine', 1, 1.02],
+      ['family-father', 1.25, 79, 930, 430, 'masculine', 0, .97],
+      ['shopper-woman', .90, 109, 650, 515, 'feminine', 1, 1.02],
+      ['school-girl', 1, 101, 750, 520, 'feminine', 0, 1.10],
+      ['school-boy', 1.12, 50, 770, 500, 'masculine', 1, 1.02],
     ],
     3: [
       ['copper-woman', .96, 22, 940, 513, 'feminine', 0, 1.04],
@@ -38,13 +38,15 @@
   };
   const pools = {4:CUSTOMERS};
   for (const [level, records] of Object.entries(lowerDefinitions)) {
-    pools[level]=Object.freeze(records.map(([id,stature,headTop,waist,centerX,gender,voiceIndex,pitch])=>Object.freeze({
+    // The counter crop is at the upper chest in LEVEL1/2, matching the close
+    // LEVEL4 framing; it is not the waist position in the full-height PNG.
+    pools[level]=Object.freeze(records.map(([id,stature,headTop,counterCrop,centerX,gender,voiceIndex,pitch])=>Object.freeze({
       id:`level${level}-${id}`,level:Number(level),
       expressions:Object.freeze(Object.fromEntries(expressions.map(expression=>{
         const revision=Number(level)===3&&((id==='campus-man'&&expression==='smile')||(id==='charcoal-man'&&['smile','angry'].includes(expression)))?2:1;
         return [expression,`./assets/customer-level${level}-${id}-${expression}-v${revision}.png`];
       }))),
-      layout:Object.freeze({aspectRatio:2/3,scale:stature*waist/(waist-headTop),visibleFraction:waist/1536,headTop:headTop/1536,centerFraction:centerX/1024}),
+      layout:Object.freeze({aspectRatio:2/3,scale:stature*counterCrop/(counterCrop-headTop),visibleFraction:counterCrop/1536,headTop:headTop/1536,centerFraction:centerX/1024}),
       voice:Object.freeze({gender,voiceIndex,pitch}),
     })));
   }

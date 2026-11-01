@@ -15,18 +15,28 @@
   const preparingButton = document.getElementById("preparing-button");
   const playLink = document.getElementById("play-link");
   const progress = globalThis.RuRiRuProgress.read();
+  const playableIndices = levels.flatMap((entry,index) => entry.level <= progress.unlocked ? [index] : []);
   for(const entry of levels) {
     const badge=document.getElementById(`level-availability-${entry.level}`);
     const stars=progress.levels[entry.level]?.stars || 0;
     const unlocked=entry.level<=progress.unlocked;
     badge.textContent=stars?'★'.repeat(stars):unlocked?'遊べる':'未解放';
     badge.classList.toggle('is-ready',unlocked);
-    cards[entry.level-1].classList.toggle('is-locked',!unlocked);
+    const card=cards[entry.level-1];
+    card.classList.toggle('is-locked',!unlocked);
+    card.disabled=!unlocked;
+    card.setAttribute('aria-disabled',String(!unlocked));
+    const unlockDescription=document.getElementById(`level-unlock-${entry.level}`);
+    if(unlockDescription) {
+      unlockDescription.textContent=unlocked?'':`LEVEL${entry.level-1}の★★★で選べます。`;
+      unlockDescription.hidden=unlocked;
+    }
+    card.setAttribute('aria-describedby',`level-rules-${entry.level} level-availability-${entry.level}${unlocked?'':` level-unlock-${entry.level}`}`);
   }
 
   function selectLevel(index, moveFocus = false) {
     const selection = levels[index];
-    if (!selection) return;
+    if (!selection || selection.level > progress.unlocked) return;
 
     cards.forEach((card, cardIndex) => {
       const active = cardIndex === index;
@@ -43,7 +53,7 @@
     playLink.hidden = !isPlayable;
     preparingButton.textContent = `LEVEL${selection.level}を遊ぶ →`;
     playLink.textContent=`LEVEL${selection.level}を遊ぶ →`;
-    playLink.href=`./play.html?level=${selection.level}&v=20261102a`;
+    playLink.href=`./play.html?level=${selection.level}&v=20261102b`;
     const stars=progress.levels[selection.level]?.stars || 0;
     startStatus.textContent = isPlayable ? stars ? `獲得した星：${'★'.repeat(stars)}　もう一度接客しよう！` : `${selection.customers}人のお客さんを接客しよう！` : `LEVEL${selection.level-1}の★★★で開きます`;
     if (moveFocus) cards[index].focus();
@@ -52,11 +62,13 @@
   cards.forEach((card, index) => {
     card.addEventListener("click", () => selectLevel(index));
     card.addEventListener("keydown", (event) => {
+      if(card.disabled) return;
+      const position=playableIndices.indexOf(index);
       let nextIndex;
-      if (event.key === "ArrowRight" || event.key === "ArrowDown") nextIndex = (index + 1) % cards.length;
-      if (event.key === "ArrowLeft" || event.key === "ArrowUp") nextIndex = (index - 1 + cards.length) % cards.length;
-      if (event.key === "Home") nextIndex = 0;
-      if (event.key === "End") nextIndex = cards.length - 1;
+      if (event.key === "ArrowRight" || event.key === "ArrowDown") nextIndex = playableIndices[(position + 1) % playableIndices.length];
+      if (event.key === "ArrowLeft" || event.key === "ArrowUp") nextIndex = playableIndices[(position - 1 + playableIndices.length) % playableIndices.length];
+      if (event.key === "Home") nextIndex = playableIndices[0];
+      if (event.key === "End") nextIndex = playableIndices[playableIndices.length - 1];
       if (nextIndex === undefined) return;
       event.preventDefault();
       selectLevel(nextIndex, true);
