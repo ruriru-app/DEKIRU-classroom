@@ -79,9 +79,13 @@
     while (start > 0 && (expressionPart(tokens[start - 1]) ||
       (tokens[start - 1] === ',' && expressionPart(tokens[start - 2])))) start--;
     const expression = tokens.slice(start, index);
-    if (expression.length === 1 && numericToken(expression[0])) {
-      if (!/^(?:0|[1-9]\d*|[1-9]\d{0,2}(?:,\d{3})+)$/.test(expression[0])) return null;
-      const amount = Number(expression[0].replaceAll(',', ''));
+    // English ASR can format a spoken yen amount as "$2,140 yen".
+    // Tolerate that single symbol only inside this explicitly yen-marked amount.
+    const numericExpression = expression.length === 2 && expression[0] === '$'
+      ? expression.slice(1) : expression;
+    if (numericExpression.length === 1 && numericToken(numericExpression[0])) {
+      if (!/^(?:0|[1-9]\d*|[1-9]\d{0,2}(?:,\d{3})+)$/.test(numericExpression[0])) return null;
+      const amount = Number(numericExpression[0].replaceAll(',', ''));
       return Number.isSafeInteger(amount) && amount <= 999999 ? { amount, start } : null;
     }
     const amount = englishNumber(expression.filter(token => token !== ','));

@@ -71,12 +71,12 @@
       if (remaining[bucket] > 0) {
         remaining[bucket]--;
         retryPending = true;
-        ready(kind === 'question' ? 'question' : kind === 'handoff' ? 'handoff' : 'price');
-        return;
+      } else {
+        if (kind === 'question') stats.questionMistakes++;
+        else stats.checkoutMistakes++;
+        stats.penalty += 120;
       }
-      if (kind === 'question') stats.questionMistakes++;
-      else stats.checkoutMistakes++;
-      stats.penalty += 120;
+      requestMode = kind === 'question' ? 'question' : kind === 'handoff' ? 'handoff' : 'price';
       expression = 'troubled';
       phase = `${kind}-feedback`;
       speak(kind === 'question' ? 'Pardon?' : kind === 'handoff' ? "Where's my order?" : 'Really?', `${kind}-error`, kind);

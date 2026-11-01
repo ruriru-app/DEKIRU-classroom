@@ -1,5 +1,6 @@
 (() => {
-  const storageKey = 'ruriru-level4-fixed-service-v1';
+  // Preserve older trial saves without replaying them under different judgement rules.
+  const storageKey = 'ruriru-level4-fixed-service-v2';
   const voiceChoiceKey = 'ruriru-customer-voice-v1';
   const eventTypes = new Set(['start', 'arrived', 'audio-started', 'audio-ended', 'attempt-start', 'attempt-finish',
     'attempt-cancel', 'submit', 'retry', 'handoff-finished', 'inspection-finished', 'hold-finished',
@@ -23,7 +24,7 @@
     function readSaved() {
       try {
         const value = JSON.parse(localStorage.getItem(storageKey) || 'null');
-        if (!value || value.version !== 1 || !Array.isArray(value.events) || value.events.length > 5000 ||
+        if (!value || value.version !== 2 || !Array.isArray(value.events) || value.events.length > 5000 ||
             !Number.isFinite(value.at) || !Array.isArray(value.items)) return null;
         let previous = -Infinity;
         for (const entry of value.events) {
@@ -229,7 +230,7 @@
     });
     function saveAndExit() {
       stopPlatform();
-      const payload = { version: 1, greeting, at: now(), events: history, items: selectedItems(),
+      const payload = { version: 2, greeting, at: now(), events: history, items: selectedItems(),
         presented: counter.view().phase === 'presented', transcript: transcript.textContent };
       try {
         localStorage.setItem(storageKey, JSON.stringify(payload));
