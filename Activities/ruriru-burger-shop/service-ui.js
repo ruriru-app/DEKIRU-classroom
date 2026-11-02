@@ -1,9 +1,5 @@
 (() => {
-  // Preserve older trial saves without replaying them under different judgement rules.
   const voiceChoiceKey = 'ruriru-customer-voice-v1';
-  const eventTypes = new Set(['start', 'arrived', 'audio-started', 'audio-ended', 'attempt-start', 'attempt-finish',
-    'attempt-cancel', 'submit', 'retry', 'handoff-finished', 'inspection-finished', 'hold-finished', 'correction-wait-finished',
-    'departure-finished', 'replay', 'hint-start', 'hint-end', 'pause', 'resume', 'technical-error', 'recover', 'items-changed', 'reset']);
 
   function createServiceUI({ products, counter, selectedItems, clearItems, onRender, setExpression, setMicState,
     setCustomer = () => {}, customers, random = Math.random, level = 4 }) {
@@ -13,19 +9,16 @@
     const remaining = el('retry-remaining'), trouble = el('service-trouble'), pauseDialog = el('service-pause');
     const result = el('service-result'), servedItems = el('served-items');
     const hint = el('order-hint'), hintText = el('order-hint-text'), bubble = el('reaction-bubble'), pattern = el('service-pattern');
-    const storageKey = level === 4 ? 'ruriru-level4-service-v6' : `ruriru-level${level}-service-v1`;
-    const rules = globalThis.RuRiRuLevels?.getLevelRules(level) ||
-      { customerCount: 4, typeMin: 3, typeMax: 5, totalMin: 6, totalMax: 12, perTypeMax: 5 };
     const profiles = globalThis.RuRiRuCustomers.getCustomers?.(level) || globalThis.RuRiRuCustomers.CUSTOMERS;
-    const expectedCustomerCount = customers ? customers.length : rules.customerCount;
     const clone = value => JSON.parse(JSON.stringify(value));
     const freshPlan = () => customers ? clone(customers) : (globalThis.RuRiRuServicePlan.createNormalPlan || globalThis.RuRiRuServicePlan.createLevel4Plan)({
       level, products, customerIds: profiles.map(profile => profile.id), random,
     });
-    let saved = readSaved();
-    let customerPlan = saved ? clone(saved.customers) : freshPlan(), renderedCustomerId = '';
-    let history = [], clockOffset = 0, replayClock = null;
-    const now = () => replayClock === null ? Date.now() - clockOffset : replayClock;
+    // A visit always opens a new game. Only finished results and voice choices
+    // persist; old in-progress games must not create a hidden resume step.
+    clearLegacyGames();
+    let customerPlan = freshPlan(), renderedCustomerId = '';
+    const now = () => Date.now();
     const canRetry = view => view.retryPending && ['question', 'checkout'].includes(view.phase) && !view.audio;
     const makeSession = () => globalThis.RuRiRuServiceSession.createServiceSession({ level, products, customers: customerPlan, now });
     let session = makeSession(), runner, speech, stopped = false, suspendedByFullscreen = false;
@@ -36,46 +29,15 @@
     const voiceErrorMessage = () => lastVoiceError === 'american-voice-unavailable'
       ? 'この端末でアメリカ英語の音声を利用できません。端末やブラウザーの音声設定でアメリカ英語を追加して、もう一度試してください。' : '';
 
-    function readSaved() {
+    function clearLegacyGames() {
       try {
-        const value = JSON.parse(localStorage.getItem(storageKey) || 'null');
-        if (!value || value.version !== 6 || (level < 4 ? value.level !== level : value.level !== undefined && value.level !== 4) ||
-            !validPlan(value.customers) || !Array.isArray(value.events) || value.events.length > 5000 ||
-            !Number.isFinite(value.at) || !Array.isArray(value.items)) return null;
-        let previous = -Infinity;
-        for (const entry of value.events) {
-          if (!Number.isFinite(entry.at) || entry.at < previous || !eventTypes.has(entry.event?.type)) return null;
-          previous = entry.at;
+        // Known revisions are also removed when an isolated storage adapter
+        // intentionally exposes only get/set/remove (as the local QA does).
+        for (let oldLevel = 1; oldLevel <= 4; oldLevel++) for (let revision = 1; revision <= 6; revision++) {
+          localStorage.removeItem(`ruriru-level${oldLevel}-service-v${revision}`);
+          localStorage.removeItem(`ruriru-level${oldLevel}-fixed-service-v${revision}`);
         }
-        if (value.at < previous || new Set(value.items.map(line => line?.id)).size !== value.items.length ||
-          value.items.some(line => !line || !products.some(p => p.id === line.id) ||
-          !Number.isInteger(line.quantity) || line.quantity < 1 || line.quantity > rules.totalMax) ||
-          value.items.reduce((n, line) => n + line.quantity, 0) > rules.totalMax) return null;
-        // Validate history with an isolated clock and session. Effects remain
-        // data here, so a damaged save cannot touch the current UI or counter.
-        let validationClock = value.events[0]?.at ?? value.at;
-        const validator = globalThis.RuRiRuServiceSession.createServiceSession({
-          level, products, customers: value.customers, now: () => validationClock,
-        });
-        for (const entry of value.events) {
-          validationClock = entry.at;
-          validator.dispatch(entry.event);
-          validator.takeEffects();
-        }
-        return value;
-      } catch { return null; }
-    }
-    function validPlan(plan) {
-      return Array.isArray(plan) && plan.length === expectedCustomerCount && plan.length > 0 &&
-        new Set(plan.map(entry => entry?.customerId)).size === plan.length && plan.every(entry =>
-          entry && profiles.some(profile => profile.id === entry.customerId) && ['Hello!', 'Hi!'].includes(entry.greeting) &&
-          typeof entry.orderText === 'string' && entry.orderText.length <= 2000 &&
-          (level < 4 ? /^I'd like .+, please\.$/ : /^(?:I'd like .+, please\.|Can I have .+, please\?)$/).test(entry.orderText) &&
-          typeof entry.correctiveText === 'string' && entry.correctiveText.length <= 2000 && /^I ordered .+\.$/.test(entry.correctiveText) &&
-          Array.isArray(entry.order) && entry.order.length >= rules.typeMin && entry.order.length <= rules.typeMax &&
-          new Set(entry.order.map(line => line?.id)).size === entry.order.length && entry.order.every(line =>
-            line && products.some(product => product.id === line.id) && Number.isInteger(line.quantity) && line.quantity >= 1 && line.quantity <= rules.perTypeMax) &&
-          entry.order.reduce((n, line) => n + line.quantity, 0) >= rules.totalMin && entry.order.reduce((n, line) => n + line.quantity, 0) <= rules.totalMax);
+      } catch { /* A fresh game also works when browser storage is unavailable. */ }
     }
     function closeDialogs() {
       for (const dialog of [trouble, pauseDialog, result]) if (dialog.open) dialog.close();
@@ -86,7 +48,6 @@
     }
     function send(event) {
       const previous = session.view().phase;
-      history.push({ at: now(), event: JSON.parse(JSON.stringify(event)) });
       session.dispatch(event);
       render();
       for (const effect of session.takeEffects()) runner.run(effect);
@@ -111,7 +72,7 @@
         setCustomer(profile);
         refreshVoiceChoices();
       }
-      el('customer-progress').textContent = `${view.customerNumber || 1} / ${view.customerCount || customerPlan.length} 人`;
+      el('customer-progress').textContent = `${view.customerNumber || 1}/${view.customerCount || customerPlan.length}人`;
       setExpression(view.expression);
       customer.hidden = stopped || ['idle', 'complete'].includes(view.phase);
       const microphoneState = speech?.state() || 'idle';
@@ -120,21 +81,23 @@
       setMicState(microphoneState, retrySuggested);
       mic.disabled = stopped || (microphoneState === 'idle' ? !(view.canRecord || canRetry(view)) : false);
       const labels = {
-        idle: '接客チャレンジ', arriving: 'お客さんが来たよ', greeting: 'あいさつを聞こう',
+        idle: '', arriving: 'お客さんが来たよ', greeting: 'あいさつを聞こう',
         question: '英語で質問しよう', order: '注文を聞こう', handoff: '受け渡しています', inspection: '商品を確認中',
         'product-feedback': '注文を聞いて作り直そう', 'question-feedback': 'もう一度質問しよう',
         'handoff-feedback': '受け渡しをもう一度', 'price-feedback': '金額をもう一度',
         hold: '伝わったよ！', thanking: 'ありがとう！', departing: 'また来てね', complete: '接客できました',
         paused: '一時停止中', technical: '音声を確認中',
       };
-      status.textContent = stopped ? '保存しました' : view.retryPending ? '発話をやり直そう' : view.phase === 'checkout'
+      status.textContent = stopped ? '' : view.retryPending ? '発話をやり直そう' : view.phase === 'checkout'
         ? view.requestMode === 'price' ? '金額をもう一度' : view.requestMode === 'handoff' ? '受け渡しをもう一度' : '準備して英語で会計'
         : labels[view.phase] || '英語で接客しよう';
-      action.textContent = stopped || (saved && view.phase === 'idle') ? '保存した接客を再開' : view.phase === 'idle' ? '接客スタート' : 'もう一度聞く';
-      action.disabled = !stopped && !(saved && view.phase === 'idle') && view.phase !== 'idle' && !view.canReplay;
+      if (action) {
+        action.textContent = view.phase === 'idle' ? '接客スタート' : 'もう一度聞く';
+        action.disabled = stopped || (view.phase !== 'idle' && !view.canReplay);
+      }
       remaining.hidden = ['idle', 'complete'].includes(view.phase);
       remaining.textContent = `やり直し あと${view.remaining[view.requestMode === 'question' ? 'question' : 'checkout']}回`;
-      el('pause-action').disabled = stopped || ['idle', 'complete', 'paused', 'technical'].includes(view.phase);
+      if (el('pause-action')) el('pause-action').disabled = stopped || ['idle', 'complete', 'paused', 'technical'].includes(view.phase);
       onRender();
     }
     function renderEnglishAids(view, microphoneState) {
@@ -185,8 +148,6 @@
       clearItems();
       servedItems.classList.remove('is-departing');
       onRender();
-      try { localStorage.removeItem(storageKey); } catch { /* Local persistence is optional on this browser. */ }
-      saved = null;
       el('result-rating').textContent = '★'.repeat(view.stars);
       el('result-points').textContent = `${view.score} 点`;
       const s = view.stats;
@@ -323,16 +284,15 @@
     document.addEventListener('pointercancel', endHint);
     window.addEventListener?.('blur', endHint);
     document.addEventListener('visibilitychange', () => { if (document.hidden) endHint(); });
-    action.addEventListener('click', () => {
-      if (saved && (stopped || session.view().phase === 'idle')) restoreSaved();
-      else if (session.view().phase === 'idle') send({ type: 'start' });
+    action?.addEventListener('click', () => {
+      if (session.view().phase === 'idle') send({ type: 'start' });
       else { runner.cancel(); send({ type: 'replay' }); }
     });
-    el('pause-action').addEventListener('click', () => {
+    el('pause-action')?.addEventListener('click', () => {
       stopPlatform(); send({ type: 'attempt-cancel' }); send({ type: 'pause' }); pauseDialog.showModal();
     });
     el('resume-action').addEventListener('click', () => { pauseDialog.close(); send({ type: 'resume' }); });
-    el('sound-action').addEventListener('click', () => {
+    el('sound-action')?.addEventListener('click', () => {
       refreshVoiceChoices();
       stopPlatform(); send({ type: 'attempt-cancel' }); lastSpeechError = '';
       send({ type: 'technical-error', source: 'audio' });
@@ -353,44 +313,15 @@
       send({ type: 'recover' });
       if (!microphoneFailure && !session.view().audio && session.view().canReplay) send({ type: 'replay', technical: true });
     });
-    function saveAndExit() {
-      stopPlatform();
-      endHint();
-      const payload = { version: 6, ...(level < 4 ? { level } : {}), customers: clone(customerPlan), at: now(), events: history, items: selectedItems(),
-        presented: counter.view().phase === 'presented', transcript: transcript.textContent };
-      try {
-        localStorage.setItem(storageKey, JSON.stringify(payload));
-        saved = payload; stopped = true; closeDialogs(); render();
-        window.location.assign('./index.html');
-      } catch { el('trouble-message').textContent = 'このブラウザーでは保存できません。接客を再開するか、この画面を開いたままにしてください。'; }
-    }
-    el('save-exit').addEventListener('click', saveAndExit);
-    el('pause-save').addEventListener('click', saveAndExit);
-    function restoreSaved() {
-      if (!saved) return;
-      stopPlatform(); closeDialogs(); clearItems();
-      customerPlan = clone(saved.customers);
-      replayClock = saved.events[0]?.at || saved.at;
-      session = makeSession();
-      for (const entry of saved.events) { replayClock = entry.at; session.dispatch(entry.event); session.takeEffects(); }
-      clockOffset = Date.now() - saved.at; replayClock = null;
-      history = [...saved.events];
-      for (const { id, quantity } of saved.items) for (let n = 0; n < quantity; n++) counter.add(id);
-      if (saved.presented) counter.present('Here you are.');
-      transcript.textContent = saved.transcript || '';
-      stopped = false;
-      customer.classList.remove('from-left', 'from-right', 'is-departing');
-      servedItems.classList.remove('is-departing');
-      const phase = session.view().phase;
-      if (phase === 'technical') send({ type: 'recover' });
-      else if (phase === 'paused') send({ type: 'resume' });
-      else render();
-    }
+    el('exit-action')?.addEventListener('click', () => {
+      stopPlatform(); endHint(); stopped = true; closeDialogs();
+      clearItems(); render(); window.location.assign('./index.html');
+    });
     el('play-again').addEventListener('click', () => {
-      stopPlatform(); closeDialogs(); clearItems(); saved = null; stopped = false;
+      stopPlatform(); closeDialogs(); clearItems(); stopped = false;
       servedItems.classList.remove('is-departing');
       customerPlan = freshPlan(); renderedCustomerId = '';
-      clockOffset = 0; history = []; session = makeSession();
+      session = makeSession();
       transcript.textContent = 'マイクを押して、お客さんに英語で接客してみよう！';
       send({ type: 'start' });
     });
@@ -408,7 +339,7 @@
       } else if (event.detail.playing && suspendedByFullscreen) {
         suspendedByFullscreen = false; send({ type: 'resume' });
         if (deferredMicrophoneError) { const error = deferredMicrophoneError; deferredMicrophoneError = null; handleSpeechError(error); }
-      } else if (event.detail.playing && session.view().phase === 'idle' && !saved) {
+      } else if (event.detail.playing && session.view().phase === 'idle') {
         send({ type: 'start' });
       }
     });

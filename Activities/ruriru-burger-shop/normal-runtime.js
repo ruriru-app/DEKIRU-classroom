@@ -11,11 +11,13 @@
   document.title=`RuRiRu BURGER SHOP — LEVEL ${level} NORMAL`;
   document.querySelector('.level-pill strong').textContent=String(level);
   document.querySelector('.game-shell').setAttribute('aria-label',`RuRiRu BURGER SHOP LEVEL ${level}`);
-  document.getElementById('shop-info-tile').setAttribute('aria-label',`RuRiRu BURGER SHOP LEVEL ${level} NORMAL 接客チャレンジ`);
+  document.getElementById('shop-info-tile').setAttribute('aria-label',`RuRiRu BURGER SHOP LEVEL ${level} NORMAL`);
   document.querySelector('.fullscreen-level').textContent=`LEVEL ${level} · NORMAL`;
-  document.getElementById('customer-progress').textContent=`1 / ${level} 人`;
+  document.getElementById('customer-progress').textContent=`1/${level}人`;
   document.getElementById('service-window').setAttribute('aria-label',`${themes[level]}の接客カウンター`);
   document.querySelector('.store-background-art').src=`./assets/level${level}-background.png`;
+  const crowdArt=document.querySelector('.store-crowd-art');
+  if(crowdArt)crowdArt.src=`./assets/level${level}-crowd-v1.png`;
   document.querySelector('.counter-art-layer').src=`./assets/level${level}-counter-foreground.png`;
   document.getElementById('prototype-note').hidden=true;
   document.getElementById('result-context').textContent=`LEVEL ${level} NORMAL · ${level}人`;

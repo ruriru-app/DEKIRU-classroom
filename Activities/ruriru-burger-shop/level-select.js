@@ -53,7 +53,7 @@
     playLink.hidden = !isPlayable;
     preparingButton.textContent = `LEVEL${selection.level}を遊ぶ →`;
     playLink.textContent=`LEVEL${selection.level}を遊ぶ →`;
-    playLink.href=`./play.html?level=${selection.level}&v=20261102c`;
+    playLink.href=`./play.html?level=${selection.level}&v=20261103a`;
     const stars=progress.levels[selection.level]?.stars || 0;
     startStatus.textContent = isPlayable ? stars ? `獲得した星：${'★'.repeat(stars)}　もう一度接客しよう！` : `${selection.customers}人のお客さんを接客しよう！` : `LEVEL${selection.level-1}の★★★で開きます`;
     if (moveFocus) cards[index].focus();

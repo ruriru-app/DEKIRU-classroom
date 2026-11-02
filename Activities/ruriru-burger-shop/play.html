@@ -5,30 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#8CCBC2" />
     <title>RuRiRu BURGER SHOP — LEVEL 4</title>
-    <link rel="stylesheet" href="./styles.css?v=20261102c" />
+    <link rel="stylesheet" href="./styles.css?v=20261103a" />
   </head>
   <body>
     <div id="store-background" class="store-background" aria-hidden="true">
       <img class="store-background-art" alt="" />
+      <img class="store-crowd-art" alt="" />
     </div>
     <img id="counter-art-layer" class="counter-art-layer" alt="" aria-hidden="true" />
 
     <main class="game-shell" aria-label="RuRiRu BURGER SHOP LEVEL 4">
       <div class="top-row">
-          <aside id="shop-info-tile" class="shop-info-tile" aria-label="RuRiRu BURGER SHOP LEVEL 4 NORMAL 接客チャレンジ">
+          <aside id="shop-info-tile" class="shop-info-tile" aria-label="RuRiRu BURGER SHOP LEVEL 4 NORMAL">
             <span class="brand" aria-label="RuRiRu BURGER SHOP">
           <img class="packaging-logo" src="./assets/brand-ruriru-burger-logo-v1.png" alt="RuRiRu BURGER SHOP" />
             </span>
             <span class="tile-status">
-              <span class="level-pill"><span>LEVEL</span><strong>4</strong></span>
-              <span class="mode-line"><span class="mode-pill">NORMAL</span><span id="customer-progress" class="customer-progress" aria-live="polite">1 / 4 人</span></span>
+              <span class="level-pill"><span>LEVEL</span><strong class="level-value">4</strong></span>
+              <span class="mode-pill">NORMAL</span>
+              <span id="customer-progress" class="customer-progress" aria-live="polite">1/4人</span>
             </span>
-            <div class="service-tools">
-              <span id="service-status" class="lesson-label" role="status">接客チャレンジ</span>
-              <button id="service-action" type="button">接客スタート</button>
-              <button id="sound-action" type="button" aria-label="音声が聞こえない" title="音声が聞こえない">🔈?</button>
-              <button id="pause-action" type="button" aria-label="一時停止" title="一時停止">Ⅱ</button>
-            </div>
+            <span id="service-status" class="sr-only" role="status"></span>
           </aside>
         <section id="main-menu" class="menu-section main-section" aria-label="MAIN商品メニュー">
           <div id="main-grid" class="main-grid"></div>
@@ -89,15 +86,12 @@
       <small id="voice-status" role="status"></small>
       <button id="sound-test" type="button">テスト音声を聞く</button>
       <button id="sound-recovered" type="button">聞こえた！</button>
-      <button id="save-exit" type="button" class="subtle-action">状態を保存して終了</button>
-      <small>保存するとLEVEL選択に戻ります。同じLEVELを開き、「保存した接客を再開」で続けられます。</small>
+      <button id="exit-action" type="button" class="subtle-action">LEVEL選択に戻る</button>
     </dialog>
     <dialog id="service-pause" class="service-dialog" aria-labelledby="pause-title">
       <h2 id="pause-title">ひと休みしましょう</h2>
       <p>準備した商品と接客の状態を保っています。</p>
       <button id="resume-action" type="button">接客を再開</button>
-      <button id="pause-save" type="button" class="subtle-action">状態を保存して終了</button>
-      <small>保存するとLEVEL選択に戻ります。同じLEVELから続けられます。</small>
     </dialog>
     <dialog id="service-result" class="service-dialog" aria-labelledby="result-title">
       <h2 id="result-title">接客できました！</h2>
@@ -119,22 +113,22 @@
       <button id="fullscreen-fallback" class="fullscreen-fallback" type="button" hidden>この画面のまま続ける</button>
       <small class="fullscreen-help">全画面は Esc キーで解除できます。</small>
     </dialog>
-    <script src="./store.js?v=20261102c"></script>
-    <script src="./counter.js?v=20261102c"></script>
-    <script src="./level-config.js?v=20261102c"></script>
-    <script src="./level-menus.js?v=20261102c"></script>
-    <script src="./normal-progression.js?v=20261102c"></script>
-    <script src="./speech.js?v=20261102c"></script>
-    <script src="./service-validation.js?v=20261102c"></script>
-    <script src="./customer-catalog.js?v=20261102c"></script>
-    <script src="./normal-runtime.js?v=20261102c"></script>
-    <script src="./service-plan.js?v=20261102c"></script>
-    <script src="./customer-voice.js?v=20261102c"></script>
-    <script src="./service-session.js?v=20261102c"></script>
-    <script src="./service-effects.js?v=20261102c"></script>
-    <script src="./service-ui.js?v=20261102c"></script>
-    <script src="./app.js?v=20261102c"></script>
-    <script src="./microphone-setup.js?v=20261102c"></script>
-    <script src="./fullscreen.js?v=20261102c"></script>
+    <script src="./store.js?v=20261103a"></script>
+    <script src="./counter.js?v=20261103a"></script>
+    <script src="./level-config.js?v=20261103a"></script>
+    <script src="./level-menus.js?v=20261103a"></script>
+    <script src="./normal-progression.js?v=20261103a"></script>
+    <script src="./speech.js?v=20261103a"></script>
+    <script src="./service-validation.js?v=20261103a"></script>
+    <script src="./customer-catalog.js?v=20261103a"></script>
+    <script src="./normal-runtime.js?v=20261103a"></script>
+    <script src="./service-plan.js?v=20261103a"></script>
+    <script src="./customer-voice.js?v=20261103a"></script>
+    <script src="./service-session.js?v=20261103a"></script>
+    <script src="./service-effects.js?v=20261103a"></script>
+    <script src="./service-ui.js?v=20261103a"></script>
+    <script src="./app.js?v=20261103a"></script>
+    <script src="./microphone-setup.js?v=20261103a"></script>
+    <script src="./fullscreen.js?v=20261103a"></script>
   </body>
 </html>

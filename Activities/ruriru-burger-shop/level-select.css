@@ -41,6 +41,7 @@ h1 { margin: 0; font-size: clamp(23px, 2.3vw, 29px); letter-spacing: .06em; line
 .level-card:focus-visible, .play-button:focus-visible { outline: 3px solid var(--focus); outline-offset: 5px; }
 .card-picture { position: relative; display: block; width: 100%; aspect-ratio: 1.9; overflow: hidden; background: var(--card-tint); border-bottom: 1px solid #e3dbc7; }
 .card-picture img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center 42%; }
+.card-picture .card-crowd { position: absolute; inset: 0; pointer-events: none; }
 .selection-marker { display: none; align-items: center; gap: 6px; position: absolute; top: 10px; left: 10px; padding: 5px 10px 5px 8px; border: 1px solid #ffffffd9; border-radius: 99px; color: #fff; background: var(--teal); box-shadow: 0 2px 8px #213d2320; font-size: 14px; font-weight: 900; }
 .selection-marker span { font-size: 11px; font-weight: 700; letter-spacing: .02em; }
 .is-selected .selection-marker { display: flex; }
