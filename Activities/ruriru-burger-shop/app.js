@@ -94,6 +94,20 @@ function syncCustomerToCounter() {
   };
   for (const [name, value] of Object.entries(values)) document.documentElement.style.setProperty(name, `${value}px`);
   document.documentElement.style.setProperty('--customer-visible-offset', `${-100 * portrait.visibleFraction}%`);
+  const bubble = document.querySelector('#reaction-bubble');
+  if (bubble && !bubble.hidden && bubble.style && bubble.dataset) {
+    const titleRight = level <= 2 ? document.querySelector('#shop-info-tile')?.getBoundingClientRect()?.right : service.left;
+    const bounds = { profile: customerProfile, portrait, viewportWidth: window.innerWidth, viewportHeight: window.innerHeight,
+      safeLeft: Math.max(service.left, titleRight || service.left) + 12, safeRight: service.right - 12 };
+    let reaction = globalThis.RuRiRuCustomers.reactionBubbleGeometry(bounds);
+    bubble.style.setProperty('--reaction-max-width', `${reaction.maxWidth}px`);
+    // Measure after wrapping the current phrase, so a longer retry message is
+    // centered on the same cheek without jumping up or leaving the viewport.
+    reaction = globalThis.RuRiRuCustomers.reactionBubbleGeometry({ ...bounds, bubbleHeight: bubble.getBoundingClientRect().height || 48 });
+    bubble.dataset.side = reaction.side;
+    bubble.style.setProperty('--reaction-left', `${reaction.left}px`);
+    bubble.style.setProperty('--reaction-top', `${reaction.top}px`);
+  }
 }
 
 function setCustomerProfile(profile) {

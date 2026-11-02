@@ -1,5 +1,23 @@
 (() => {
   const expressions = ['neutral', 'troubled', 'angry', 'smile'];
+  // Cheek edges and eye/cheek height in each original PNG. These anchors stay
+  // independent of the torso crop and body scale used to place the customer.
+  const facePixels = {
+    'sunhat-woman': [430, 790, 430], 'mint-man': [425, 790, 330],
+    'lavender-woman': [430, 790, 350], 'orange-man': [425, 790, 310],
+    'coral-woman': [430, 790, 370], 'blue-senior-man': [425, 790, 320],
+    'level1-cyclist-boy': [360, 660, 370], 'level1-commuter-woman': [370, 650, 275],
+    'level1-senior-man': [355, 665, 280],
+    'level2-family-father': [290, 565, 280], 'level2-shopper-woman': [365, 670, 305],
+    'level2-school-girl': [355, 675, 330], 'level2-school-boy': [355, 665, 285],
+    'level3-copper-woman': [350, 675, 270], 'level3-silver-woman': [350, 660, 275],
+    'level3-charcoal-man': [350, 680, 300], 'level3-campus-man': [350, 680, 290],
+    'level3-olive-woman': [350, 670, 260],
+  };
+  function sourceFace(id, width, height) {
+    const [left, right, centerY] = facePixels[id];
+    return Object.freeze({ left: left / width, right: right / width, centerY: centerY / height });
+  }
   const definitions = [
     ['sunhat-woman', 1218 / 1292, 1, .79, 'feminine', 0, 1.05],
     ['mint-man', 1218 / 1292, 1.08, .73, 'masculine', 0, .96],
@@ -13,6 +31,7 @@
     expressions: Object.freeze(Object.fromEntries(expressions.map(expression => [expression,
       `./assets/customer-${id === 'sunhat-woman' ? '' : `${id}-`}${expression}-v1.png`]))),
     layout: Object.freeze({ aspectRatio, scale, visibleFraction }),
+    face: sourceFace(id, 1218, 1292),
     voice: Object.freeze({ gender, voiceIndex, pitch }),
   })));
 
@@ -47,6 +66,7 @@
         return [expression,`./assets/customer-level${level}-${id}-${expression}-v${revision}.png`];
       }))),
       layout:Object.freeze({aspectRatio:2/3,scale:stature*counterCrop/(counterCrop-headTop),visibleFraction:counterCrop/1536,headTop:headTop/1536,centerFraction:centerX/1024}),
+      face:sourceFace(`level${level}-${id}`,1024,1536),
       voice:Object.freeze({gender,voiceIndex,pitch}),
     })));
   }
@@ -66,7 +86,8 @@
     // touch the same top limit or cancel stature against the crop fraction.
     const reference = CUSTOMERS[0].layout;
     const preferredWidth = viewportHeight <= 610 ? 340 : viewportHeight <= 700 ? 380 : 420;
-    const preferredUnit = preferredWidth / reference.aspectRatio * reference.visibleFraction;
+    const proximity = profile.level === 1 ? 1.3 : 1;
+    const preferredUnit = preferredWidth / reference.aspectRatio * reference.visibleFraction * proximity;
     const pool = profile.level ? getCustomers(profile.level) : CUSTOMERS;
     const bodies = pool.includes(profile) ? pool : [...pool, profile];
     const tallest = Math.max(...bodies.map(body => body.layout.scale));
@@ -79,5 +100,25 @@
       top: counterY, width, height: width / ratio, visibleFraction };
   }
 
-  globalThis.RuRiRuCustomers = Object.freeze({ CUSTOMERS, getCustomers, customerGeometry });
+  function reactionBubbleGeometry({ profile, portrait, viewportWidth, viewportHeight,
+    safeLeft = 10, safeRight = viewportWidth - 10, bubbleWidth = 220, bubbleHeight = 48, gap = 16 } = {}) {
+    const face = profile.face;
+    const imageLeft = portrait.left - portrait.width / 2;
+    const imageTop = portrait.top - portrait.height * portrait.visibleFraction;
+    const leftCheek = imageLeft + portrait.width * face.left;
+    const rightCheek = imageLeft + portrait.width * face.right;
+    const leftBound = Math.max(10, safeLeft), rightBound = Math.min(viewportWidth - 10, safeRight);
+    const leftRoom = Math.max(0, leftCheek - gap - leftBound);
+    const rightRoom = Math.max(0, rightBound - rightCheek - gap);
+    const side = rightRoom >= bubbleWidth || rightRoom >= leftRoom ? 'right' : 'left';
+    const halfHeight = Math.min(bubbleHeight / 2, Math.max(0, viewportHeight / 2 - 10));
+    return {
+      side, left: side === 'right' ? rightCheek + gap : leftCheek - gap,
+      top: Math.max(10 + halfHeight, Math.min(viewportHeight - 10 - halfHeight,
+        imageTop + portrait.height * face.centerY)),
+      maxWidth: Math.min(bubbleWidth, side === 'right' ? rightRoom : leftRoom),
+    };
+  }
+
+  globalThis.RuRiRuCustomers = Object.freeze({ CUSTOMERS, getCustomers, customerGeometry, reactionBubbleGeometry });
 })();
