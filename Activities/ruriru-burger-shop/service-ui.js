@@ -152,7 +152,7 @@
       el('result-points').textContent = `${view.score} 点`;
       const s = view.stats;
       el('result-details').textContent = `接客 ${Math.round(view.elapsedMs / 1000)}秒 ／ 質問ミス ${s.questionMistakes}・商品ミス ${s.productMistakes}・会計ミス ${s.checkoutMistakes}回`;
-      if (el('result-context')) el('result-context').textContent = `LEVEL ${level} NORMAL · ${view.customerCount}人`;
+      if (el('result-context')) el('result-context').textContent = `LEVEL ${level} · ${view.customerCount}人`;
       if (el('next-level')) el('next-level').hidden = view.stars !== 3 || level >= 4;
       globalThis.RuRiRuProgress?.recordResult(level, { stars: view.stars, score: view.score, elapsedMs: view.elapsedMs, stats: view.stats });
       if (!result.open) result.showModal();
