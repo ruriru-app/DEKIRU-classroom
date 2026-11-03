@@ -1,7 +1,7 @@
 const test=require('node:test'),assert=require('node:assert/strict'),vm=require('node:vm'),fs=require('node:fs'),C=require('./typing-core.js');
 // Run the real player; only the browser DOM and speech engine are replaced.
 function player(first='cat',autoStart=true,storage=new Map(),dogJapanese=''){
- const nodes=new Map(),spoken=[],utterances=[],countdownJobs=new Map();let now=1000,job=0;
+ const nodes=new Map(),spoken=[],utterances=[],countdownJobs=new Map(),keySounds=[];let now=1000,job=0;
  const schedule=(fn,ms)=>{if(ms===1000){const id=++job;countdownJobs.set(id,fn);return id;}return setTimeout(fn,ms);};
  const cancel=id=>{if(countdownJobs.has(id))countdownJobs.delete(id);else clearTimeout(id);};
  const tick=()=>{const item=countdownJobs.entries().next().value;if(item){countdownJobs.delete(item[0]);item[1]();}};
@@ -12,10 +12,22 @@ function player(first='cat',autoStart=true,storage=new Map(),dogJapanese=''){
  class Utterance{constructor(text){this.text=text;}}
  const mockMath=Object.create(Math);mockMath.random=()=>0;
  const context={Math:mockMath,localStorage:{getItem:k=>storage.get(k)??null,setItem:(k,v)=>storage.set(k,v)},TypingCore:C,Date:{now:()=>now},setInterval:()=>1,clearInterval(){},setTimeout:schedule,clearTimeout:cancel,document:{getElementById:get,createElement:node,addEventListener(){},hidden:false},window:{speechSynthesis:synthesis,SpeechSynthesisUtterance:Utterance,addEventListener(){}},speechSynthesis:synthesis,SpeechSynthesisUtterance:Utterance,location:{hash:'#d=test',search:'?book=nh6&unit=6',origin:'https://example.test'},URL,URLSearchParams,ShareCodec:{decodeJson:()=>({version:1,type:'english-typing',title:'Test',entries:[{english:first,japanese:'ねこ'},{english:'dog',japanese:dogJapanese}]})}};
+ context.window.TypingSounds={sets:[{id:'normal',label:'ノーマル'}],create:()=>({settings:()=>({set:'normal',volume:.4}),configure(){},prepare(){return Promise.resolve(true);},play:kind=>keySounds.push(kind),preview(){return Promise.resolve(true);},stop(){}})};
  vm.createContext(context);vm.runInContext(fs.readFileSync(require.resolve('./typing-player.js'),'utf8'),context);
  if(autoStart&&get('start').onclick){get('start').onclick();countdown();}
- return {get,spoken,utterances,tick,countdown,advanceTime(ms){now+=ms;},submit(value){get('answer').value=value;get('answer-form').onsubmit({preventDefault(){}});}};
+ return {get,spoken,utterances,keySounds,tick,countdown,advanceTime(ms){now+=ms;},submit(value){get('answer').value=value;get('answer-form').onsubmit({preventDefault(){}});}};
 }
+
+test('accepted typing plays a key sound but rejected Easy input does not',()=>{
+ const p=player(),input=p.get('answer');input.value='c';input.oninput({inputType:'insertText',isComposing:false});
+ assert.deepEqual(p.keySounds,['key']);input.value='cu';input.oninput({inputType:'insertText',isComposing:false});
+ assert.deepEqual(p.keySounds,['key']);assert.equal(input.value,'c');
+});
+test('Enter uses its paired sound once and speaker mute silences typing',()=>{
+ const p=player(),input=p.get('answer');assert.equal(typeof input.onkeydown,'function');
+ input.onkeydown({key:'Enter',repeat:false});input.onkeydown({key:'Enter',repeat:true});assert.deepEqual(p.keySounds,['enter']);
+ p.get('sound-toggle').onclick();input.value='c';input.oninput({inputType:'insertText',isComposing:false});input.onkeydown({key:'Enter',repeat:false});assert.deepEqual(p.keySounds,['enter']);
+});
 test('correct first answer immediately opens next problem without previous attempt',()=>{
  const p=player();p.submit('cat');
  assert.equal(p.get('progress').textContent,'2 / 2問');
