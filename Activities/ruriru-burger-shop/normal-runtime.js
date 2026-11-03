@@ -17,7 +17,7 @@
   document.getElementById('service-window').setAttribute('aria-label',`${themes[level]}の接客カウンター`);
   document.querySelector('.store-background-art').src=`./assets/level${level}-background.png`;
   const crowdArt=document.querySelector('.store-crowd-art');
-  if(crowdArt)crowdArt.src=`./assets/level${level}-crowd-v1.png`;
+  if(crowdArt)crowdArt.src=`./assets/level${level}-crowd-v${level>=2?2:1}.png`;
   document.querySelector('.counter-art-layer').src=`./assets/level${level}-counter-foreground.png`;
   document.getElementById('prototype-note').hidden=true;
   document.getElementById('result-context').textContent=`LEVEL ${level} NORMAL · ${level}人`;

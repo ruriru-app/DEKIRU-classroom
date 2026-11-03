@@ -48,17 +48,18 @@
       ['school-boy', 1.12, 50, 770, 500, 'masculine', 1, 1.02],
     ],
     3: [
-      ['copper-woman', .96, 22, 940, 513, 'feminine', 0, 1.04],
-      ['silver-woman', .81, 32, 940, 508, 'feminine', 1, .94],
-      ['charcoal-man', 1.12, 38, 1150, 509, 'masculine', 0, .94],
-      ['campus-man', 1.18, 45, 1190, 507, 'masculine', 1, 1.06],
-      ['olive-woman', .88, 11, 927, 507, 'feminine', 2, 1],
+      ['copper-woman', .96, 22, 680, 513, 'feminine', 0, 1.04],
+      ['silver-woman', .81, 32, 570, 508, 'feminine', 1, .94],
+      ['charcoal-man', 1.12, 38, 730, 509, 'masculine', 0, .94],
+      ['campus-man', 1.18, 45, 720, 507, 'masculine', 1, 1.06],
+      ['olive-woman', .88, 11, 550, 507, 'feminine', 2, 1],
     ],
   };
   const pools = {4:CUSTOMERS};
   for (const [level, records] of Object.entries(lowerDefinitions)) {
-    // The counter crop is at the upper chest in LEVEL1/2, matching the close
-    // LEVEL4 framing; it is not the waist position in the full-height PNG.
+    // Each portrait meets the counter at its chest, matching the close LEVEL4
+    // framing. LEVEL3 needs separate landmarks for its full-height source art;
+    // using the waist would make faces and shoulders look far behind the counter.
     pools[level]=Object.freeze(records.map(([id,stature,headTop,counterCrop,centerX,gender,voiceIndex,pitch])=>Object.freeze({
       id:`level${level}-${id}`,level:Number(level),
       expressions:Object.freeze(Object.fromEntries(expressions.map(expression=>{
