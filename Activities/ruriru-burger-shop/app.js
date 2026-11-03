@@ -61,10 +61,12 @@ function syncCustomerToCounter() {
   const tray = document.querySelector('#tray').getBoundingClientRect();
   const service = document.querySelector('#service-window').getBoundingClientRect();
   const mainMenu = document.querySelector('#main-menu');
+  const cameraTop = document.querySelector('.top-row')?.getBoundingClientRect()?.bottom;
   const neutral = customerImages.find(image => image.dataset.customerExpression === 'neutral');
   const portrait = globalThis.RuRiRuCustomers.customerGeometry({
     profile: customerProfile, counterY: counterLine,
     topLimit: level <= 2 ? 10 : mainMenu.getBoundingClientRect().bottom + 10,
+    cameraTopLimit: (cameraTop ?? mainMenu.getBoundingClientRect().bottom) + 10,
     gapLeft: service.left, gapRight: service.right, viewportHeight: window.innerHeight,
     aspectRatio: neutral?.naturalWidth && neutral.naturalHeight ? neutral.naturalWidth / neutral.naturalHeight : undefined,
   });
@@ -89,6 +91,7 @@ function syncCustomerToCounter() {
     '--service-unit-size': Math.min(76, serviceWidth / 7.2),
     '--handoff-lift': geometry.workFront - geometry.serviceFront,
     '--customer-left': portrait.left,
+    '--customer-top': portrait.top,
     '--customer-width': portrait.width,
     '--customer-height': portrait.height,
   };

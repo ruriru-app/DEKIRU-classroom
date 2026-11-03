@@ -19,12 +19,12 @@
     return Object.freeze({ left: left / width, right: right / width, centerY: centerY / height });
   }
   const definitions = [
-    ['sunhat-woman', 1218 / 1292, 1, .79, 'feminine', 0, 1.05],
-    ['mint-man', 1218 / 1292, 1.08, .73, 'masculine', 0, .96],
-    ['lavender-woman', 1218 / 1292, .80, .70, 'feminine', 1, 1.12],
+    ['sunhat-woman', 1218 / 1292, 1, .63, 'feminine', 0, 1.05],
+    ['mint-man', 1218 / 1292, 1.08, .58, 'masculine', 0, .96],
+    ['lavender-woman', 1218 / 1292, .80, .54, 'feminine', 1, 1.12],
     ['orange-man', 1218 / 1292, 1.14, .60, 'masculine', 1, 1.04],
-    ['coral-woman', 1218 / 1292, .92, .75, 'feminine', 2, .98],
-    ['blue-senior-man', 1218 / 1292, 1.01, .64, 'masculine', 2, .89],
+    ['coral-woman', 1218 / 1292, .92, .58, 'feminine', 2, .98],
+    ['blue-senior-man', 1218 / 1292, 1.01, .56, 'masculine', 2, .89],
   ];
   const CUSTOMERS = Object.freeze(definitions.map(([id, aspectRatio, scale, visibleFraction, gender, voiceIndex, pitch]) => Object.freeze({
     id,
@@ -77,7 +77,7 @@
     return pools[level];
   }
 
-  function customerGeometry({ profile = CUSTOMERS[0], counterY, topLimit, gapLeft, gapRight, viewportHeight, aspectRatio } = {}) {
+  function customerGeometry({ profile = CUSTOMERS[0], counterY, topLimit, cameraTopLimit = topLimit, gapLeft, gapRight, viewportHeight, aspectRatio } = {}) {
     const layout = profile.layout;
     const ratio = Number.isFinite(aspectRatio) && aspectRatio > 0 ? aspectRatio : layout.aspectRatio;
     const visibleFraction = layout.visibleFraction;
@@ -85,10 +85,17 @@
     // locates the torso crop within each unchanged source portrait. Fit the
     // entire cast to one scene unit so a short viewport cannot make every head
     // touch the same top limit or cancel stature against the crop fraction.
-    const reference = CUSTOMERS[0].layout;
     const preferredWidth = viewportHeight <= 610 ? 340 : viewportHeight <= 700 ? 380 : 420;
-    const proximity = profile.level === 1 ? 1.3 : 1;
-    const preferredUnit = preferredWidth / reference.aspectRatio * reference.visibleFraction * proximity;
+    const proximity = profile.level === 1 ? 1.2 : 1;
+    // Keep the chosen LEVEL3 camera unit independent of individual source crops.
+    let preferredUnit = preferredWidth / (1218 / 1292) * .79;
+    if (profile.level !== 3) {
+      // Use LEVEL3's headroom as the common camera ceiling even where the
+      // MAIN board is absent or a cast's source proportions differ.
+      const referenceStature = Math.max(...getCustomers(3).map(body => body.layout.scale));
+      preferredUnit = Math.min(preferredUnit, Math.max(0, counterY - cameraTopLimit) / referenceStature);
+    }
+    preferredUnit *= proximity;
     const pool = profile.level ? getCustomers(profile.level) : CUSTOMERS;
     const bodies = pool.includes(profile) ? pool : [...pool, profile];
     const tallest = Math.max(...bodies.map(body => body.layout.scale));
@@ -97,8 +104,15 @@
     const unit = Math.max(0, Math.min(preferredUnit,
       (counterY - topLimit) / tallest, (gapRight - gapLeft - 24) / widest));
     const width = unit * layout.scale / visibleFraction * ratio;
+    const height = width / ratio;
+    const headTop = counterY - height * (visibleFraction - (layout.headTop || 0));
+    // Reveal more torso by moving the same-size portrait upward.
+    // The source continues below the counter; only its visible portion changes.
+    const lift = profile.level === 3 || !profile.level
+      ? Math.min(viewportHeight * .045 * (profile.level === 3 ? 1 : layout.scale),
+        Math.max(0, headTop - topLimit)) : 0;
     return { left: (gapLeft + gapRight) / 2 + (.5-(layout.centerFraction ?? .5))*width,
-      top: counterY, width, height: width / ratio, visibleFraction };
+      top: counterY - lift, width, height, visibleFraction };
   }
 
   function reactionBubbleGeometry({ profile, portrait, viewportWidth, viewportHeight,

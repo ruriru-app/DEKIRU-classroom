@@ -344,7 +344,7 @@ button { font: inherit; }
 }
 .customer-facing {
   left: var(--customer-left, 50%);
-  top: var(--counter-top-y);
+  top: var(--customer-top, var(--counter-top-y));
   width: var(--customer-width, 380px);
   height: var(--customer-height, 403px);
   transform: translate(-50%, var(--customer-visible-offset, -79%));
