@@ -66,6 +66,14 @@
       qrShare: true,
     },
     {
+      id: "alphabet-bingo-sheet",
+      title: "ALPHABET BINGO SHEET",
+      subtitle: "25文字を選んで、自分だけの5×5ビンゴシートを作ろう",
+      units: [],
+      href: "alphabet-bingo-sheet.html",
+      qrShare: true,
+    },
+    {
       id: "my-pencilcase",
       title: "My Pencilcase",
       subtitle: "自分だけの文房具セットを作ろう",
