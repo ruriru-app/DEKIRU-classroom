@@ -62,7 +62,7 @@
       { id: 'ice-cream', name: 'Ice cream', alt: 'アイスクリーム', price: 220, image: 'western-ice-cream.webp', spoken: 'ice[ -]?creams?' },
     ],
     pizza: [
-      { id: 'margherita', name: 'Margherita Pizza', alt: 'マルゲリータピザ', price: 750, image: 'pizza-margherita.webp', spoken: 'margherita(?: pizzas?)?' },
+      { id: 'margherita', name: 'Tomato Cheese Pizza', alt: 'トマトとチーズのピザ', price: 750, image: 'pizza-margherita.webp', spoken: 'tomato (?:and )?cheese pizzas?' },
       { id: 'pepperoni', name: 'Pepperoni Pizza', alt: 'ペパロニピザ', price: 850, image: 'pizza-pepperoni.webp', spoken: 'pepperoni(?: pizzas?)?' },
       { id: 'four-cheese', name: 'Four Cheese Pizza', alt: 'フォーチーズピザ', price: 850, image: 'pizza-four-cheese.webp', spoken: '(?:four|4)[ -]cheese pizzas?' },
       { id: 'seafood', name: 'Seafood Pizza', alt: 'シーフードピザ', price: 950, image: 'pizza-seafood.webp', spoken: 'sea ?food pizzas?' },
@@ -199,11 +199,19 @@
       const heading = createElement('h3');
       heading.id = `${shop}-list-title`;
       group.setAttribute('aria-labelledby', heading.id);
-      const number = createElement('span', '', String(listGroups.size + 1).padStart(2, '0'));
+      const button = createElement('button', 'list-shop-button');
+      button.type = 'button';
+      button.dataset.store = shop;
+      const number = createElement('span', 'list-shop-number', String(listGroups.size + 1).padStart(2, '0'));
       number.setAttribute('aria-hidden', 'true');
       const check = createElement('b', 'completion-check', '✓');
       check.setAttribute('aria-label', '購入済み');
-      heading.append(number, ` ${stores[shop]} `, check);
+      const arrow = createElement('span', 'list-shop-arrow', '→');
+      arrow.setAttribute('aria-hidden', 'true');
+      const marks = createElement('span', 'list-shop-marks');
+      marks.append(check, arrow);
+      button.append(number, stores[shop], marks);
+      heading.append(button);
       group.append(heading);
       for (const { product, quantity } of lines) {
         const row = createElement('button', 'list-line list-audio-button');
@@ -280,7 +288,9 @@
     let totalTypes = 0;
     for (const [shop, lines] of route) {
       const completed = purchasedStores.has(shop);
-      listGroups.get(shop).classList.toggle('is-complete', completed);
+      const group = listGroups.get(shop);
+      group.classList.toggle('is-complete', completed);
+      group.querySelector('.list-shop-button').disabled = inShop;
       if (completed) completedTypes += lines.length;
       totalTypes += lines.length;
     }
@@ -446,9 +456,11 @@
     order = order.replace(/^please\s+/, '').replace(/\s+please$/, '').trim();
     order = order.replace(/^(?:i would like(?: to (?:order|have))?|can i (?:have|get)|could i (?:have|get)|may i have|i (?:want|will have))\s+/, '');
     order = order.replace(/\s+please$/, '').trim();
-    const parts = order.split(/\s+and\s+/);
-    if (parts.length !== lines.length) return false;
     const two = fromSpeech ? '(?:two|2|to)' : '(?:two|2)';
+    // A conjunction inside a product name is not a separator.
+    const itemSeparator = new RegExp(`\\s+and\\s+(?=(?:one|1|a|an|${two})\\b)`);
+    const parts = order.split(itemSeparator);
+    if (parts.length !== lines.length) return false;
     return lines.every(({ product, quantity }) => {
       const quantityWords = quantity === 2 ? two : '(?:one|1|a|an)';
       const containers = product.containers ? `|${product.containers}` : '';
@@ -657,6 +669,12 @@
   shopTiles.forEach((button) => {
     button.addEventListener('click', () => enterShop(button.dataset.store));
   });
+  ui.list.addEventListener('click', (event) => {
+    const button = event.target.closest('.list-shop-button');
+    if (state !== 'browse' || !button) return;
+    enterShop(button.dataset.store);
+    ui.shopName.focus();
+  });
   keyButtons.forEach((button) => {
     button.addEventListener('click', () => usePaymentKey(button.dataset.key));
   });
@@ -688,7 +706,11 @@
   ui.replay.addEventListener('click', () => {
     if (state !== 'browse' && state !== 'listening' && lastClerkAudio) speak(lastClerkAudio);
   });
-  ui.leave.addEventListener('click', leaveShop);
+  ui.leave.addEventListener('click', () => {
+    const button = listGroups.get(store)?.querySelector('.list-shop-button');
+    leaveShop();
+    button?.focus();
+  });
   function selectLevel(level) {
     if (!Number.isInteger(level) || level < 1 || level > highestUnlockedLevel) {
       ui.level.value = String(currentLevel);

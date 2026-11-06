@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#f7f2e7">
   <title>RuRiRu PARTY SHOPPING｜画面案</title>
-  <link rel="stylesheet" href="./party.css">
+  <link rel="stylesheet" href="./party.css?v=list-shops-20261106">
 </head>
 <body>
   <main class="shopping-app">
@@ -22,7 +22,7 @@
       </div>
       <section class="shopping-list" aria-labelledby="list-title">
         <div class="list-heading"><h2 id="list-title">買い物リスト</h2><span id="list-count" aria-live="polite">0 / 2種類</span></div>
-        <p class="list-help">商品を押すと、英語の発音が聞けるよ。</p>
+        <p class="list-help">店名を押すと入店、商品を押すと発音。</p>
         <div id="shopping-list"></div>
       </section>
       <div class="destination"><p>買い物がそろったら、パーティーへ！</p><button id="venue-button" class="primary-button venue-button" disabled>会場へ向かう <span aria-hidden="true">→</span></button></div>
@@ -96,7 +96,7 @@
         </section>
       </div>
       <aside class="checkout-panel" aria-labelledby="shop-name">
-        <header class="current-shop"><span class="eyebrow">YOU ARE HERE</span><h2 id="shop-name">バーガーショップ</h2></header>
+        <header class="current-shop"><span class="eyebrow">YOU ARE HERE</span><h2 id="shop-name" tabindex="-1">バーガーショップ</h2></header>
         <div class="payment-heading"><h3>お会計</h3><p>聞こえた金額を入力しよう</p></div>
         <output id="payment-display" class="payment-display" aria-label="入力した支払金額" aria-live="polite">¥ —</output>
         <div class="keypad" aria-label="支払用テンキー">
@@ -123,6 +123,6 @@
       </div>
     </div>
   </dialog>
-  <script src="./party.js?v=burger-random-20261106"></script>
+  <script src="./party.js?v=list-shops-20261106"></script>
 </body>
 </html>
