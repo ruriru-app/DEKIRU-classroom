@@ -39,7 +39,7 @@
     western: '洋食屋さん',
     japanese: '和食屋さん',
   };
-  const unlockLevels = { western: 2, pizza: 3, japanese: 4 };
+  const unlockLevels = { burger: 1, western: 2, pizza: 3, japanese: 4 };
   const maxLevel = Math.max(...Object.values(unlockLevels));
   const progressKey = 'ruriru-party-shopping-unlocked-level';
   const priceQuestion = 'How much is it?';
@@ -50,7 +50,7 @@
       { id: 'hamburger', name: 'Hamburger', alt: 'ハンバーガー', price: 300, image: 'product-hamburger-menu-v1.png', spoken: 'hamburgers?|burgers?' },
       { id: 'cheeseburger', name: 'Cheeseburger', alt: 'チーズバーガー', price: 450, image: 'product-cheeseburger-menu-v1.png', spoken: 'cheeseburgers?' },
       { id: 'french-fries', name: 'French fries', alt: 'フライドポテト', price: 200, image: 'product-french-fries-menu-v4.png', spoken: '(?:french )?fries' },
-      { id: 'orange-juice', name: 'Orange juice', alt: 'オレンジジュース', price: 100, image: 'product-orange-juice-menu-v1.png', spoken: 'orange juices?' },
+      { id: 'orange-juice', name: 'Orange juice', alt: 'オレンジジュース', price: 100, image: 'product-orange-juice-menu-v1.png', spoken: 'orange juices?', containers: 'cups?|glass(?:es)?' },
     ],
     western: [
       { id: 'sandwich', name: 'Sandwich', alt: 'サンドイッチ', price: 450, image: 'western-sandwich.webp', spoken: 'sandwich(?:es)?' },
@@ -158,11 +158,7 @@
 
   function createRoute(level) {
     const selectedLevel = Number(level) || 1;
-    const burgerOrder = [
-      { product: menus.burger.find(({ id }) => id === 'hamburger'), quantity: 2 },
-      { product: menus.burger.find(({ id }) => id === 'french-fries'), quantity: 1 },
-    ];
-    const shops = new Map([['burger', burgerOrder]]);
+    const shops = new Map();
     for (const [shop, unlockLevel] of Object.entries(unlockLevels)) {
       if (selectedLevel < unlockLevel) continue;
       const products = menus[shop].slice();
@@ -170,7 +166,10 @@
         const other = Math.floor(Math.random() * (index + 1));
         [products[index], products[other]] = [products[other], products[index]];
       }
-      shops.set(shop, products.slice(0, 2).map((product) => ({ product, quantity: 1 })));
+      shops.set(shop, products.slice(0, 2).map((product, index) => ({
+        product,
+        quantity: shop === 'burger' && index === 0 ? 2 : 1,
+      })));
     }
     return shops;
   }
