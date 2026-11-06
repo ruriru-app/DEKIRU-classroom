@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f7f2e7">
+  <title>RuRiRu PARTY SHOPPING｜画面案</title>
+  <link rel="stylesheet" href="./party.css">
+</head>
+<body>
+  <main class="shopping-app">
+    <aside class="trip-panel" aria-label="タイトルと買い物リスト">
+      <header class="game-brand"><span class="party-kicker">LET’S GET READY FOR A PARTY!</span><h1>RuRiRu<span>PARTY SHOPPING</span></h1><p>パーティーの買い出しに行こう</p></header>
+      <div class="level-picker">
+        <label for="level-select">レベル</label>
+        <select id="level-select">
+          <option value="1">LEVEL 1 · 1店舗</option>
+          <option value="2" disabled>LEVEL 2 · 2店舗</option>
+          <option value="3" disabled>LEVEL 3 · 3店舗</option>
+          <option value="4" disabled>LEVEL 4 · 4店舗</option>
+        </select>
+      </div>
+      <section class="shopping-list" aria-labelledby="list-title">
+        <div class="list-heading"><h2 id="list-title">買い物リスト</h2><span id="list-count" aria-live="polite">0 / 2種類</span></div>
+        <p class="list-help">商品を押すと、英語の発音が聞けるよ。</p>
+        <div id="shopping-list"></div>
+      </section>
+      <div class="destination"><p>買い物がそろったら、パーティーへ！</p><button id="venue-button" class="primary-button venue-button" disabled>会場へ向かう <span aria-hidden="true">→</span></button></div>
+      <p class="prototype-caption">試作版 · LEVEL 1〜4</p>
+    </aside>
+
+    <section id="store-selection" class="store-selection" aria-labelledby="stores-title">
+      <header class="stores-heading"><div><span class="eyebrow">CHOOSE A SHOP</span><h2 id="stores-title">どのお店へ行く？</h2></div><span class="trip-label">パーティーのお買い物</span></header>
+      <div class="store-grid">
+        <button class="store-card burger-card" data-store="burger"><span class="store-poster burger-poster"><span class="poster-awning" aria-hidden="true"></span><img class="poster-fries" src="./assets/product-french-fries-menu-v4.png" alt=""><img class="poster-burger" src="./assets/product-hamburger-menu-v1.png" alt=""><img class="poster-juice" src="./assets/product-orange-juice-menu-v1.png" alt=""><span class="poster-caption">RuRiRu BURGER</span></span><span class="store-card-caption"><span><small>BURGER SHOP</small><strong>バーガーショップ</strong></span></span></button>
+        <button class="store-card pizza-card locked" data-store="pizza" disabled><span class="store-poster pizza-poster"><span class="poster-awning" aria-hidden="true"></span><img class="poster-margherita" src="./assets/pizza-margherita.webp" alt=""><img class="poster-pepperoni" src="./assets/pizza-pepperoni.webp" alt=""><img class="poster-seafood" src="./assets/pizza-seafood.webp" alt=""><span class="poster-caption">PIZZA HOUSE</span></span><span class="store-card-caption"><span><small>PIZZA SHOP</small><strong>ピザ屋さん</strong></span><span class="coming-label">LEVEL 3で開放</span></span></button>
+        <button class="store-card western-card locked" data-store="western" disabled><span class="store-poster western-poster"><span class="poster-awning" aria-hidden="true"></span><img class="poster-sandwich" src="./assets/western-sandwich.webp" alt=""><img class="poster-spaghetti" src="./assets/western-spaghetti.webp" alt=""><img class="poster-cake" src="./assets/western-cake.webp" alt=""><span class="poster-caption">KITCHEN &amp; DELI</span></span><span class="store-card-caption"><span><small>WESTERN RESTAURANT</small><strong>洋食屋さん</strong></span><span class="coming-label">LEVEL 2で開放</span></span></button>
+        <button class="store-card japanese-card locked" data-store="japanese" disabled><span class="store-poster japanese-poster"><span class="poster-awning" aria-hidden="true"></span><img class="poster-sushi" src="./assets/japanese-sushi-v2.webp" alt=""><img class="poster-beef-bowl" src="./assets/japanese-beef-bowl.webp" alt=""><img class="poster-parfait" src="./assets/japanese-matcha-parfait.webp" alt=""><span class="poster-caption">和のおいしさ、お持ち帰り。</span></span><span class="store-card-caption"><span><small>JAPANESE RESTAURANT</small><strong>和食屋さん</strong></span><span class="coming-label">LEVEL 4で開放</span></span></button>
+      </div>
+      <p class="selection-note">リストにあるお店で買い物しよう。支払いがすむとお店にチェックが付くよ。</p>
+    </section>
+
+    <section id="visit-view" class="visit-view" hidden aria-label="お店での買い物">
+      <div class="interaction-panel">
+        <section class="clerk-scene" aria-label="お客さん側から見た店舗カウンター">
+          <div class="shop-scene-art burger-scene-art" aria-hidden="true">
+            <img src="./assets/burger-scene-normal.png" alt="" width="1254" height="1254">
+            <img class="scene-retry" src="./assets/burger-scene-retry.png" alt="" width="1254" height="1254">
+          </div>
+          <div class="shop-scene-art western-scene-art" aria-hidden="true">
+            <img src="./assets/western-scene-normal.png" alt="" width="1254" height="1254">
+            <img class="scene-retry" src="./assets/western-scene-retry.png" alt="" width="1254" height="1254">
+          </div>
+          <div class="shop-scene-art pizza-scene-art" aria-hidden="true">
+            <img src="./assets/pizza-scene-normal.png" alt="" width="1254" height="1254">
+            <img class="scene-retry" src="./assets/pizza-scene-retry.png" alt="" width="1254" height="1254">
+          </div>
+          <div class="shop-scene-art japanese-scene-art" aria-hidden="true">
+            <img src="./assets/japanese-scene-normal.png" alt="" width="1254" height="1254">
+            <img class="scene-retry" src="./assets/japanese-scene-retry.png" alt="" width="1254" height="1254">
+          </div>
+          <div class="kitchen-wall" aria-hidden="true"><div class="shelf shelf-left"><i></i><i></i><i></i></div><div class="shelf shelf-right"><i></i><i></i><i></i></div></div>
+          <div id="shop-menu" class="shop-menu" aria-label="英語の商品メニュー"></div>
+          <div class="shop-sign" aria-hidden="true">WELCOME TO OUR SHOP</div>
+          <svg class="clerk-portrait" viewBox="0 0 320 350" role="img" aria-label="カウンターの向こうにいる店主。仮のイラスト">
+            <defs><linearGradient id="apron" x2="0" y2="1"><stop stop-color="#ffbc7b"/><stop offset="1" stop-color="#ef9b5c"/></linearGradient></defs>
+            <path d="M66 430V294Q67 240 119 233H201Q253 241 254 294V430" fill="#fffaf0" stroke="#897563" stroke-width="3"/>
+            <path d="M119 234L133 281H185L201 234M100 255L107 430H216L223 255" fill="none" stroke="#4c9587" stroke-width="15"/>
+            <path d="M118 273H202L218 430H101Z" fill="url(#apron)" stroke="#db995e" stroke-width="2"/>
+            <path d="M140 212V244Q161 267 181 244V212" fill="#efb68c" stroke="#b4886c" stroke-width="2"/>
+            <path d="M95 113Q93 53 156 45Q230 42 229 132L220 203Q203 235 160 237Q113 235 97 201Z" fill="#705445"/>
+            <ellipse cx="100" cy="160" rx="15" ry="22" fill="#f5c59e"/><ellipse cx="220" cy="160" rx="15" ry="22" fill="#f5c59e"/>
+            <path d="M103 119Q102 77 160 77Q217 79 217 122L215 175Q209 220 161 225Q111 221 105 175Z" fill="#f7c9a5" stroke="#be9578" stroke-width="2"/>
+            <path d="M104 129Q134 118 148 87Q173 117 217 124V99L195 69L137 64L106 84Z" fill="#705445"/>
+            <path d="M120 140Q132 132 143 139M177 139Q189 132 201 140" fill="none" stroke="#705445" stroke-width="4" stroke-linecap="round"/>
+            <ellipse cx="132" cy="155" rx="7" ry="10" fill="#56473e"/><ellipse cx="188" cy="155" rx="7" ry="10" fill="#56473e"/>
+            <circle cx="134" cy="151" r="2.5" fill="white"/><circle cx="190" cy="151" r="2.5" fill="white"/>
+            <ellipse cx="119" cy="177" rx="11" ry="6" fill="#efab9c" opacity=".65"/><ellipse cx="201" cy="177" rx="11" ry="6" fill="#efab9c" opacity=".65"/>
+            <path d="M157 163L154 179L162 181" fill="none" stroke="#d39f7b" stroke-width="2" stroke-linecap="round"/>
+            <path d="M144 193Q160 208 178 192" fill="#fff9ef" stroke="#b97e6a" stroke-width="3" stroke-linejoin="round"/>
+            <path d="M90 101Q84 58 111 48Q126 15 159 34Q188 11 207 47Q237 54 231 100Z" fill="#fffcf4" stroke="#897563" stroke-width="3"/>
+            <path d="M91 91H231V111Q159 100 92 113Z" fill="#8ccbc2" stroke="#6ba99f" stroke-width="2"/>
+            <path d="M71 303L59 382M250 303L262 382" fill="none" stroke="#f2c4a0" stroke-width="28" stroke-linecap="round"/>
+            <rect x="126" y="323" width="68" height="53" rx="10" fill="#fff6dc" opacity=".9"/><text x="160" y="347" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="900" fill="#40897d">RuRiRu</text><path d="M140 357H181" stroke="#8ccbc2" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+          <div id="order-tray" class="order-tray" role="group" aria-label="カウンターの注文トレー" hidden></div>
+          <div id="bought-items" class="bought-items" hidden><span class="purchase-bag" aria-hidden="true">✓</span><span>お買い物、ありがとう！</span></div>
+          <div class="customer-counter" aria-hidden="true"><span>RuRiRu</span><i></i></div>
+          <span class="art-caption">店主・店舗は仮のイラストです</span>
+        </section>
+        <section class="voice-panel" aria-label="店主とのやり取り">
+          <div class="conversation-heading"><span class="conversation-dot" aria-hidden="true"></span><p id="clerk-message" role="status" aria-live="polite">リストを見て、英語で注文しよう。</p><button id="replay-button" class="replay-button" disabled aria-label="店員の声をもう一度聞く">↻ もう一度聞く</button></div>
+          <div class="speech-row"><div class="speech-box"><label for="speech-result">YOU SAID <small>あなたが話した英語</small></label><p id="speech-result" aria-live="polite"></p></div><button id="mic-button" class="primary-button mic-button">マイクスタート</button></div>
+          <div class="speech-options"><button id="cancel-mic" class="text-button" hidden>キャンセル</button><button id="show-typed-order" class="text-button">キーボードで入力</button></div>
+          <form id="speech-fallback" class="speech-fallback" hidden><label id="typed-phrase-label" for="typed-order">英語の注文を入力</label><div><input id="typed-order" type="text" autocomplete="off" placeholder="英語で注文する・金額をたずねる"><button id="submit-typed-order" type="button">注文する</button></div></form>
+        </section>
+      </div>
+      <aside class="checkout-panel" aria-labelledby="shop-name">
+        <header class="current-shop"><span class="eyebrow">YOU ARE HERE</span><h2 id="shop-name">バーガーショップ</h2></header>
+        <div class="payment-heading"><h3>お会計</h3><p>聞こえた金額を入力しよう</p></div>
+        <output id="payment-display" class="payment-display" aria-label="入力した支払金額" aria-live="polite">¥ —</output>
+        <div class="keypad" aria-label="支払用テンキー">
+          <button data-key="1">1</button><button data-key="2">2</button><button data-key="3">3</button>
+          <button data-key="4">4</button><button data-key="5">5</button><button data-key="6">6</button>
+          <button data-key="7">7</button><button data-key="8">8</button><button data-key="9">9</button>
+          <button data-key="clear" class="utility-key" aria-label="すべて消す">C</button><button data-key="0">0</button><button data-key="backspace" class="utility-key" aria-label="一文字消す">⌫</button>
+        </div>
+        <button id="pay-button" class="primary-button pay-button" disabled>支払う</button>
+        <p class="payment-note">金額をたずねると、<br>店員さんが英語で教えてくれるよ。</p>
+        <button id="leave-button" class="leave-button">店を出る <span aria-hidden="true">→</span></button>
+      </aside>
+    </section>
+  </main>
+  <dialog id="party-dialog" class="party-dialog" aria-labelledby="party-title">
+    <img id="party-venue-art" class="party-venue-art" src="./assets/party-venue-level1.webp" alt="料理が並んだパーティー会場で、笑顔で迎えてくれる友だち">
+    <div class="party-summary">
+      <p class="eyebrow">LET'S PARTY!</p>
+      <h2 id="party-title">パーティー会場にとうちゃく！</h2>
+      <p id="party-result">買い出し、できたね！</p>
+      <div class="party-actions">
+        <button id="close-party" class="leave-button">買い物画面に戻る</button>
+        <button id="next-level" class="primary-button" hidden></button>
+      </div>
+    </div>
+  </dialog>
+  <script src="./party.js"></script>
+</body>
+</html>
