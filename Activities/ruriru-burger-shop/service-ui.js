@@ -53,8 +53,13 @@
       for (const effect of session.takeEffects()) runner.run(effect);
       if (previous !== 'technical' && session.view().phase === 'technical') {
         stopPlatform();
-        el('trouble-message').textContent = lastSpeechError || voiceErrorMessage() || '音声を再生できませんでした。端末の音量や音声設定を確認してください。';
-        el('sound-recovered').textContent = lastSpeechError || voiceErrorMessage() ? 'もう一度試す' : '聞こえた！';
+        const microphoneFailure = Boolean(lastSpeechError);
+        el('trouble-title').textContent = microphoneFailure ? 'マイク入力を確かめよう' : '音声を確かめよう';
+        el('voice-troubleshooting').hidden = microphoneFailure;
+        el('trouble-message').textContent = microphoneFailure
+          ? `${lastSpeechError} 接客に戻ったら、マイクスタートを押してください。`
+          : voiceErrorMessage() || '音声を再生できませんでした。端末の音量や音声設定を確認してください。';
+        el('sound-recovered').textContent = microphoneFailure ? '接客に戻る' : voiceErrorMessage() ? 'もう一度試す' : '聞こえた！';
         if (!trouble.open) trouble.showModal();
       }
     }
@@ -209,20 +214,25 @@
       if (session.view().phase === 'paused' && suspendedByFullscreen) { deferredMicrophoneError = error; return; }
       send({ type: 'attempt-cancel' });
       transcript.textContent = previousTranscript;
+      if (error === 'no-speech') {
+        transcript.textContent = '声を聞き取れませんでした。マイクスタートを押して、もう一度話してみましょう。';
+        return;
+      }
       const messages = {
-        'no-speech': '音声が確認できませんでした。マイクを確認し、「もう一度試す」の後にスタートを押してください。',
         'not-allowed': 'マイクが許可されていません。ブラウザーのマイク設定を確認してください。',
         'not-supported': 'このブラウザーでは音声認識を利用できません。対応ブラウザーで開いてください。',
-        network: '音声認識サービスとの通信が途切れました。インターネット接続を確認し、「もう一度試す」を押してください。',
+        network: '音声認識サービスとの通信が途切れました。インターネット接続を確認してください。',
         'audio-capture': 'マイクから音声を受け取れませんでした。マイクの接続や、ほかのアプリで使用中でないかを確認してください。',
-        aborted: '音声入力が途中で停止しました。「もう一度試す」を押してから、マイクスタートで話し直してください。',
-        'start-failed': '音声入力を開始できませんでした。マイクの接続や使用許可を確認して、もう一度試してください。',
-        'stop-failed': '音声入力の終了処理に失敗しました。「もう一度試す」を押してから、マイクスタートで話し直してください。',
-        'service-not-allowed': 'このブラウザーの音声認識サービスを利用できません。ブラウザーや端末の音声入力の設定を確認してください。',
+        aborted: '音声入力が途中で停止しました。',
+        'start-failed': '音声入力を開始できませんでした。マイクの接続や使用許可を確認してください。',
+        'start-timeout': 'マイク入力を開始できませんでした。ブラウザーのマイク許可や接続を確認してください。',
+        'stop-failed': '音声入力を終了できませんでした。',
+        'stop-timeout': '音声認識の結果が時間内に届きませんでした。通信状態を確認してください。',
+        'service-not-allowed': 'ブラウザーの音声認識サービスを利用できません。学校の端末では管理者に設定を確認してください。',
         'language-not-supported': '英語の音声入力を利用できません。ブラウザーや端末の音声入力の設定を確認してください。',
       };
       const code = Object.hasOwn(messages, error) ? error : 'recognition-error';
-      lastSpeechError = messages[code] || '音声入力を完了できませんでした。マイクの接続や通信状態を確認して、もう一度試してください。';
+      lastSpeechError = messages[code] || '音声入力を完了できませんでした。マイクの接続や通信状態を確認してください。';
       runner.cancel();
       send({ type: 'technical-error', source: 'recognition', code });
     }
@@ -263,6 +273,9 @@
     });
     document.addEventListener('keydown', event => {
       if (event.key === 'Escape' && speech.state() !== 'idle') { event.preventDefault(); cancelAttempt(); }
+    });
+    window.addEventListener('pagehide', () => {
+      if (speech.state() !== 'idle') cancelAttempt();
     });
     function startHint(event) {
       if (!hint || hint.disabled || hint.hidden || !session.view().canHint) return;

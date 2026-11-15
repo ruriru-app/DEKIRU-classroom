@@ -84,6 +84,16 @@
     'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
   const tens = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
   const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const recognitionMessages = {
+    'not-allowed': 'マイクを使えませんでした。このサイトのマイクの許可を確認してください。',
+    'audio-capture': 'マイクから音声を受け取れませんでした。マイクの接続を確認してください。',
+    network: '音声認識サービスとの通信ができませんでした。インターネット接続を確認してください。',
+    'service-not-allowed': 'このブラウザーで音声認識サービスを利用できませんでした。',
+    'language-not-supported': 'このブラウザーで英語の音声認識を利用できませんでした。',
+    aborted: '音声認識が中断されました。',
+    'start-timeout': '音声認識を開始できませんでした。',
+    'finish-timeout': '音声認識の結果が届きませんでした。',
+  };
   const synth = window.speechSynthesis;
   const canSpeak = Boolean(synth && typeof window.SpeechSynthesisUtterance === 'function');
   const clerkVoices = {
@@ -116,6 +126,7 @@
   let activeSpeech = null;
   let speechTimer = null;
   let recognition = null;
+  let recognitionTimer = null;
   let pendingCapture = null;
   let stopping = false;
   let lastClerkAudio = '';
@@ -260,11 +271,14 @@
     ui.visit.dataset.expression = expression;
     ui.visit.classList.toggle('is-speaking', clerkSpeaking);
     ui.mic.hidden = !Recognition || !(enteringPhrase || listening);
-    ui.mic.disabled = Boolean(activeSpeech) || stopping;
-    ui.mic.textContent = listening ? (stopping ? '確定中…' : 'できた！') : 'マイクスタート';
+    const starting = listening && !pendingCapture.ready;
+    ui.mic.disabled = Boolean(activeSpeech) || starting || stopping;
+    ui.mic.textContent = 'マイクスタート';
+    if (starting) ui.mic.textContent = '準備中…';
+    else if (stopping) ui.mic.textContent = '確定中…';
+    else if (listening) ui.mic.textContent = 'できた！';
     ui.mic.setAttribute('aria-pressed', String(listening));
     ui.cancelMic.hidden = !listening;
-    ui.cancelMic.disabled = stopping;
     ui.fallback.hidden = !(enteringPhrase && typedVisible);
     ui.typedLabel.textContent = askingPrice ? '金額を英語でたずねる' : '注文と金額の質問を英語で入力';
     ui.typedOrder.placeholder = askingPrice ? priceQuestion : `注文のあとに ${priceQuestion}`;
@@ -370,10 +384,13 @@
 
   function abandonRecognition() {
     const active = recognition;
+    const ended = pendingCapture?.ended;
+    clearTimeout(recognitionTimer);
+    recognitionTimer = null;
     recognition = null;
     pendingCapture = null;
     stopping = false;
-    if (active) {
+    if (active && !ended) {
       try { active.abort(); } catch (_) { /* The session may already be closed. */ }
     }
   }
@@ -549,8 +566,7 @@
       render();
       return;
     }
-    const capture = { phase: state, text: '', ended: false };
-    let recognitionFailed = false;
+    const capture = { phase: state, text: '', previousText: ui.transcript.textContent, ready: false, ended: false };
     recognition = active;
     pendingCapture = capture;
     stopping = false;
@@ -560,11 +576,20 @@
     active.maxAlternatives = 1;
     state = 'listening';
     ui.transcript.textContent = '';
-    setMessage(capture.phase === 'asking-price'
-      ? `「${priceQuestion}」と聞いて、「できた！」を押しましょう。`
-      : `${orderPrompt} 終わったら「できた！」を押しましょう。`, capture.phase === 'asking-price' ? 'retry' : 'normal');
+    setMessage('音声認識を準備しています。', expression);
     render();
     const isCurrent = () => sessionVisit === visitGeneration && recognition === active && state === 'listening';
+    const markReady = () => {
+      if (!isCurrent() || capture.ready) return;
+      capture.ready = true;
+      clearTimeout(recognitionTimer);
+      recognitionTimer = null;
+      setMessage(capture.phase === 'asking-price'
+        ? `「${priceQuestion}」と聞いて、「できた！」を押しましょう。`
+        : `${orderPrompt} 終わったら「できた！」を押しましょう。`, capture.phase === 'asking-price' ? 'retry' : 'normal');
+      render();
+    };
+    active.onstart = markReady;
     active.onresult = (event) => {
       if (!isCurrent()) return;
       const pieces = [];
@@ -572,65 +597,70 @@
         if (event.results[index].isFinal) pieces.push(event.results[index][0].transcript);
       }
       capture.text = pieces.join(' ').trim();
+      if (capture.text) markReady();
     };
     active.onerror = (event) => {
-      if (!isCurrent()) return;
-      recognitionFailed = true;
-      recognition = null;
-      pendingCapture = null;
-      stopping = false;
-      state = capture.phase;
-      const permissionFailure = event.error === 'not-allowed' || event.error === 'service-not-allowed';
-      if (permissionFailure) typedVisible = true;
-      const message = permissionFailure ? 'マイクを使えませんでした。キーボードでも入力できます。' : 'うまく聞き取れませんでした。もう一度話してみましょう。';
-      setMessage(message, event.error === 'no-speech' ? 'retry' : 'normal');
-      render();
+      if (isCurrent()) recoverRecognition(event.error);
     };
     active.onend = () => {
-      if (recognitionFailed || !isCurrent()) return;
+      if (!isCurrent()) return;
       capture.ended = true;
-      if (stopping) commitCapture();
-      else render();
+      if (!capture.text) recoverRecognition('no-speech');
+      else if (stopping) commitCapture();
     };
+    recognitionTimer = setTimeout(() => {
+      if (isCurrent()) recoverRecognition('start-timeout');
+    }, 20000);
     try {
       active.start();
     } catch (_) {
-      recognition = null;
-      pendingCapture = null;
-      stopping = false;
-      state = capture.phase;
-      typedVisible = true;
-      setMessage('マイクを使えませんでした。キーボードでも入力できます。');
-      render();
+      if (isCurrent()) recoverRecognition();
     }
+  }
+
+  function recoverRecognition(reason) {
+    const { phase, previousText } = pendingCapture;
+    state = phase;
+    abandonRecognition();
+    ui.transcript.textContent = previousText;
+    if (reason === 'no-speech') {
+      setMessage('声が聞き取れませんでした。もう一度マイクを押して話してみましょう。', expression);
+    } else {
+      typedVisible = true;
+      const message = recognitionMessages[reason] || '音声認識を利用できませんでした。';
+      setMessage(`${message} マイクでやり直すか、キーボードで入力できます。`, expression);
+    }
+    render();
   }
 
   function commitCapture() {
     if (state !== 'listening' || !pendingCapture) return;
     const { phase, text } = pendingCapture;
-    recognition = null;
-    pendingCapture = null;
-    stopping = false;
     state = phase;
+    abandonRecognition();
     acceptCapture(text, { fromSpeech: true });
   }
 
   function finishListening() {
-    if (state !== 'listening' || !recognition || stopping) return;
-    if (pendingCapture && pendingCapture.ended) {
+    if (state !== 'listening' || !pendingCapture?.ready || stopping) return;
+    if (pendingCapture.ended) {
       commitCapture();
       return;
     }
     stopping = true;
+    const capture = pendingCapture;
+    recognitionTimer = setTimeout(() => {
+      if (pendingCapture !== capture) return;
+      if (capture.text) commitCapture();
+      else recoverRecognition('finish-timeout');
+    }, 4000);
     render();
     try {
       recognition.stop();
     } catch (_) {
-      if (!pendingCapture) return;
-      state = pendingCapture.phase;
-      abandonRecognition();
-      setMessage('もう一度、マイクを押して話してみましょう。');
-      render();
+      if (pendingCapture !== capture) return;
+      if (capture.text) commitCapture();
+      else recoverRecognition('finish-timeout');
     }
   }
 

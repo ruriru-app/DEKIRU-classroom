@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#8CCBC2" />
     <title>RuRiRu BURGER SHOP — LEVEL 4</title>
-    <link rel="stylesheet" href="./styles.css?v=20261103d" />
+    <link rel="stylesheet" href="./styles.css?v=mic-recovery-20261115" />
   </head>
   <body>
     <div id="store-background" class="store-background" aria-hidden="true">
@@ -80,10 +80,12 @@
     <dialog id="service-trouble" class="service-dialog" aria-labelledby="trouble-title">
       <h2 id="trouble-title">音声を確かめよう</h2>
       <p id="trouble-message">端末の音量と音声の設定を確認してください。</p>
-      <label class="voice-choice-label" for="customer-voice-choice">お客さんの声</label>
-      <select id="customer-voice-choice"><option value="">自動（お客さんに合わせる）</option></select>
-      <small id="voice-status" role="status"></small>
-      <button id="sound-test" type="button">テスト音声を聞く</button>
+      <div id="voice-troubleshooting">
+        <label class="voice-choice-label" for="customer-voice-choice">お客さんの声</label>
+        <select id="customer-voice-choice"><option value="">自動（お客さんに合わせる）</option></select>
+        <small id="voice-status" role="status"></small>
+        <button id="sound-test" type="button">テスト音声を聞く</button>
+      </div>
       <button id="sound-recovered" type="button">聞こえた！</button>
       <button id="exit-action" type="button" class="subtle-action">LEVEL選択に戻る</button>
     </dialog>
@@ -112,22 +114,22 @@
       <button id="fullscreen-fallback" class="fullscreen-fallback" type="button" hidden>この画面のまま続ける</button>
       <small class="fullscreen-help">全画面は Esc キーで解除できます。</small>
     </dialog>
-    <script src="./store.js?v=20261103d"></script>
-    <script src="./counter.js?v=20261103d"></script>
-    <script src="./level-config.js?v=20261103d"></script>
-    <script src="./level-menus.js?v=20261103d"></script>
-    <script src="./normal-progression.js?v=20261103d"></script>
-    <script src="./speech.js?v=20261103d"></script>
-    <script src="./service-validation.js?v=20261103d"></script>
-    <script src="./customer-catalog.js?v=20261103d"></script>
-    <script src="./normal-runtime.js?v=20261103d"></script>
-    <script src="./service-plan.js?v=20261103d"></script>
-    <script src="./customer-voice.js?v=20261103d"></script>
-    <script src="./service-session.js?v=20261103d"></script>
-    <script src="./service-effects.js?v=20261103d"></script>
-    <script src="./service-ui.js?v=20261103d"></script>
-    <script src="./app.js?v=20261103d"></script>
-    <script src="./microphone-setup.js?v=20261103d"></script>
-    <script src="./fullscreen.js?v=20261103d"></script>
+    <script src="./store.js?v=mic-recovery-20261115"></script>
+    <script src="./counter.js?v=mic-recovery-20261115"></script>
+    <script src="./level-config.js?v=mic-recovery-20261115"></script>
+    <script src="./level-menus.js?v=mic-recovery-20261115"></script>
+    <script src="./normal-progression.js?v=mic-recovery-20261115"></script>
+    <script src="./speech.js?v=mic-recovery-20261115"></script>
+    <script src="./service-validation.js?v=mic-recovery-20261115"></script>
+    <script src="./customer-catalog.js?v=mic-recovery-20261115"></script>
+    <script src="./normal-runtime.js?v=mic-recovery-20261115"></script>
+    <script src="./service-plan.js?v=mic-recovery-20261115"></script>
+    <script src="./customer-voice.js?v=mic-recovery-20261115"></script>
+    <script src="./service-session.js?v=mic-recovery-20261115"></script>
+    <script src="./service-effects.js?v=mic-recovery-20261115"></script>
+    <script src="./service-ui.js?v=mic-recovery-20261115"></script>
+    <script src="./app.js?v=mic-recovery-20261115"></script>
+    <script src="./microphone-setup.js?v=mic-recovery-20261115"></script>
+    <script src="./fullscreen.js?v=mic-recovery-20261115"></script>
   </body>
 </html>

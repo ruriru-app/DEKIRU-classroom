@@ -75,16 +75,22 @@
     onState(state) {
       microphoneReady = state === 'ready';
       microphoneButton.disabled = state === 'checking' || microphoneReady;
-      microphoneButton.textContent = microphoneReady ? 'マイク確認済み' : state === 'checking' ? 'ブラウザーの許可を待っています…' : 'マイクを確認する';
+      microphoneButton.textContent = microphoneReady ? 'マイク確認済み' : state === 'checking' ? 'マイクを確認中…' : 'マイクを確認する';
       microphoneStatus.textContent = microphoneReady ? 'マイクを確認できました。「全画面で始める」を押してください。'
-        : state === 'checking' ? 'ブラウザーのマイク使用確認で「許可」を選んでください。確認が終わるまで、この画面で待ってください。'
+        : state === 'checking' ? '許可を求められたら「許可」を選んでください。マイクの確認が終わるまでお待ちください。'
         : '最初に通常画面でマイクを確認してから、全画面で始めます。';
       start.disabled = !microphoneReady;
     },
     onError(error) {
-      microphoneStatus.textContent = error === 'not-allowed' ? 'マイクが許可されていません。アドレス欄のマイク設定を確認し、もう一度「マイクを確認する」を押してください。'
-        : error === 'not-supported' ? 'このブラウザーでは音声認識を利用できません。Chromeで開いてください。'
-        : 'マイクの確認ができませんでした。接続や通信状態を確認して、もう一度試してください。';
+      const messages = {
+        'not-allowed': 'アドレス欄の設定でマイクを許可し、もう一度試してください。',
+        'not-supported': 'このブラウザーでは音声認識を利用できません。Chromeで開いてください。',
+        'service-not-allowed': 'ブラウザーの音声認識サービスを利用できません。学校の端末では管理者に設定を確認してください。',
+        'audio-capture': 'マイクから音声を受け取れません。マイクの接続と入力先を確認してください。',
+        network: '音声認識サービスと通信できませんでした。インターネット接続を確認して、もう一度試してください。',
+      };
+      microphoneStatus.textContent = Object.hasOwn(messages, error) ? messages[error]
+        : 'マイクの確認が完了しませんでした。もう一度「マイクを確認する」を押してください。';
     },
   });
 
@@ -130,6 +136,7 @@
   });
 
   microphoneButton.addEventListener('click', () => microphoneSetup.check());
+  window.addEventListener('pagehide', () => microphoneSetup.cancel());
   start.addEventListener('click', () => { if (microphoneReady) void controller.start(); });
   fallback.addEventListener('click', () => controller.continueWindowed());
   gate.addEventListener('cancel', (event) => event.preventDefault());
