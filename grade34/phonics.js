@@ -4,7 +4,7 @@
   let active=false;
   const from=new URLSearchParams(location.search).get('from');
   const returns={lt1:'index.html#/book/lt1',lt2:'index.html#/book/lt2',nh5:'../grade56/index.html#/book/nh5'};
-  $('back').href=returns[from]||returns.lt1;
+  $('back').href='phonics.html'+(from?'?from='+encodeURIComponent(from):'');
   $('selection').innerHTML=M.groups.map(g=>`<details open><summary><label><input type="checkbox" data-group="${g.id}" checked>${g.name}（${M.cards.filter(c=>c.group===g.id).length}）</label></summary><div class="letter-options">${M.cards.filter(c=>c.group===g.id).map(c=>`<label><input type="checkbox" data-letter="${c.letter}" checked>${c.letter}${c.letter.toLowerCase()}</label>`).join('')}</div></details>`).join('');
   $('practice-settings').innerHTML=practice.settings();
   function card(c){
