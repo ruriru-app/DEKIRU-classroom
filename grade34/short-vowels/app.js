@@ -4,6 +4,18 @@
   const $=id=>document.getElementById(id);
   const vowels=['a','e','i','o','u'];
   let state=P.start();
+  const from=new URLSearchParams(location.search).get('from')||'nh5';
+  const upper=from==='nh5';
+  const home=upper?'../../grade56/index.html#/':'../index.html#/';
+  $('brand-home').href=home;$('home').href=home;
+  $('classroom-logo').src='../assets/ui/branding/logo-grade'+(upper?'56':'34')+'.svg';
+  $('classroom-logo').alt='DEKIRU Classroom for Grade '+(upper?'5 & 6':'3 & 4');
+  $('back').href='../phonics.html?from='+encodeURIComponent(from);
+  $('settings-button').addEventListener('click',()=>{
+    const settings=new URL('../class-settings.html',location.href);
+    settings.searchParams.set('returnTo',new URL(home,location.href).href);
+    location.href=settings.href;
+  });
   const modes=[...document.querySelectorAll('[data-mode]')];
   const imagePath=word=>'assets/'+word+'.png';
   function letters(word,count=word.length){
@@ -24,6 +36,7 @@
   });
   function render(){
     const overview=state.mode==='overview';
+    $('mode-title').textContent={overview:'一覧表示',cards:'一語づつ読む',guess:'文字を読む',letters:'綴りを思い出す'}[state.mode];
     $('overview').hidden=!overview;$('lesson').hidden=overview;
     modes.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===state.mode)));
     $('keyboard-hint').textContent=overview?'一覧から好きな語を選べます':'Enter：表示する　｜　← →：前・次の語';
