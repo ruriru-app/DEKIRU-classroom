@@ -39,10 +39,11 @@
     $('mode-title').textContent={overview:'一覧表示',cards:'一語づつ読む',guess:'文字を読む',letters:'綴りを思い出す'}[state.mode];
     $('overview').hidden=!overview;$('lesson').hidden=overview;
     modes.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===state.mode)));
-    $('keyboard-hint').textContent=overview?'一覧から好きな語を選べます':'Enter：表示する　｜　← →：前・次の語';
     if(overview)return;
     const word=P.words[state.index],vowel=vowels[Math.floor(state.index/5)],view=P.visible(state);
     $('lesson').className='vowel-'+vowel;
+    $('lesson').dataset.mode=state.mode;
+    $('lesson').classList.toggle('word-only',state.mode==='guess'&&!view.image);
     $('vowel-badge').textContent='short '+vowel;
     $('progress').textContent=String(state.index+1).padStart(2,'0')+' / 25';
     $('picture').src=imagePath(word);
@@ -56,7 +57,7 @@
     $('stage').className='stage'+(state.mode==='cards'?' static':'')+(complete?' answered':'');
     $('stage').setAttribute('aria-label',state.mode==='letters'?(view.text?view.text+'。':'')+(complete?'すべての文字を表示しました':'タップまたはEnterで次の1文字を表示'):state.mode==='guess'?word+'。'+(view.image?'イラストを表示しました':'タップまたはEnterでイラストを表示'):word);
     $('stage').setAttribute('aria-disabled',String(complete||state.mode==='cards'));
-    $('instruction').textContent=state.mode==='cards'?'絵と単語を見て、声に出してみよう。':complete?'表示できました。「次へ」で次の語に進みます。':state.mode==='letters'?'絵をタップ / Enter で、1文字ずつ表示':'単語を読んだら、タップ / Enter で絵を表示';
+    $('instruction').textContent=state.mode==='cards'?'':complete?'次へ：次の語':state.mode==='letters'?'絵をタップ / Enter で、1文字ずつ表示':'タップ / Enter：イラストを表示';
     $('reset').hidden=state.mode==='cards';
     [...$('word-rail').children].forEach((b,i)=>{
       b.setAttribute('aria-current',String(i===state.index));
@@ -78,10 +79,25 @@
     if(event.key==='ArrowLeft'||event.key==='ArrowRight'){event.preventDefault();navigate(event.key==='ArrowLeft'?-1:1);}
     if(event.key==='Enter'&&!event.target.closest('button,a,input,select,textarea')){event.preventDefault();reveal();}
   });
+  const content=$('teaching-content');
+  function syncFullscreen(){
+    const expanded=document.fullscreenElement===content||content.classList.contains('expanded');
+    document.body.classList.toggle('teaching-fullscreen',expanded);
+    $('exit-fullscreen').hidden=!expanded;
+    $('fullscreen').hidden=expanded;
+  }
+  async function exitFullscreen(){
+    if(document.fullscreenElement===content)await document.exitFullscreen();
+    content.classList.remove('expanded');syncFullscreen();
+    $('fullscreen').focus();
+  }
   $('fullscreen').addEventListener('click',async event=>{
     pointerBlur(event);
-    try{if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen();}catch{ $('fullscreen').textContent='全画面にできません'; }
+    try{await content.requestFullscreen();}catch{content.classList.add('expanded');}
+    syncFullscreen();
   });
-  document.addEventListener('fullscreenchange',()=>{$('fullscreen').setAttribute('aria-label',document.fullscreenElement?'全画面を終了':'全画面表示');$('fullscreen').innerHTML=document.fullscreenElement?'⛶ <span>全画面を終了</span>':'⛶ <span>全画面</span>';});
+  $('exit-fullscreen').addEventListener('click',exitFullscreen);
+  document.addEventListener('fullscreenchange',syncFullscreen);
+  document.addEventListener('keydown',event=>{if(event.key==='Escape'&&content.classList.contains('expanded'))exitFullscreen();});
   render();
 })();

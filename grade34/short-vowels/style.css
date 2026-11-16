@@ -17,3 +17,17 @@ button{cursor:pointer}button:disabled{cursor:default;opacity:.4}button:focus-vis
 
 .word-card{aspect-ratio:auto;width:100%;height:100%;box-shadow:none}
 @media(min-width:1101px){.word-card{flex-direction:row}}
+
+/* Teacher presentation: prioritize letters and isolate the teaching panel. */
+.content-heading{justify-content:flex-start}.content-heading #fullscreen{margin-left:auto}
+.stage{container-type:inline-size;display:grid;grid-template-columns:30% minmax(0,1fr);gap:3%;padding:20px}
+.picture-area{height:100%;max-height:340px;min-width:0}.picture-area img{max-height:340px;max-width:340px}
+.big-word{min-width:0;font-size:clamp(64px,17cqw,280px);gap:.035em;line-height:1.15}
+.word-only .stage{grid-template-columns:1fr}.word-only .picture-area{display:none}.word-only .big-word{font-size:clamp(80px,25cqw,360px)}
+.sv-content:fullscreen,.sv-content.expanded{width:100vw;height:100dvh;max-width:none;min-height:0;border:0;border-radius:0;padding:16px 24px;background:#fff;overflow:auto}
+.sv-content.expanded{position:fixed;inset:0;z-index:1000}
+.teaching-fullscreen>.app-header,.teaching-fullscreen .sv-sidebar{display:none!important}
+.teaching-fullscreen .sv-workspace{display:block;height:100dvh;min-height:0;padding:0}
+.sv-content:fullscreen .word-grid,.sv-content.expanded .word-grid{min-height:0}
+.sv-content:fullscreen .word-card .label,.sv-content.expanded .word-card .label{font-size:clamp(28px,3.2vw,54px)}
+@media(max-width:720px){.stage{grid-template-columns:28% minmax(0,1fr);height:320px;padding:10px}.big-word{font-size:clamp(48px,17cqw,140px)}.sv-content:fullscreen,.sv-content.expanded{padding:12px;height:100dvh}.sv-content:fullscreen .stage,.sv-content.expanded .stage{flex:1;height:auto}.sv-content:fullscreen .word-grid,.sv-content.expanded .word-grid{height:auto;flex:1}}

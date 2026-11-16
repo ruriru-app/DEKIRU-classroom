@@ -5,9 +5,9 @@
   <meta name="theme-color" content="#136b62">
   <meta name="description" content="DEKIRU Classroomのフォニックス教材。25語のイラストで短母音を練習する4つの学習モード。">
   <title>Short Vowels | DEKIRU Classroom</title>
-  <link rel="stylesheet" href="../styles.css?v=40ecd275082d"><link rel="stylesheet" href="style.css?v=sidebar-1">
+  <link rel="stylesheet" href="../styles.css?v=40ecd275082d"><link rel="stylesheet" href="style.css?v=teaching-2">
   <script src="../common-ui.js?v=5b3d99baf5a9" defer></script>
-  <script src="state.js" defer></script><script src="app.js?v=sidebar-1" defer></script>
+  <script src="state.js" defer></script><script src="app.js?v=teaching-2" defer></script>
 </head>
 <body>
 <header class="app-header"><a id="brand-home" class="brand" href="../../grade56/index.html#/" aria-label="トップへ戻る"><img id="classroom-logo" src="../assets/ui/branding/logo-grade56.svg" alt="DEKIRU Classroom for Grade 5 &amp; 6"></a><nav class="header-actions" aria-label="共通メニュー"><a id="home" class="icon-button" href="../../grade56/index.html#/" aria-label="ホーム"><img src="../assets/ui/originals/ホームアイコン.svg" alt=""></a><button class="icon-button" id="settings-button" type="button" aria-label="設定"><img src="../assets/ui/originals/設定アイコン.svg" alt=""></button></nav></header>
@@ -21,8 +21,8 @@
    <button type="button" data-mode="letters" aria-pressed="false">綴りを思い出す</button>
   </nav>
  </aside>
- <main class="sv-content">
-  <div class="content-heading"><h2 id="mode-title">一覧表示</h2><button id="fullscreen" class="quiet-button" type="button" aria-label="全画面表示">⛶ <span>全画面</span></button></div>
+ <main id="teaching-content" class="sv-content">
+  <div class="content-heading"><button id="exit-fullscreen" class="back-button" type="button" aria-label="全画面を解除して戻る" hidden><img src="../assets/ui/originals/戻る.svg" alt=""></button><h2 id="mode-title">一覧表示</h2><button id="fullscreen" class="quiet-button" type="button" aria-label="全画面表示">⛶ <span>全画面</span></button></div>
     <section id="overview" aria-label="25語の一覧">
       <div class="section-top"><p>絵をタップすると、1語ずつ表示できます。</p><span>5 vowels · 25 words</span></div>
       <div class="word-grid" id="word-grid"></div>
@@ -30,13 +30,12 @@
     <section id="lesson" aria-label="単語の練習" hidden>
       <div class="lesson-top"><span class="vowel-badge" id="vowel-badge"></span><span id="progress"></span><button id="reset" type="button" class="quiet-button">↺ もう一度</button></div>
       <button id="stage" type="button" class="stage" aria-label="学習カード">
-        <span class="picture-area"><img id="picture" alt="" draggable="false"><span id="picture-hidden" class="picture-hidden" aria-hidden="true"><span>?</span><small>どんな絵かな？</small></span></span>
+        <span class="picture-area"><img id="picture" alt="" draggable="false"><span id="picture-hidden" class="picture-hidden" aria-hidden="true"><span>?</span></span></span>
         <span id="word" class="big-word" lang="en"></span>
       </button>
       <div class="lesson-bottom"><button id="previous" class="step-button" type="button">← 前へ</button><p id="instruction" aria-live="polite"></p><button id="next" class="step-button primary" type="button">次へ →</button></div>
       <div class="word-rail" id="word-rail" aria-label="単語を選ぶ"></div>
     </section>
-  <footer><span>ひとつずつ、読めるをふやそう。</span><span id="keyboard-hint">一覧から好きな語を選べます</span></footer>
  </main>
 </div>
 <noscript>この教材を使うには、ブラウザーのJavaScriptを有効にしてください。</noscript>
