@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#136b62">
-  <meta name="description" content="DEKIRU Classroomのフォニックス教材。25語のイラストで短母音を練習する4つの学習モード。">
+  <meta name="description" content="DEKIRU Classroomのフォニックス教材。25語のイラストで短母音を練習する学習モードと印刷用ワークシート。">
   <title>Short Vowels | DEKIRU Classroom</title>
-  <link rel="stylesheet" href="../styles.css?v=40ecd275082d"><link rel="stylesheet" href="style.css?v=random-6">
+  <link rel="stylesheet" href="../styles.css?v=40ecd275082d"><link rel="stylesheet" href="style.css?v=worksheets-7">
   <script src="../common-ui.js?v=5b3d99baf5a9" defer></script>
-  <script src="state.js?v=random-6" defer></script><script src="app.js?v=random-6" defer></script>
+  <script src="state.js?v=random-6" defer></script><script src="app.js?v=worksheets-7" defer></script>
 </head>
 <body>
 <header class="app-header"><a id="brand-home" class="brand" href="../../grade56/index.html#/" aria-label="トップへ戻る"><img id="classroom-logo" src="../assets/ui/branding/logo-grade56.svg" alt="DEKIRU Classroom for Grade 5 &amp; 6"></a><nav class="header-actions" aria-label="共通メニュー"><a id="home" class="icon-button" href="../../grade56/index.html#/" aria-label="ホーム"><img src="../assets/ui/originals/ホームアイコン.svg" alt=""></a><button class="icon-button" id="settings-button" type="button" aria-label="設定"><img src="../assets/ui/originals/設定アイコン.svg" alt=""></button></nav></header>
@@ -19,6 +19,7 @@
    <button type="button" data-mode="cards" aria-pressed="false">一語づつ読む</button>
    <button type="button" data-mode="guess" aria-pressed="false">文字を読む</button>
    <button type="button" data-mode="letters" aria-pressed="false">綴りを思い出す</button>
+   <button type="button" data-mode="worksheets" aria-pressed="false">ワークシート</button>
   </nav>
  </aside>
  <main id="teaching-content" class="sv-content">
@@ -35,6 +36,35 @@
       </button>
       <div class="lesson-bottom"><button id="previous" class="step-button" type="button">← 前へ</button><p id="instruction" aria-live="polite"></p><button id="next" class="step-button primary" type="button">次へ →</button></div>
       <div class="word-rail" id="word-rail" aria-label="単語を選ぶ"></div>
+    </section>
+    <section id="worksheets" aria-labelledby="mode-title" hidden>
+      <p class="worksheet-format">A4横・各1ページ</p>
+      <article class="worksheet-row" aria-labelledby="ipa-title">
+        <h3 id="ipa-title">発音記号つき単語一覧</h3>
+        <div class="worksheet-actions">
+          <a class="step-button primary" href="worksheets/short-vowels-ipa.pdf" target="_blank" rel="noopener" aria-describedby="ipa-title">PDFを開く</a>
+          <a class="step-button" href="worksheets/short-vowels-ipa.pdf" download aria-describedby="ipa-title">ダウンロード</a>
+        </div>
+      </article>
+      <article class="worksheet-row" aria-labelledby="writing-title">
+        <h3 id="writing-title"><span lang="en">Let's Write!</span>（通常版）</h3>
+        <div class="worksheet-actions">
+          <a class="step-button primary" href="worksheets/short-vowels-writing.pdf" target="_blank" rel="noopener" aria-describedby="writing-title">PDFを開く</a>
+          <a class="step-button" href="worksheets/short-vowels-writing.pdf" download aria-describedby="writing-title">ダウンロード</a>
+          <button class="step-button" type="button" data-worksheet-answers="standard" aria-describedby="writing-title">答え合わせ（全画面）</button>
+        </div>
+      </article>
+      <article class="worksheet-row" aria-labelledby="random-title">
+        <h3 id="random-title"><span lang="en">Let's Write!</span>（ランダム版）</h3>
+        <div class="worksheet-actions">
+          <a class="step-button primary" href="worksheets/short-vowels-writing-random.pdf" target="_blank" rel="noopener" aria-describedby="random-title">PDFを開く</a>
+          <a class="step-button" href="worksheets/short-vowels-writing-random.pdf" download aria-describedby="random-title">ダウンロード</a>
+          <button class="step-button" type="button" data-worksheet-answers="random" aria-describedby="random-title">答え合わせ（全画面）</button>
+        </div>
+      </article>
+    </section>
+    <section id="worksheet-answers" aria-labelledby="mode-title" hidden>
+      <div class="word-grid" id="answer-grid"></div>
     </section>
  </main>
 </div>

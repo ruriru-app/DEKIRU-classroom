@@ -5,6 +5,13 @@
   const vowels=['a','e','i','o','u'];
   let state=P.start();
   let order=P.makeOrder();
+  let answerButton=null;
+  // The answer grid follows the fixed order of short-vowels-writing-random.pdf.
+  const randomWorksheetWords='bug red mop bag map pig six bed cap pin run sit mom bus hot cup top leg hat dog sun ten pen cat big'.split(' ');
+  const titles={
+    overview:'一覧表示',cards:'一語づつ読む',guess:'文字を読む',letters:'綴りを思い出す',
+    worksheets:'ワークシート',answers:'答え合わせ'
+  };
   const from=new URLSearchParams(location.search).get('from')||'nh5';
   const upper=from==='nh5';
   const home=upper?'../../grade56/index.html#/':'../index.html#/';
@@ -23,11 +30,17 @@
     return [...word].map((char,i)=>'<span class="letter-slot'+(i===1?' vowel':'')+(i>=count?' empty':'')+'">'+(i<count?char:'')+'</span>').join('');
   }
   function pointerBlur(event){if(event.detail>0)event.currentTarget.blur();}
+  function wordCard(word, tag){
+    const card=document.createElement(tag);
+    card.className='word-card vowel-'+word[1];
+    card.innerHTML='<img src="'+imagePath(word)+'" alt="" draggable="false"><span class="label" lang="en">'+word[0]+'<span class="vowel">'+word[1]+'</span>'+word[2]+'</span>';
+    return card;
+  }
   P.words.forEach((word,index)=>{
     const vowel=vowels[Math.floor(index/5)];
-    const card=document.createElement('button');card.type='button';card.className='word-card vowel-'+vowel;
+    const card=wordCard(word,'button');
+    card.type='button';
     card.setAttribute('aria-label',word+' を表示');
-    card.innerHTML='<img src="'+imagePath(word)+'" alt="" draggable="false"><span class="label" lang="en">'+word[0]+'<span class="vowel">'+word[1]+'</span>'+word[2]+'</span>';
     card.addEventListener('click',event=>{state=P.start('cards',index);render();pointerBlur(event);});
     $('word-grid').append(card);
     const button=document.createElement('button');button.type='button';button.className='vowel-'+vowel;button.textContent=word;button.lang='en';
@@ -35,12 +48,21 @@
     button.addEventListener('click',event=>{state=P.start(state.mode,index);render();pointerBlur(event);});
     $('word-rail').append(button);
   });
+  function isPracticeMode(){
+    return state.mode==='cards'||state.mode==='guess'||state.mode==='letters';
+  }
   function render(){
-    const overview=state.mode==='overview';
-    $('mode-title').textContent={overview:'一覧表示',cards:'一語づつ読む',guess:'文字を読む',letters:'綴りを思い出す'}[state.mode];
-    $('overview').hidden=!overview;$('lesson').hidden=overview;
-    modes.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===state.mode)));
-    if(overview)return;
+    const answers=state.mode==='answers';
+    const lesson=isPracticeMode();
+    $('mode-title').textContent=titles[state.mode];
+    $('overview').hidden=state.mode!=='overview';
+    $('lesson').hidden=!lesson;
+    $('worksheets').hidden=state.mode!=='worksheets';
+    $('worksheet-answers').hidden=!answers;
+    $('fullscreen').hidden=answers||state.mode==='worksheets'||document.body.classList.contains('teaching-fullscreen');
+    const selected=answers?'worksheets':state.mode;
+    modes.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===selected)));
+    if(!lesson)return;
     const word=P.words[state.index],vowel=vowels[Math.floor(state.index/5)],view=P.visible(state);
     $('lesson').className='vowel-'+vowel;
     $('lesson').dataset.mode=state.mode;
@@ -78,7 +100,7 @@
   $('reset').addEventListener('click',event=>{state=P.start(state.mode,state.index);render();pointerBlur(event);});
   document.addEventListener('keydown',event=>{
     if(event.altKey||event.ctrlKey||event.metaKey||event.isComposing)return;
-    if(state.mode==='overview')return;
+    if(!isPracticeMode())return;
     if(event.repeat&&['Enter',' ','ArrowLeft','ArrowRight'].includes(event.key)){event.preventDefault();return;}
     if(event.key==='ArrowLeft'||event.key==='ArrowRight'){event.preventDefault();navigate(event.key==='ArrowLeft'?-1:1);}
     if(event.key==='Enter'&&!event.target.closest('button,a,input,select,textarea')){event.preventDefault();reveal();}
@@ -88,17 +110,36 @@
     const expanded=document.fullscreenElement===content||content.classList.contains('expanded');
     document.body.classList.toggle('teaching-fullscreen',expanded);
     $('exit-fullscreen').hidden=!expanded;
-    $('fullscreen').hidden=expanded;
+    if(!expanded&&state.mode==='answers'){
+      state=P.changeMode(state,'worksheets');
+      render();
+      answerButton?.focus();
+      answerButton=null;
+    }
+    $('fullscreen').hidden=expanded||state.mode==='worksheets';
   }
   async function exitFullscreen(){
     if(document.fullscreenElement===content)await document.exitFullscreen();
     content.classList.remove('expanded');syncFullscreen();
     $('fullscreen').focus();
   }
-  $('fullscreen').addEventListener('click',async event=>{
-    pointerBlur(event);
+  async function enterFullscreen(){
     try{await content.requestFullscreen();}catch{content.classList.add('expanded');}
     syncFullscreen();
+  }
+  $('fullscreen').addEventListener('click',event=>{
+    pointerBlur(event);
+    enterFullscreen();
+  });
+  document.querySelectorAll('[data-worksheet-answers]').forEach(button=>{
+    button.addEventListener('click',()=>{
+      answerButton=button;
+      const words=button.dataset.worksheetAnswers==='random'?randomWorksheetWords:P.words;
+      $('answer-grid').replaceChildren(...words.map(word=>wordCard(word,'div')));
+      state=P.changeMode(state,'answers');
+      render();
+      enterFullscreen();
+    });
   });
   $('exit-fullscreen').addEventListener('click',exitFullscreen);
   document.addEventListener('fullscreenchange',syncFullscreen);
