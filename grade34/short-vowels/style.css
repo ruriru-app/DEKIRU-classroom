@@ -43,3 +43,7 @@ button{cursor:pointer}button:disabled{cursor:default;opacity:.4}button:focus-vis
 .stage{container-type:size;grid-template-rows:minmax(0,1fr)}
 .big-word:not(.spelling){font-size:clamp(72px,min(23cqw,85cqh),380px)}
 .word-only .big-word:not(.spelling){font-size:clamp(96px,min(33cqw,85cqh),460px)}
+
+/* Let fullscreen illustrations grow with the presentation area. */
+.sv-content:fullscreen #lesson:not([data-mode="letters"]) .picture-area,.sv-content.expanded #lesson:not([data-mode="letters"]) .picture-area{max-height:none}
+.sv-content:fullscreen #lesson:not([data-mode="letters"]) .picture-area img,.sv-content.expanded #lesson:not([data-mode="letters"]) .picture-area img{max-width:none;max-height:none;width:100%;height:100%}
