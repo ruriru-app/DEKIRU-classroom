@@ -32,3 +32,12 @@ test('switching modes resets hidden information',()=>{
 test('all 25 approved words occur exactly once',()=>{
  assert.equal(ctx.Phonics.words.join(','),'cat,hat,bag,cap,map,bed,pen,red,leg,ten,pig,pin,big,six,sit,dog,mom,mop,top,hot,sun,cup,bus,bug,run');
 });
+test('random order covers all words once and navigation follows that order',()=>{
+ const p=ctx.Phonics,order=p.makeOrder(true,()=>0.25);
+ assert.equal(new Set(order).size,25);assert.equal(order.length,25);
+ assert.notEqual(order.join(','),p.makeOrder().join(','));
+ let s=p.start('letters',order[0]);
+ for(let i=0;i<25;i++){assert.equal(s.index,order[i]);s=p.move(p.advance(s),1,order);assert.equal(s.revealed,0);}
+ assert.equal(s.index,order[24]);assert.equal(p.move(s,-1,order).index,order[23]);
+ assert.equal(p.move(p.start('cards',order[0]),-1,order).index,order[0]);
+});

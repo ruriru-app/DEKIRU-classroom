@@ -4,6 +4,7 @@
   const $=id=>document.getElementById(id);
   const vowels=['a','e','i','o','u'];
   let state=P.start();
+  let order=P.makeOrder();
   const from=new URLSearchParams(location.search).get('from')||'nh5';
   const upper=from==='nh5';
   const home=upper?'../../grade56/index.html#/':'../index.html#/';
@@ -45,14 +46,14 @@
     $('lesson').dataset.mode=state.mode;
     $('lesson').classList.toggle('word-only',state.mode==='guess'&&!view.image);
     $('vowel-badge').textContent='short '+vowel;
-    $('progress').textContent=String(state.index+1).padStart(2,'0')+' / 25';
+    $('progress').textContent=String(order.indexOf(state.index)+1).padStart(2,'0')+' / 25';
     $('picture').src=imagePath(word);
     $('picture').hidden=!view.image;
     $('picture').alt=state.mode==='letters'?'単語を考えるためのイラスト':word+' のイラスト';
     $('picture-hidden').hidden=view.image;
     $('word').className='big-word'+(state.mode==='letters'?' spelling':'');
     $('word').innerHTML=letters(word,state.mode==='letters'?state.revealed:word.length);
-    $('previous').disabled=state.index===0;$('next').disabled=state.index===24;
+    $('previous').disabled=order.indexOf(state.index)===0;$('next').disabled=order.indexOf(state.index)===24;
     const complete=(state.mode==='letters'&&state.revealed===word.length)||(state.mode==='guess'&&view.image);
     $('stage').className='stage'+(state.mode==='cards'?' static':'')+(complete?' answered':'');
     $('stage').setAttribute('aria-label',state.mode==='letters'?(view.text?view.text+'。':'')+(complete?'すべての文字を表示しました':'タップまたはEnterで次の1文字を表示'):state.mode==='guess'?word+'。'+(view.image?'イラストを表示しました':'タップまたはEnterでイラストを表示'):word);
@@ -66,8 +67,11 @@
     });
   }
   function reveal(){if(state.mode==='letters'||state.mode==='guess'){state=P.advance(state);render();}}
-  function navigate(delta){state=P.move(state,delta);render();}
+  function navigate(delta){state=P.move(state,delta,order);render();}
   modes.forEach(button=>button.addEventListener('click',event=>{state=P.changeMode(state,button.dataset.mode);render();pointerBlur(event);}));
+  function reorder(){order=P.makeOrder($('random-order').checked);state=P.start(state.mode,order[0]);$('reshuffle').hidden=!$('random-order').checked;render();}
+  $('random-order').addEventListener('change',reorder);
+  $('reshuffle').addEventListener('click',event=>{reorder();pointerBlur(event);});
   $('stage').addEventListener('click',reveal);
   $('previous').addEventListener('click',event=>{navigate(-1);pointerBlur(event);});
   $('next').addEventListener('click',event=>{navigate(1);pointerBlur(event);});

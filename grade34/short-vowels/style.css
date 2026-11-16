@@ -47,3 +47,5 @@ button{cursor:pointer}button:disabled{cursor:default;opacity:.4}button:focus-vis
 /* Let fullscreen illustrations grow with the presentation area. */
 .sv-content:fullscreen #lesson:not([data-mode="letters"]) .picture-area,.sv-content.expanded #lesson:not([data-mode="letters"]) .picture-area{max-height:none}
 .sv-content:fullscreen #lesson:not([data-mode="letters"]) .picture-area img,.sv-content.expanded #lesson:not([data-mode="letters"]) .picture-area img{max-width:none;max-height:none;width:100%;height:100%}
+
+.lesson-top{grid-template-columns:auto auto 1fr}.lesson-tools{justify-self:end;display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}.random-toggle{display:inline-flex;align-items:center;gap:5px;font-size:13px;cursor:pointer}.random-toggle input{width:17px;height:17px;margin:0}
