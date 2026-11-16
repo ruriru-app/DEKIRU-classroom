@@ -28,6 +28,9 @@ h1{font-size:clamp(22px,3vw,34px);margin:0;letter-spacing:.03em}.progress{font-w
 
 .screen{display:none}.screen.active{display:block}
 #menuScreen{display:none}#menuScreen.active{display:grid}
+#menuScreen{grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr) auto auto}
+#menuScreen>.picker{min-width:0}
+#menuScreen>header h1{flex:1;text-align:center}
 #loadingScreen.active{display:flex}
 #loadingScreen{position:fixed;inset:0;z-index:50;background:var(--cream);align-items:center;justify-content:center;flex-direction:column;padding:5vw}
 .loading-logo{width:min(760px,86vw);max-height:56vh;object-fit:contain;border-radius:24px}
@@ -123,7 +126,6 @@ h1{font-size:clamp(22px,3vw,34px);margin:0;letter-spacing:.03em}.progress{font-w
 @keyframes confettiFall{0%{transform:translate3d(0,-8vh,0) rotate(0)}100%{transform:translate3d(var(--drift),112vh,0) rotate(var(--spin))}}
 
 </style>
-<link rel="stylesheet" href="ruriru-restaurant-navigation.css?v=03b6800ce94c">
 </head>
 <body>
 <div id="loadingScreen" class="screen active">
@@ -195,7 +197,8 @@ h1{font-size:clamp(22px,3vw,34px);margin:0;letter-spacing:.03em}.progress{font-w
 <script>
 const IMAGE_DATA = {"fried_chicken":"assets/ruriru-restaurant/image-f4f0ca499a633892.png","omelet_rice":"assets/ruriru-restaurant/image-3460fa64fe9f7ab4.png","milk":"assets/ruriru-restaurant/image-2c5da7a1062682c5.png","sandwich":"assets/ruriru-restaurant/image-365350259c43cb39.png","salad":"assets/ruriru-restaurant/image-36c14429718b3a36.png","cake":"assets/ruriru-restaurant/image-18ae656e2e3a1f85.png","curry_and_rice":"assets/ruriru-restaurant/image-d588ae69ddee9cae.png","tea":"assets/ruriru-restaurant/image-5e2ca69888c89c3e.png","vanilla_shake":"assets/ruriru-restaurant/image-efc5570dc9abc380.png","pancake":"assets/ruriru-restaurant/image-f6f8bebace0584b5.png","coffee":"assets/ruriru-restaurant/image-1cb6facf35f1cf9e.png","pudding":"assets/ruriru-restaurant/image-fe433dd4b7281d57.png","chicken_nuggets":"assets/ruriru-restaurant/image-b43d5bb9c1c74a75.png","pizza":"assets/ruriru-restaurant/image-391729e5f134bbc6.png","french_fries":"assets/ruriru-restaurant/image-f8bcec1f995de546.png","strawberry_shake":"assets/ruriru-restaurant/image-63ee2c3d16dcf309.png","spaghetti":"assets/ruriru-restaurant/image-e95c582a15a5bcde.png","corn_soup":"assets/ruriru-restaurant/image-dc2b62592b30b2a1.png","cola":"assets/ruriru-restaurant/image-e063d97a979aaa85.png","apple_juice":"assets/ruriru-restaurant/image-c837b47fac952de3.png","steak":"assets/ruriru-restaurant/image-710f968708c00d07.png","grilled_fish":"assets/ruriru-restaurant/image-252cf431b1e08c7e.png","hamburger_steak":"assets/ruriru-restaurant/image-52bc19ef3fe765bb.png","hamburger":"assets/ruriru-restaurant/image-62af3efe0c33c446.png","orange_juice":"assets/ruriru-restaurant/image-d2a5d1c2dd211ee6.png","ice_cream":"assets/ruriru-restaurant/image-25d02e3992e9ed60.png","apple_pie":"assets/ruriru-restaurant/image-0e5793e929b2ee03.png","grape_juice":"assets/ruriru-restaurant/image-75ee4ae84e27d6f4.png","chocolate_shake":"assets/ruriru-restaurant/image-97cf8b6af5989ae3.png","hot_dog":"assets/ruriru-restaurant/image-3aa3339c84d8c863.png"};
 const ITEMS = [{"id": "hamburger", "name": "hamburger", "cat": "main"}, {"id": "pizza", "name": "pizza", "cat": "main"}, {"id": "spaghetti", "name": "spaghetti", "cat": "main"}, {"id": "curry_and_rice", "name": "curry and rice", "cat": "main"}, {"id": "omelet_rice", "name": "omelet rice", "cat": "main"}, {"id": "hamburger_steak", "name": "hamburger steak", "cat": "main"}, {"id": "steak", "name": "steak", "cat": "main"}, {"id": "grilled_fish", "name": "grilled fish", "cat": "main"}, {"id": "hot_dog", "name": "hot dog", "cat": "main"}, {"id": "sandwich", "name": "sandwich", "cat": "main"}, {"id": "cola", "name": "cola", "cat": "drink"}, {"id": "orange_juice", "name": "orange juice", "cat": "drink"}, {"id": "apple_juice", "name": "apple juice", "cat": "drink"}, {"id": "grape_juice", "name": "grape juice", "cat": "drink"}, {"id": "strawberry_shake", "name": "strawberry shake", "cat": "drink"}, {"id": "vanilla_shake", "name": "vanilla shake", "cat": "drink"}, {"id": "chocolate_shake", "name": "chocolate shake", "cat": "drink"}, {"id": "milk", "name": "milk", "cat": "drink"}, {"id": "coffee", "name": "coffee", "cat": "drink"}, {"id": "tea", "name": "tea", "cat": "drink"}, {"id": "french_fries", "name": "french fries", "cat": "side"}, {"id": "fried_chicken", "name": "fried chicken", "cat": "side"}, {"id": "chicken_nuggets", "name": "chicken nuggets", "cat": "side"}, {"id": "salad", "name": "salad", "cat": "side"}, {"id": "corn_soup", "name": "corn soup", "cat": "side"}, {"id": "ice_cream", "name": "ice cream", "cat": "side"}, {"id": "pudding", "name": "pudding", "cat": "side"}, {"id": "cake", "name": "cake", "cat": "side"}, {"id": "apple_pie", "name": "apple pie", "cat": "side"}, {"id": "pancake", "name": "pancake", "cat": "side"}];
-const selected={main:[],drink:[],side:[]}; let filter='main';
+const selected={main:[],drink:[],side:[]}; let filter='main', screen='menuScreen';
+const saveKey='dekiru-restaurant-1000-v1';
 const rail=document.getElementById('rail');
 function slots(cat){
  const el=document.getElementById('slots-'+cat); el.innerHTML='';
@@ -216,22 +219,22 @@ function renderRail(){
 function isSelected(id){return Object.values(selected).some(a=>a.some(x=>x.id===id))}
 function add(item){
  if(selected[item.cat].length>=5)return;
- selected[item.cat].push(item); update();
+ selected[item.cat].push(item);
  if(selected[item.cat].length===5){
    const next={main:'drink',drink:'side',side:null}[item.cat];
    if(next){filter=next;document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.filter===filter));renderRail();}
  }
+ update();
 }
-function remove(id){for(const c of ['main','drink','side']){const i=selected[c].findIndex(x=>x.id===id);if(i>=0)selected[c].splice(i,1)}update()}
+function remove(id){for(const c of ['main','drink','side']){const i=selected[c].findIndex(x=>x.id===id);if(i>=0)selected[c].splice(i,1)}delete assignments[id];delete prices[id];update()}
 function update(){
  ['main','drink','side'].forEach(slots);renderRail();
  const n=selected.main.length+selected.drink.length+selected.side.length;
  document.getElementById('total').textContent=n+' / 15';
  document.getElementById('next').classList.toggle('ready',n===15);
+ saveProgress();
 }
-document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{filter=t.dataset.filter;document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===t));renderRail()});
-document.getElementById('next').onclick=()=>alert('SET THE PRICE is ready for the next prototype.');
-update();
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{filter=t.dataset.filter;document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===t));renderRail();saveProgress()});
 
 const RANGES=[
  {id:'r1',label:'¥10–90',min:10,max:90,limit:1},
@@ -244,12 +247,14 @@ let assignments={}, prices={}, rangesLocked=false, activeRange=null;
 
 function selectedItems(){return ['main','drink','side'].flatMap(c=>selected[c])}
 function showScreen(id){
+ screen=id;
  document.getElementById('loadingScreen').classList.remove('active');
  document.getElementById('menuScreen').classList.remove('active');
  document.getElementById('priceScreen').classList.remove('active');
  document.getElementById('restaurantScreen').classList.remove('active');
  document.getElementById(id).classList.add('active');
  window.scrollTo(0,0);
+ saveProgress();
 }
 function buildPriceScreen(){
  const left=document.getElementById('priceLeft');left.innerHTML='';
@@ -266,7 +271,8 @@ function buildPriceScreen(){
   });
   box.append(cards);left.append(box);
  });
- renderRangeButtons();updateRangeState();
+ document.getElementById('setRanges').textContent=rangesLocked?'RANGES SET ✓':'SET THE RANGES →';
+ renderRangeButtons();updateRangeState();updatePriceState();
 }
 function usedCount(rid){return Object.values(assignments).filter(x=>x===rid).length}
 function renderRangeButtons(){
@@ -306,6 +312,7 @@ function assignRange(itemId,rid){
    if(item)renderSlot(s,item);
  });
  renderRangeButtons();updateRangeState();
+ saveProgress();
 }
 function renderSlot(slot,item){
  const rid=assignments[item.id];slot.className='range-slot'+(rid?' filled '+rid:'');
@@ -327,6 +334,7 @@ function renderSlot(slot,item){
      const wrap=document.querySelector('[data-itemwrap="'+item.id+'"]');
      if(wrap){wrap.classList.remove('awaiting');wrap.classList.add('priced')}
      updatePriceState();
+     saveProgress();
    };
    opts.append(b)
  }
@@ -356,8 +364,9 @@ document.getElementById('setRanges').onclick=()=>{
  document.querySelectorAll('.price-item').forEach(w=>{w.classList.remove('priced');w.classList.add('awaiting')});
  document.getElementById('rangeProgress').textContent='PRICE 0 / 15';
  updatePriceState();
+ saveProgress();
 };
-document.getElementById('backMenu').onclick=()=>{if(rangesLocked){if(!confirm('Price ranges are already set. Return to menu and reset prices?'))return;assignments={};prices={};rangesLocked=false;activeRange=null;document.getElementById('setRanges').textContent='SET THE RANGES →'}showScreen('menuScreen')};
+document.getElementById('backMenu').onclick=()=>{if(rangesLocked&&!confirm('Price ranges are already set. Return to menu and reset prices?'))return;if(rangesLocked){assignments={};prices={};rangesLocked=false;activeRange=null;}showScreen('menuScreen')};
 document.getElementById('openRestaurant').onclick=()=>{
  if(!selectedItems().every(x=>prices[x.id]!=null))return;
  playSound('decisionSound');
@@ -365,7 +374,7 @@ document.getElementById('openRestaurant').onclick=()=>{
  showScreen('restaurantScreen');
 };
 
-document.getElementById('next').onclick=()=>{playSound('decisionSound');buildPriceScreen();showScreen('priceScreen')};
+document.getElementById('next').onclick=()=>{if(selectedItems().length!==15)return;playSound('decisionSound');buildPriceScreen();showScreen('priceScreen')};
 
 
 
@@ -388,8 +397,8 @@ function launchConfetti(){
 
 let restaurantOrder=[],restaurantFinished=false,checkoutSource=null,checkoutItems=Array(8).fill(null),restaurantTotalDone=false;
 
-function buildRestaurant(){
- restaurantOrder=[];restaurantFinished=false;checkoutSource=null;checkoutItems=Array(8).fill(null);restaurantTotalDone=false;
+function buildRestaurant(resume=false){
+ if(!resume){restaurantOrder=[];restaurantFinished=false;checkoutSource=null;checkoutItems=Array(8).fill(null);restaurantTotalDone=false;}
  const menu=document.getElementById('restMenu');menu.innerHTML='';
  const labels={main:'MAIN',drink:'DRINK',side:'SIDE & DESSERT'};
  ['main','drink','side'].forEach(cat=>{
@@ -398,15 +407,18 @@ function buildRestaurant(){
   const cards=document.createElement('div');cards.className='rest-cards';
   selected[cat].forEach(item=>{
    const b=document.createElement('button');b.className='rest-card';b.dataset.restId=item.id;
+   b.classList.toggle('selected',!restaurantFinished&&restaurantOrder.includes(item.id));
+   b.classList.toggle('dim',restaurantFinished&&!restaurantOrder.includes(item.id));
+   b.classList.toggle('moved',checkoutItems.includes(item.id));
    const im=document.createElement('img');im.src=IMAGE_DATA[item.id];im.alt=item.name;b.append(im);
    b.onclick=()=>restaurantMenuTap(item.id);
    cards.append(b);
   });
   box.append(title,cards);menu.append(box);
  });
- const f=document.getElementById('finishOrdering');f.disabled=true;f.textContent='FINISH ORDERING';
- document.getElementById('totalResult').innerHTML='';
- document.getElementById('newOrder').classList.remove('show');
+ const f=document.getElementById('finishOrdering');f.disabled=restaurantFinished||!restaurantOrder.length;f.textContent=restaurantFinished?'ORDER CONFIRMED ✓':'FINISH ORDERING';
+ document.getElementById('totalResult').innerHTML=restaurantTotalDone?totalMarkup():'';
+ document.getElementById('newOrder').classList.toggle('show',restaurantTotalDone);
  renderCheckout();updateOrderCount();
 }
 
@@ -431,6 +443,7 @@ function restaurantMenuTap(id){
 function updateOrderCount(){
  const n=checkoutItems.filter(Boolean).length;
  document.getElementById('orderCount').textContent=restaurantFinished?('CHECKOUT '+n+' / '+restaurantOrder.length):('ORDER '+restaurantOrder.length+' / 8');
+ saveProgress();
 }
 
 document.getElementById('finishOrdering').onclick=()=>{
@@ -484,6 +497,12 @@ function returnCheckoutItem(index,id){
  renderCheckout();updateOrderCount();
 }
 
+function totalMarkup(){
+ const total=checkoutItems.filter(Boolean).reduce((sum,id)=>sum+prices[id],0);
+ const diff=total-1000,sign=diff>0?'+':'−';
+ return '<div class="total-amount">TOTAL ¥'+total.toLocaleString()+'</div>'+
+  '<div class="total-diff">'+(diff===0?'PERFECT!':'¥1,000 → '+sign+'¥'+Math.abs(diff).toLocaleString())+'</div>';
+}
 document.getElementById('totalBtn').onclick=()=>{
  if(restaurantTotalDone)return;
  const moved=checkoutItems.filter(Boolean);
@@ -491,14 +510,13 @@ document.getElementById('totalBtn').onclick=()=>{
  restaurantTotalDone=true;
  playSound('decisionSound');
  const total=moved.reduce((sum,id)=>sum+prices[id],0);
- const diff=total-1000;
- const sign=diff>0?'+':diff<0?'−':'';
+ const result=totalMarkup();
+ saveProgress();
  setTimeout(()=>{
+  if(!restaurantTotalDone)return;
   playSound('totalSound');
-  document.getElementById('totalResult').innerHTML=
-   '<div class="total-amount">TOTAL ¥'+total.toLocaleString()+'</div>'+
-   '<div class="total-diff">'+(diff===0?'PERFECT!':'¥1,000 → '+sign+'¥'+Math.abs(diff).toLocaleString())+'</div>';
-  if(diff===0){
+  document.getElementById('totalResult').innerHTML=result;
+  if(total===1000){
    setTimeout(()=>{
     playSound('cheerSound');launchConfetti();
     const o=document.getElementById('perfectOverlay');o.classList.add('show');
@@ -512,13 +530,59 @@ document.getElementById('totalBtn').onclick=()=>{
 
 document.getElementById('newOrder').onclick=()=>buildRestaurant();
 
+function saveProgress(){
+ try{
+  localStorage.setItem(saveKey,JSON.stringify({
+   screen,filter,items:selectedItems().map(item=>item.id),assignments,prices,
+   rangesLocked,restaurantOrder,restaurantFinished,checkoutItems,restaurantTotalDone
+  }));
+ }catch{}
+}
+function restoreProgress(){
+ try{
+  const saved=JSON.parse(localStorage.getItem(saveKey));
+  if(!saved||!Array.isArray(saved.items))return;
+  for(const id of new Set(saved.items)){
+   const item=ITEMS.find(x=>x.id===id);
+   if(item&&selected[item.cat].length<5)selected[item.cat].push(item);
+  }
+  if(['all','main','drink','side'].includes(saved.filter))filter=saved.filter;
+  for(const {id} of selectedItems()){
+   const range=RANGES.find(r=>r.id===saved.assignments?.[id]);
+   if(!range||usedCount(range.id)>=range.limit)continue;
+   assignments[id]=range.id;
+   const price=saved.prices?.[id];
+   if(Number.isInteger(price)&&price>=range.min&&price<=range.max&&price%10===0)prices[id]=price;
+  }
+  rangesLocked=saved.rangesLocked===true&&Object.keys(assignments).length===15;
+  if(selectedItems().length!==15||saved.screen==='menuScreen')return;
+  screen='priceScreen';
+  if(saved.screen!=='restaurantScreen'||!rangesLocked||Object.keys(prices).length!==15)return;
+  screen='restaurantScreen';
+  const ids=new Set(selectedItems().map(item=>item.id));
+  restaurantOrder=Array.isArray(saved.restaurantOrder)?[...new Set(saved.restaurantOrder.filter(id=>ids.has(id)))].slice(0,8):[];
+  restaurantFinished=saved.restaurantFinished===true&&restaurantOrder.length>0;
+  if(restaurantFinished&&Array.isArray(saved.checkoutItems)){
+   checkoutItems=Array.from({length:8},(_,i)=>{
+    const id=saved.checkoutItems[i];
+    return restaurantOrder.includes(id)&&saved.checkoutItems.indexOf(id)===i?id:null;
+   });
+  }
+  restaurantTotalDone=saved.restaurantTotalDone===true&&restaurantFinished&&checkoutItems.filter(Boolean).length===restaurantOrder.length;
+ }catch{}
+}
+restoreProgress();
+document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.filter===filter));
+update();
+if(screen==='priceScreen')buildPriceScreen();
+if(screen==='restaurantScreen')buildRestaurant(true);
+
 // Preload all embedded images before showing the menu.
 (function preload(){
  const entries=Object.entries(IMAGE_DATA);let done=0;
- function tick(){done++;document.getElementById('loadCount').textContent=done+' / '+entries.length;document.getElementById('loadBar').style.width=(done/entries.length*100)+'%';if(done===entries.length)setTimeout(()=>showScreen('menuScreen'),180)}
+ function tick(){done++;document.getElementById('loadCount').textContent=done+' / '+entries.length;document.getElementById('loadBar').style.width=(done/entries.length*100)+'%';if(done===entries.length)setTimeout(()=>showScreen(screen),180)}
  entries.forEach(([id,src])=>{const im=new Image();im.onload=tick;im.onerror=tick;im.src=src});
 })();
 
 </script>
-<script src="ruriru-restaurant-navigation.js?v=0da70a827769"></script>
 </body></html>
