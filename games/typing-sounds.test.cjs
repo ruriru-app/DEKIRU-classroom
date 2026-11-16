@@ -4,6 +4,10 @@ test('seven themes resolve to their own key and Enter assets',()=>{
  const S=api();assert.equal(S.sets.length,7);
  for(const set of S.sets){assert.equal(set.key,'typing-sounds/'+set.id+'-key.mp3');assert.equal(set.enter,'typing-sounds/'+set.id+'-enter.mp3');for(const file of [set.key,set.enter])assert.ok(fs.statSync(__dirname+'/'+file).size>1000);}
 });
+test('typing is silent until a sound set is chosen',()=>{
+ const sound=api().create({storage:{getItem:()=>null}});
+ assert.equal(sound.settings().set,'none');
+});
 test('sound-set preferences persist together, support silence, and reject invalid values',()=>{
  const S=api(),saved=new Map(),storage={getItem:k=>saved.get(k)||null,setItem:(k,v)=>saved.set(k,v)};
  const sound=S.create({storage});sound.configure({set:'sword',volume:.2});
@@ -27,5 +31,5 @@ test('prepared key and Enter play their paired buffers without blocking each oth
 });
 test('unavailable audio files fail quietly without breaking typing',async()=>{
  const S=api();class AudioContext{constructor(){this.state='running';}createGain(){return {gain:{value:1},connect(){}};}}
- const sound=S.create({AudioContext,fetch:async()=>({ok:false})});assert.equal(await sound.prepare(),false);assert.equal(sound.play('key'),false);
+ const sound=S.create({AudioContext,fetch:async()=>({ok:false})});sound.configure({set:'normal',volume:.4});assert.equal(await sound.prepare(),false);assert.equal(sound.play('key'),false);
 });

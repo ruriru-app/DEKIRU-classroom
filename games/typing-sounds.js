@@ -5,7 +5,7 @@ const sets=Object.freeze([['normal','ノーマル'],['cute','かわいい'],['sf
 const storageKey='dekiru-typing-sounds-v1';
 function create(options={}){
  let storage=options.storage;try{if(!storage)storage=root.localStorage;}catch{}
- let settings={set:'normal',volume:.4},context=null,gain=null,generation=0;
+ let settings={set:'none',volume:.4},context=null,gain=null,generation=0;
  const buffers=new Map(),pending=new Map(),sources=[];
  try{const saved=JSON.parse(storage?.getItem(storageKey)||'null');if(saved)settings=valid(saved);}catch{}
  function valid(value){return {set:value.set==='none'||sets.some(x=>x.id===value.set)?value.set:settings.set,volume:Number.isFinite(value.volume)?Math.max(0,Math.min(1,value.volume)):settings.volume};}
