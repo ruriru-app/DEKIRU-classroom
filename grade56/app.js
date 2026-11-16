@@ -98,11 +98,14 @@
     vocabulary=null;
     const [page,key,number] = location.hash.replace(/^#\/?/,'').split('/');
     const book=books[key];
-    if(page==='phonics' && key==='nh5') {location.replace('../grade34/phonics.html?from=nh5');return;}
+    if(page==='phonics' && (key==='nh5' || key==='nh6')) {
+      location.replace('../grade34/phonics.html?from='+key);
+      return;
+    }
     document.title='DEKIRU Classroom for Grade 5 & 6';
     if(page==='book' && book) {
       document.title=book.title+' | DEKIRU Classroom';
-      app.innerHTML=heading(book.title,book.grade,'#/')+`<section class="unit-grid">${book.units.map((title,i)=>`<button class="unit-tile ${book.color}" data-route="#/unit/${key}/${i+1}"><span>Unit ${i+1}</span><strong>${title}</strong></button>`).join('')}<button class="unit-tile activities" data-route="#/phonics/${key}"><span>${key==='nh5'?'一文字一音':'準備中'}</span><strong>Phonics</strong></button></section>`;
+      app.innerHTML=heading(book.title,book.grade,'#/')+`<section class="unit-grid">${book.units.map((title,i)=>`<button class="unit-tile ${book.color}" data-route="#/unit/${key}/${i+1}"><span>Unit ${i+1}</span><strong>${title}</strong></button>`).join('')}<button class="unit-tile activities" data-route="#/phonics/${key}"><span>文字と音の練習</span><strong>Phonics</strong></button></section>`;
     } else if(book && page==='unit' && window.NheUnits.get(key,number)) {
       renderUnit(key,book,Number(number));
     } else if(book && (page==='phonics' || (page==='unit' && /^[1-8]$/.test(number)))) {

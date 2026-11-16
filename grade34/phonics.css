@@ -34,7 +34,9 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--blue-dark);outline-
 .phonics-categories {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
+  grid-template-rows: repeat(6, auto);
+  grid-auto-flow: column;
+  gap: 12px clamp(28px, 5vw, 56px);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -71,7 +73,11 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--blue-dark);outline-
 a.phonics-topic {background: white; border-color: var(--blue);}
 a.phonics-topic:hover, a.phonics-topic .phonics-topic-number {background: var(--blue-pale);}
 @media(max-width: 650px) {
-  .phonics-categories {grid-template-columns: 1fr;}
+  .phonics-categories {
+    grid-template-columns: 1fr;
+    grid-template-rows: none;
+    grid-auto-flow: row;
+  }
   .phonics-topic {gap: 8px; padding-inline: 10px;}
   .phonics-topic strong {font-size: 17px;}
 }

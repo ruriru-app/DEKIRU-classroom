@@ -13,7 +13,7 @@
     worksheets:'ワークシート',projection:"Let's Write!",typing:'タイピング'
   };
   const from=new URLSearchParams(location.search).get('from')||'nh5';
-  const upper=from==='nh5';
+  const upper=from==='nh5'||from==='nh6';
   const home=upper?'../../grade56/index.html#/':'../index.html#/';
   $('brand-home').href=home;$('home').href=home;
   $('classroom-logo').src='../assets/ui/branding/logo-grade'+(upper?'56':'34')+'.svg';
