@@ -31,3 +31,7 @@ button{cursor:pointer}button:disabled{cursor:default;opacity:.4}button:focus-vis
 .sv-content:fullscreen .word-grid,.sv-content.expanded .word-grid{min-height:0}
 .sv-content:fullscreen .word-card .label,.sv-content.expanded .word-card .label{font-size:clamp(28px,3.2vw,54px)}
 @media(max-width:720px){.stage{grid-template-columns:28% minmax(0,1fr);height:320px;padding:10px}.big-word{font-size:clamp(48px,17cqw,140px)}.sv-content:fullscreen,.sv-content.expanded{padding:12px;height:100dvh}.sv-content:fullscreen .stage,.sv-content.expanded .stage{flex:1;height:auto}.sv-content:fullscreen .word-grid,.sv-content.expanded .word-grid{height:auto;flex:1}}
+
+/* Use natural glyph widths when reading a complete word. */
+.big-word:not(.spelling){display:block;text-align:center;letter-spacing:normal;white-space:nowrap}
+.big-word:not(.spelling) .letter-slot{display:inline;width:auto;height:auto}
