@@ -118,3 +118,15 @@ button{cursor:pointer}button:disabled{cursor:default;opacity:.4}button:focus-vis
 .projection-lines span {
   border-bottom: 2px solid var(--ink);
 }
+.typing-copy-status {
+  margin: 12px 0 4px;
+}
+.typing-copy-status:empty {
+  margin: 0;
+}
+#typing-share-url {
+  width: min(100%, 680px);
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}

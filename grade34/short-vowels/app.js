@@ -10,7 +10,7 @@
   const randomWorksheetWords='bug red mop bag map pig six bed cap pin run sit mom bus hot cup top leg hat dog sun ten pen cat big'.split(' ');
   const titles={
     overview:'一覧表示',cards:'一語づつ読む',guess:'文字を読む',letters:'綴りを思い出す',
-    worksheets:'ワークシート',projection:"Let's Write!"
+    worksheets:'ワークシート',projection:"Let's Write!",typing:'タイピング'
   };
   const from=new URLSearchParams(location.search).get('from')||'nh5';
   const upper=from==='nh5';
@@ -65,6 +65,9 @@
   function isPracticeMode(){
     return state.mode==='cards'||state.mode==='guess'||state.mode==='letters';
   }
+  function canPresent(){
+    return state.mode==='overview'||isPracticeMode();
+  }
   function render(){
     const projection=state.mode==='projection';
     const lesson=isPracticeMode();
@@ -73,7 +76,8 @@
     $('lesson').hidden=!lesson;
     $('worksheets').hidden=state.mode!=='worksheets';
     $('worksheet-projection').hidden=!projection;
-    $('fullscreen').hidden=projection||state.mode==='worksheets'||document.body.classList.contains('teaching-fullscreen');
+    $('typing').hidden=state.mode!=='typing';
+    $('fullscreen').hidden=!canPresent()||document.body.classList.contains('teaching-fullscreen');
     const selected=projection?'worksheets':state.mode;
     modes.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===selected)));
     if(!lesson)return;
@@ -105,6 +109,22 @@
   function reveal(){if(state.mode==='letters'||state.mode==='guess'){state=P.advance(state);render();}}
   function navigate(delta){state=P.move(state,delta,order);render();}
   modes.forEach(button=>button.addEventListener('click',event=>{state=P.changeMode(state,button.dataset.mode);render();pointerBlur(event);}));
+  const typingLink=$('open-typing');
+  $('copy-typing-url').addEventListener('click',async()=>{
+    const status=$('typing-copy-status');
+    const field=$('typing-share-url');
+    try{
+      await navigator.clipboard.writeText(typingLink.href);
+      field.hidden=true;
+      status.textContent='URLをコピーしました。';
+    }catch{
+      field.value=typingLink.href;
+      field.hidden=false;
+      field.focus();
+      field.select();
+      status.textContent='選択したURLをコピーしてください。';
+    }
+  });
   function reorder(){order=P.makeOrder($('random-order').checked);state=P.start(state.mode,order[0]);$('reshuffle').hidden=!$('random-order').checked;render();}
   $('random-order').addEventListener('change',reorder);
   $('reshuffle').addEventListener('click',event=>{reorder();pointerBlur(event);});
@@ -130,7 +150,7 @@
       projectionButton?.focus();
       projectionButton=null;
     }
-    $('fullscreen').hidden=expanded||state.mode==='worksheets';
+    $('fullscreen').hidden=expanded||!canPresent();
   }
   async function exitFullscreen(){
     if(document.fullscreenElement===content)await document.exitFullscreen();

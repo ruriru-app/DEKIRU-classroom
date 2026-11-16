@@ -1,0 +1,222 @@
+(()=>{
+'use strict';const $=id=>document.getElementById(id),C=TypingCore;
+let activity,queue=[],cursor=0,showModel=true,last=null,statuses=[],correct=false,soundEnabled=true;
+let failed=[],started=0,elapsed=0,running=false,clock=null,wordByWord=false,speechRate=.55,speechLanguage='en-US',speechGeneration=0,speechPause=null;
+let mode='easy',phase='setup',recordEligible=true,audioContext=null,tones=[];
+let questionOrder='ordered',countdownTimer=null;
+let easyValue='',easyCaret=0;
+const modeNames={easy:'Easy',normal:'Normal',hard:'Hard'};
+const cards=new Map((window.GAMES_DATA?.cards||[]).map(c=>[c.id,c]));
+const current=()=>activity.entries[queue[cursor]];
+const typingSounds=window.TypingSounds?.create();
+function keySound(kind){if(soundEnabled)typingSounds?.play(kind);}
+if(typingSounds){
+ const settings=typingSounds.settings();
+ for(const set of window.TypingSounds.sets){const option=document.createElement('option');option.value=set.id;option.textContent=set.label;$('key-sound-set').append(option);}
+ $('key-sound-set').value=settings.set;$('key-sound-volume').value=String(Math.round(settings.volume*100));$('key-sound-volume-value').textContent=Math.round(settings.volume*100)+'%';
+ $('key-sound-set').onchange=()=>{typingSounds.configure({set:$('key-sound-set').value,volume:Number($('key-sound-volume').value)/100});$('key-sound-message').textContent='';};
+ $('key-sound-volume').oninput=()=>{const volume=Number($('key-sound-volume').value);typingSounds.configure({set:$('key-sound-set').value,volume:volume/100});$('key-sound-volume-value').textContent=volume+'%';};
+ $('key-sound-preview').onclick=async()=>{
+  $('key-sound-message').textContent='';
+  if(!soundEnabled){$('key-sound-message').textContent='右上のスピーカーをオンにして試聴してください。';return;}
+  const ok=await typingSounds.preview();$('key-sound-message').textContent=!ok?'打音を再生できませんでした。もう一度試聴してください。':typingSounds.settings().set==='none'?'打音は「音なし」です。':'通常キー → Enterキーの順で試聴しています。';
+ };
+}
+function tone(kind){
+ if(!soundEnabled)return;
+ try{
+  const Audio=window.AudioContext||window.webkitAudioContext;if(!Audio)return;
+  audioContext=audioContext||new Audio();if(audioContext.state==='suspended')audioContext.resume().catch(()=>{});
+  const notes=kind==='wrong'?[[190,0,.13]]:kind==='record'?[[523,0,.14],[659,.14,.14],[784,.28,.3],[1047,.58,.4]]:[[880,0,.13],[660,.14,.22]];
+  tones=tones.filter(x=>!x.ended);
+  notes.forEach(([frequency,delay,duration])=>{
+   const osc=audioContext.createOscillator(),gain=audioContext.createGain(),t=audioContext.currentTime+delay;
+   osc.frequency.value=frequency;gain.gain.setValueAtTime(.0001,t);gain.gain.exponentialRampToValueAtTime(.12,t+.01);gain.gain.exponentialRampToValueAtTime(.0001,t+duration);
+   osc.connect(gain);gain.connect(audioContext.destination);const item={osc,ended:false};tones.push(item);
+   osc.onended=()=>{item.ended=true;osc.disconnect();gain.disconnect();};osc.start(t);osc.stop(t+duration+.03);
+  });
+ }catch{}
+}
+function recordData(){const signature=JSON.stringify(activity.entries.map(e=>[e.english,e.japanese]));let hash=2166136261;for(let i=0;i<signature.length;i++)hash=Math.imul(hash^signature.charCodeAt(i),16777619);return {signature,key:'dekiru-short-vowels-best-v1:'+mode+':'+(hash>>>0).toString(16)+(questionOrder==='random'?':random':'')};}
+function readBest(){try{const {signature,key}=recordData(),saved=JSON.parse(localStorage.getItem(key));return saved?.signature===signature&&Number.isFinite(saved.ms)&&saved.ms>0?saved.ms:null;}catch{return null;}}
+function bestDisplay(){const best=readBest(),text=modeNames[mode]+' BEST：'+(best===null?'まだ記録がありません':(best/1000).toFixed(2)+'秒');$('best-time').textContent=text;$('finish-best').textContent=text;}
+function saveBest(){
+ $('new-record').hidden=true;$('record-notice').textContent='';
+ if(!recordEligible||statuses.some(s=>s!=='correct')){$('record-notice').textContent='スキップや練習設定の変更があったため、今回は記録の対象外です。';return;}
+ const best=readBest();if(elapsed<=0||(best!==null&&best<=elapsed)){bestDisplay();return;}
+ try{const {signature,key}=recordData();localStorage.setItem(key,JSON.stringify({signature,ms:elapsed}));$('new-record').hidden=false;tone('record');}
+ catch{$('record-notice').textContent='このブラウザに記録を保存できませんでした。';}
+ bestDisplay();
+}
+function selectMode(value,resetLanguage=true){
+ mode=value;for(const name of Object.keys(modeNames))$('mode-'+name).setAttribute('aria-pressed',String(name===mode));
+ speechLanguage='en-US';
+ $('listen').hidden=mode==='hard';$('word-toggle').hidden=mode==='hard';$('speech-rate').disabled=mode==='hard';
+ const missing=false;
+ $('start').disabled=missing;$('setup-message').textContent=missing?'日本語が未登録の問題があるため、Hardでは開始できません。':'';
+ bestDisplay();
+}
+function setup(){
+ typingSounds?.stop();
+ phase='setup';stopSpeech();clearInterval(clock);clearTimeout(countdownTimer);running=false;$('countdown').hidden=true;
+ $('setup').hidden=false;$('practice').hidden=true;$('complete').hidden=true;$('practice-stats').hidden=true;$('audio-settings').hidden=false;$('new-record').hidden=true;
+ $('progress').textContent=activity.entries.length+'問';selectMode(mode,false);$('start').focus();
+}
+function begin(){
+ if($('start').disabled)return;
+ typingSounds?.stop();typingSounds?.prepare();
+ clearInterval(clock);clearTimeout(countdownTimer);stopSpeech();running=false;phase='countdown';recordEligible=true;statuses=activity.entries.map(()=>null);queue=activity.entries.map((_,i)=>i);cursor=0;
+ questionOrder=$('question-order').value==='random'?'random':'ordered';
+ if(questionOrder==='random')for(let i=queue.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[queue[i],queue[j]]=[queue[j],queue[i]];}
+ showModel=mode==='easy';recordEligible=true;
+ $('setup').hidden=true;$('practice').hidden=true;$('complete').hidden=true;$('audio-settings').hidden=true;$('practice-stats').hidden=true;$('timer').hidden=true;$('meaning').hidden=false;
+ $('mode-label').textContent=modeNames[mode];$('new-record').hidden=true;$('countdown').hidden=false;$('countdown-value').textContent='3';
+ // Prime speech from the Start gesture while the visible countdown gives voices time to initialize.
+ if(mode!=='hard'&&soundEnabled&&window.speechSynthesis&&window.SpeechSynthesisUtterance)try{
+  window.speechSynthesis.getVoices?.();const warmup=new SpeechSynthesisUtterance(speechLanguage==='ja-JP'?current().japanese:current().english);warmup.lang=speechLanguage;warmup.volume=0;window.speechSynthesis.speak(warmup);
+ }catch{}
+ let remaining=3;
+ function tick(){
+  if(phase!=='countdown')return;
+  remaining--;if(remaining){$('countdown-value').textContent=String(remaining);countdownTimer=setTimeout(tick,1000);return;}
+  stopSpeech();$('countdown').hidden=true;$('audio-settings').hidden=false;$('practice-stats').hidden=false;phase='play';startClock(true);load();
+ }countdownTimer=setTimeout(tick,1000);
+}
+function stopSpeech(){speechGeneration++;clearTimeout(speechPause);window.speechSynthesis?.cancel();}
+function stats(){
+ const ms=elapsed+(running?Date.now()-started:0),seconds=Math.floor(ms/1000),time=Math.floor(seconds/60)+'分'+String(seconds%60).padStart(2,'0')+(running?'':'.'+String(Math.floor(ms%1000/10)).padStart(2,'0'))+'秒';
+ const count=statuses.filter((value,i)=>value==='correct'&&!failed[i]).length;
+ $('first-pass').textContent='初回正解 '+count+' / '+activity.entries.length+'問';$('timer').textContent='タイム '+time;
+ $('result-stats').textContent='間違いなしで入力できた問題：'+count+' / '+activity.entries.length+'問　タイム：'+time;
+}
+function startClock(reset=false){if(reset){elapsed=0;failed=activity.entries.map(()=>false);}started=Date.now();running=true;clearInterval(clock);clock=setInterval(stats,1000);stats();}
+function model(){
+ $('toggle-model').setAttribute('aria-pressed',String(showModel));$('toggle-model').textContent=showModel?'お手本を隠す':'お手本を見る';
+ $('model').replaceChildren();$('model').classList.toggle('hidden-model',!showModel);
+ if(!showModel){$('model').textContent='お手本は非表示です。';return;}
+ if(!last){$('model').textContent=current().english;return;}
+ const target=new Set(last.edits.filter(x=>x.kind==='replace'||x.kind==='missing').map(x=>x.index));
+ Array.from(C.normalize(current().english)).forEach((char,index)=>{
+  const span=document.createElement('span');span.textContent=char===' '&&target.has(index)?'␣':char;if(target.has(index))span.className='target';$('model').append(span);
+ });
+}
+function previous(){
+ $('previous').replaceChildren();$('previous-attempt').hidden=!last;$('error-detail').textContent='';
+ if(!last)return;
+ const details=[];let position=1;
+ const label=char=>char===' '?'スペース':'「'+char+'」';
+ last.edits.forEach(edit=>{
+  const span=document.createElement('span');span.textContent=edit.kind==='missing'?'□':edit.actual===' '&&edit.kind!=='equal'?'␣':edit.actual;
+  if(edit.kind!=='equal')span.className='error';
+  $('previous').append(span);
+  if(edit.kind==='extra')details.push(position+'文字目の'+label(edit.actual)+'が余分です。');
+  if(edit.kind==='replace')details.push(position+'文字目の'+label(edit.actual)+(showModel?'を'+label(edit.expected)+'に直そう。':'を確認しよう。'));
+  if(edit.kind==='missing')details.push(position+'文字目に'+(showModel?label(edit.expected)+'が足りません。':'文字が足りません。'));
+  if(edit.actual)position++;
+ });
+ $('error-detail').textContent=details.join('\n');
+}
+function load(speechDelay=0){
+ easyValue='';easyCaret=0;
+ stopSpeech();last=null;correct=false;$('practice').hidden=false;$('complete').hidden=true;$('answer').value='';$('answer').disabled=false;$('check').disabled=false;$('next').hidden=true;$('skip').hidden=false;
+ const item=current();$('japanese').textContent='';$('progress').textContent=(cursor+1)+' / '+queue.length+'問';
+ const picture=$('picture');picture.hidden=false;picture.alt='問題のイラスト';
+ picture.onerror=()=>{picture.hidden=true;$('answer').disabled=true;$('check').disabled=true;$('feedback').textContent='画像を読み込めませんでした。ページを開き直すか、いったん次へ進んでください。';};
+ picture.src='../assets/'+item.english+'.png';
+ $('feedback').classList.remove('success');$('feedback').textContent=mode==='hard'?'イラストを見て、英語を入力しよう。':'イラスト・音声'+(showModel?'・お手本':'')+'を手がかりに、英語を入力しよう。';model();previous();stats();$('answer').focus();
+ if(speechDelay)speechPause=setTimeout(()=>speak(),speechDelay);else speak();
+}
+function finish(){
+ phase='complete';
+ stopSpeech();if(running){elapsed+=Date.now()-started;running=false;}clearInterval(clock);stats();$('practice').hidden=true;$('complete').hidden=false;
+ const count=statuses.filter(x=>x==='correct').length,skipped=statuses.filter(x=>x!=='correct').length;
+ $('result').textContent='正しく入力できた問題：'+count+' / '+activity.entries.length+'問'+(skipped?'　後回し：'+skipped+'問':'');
+ $('retry-skipped').hidden=!skipped;$('progress').textContent='練習終了';
+ $('timer').hidden=false;saveBest();$('complete').focus();
+}
+function next(skip=false){
+ if(skip&&!correct){statuses[queue[cursor]]='skipped';failed[queue[cursor]]=true;recordEligible=false;}
+ if(cursor+1<queue.length){cursor++;load(correct?600:0);}else finish();
+}
+function speak(){
+ if(mode==='hard'||!soundEnabled||!activity||phase!=='play'||$('practice').hidden)return;
+ if(!window.speechSynthesis||!window.SpeechSynthesisUtterance){$('feedback').textContent='このブラウザでは音声を再生できません。お手本を見ながら練習できます。';return;}
+ stopSpeech();const generation=speechGeneration,text=speechLanguage==='ja-JP'?current().japanese:current().english;
+ if(!text){$('feedback').textContent='この問題には日本語が登録されていません。';return;}
+ const words=wordByWord?text.split(/\s+/).filter(Boolean):[text];
+ function play(i){
+  if(generation!==speechGeneration||!soundEnabled)return;
+  const utterance=new SpeechSynthesisUtterance(words[i]);utterance.lang=speechLanguage;utterance.rate=speechRate;
+  utterance.onend=()=>{if(generation===speechGeneration&&i+1<words.length)speechPause=setTimeout(()=>play(i+1),360);};
+  utterance.onerror=event=>{if(generation!==speechGeneration||!soundEnabled||['canceled','interrupted'].includes(event.error))return;$('feedback').textContent=event.error==='not-allowed'?'音声を始めるには「発音を聞く」を押してください。':'音声を再生できませんでした。「発音を聞く」をもう一度押してください。';};
+  speechSynthesis.speak(utterance);
+ }play(0);
+}
+function warnEasy(){
+ failed[queue[cursor]]=true;tone('wrong');
+ $('feedback').textContent='違う文字です。もう一度、正しい文字を入力しよう。';stats();
+}
+function typingPrefix(value){return value.normalize('NFKC').replace(/[‘’]/g,"'").replace(/[“”]/g,'"').replace(/[‐‑–—]/g,'-');}
+function easyInput(event){
+ if(phase!=='play'||event.isComposing)return;
+ if(mode!=='easy'){keySound('key');return;}
+ const input=$('answer'),value=input.value;
+ // Deletion is always allowed; additions must match the expected spelling from the beginning.
+ const deletion=event.inputType?.startsWith('delete')||value==='';
+ if(!deletion&&!typingPrefix(current().english).startsWith(typingPrefix(value))){
+  input.value=easyValue;input.setSelectionRange?.(easyCaret,easyCaret);warnEasy();return;
+ }
+ easyValue=value;easyCaret=input.selectionStart??value.length;
+ keySound('key');
+ $('feedback').textContent='最後まで入力したら、答え合わせをしよう。';
+}
+$('answer').onbeforeinput=event=>{
+ if(mode!=='easy'||phase!=='play'||event.isComposing||!event.inputType?.startsWith('insert')||typeof event.data!=='string')return;
+ const input=$('answer'),start=input.selectionStart??input.value.length,end=input.selectionEnd??start;
+ const value=input.value.slice(0,start)+event.data+input.value.slice(end);
+ if(!typingPrefix(current().english).startsWith(typingPrefix(value))){event.preventDefault();warnEasy();}
+};
+$('answer').oninput=easyInput;
+$('answer').oncompositionend=()=>easyInput({isComposing:false});
+$('answer').onkeydown=event=>{
+ if(phase!=='play'||event.isComposing||event.key!=='Enter')return;
+ if(event.repeat){event.preventDefault?.();return;}
+ keySound('enter');
+};
+$('answer-form').onsubmit=event=>{
+ event.preventDefault();if(correct||phase!=='play')return;
+ if(!C.normalize($('answer').value)){$('feedback').textContent='英語を入力してから答え合わせをしよう。';$('answer').focus();return;}
+ try{
+  last=C.compare(current().english,$('answer').value);
+  if(last.correct){correct=true;statuses[queue[cursor]]='correct';tone('correct');last=null;previous();next();}
+  else{failed[queue[cursor]]=true;previous();model();$('feedback').textContent='間違えたところを確認して、もう一度入力しよう。';$('feedback').classList.remove('success');$('answer').value='';$('answer').focus();}
+ }catch(error){$('feedback').textContent=error.message;}
+};
+$('toggle-model').onclick=()=>{showModel=!showModel;if(showModel&&mode!=='easy')recordEligible=false;model();previous();$('answer').focus();};
+$('listen').onclick=()=>speak();
+$('sound-toggle').onclick=()=>{
+ soundEnabled=!soundEnabled;
+ $('sound-toggle').setAttribute('aria-pressed',String(soundEnabled));
+ $('sound-toggle').setAttribute('aria-label',soundEnabled?'音声をオフにする':'音声をオンにする');
+ $('listen').disabled=!soundEnabled;
+ if(soundEnabled)speak();else{stopSpeech();typingSounds?.stop();tones.forEach(x=>{try{x.osc.stop();}catch{}});}
+};
+$('word-toggle').onclick=()=>{wordByWord=!wordByWord;$('word-toggle').setAttribute('aria-pressed',String(wordByWord));speak();};
+$('speech-rate').onchange=()=>{const value=Number($('speech-rate').value);if([.55,.85,1.2].includes(value)){speechRate=value;speak();}};
+$('next').onclick=()=>next();$('skip').onclick=()=>next(true);
+$('restart').onclick=begin;
+$('restart-current').onclick=()=>{if(phase==='play'&&!window.confirm('今の練習を終えて、最初からやり直しますか？'))return;begin();};
+$('cancel-countdown').onclick=setup;
+$('question-order').onchange=()=>{questionOrder=$('question-order').value==='random'?'random':'ordered';bestDisplay();};
+$('choose-mode').onclick=setup;$('start').onclick=begin;
+for(const value of Object.keys(modeNames))$('mode-'+value).onclick=()=>selectMode(value);
+$('retry-skipped').onclick=()=>{phase='play';queue=activity.entries.map((_,i)=>i).filter(i=>statuses[i]!=='correct');cursor=0;startClock();load();};
+window.addEventListener('pagehide',()=>{typingSounds?.stop();stopSpeech();clearInterval(clock);clearTimeout(countdownTimer);});
+document.addEventListener('visibilitychange',()=>{if(document.hidden){typingSounds?.stop();stopSpeech();if(phase==='countdown')setup();}});
+try{
+ activity=C.activity(window.ShortVowels);$('title').textContent=activity.title;$('instructions').textContent=activity.instructions;
+ const params=new URLSearchParams(location.search),book=params.get('book'),unit=params.get('unit');
+ $('unit-label').textContent=/^nh[56]$/.test(book)&&/^[1-8]$/.test(unit)?(book==='nh5'?'５':'６')+'年生Unit'+unit:'';
+ queue=activity.entries.map((_,i)=>i);statuses=activity.entries.map(()=>null);setup();
+}catch(error){$('setup').hidden=true;$('practice').hidden=true;$('complete').hidden=true;$('fatal').textContent=error.message;}
+})();

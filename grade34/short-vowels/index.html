@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#136b62">
-  <meta name="description" content="DEKIRU Classroomのフォニックス教材。25語のイラストで短母音を練習する学習モードと印刷用ワークシート。">
+  <meta name="description" content="DEKIRU Classroomのフォニックス教材。25語の短母音を練習する学習モード、印刷用ワークシート、タイピング。">
   <title>Short Vowels | DEKIRU Classroom</title>
-  <link rel="stylesheet" href="../styles.css?v=40ecd275082d"><link rel="stylesheet" href="style.css?v=worksheets-8">
+  <link rel="stylesheet" href="../styles.css?v=40ecd275082d"><link rel="stylesheet" href="style.css?v=typing-9">
   <script src="../common-ui.js?v=5b3d99baf5a9" defer></script>
-  <script src="state.js?v=random-6" defer></script><script src="app.js?v=worksheets-8" defer></script>
+  <script src="state.js?v=random-6" defer></script><script src="app.js?v=typing-9" defer></script>
 </head>
 <body>
 <header class="app-header"><a id="brand-home" class="brand" href="../../grade56/index.html#/" aria-label="トップへ戻る"><img id="classroom-logo" src="../assets/ui/branding/logo-grade56.svg" alt="DEKIRU Classroom for Grade 5 &amp; 6"></a><nav class="header-actions" aria-label="共通メニュー"><a id="home" class="icon-button" href="../../grade56/index.html#/" aria-label="ホーム"><img src="../assets/ui/originals/ホームアイコン.svg" alt=""></a><button class="icon-button" id="settings-button" type="button" aria-label="設定"><img src="../assets/ui/originals/設定アイコン.svg" alt=""></button></nav></header>
@@ -20,6 +20,7 @@
    <button type="button" data-mode="guess" aria-pressed="false">文字を読む</button>
    <button type="button" data-mode="letters" aria-pressed="false">綴りを思い出す</button>
    <button type="button" data-mode="worksheets" aria-pressed="false">ワークシート</button>
+   <button type="button" data-mode="typing" aria-pressed="false">タイピング</button>
   </nav>
  </aside>
  <main id="teaching-content" class="sv-content">
@@ -65,6 +66,14 @@
     </section>
     <section id="worksheet-projection" aria-labelledby="mode-title" hidden>
       <div class="word-grid" id="projection-grid"></div>
+    </section>
+    <section id="typing" aria-labelledby="mode-title" hidden>
+      <div class="worksheet-actions">
+        <a id="open-typing" class="step-button primary" href="typing/" target="_blank" rel="noopener">別ウインドウで開く</a>
+        <button id="copy-typing-url" class="step-button" type="button">URLをコピーする</button>
+      </div>
+      <p id="typing-copy-status" class="typing-copy-status" role="status"></p>
+      <input id="typing-share-url" type="url" aria-label="タイピング教材のURL" readonly hidden>
     </section>
  </main>
 </div>
