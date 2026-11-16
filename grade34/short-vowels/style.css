@@ -35,3 +35,11 @@ button{cursor:pointer}button:disabled{cursor:default;opacity:.4}button:focus-vis
 /* Use natural glyph widths when reading a complete word. */
 .big-word:not(.spelling){display:block;text-align:center;letter-spacing:normal;white-space:nowrap}
 .big-word:not(.spelling) .letter-slot{display:inline;width:auto;height:auto}
+
+/* Enlarge reading modes while preserving spelling slots. */
+.big-word:not(.spelling){font-size:clamp(72px,23cqw,380px)}
+.word-only .big-word:not(.spelling){font-size:clamp(96px,33cqw,460px)}
+
+.stage{container-type:size;grid-template-rows:minmax(0,1fr)}
+.big-word:not(.spelling){font-size:clamp(72px,min(23cqw,85cqh),380px)}
+.word-only .big-word:not(.spelling){font-size:clamp(96px,min(33cqw,85cqh),460px)}
