@@ -5,9 +5,9 @@
   <meta name="theme-color" content="#136b62">
   <meta name="description" content="DEKIRU Classroomのフォニックス教材。25語のイラストで短母音を練習する学習モードと印刷用ワークシート。">
   <title>Short Vowels | DEKIRU Classroom</title>
-  <link rel="stylesheet" href="../styles.css?v=40ecd275082d"><link rel="stylesheet" href="style.css?v=worksheets-7">
+  <link rel="stylesheet" href="../styles.css?v=40ecd275082d"><link rel="stylesheet" href="style.css?v=worksheets-8">
   <script src="../common-ui.js?v=5b3d99baf5a9" defer></script>
-  <script src="state.js?v=random-6" defer></script><script src="app.js?v=worksheets-7" defer></script>
+  <script src="state.js?v=random-6" defer></script><script src="app.js?v=worksheets-8" defer></script>
 </head>
 <body>
 <header class="app-header"><a id="brand-home" class="brand" href="../../grade56/index.html#/" aria-label="トップへ戻る"><img id="classroom-logo" src="../assets/ui/branding/logo-grade56.svg" alt="DEKIRU Classroom for Grade 5 &amp; 6"></a><nav class="header-actions" aria-label="共通メニュー"><a id="home" class="icon-button" href="../../grade56/index.html#/" aria-label="ホーム"><img src="../assets/ui/originals/ホームアイコン.svg" alt=""></a><button class="icon-button" id="settings-button" type="button" aria-label="設定"><img src="../assets/ui/originals/設定アイコン.svg" alt=""></button></nav></header>
@@ -51,7 +51,7 @@
         <div class="worksheet-actions">
           <a class="step-button primary" href="worksheets/short-vowels-writing.pdf" target="_blank" rel="noopener" aria-describedby="writing-title">PDFを開く</a>
           <a class="step-button" href="worksheets/short-vowels-writing.pdf" download aria-describedby="writing-title">ダウンロード</a>
-          <button class="step-button" type="button" data-worksheet-answers="standard" aria-describedby="writing-title">答え合わせ（全画面）</button>
+          <button class="step-button" type="button" data-worksheet-projection="standard" aria-describedby="writing-title">全画面で投影</button>
         </div>
       </article>
       <article class="worksheet-row" aria-labelledby="random-title">
@@ -59,12 +59,12 @@
         <div class="worksheet-actions">
           <a class="step-button primary" href="worksheets/short-vowels-writing-random.pdf" target="_blank" rel="noopener" aria-describedby="random-title">PDFを開く</a>
           <a class="step-button" href="worksheets/short-vowels-writing-random.pdf" download aria-describedby="random-title">ダウンロード</a>
-          <button class="step-button" type="button" data-worksheet-answers="random" aria-describedby="random-title">答え合わせ（全画面）</button>
+          <button class="step-button" type="button" data-worksheet-projection="random" aria-describedby="random-title">全画面で投影</button>
         </div>
       </article>
     </section>
-    <section id="worksheet-answers" aria-labelledby="mode-title" hidden>
-      <div class="word-grid" id="answer-grid"></div>
+    <section id="worksheet-projection" aria-labelledby="mode-title" hidden>
+      <div class="word-grid" id="projection-grid"></div>
     </section>
  </main>
 </div>

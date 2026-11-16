@@ -5,12 +5,12 @@
   const vowels=['a','e','i','o','u'];
   let state=P.start();
   let order=P.makeOrder();
-  let answerButton=null;
-  // The answer grid follows the fixed order of short-vowels-writing-random.pdf.
+  let projectionButton=null;
+  // The projection follows the fixed order of short-vowels-writing-random.pdf.
   const randomWorksheetWords='bug red mop bag map pig six bed cap pin run sit mom bus hot cup top leg hat dog sun ten pen cat big'.split(' ');
   const titles={
     overview:'一覧表示',cards:'一語づつ読む',guess:'文字を読む',letters:'綴りを思い出す',
-    worksheets:'ワークシート',answers:'答え合わせ'
+    worksheets:'ワークシート',projection:"Let's Write!"
   };
   const from=new URLSearchParams(location.search).get('from')||'nh5';
   const upper=from==='nh5';
@@ -30,15 +30,29 @@
     return [...word].map((char,i)=>'<span class="letter-slot'+(i===1?' vowel':'')+(i>=count?' empty':'')+'">'+(i<count?char:'')+'</span>').join('');
   }
   function pointerBlur(event){if(event.detail>0)event.currentTarget.blur();}
-  function wordCard(word, tag){
-    const card=document.createElement(tag);
+  function wordCard(word){
+    const card=document.createElement('button');
     card.className='word-card vowel-'+word[1];
     card.innerHTML='<img src="'+imagePath(word)+'" alt="" draggable="false"><span class="label" lang="en">'+word[0]+'<span class="vowel">'+word[1]+'</span>'+word[2]+'</span>';
     return card;
   }
+  function projectionCard(word,index){
+    const card=document.createElement('div');
+    card.className='projection-card';
+    const picture=document.createElement('img');
+    picture.src=imagePath(word);
+    picture.alt=`問題 ${index+1} のイラスト`;
+    picture.draggable=false;
+    const writingSpace=document.createElement('span');
+    writingSpace.className='projection-lines';
+    writingSpace.setAttribute('aria-hidden','true');
+    writingSpace.innerHTML='<span></span><span></span><span></span>';
+    card.append(picture,writingSpace);
+    return card;
+  }
   P.words.forEach((word,index)=>{
     const vowel=vowels[Math.floor(index/5)];
-    const card=wordCard(word,'button');
+    const card=wordCard(word);
     card.type='button';
     card.setAttribute('aria-label',word+' を表示');
     card.addEventListener('click',event=>{state=P.start('cards',index);render();pointerBlur(event);});
@@ -52,15 +66,15 @@
     return state.mode==='cards'||state.mode==='guess'||state.mode==='letters';
   }
   function render(){
-    const answers=state.mode==='answers';
+    const projection=state.mode==='projection';
     const lesson=isPracticeMode();
     $('mode-title').textContent=titles[state.mode];
     $('overview').hidden=state.mode!=='overview';
     $('lesson').hidden=!lesson;
     $('worksheets').hidden=state.mode!=='worksheets';
-    $('worksheet-answers').hidden=!answers;
-    $('fullscreen').hidden=answers||state.mode==='worksheets'||document.body.classList.contains('teaching-fullscreen');
-    const selected=answers?'worksheets':state.mode;
+    $('worksheet-projection').hidden=!projection;
+    $('fullscreen').hidden=projection||state.mode==='worksheets'||document.body.classList.contains('teaching-fullscreen');
+    const selected=projection?'worksheets':state.mode;
     modes.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===selected)));
     if(!lesson)return;
     const word=P.words[state.index],vowel=vowels[Math.floor(state.index/5)],view=P.visible(state);
@@ -110,11 +124,11 @@
     const expanded=document.fullscreenElement===content||content.classList.contains('expanded');
     document.body.classList.toggle('teaching-fullscreen',expanded);
     $('exit-fullscreen').hidden=!expanded;
-    if(!expanded&&state.mode==='answers'){
+    if(!expanded&&state.mode==='projection'){
       state=P.changeMode(state,'worksheets');
       render();
-      answerButton?.focus();
-      answerButton=null;
+      projectionButton?.focus();
+      projectionButton=null;
     }
     $('fullscreen').hidden=expanded||state.mode==='worksheets';
   }
@@ -131,12 +145,12 @@
     pointerBlur(event);
     enterFullscreen();
   });
-  document.querySelectorAll('[data-worksheet-answers]').forEach(button=>{
+  document.querySelectorAll('[data-worksheet-projection]').forEach(button=>{
     button.addEventListener('click',()=>{
-      answerButton=button;
-      const words=button.dataset.worksheetAnswers==='random'?randomWorksheetWords:P.words;
-      $('answer-grid').replaceChildren(...words.map(word=>wordCard(word,'div')));
-      state=P.changeMode(state,'answers');
+      projectionButton=button;
+      const words=button.dataset.worksheetProjection==='random'?randomWorksheetWords:P.words;
+      $('projection-grid').replaceChildren(...words.map(projectionCard));
+      state=P.changeMode(state,'projection');
       render();
       enterFullscreen();
     });
