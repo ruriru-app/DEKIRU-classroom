@@ -9,5 +9,6 @@
  };
  document.getElementById('back').href=returns[from]||returns.lt1;
  document.getElementById('short-vowels-link').href='short-vowels/'+(from?'?from='+encodeURIComponent(from):'');
+ document.getElementById('silent-e-link').href='silent-e/'+(from?'?from='+encodeURIComponent(from):'');
  document.getElementById('letter-sounds-link').href='letter-sounds.html'+(from?'?from='+encodeURIComponent(from):'');
 })();

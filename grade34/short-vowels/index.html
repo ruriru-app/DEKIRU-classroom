@@ -5,9 +5,9 @@
   <meta name="theme-color" content="#136b62">
   <meta name="description" content="DEKIRU Classroomのフォニックス教材。25語の短母音を練習する学習モード、印刷用ワークシート、タイピング。">
   <title>Short Vowels | DEKIRU Classroom</title>
-  <link rel="stylesheet" href="../styles.css?v=40ecd275082d"><link rel="stylesheet" href="style.css?v=typing-9">
+  <link rel="stylesheet" href="../styles.css?v=40ecd275082d"><link rel="stylesheet" href="style.css?v=letter-tiles-10">
   <script src="../common-ui.js?v=5b3d99baf5a9" defer></script>
-  <script src="state.js?v=random-6" defer></script><script src="app.js?v=typing-9-grade6" defer></script>
+  <script src="state.js?v=letter-tiles-10" defer></script><script src="app.js?v=letter-tiles-10" defer></script>
 </head>
 <body>
 <header class="app-header"><a id="brand-home" class="brand" href="../../grade56/index.html#/" aria-label="トップへ戻る"><img id="classroom-logo" src="../assets/ui/branding/logo-grade56.svg" alt="DEKIRU Classroom for Grade 5 &amp; 6"></a><nav class="header-actions" aria-label="共通メニュー"><a id="home" class="icon-button" href="../../grade56/index.html#/" aria-label="ホーム"><img src="../assets/ui/originals/ホームアイコン.svg" alt=""></a><button class="icon-button" id="settings-button" type="button" aria-label="設定"><img src="../assets/ui/originals/設定アイコン.svg" alt=""></button></nav></header>
@@ -31,10 +31,11 @@
     </section>
     <section id="lesson" aria-label="単語の練習" hidden>
       <div class="lesson-top"><span class="vowel-badge" id="vowel-badge"></span><span id="progress"></span><div class="lesson-tools"><label class="random-toggle"><input id="random-order" type="checkbox">ランダム</label><button id="reshuffle" type="button" class="quiet-button" hidden>並べ替え</button><button id="reset" type="button" class="quiet-button">↺ もう一度</button></div></div>
-      <button id="stage" type="button" class="stage" aria-label="学習カード">
+      <div id="stage" class="stage">
         <span class="picture-area"><img id="picture" alt="" draggable="false"><span id="picture-hidden" class="picture-hidden" aria-hidden="true"><span>?</span></span></span>
         <span id="word" class="big-word" lang="en"></span>
-      </button>
+        <button id="reveal-picture" type="button" aria-label="イラストを表示" hidden></button>
+      </div>
       <div class="lesson-bottom"><button id="previous" class="step-button" type="button">← 前へ</button><p id="instruction" aria-live="polite"></p><button id="next" class="step-button primary" type="button">次へ →</button></div>
       <div class="word-rail" id="word-rail" aria-label="単語を選ぶ"></div>
     </section>

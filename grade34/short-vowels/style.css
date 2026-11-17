@@ -111,7 +111,7 @@ button{cursor:pointer}button:disabled{cursor:default;opacity:.4}button:focus-vis
   margin-top: 0;
   height: 62%;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(var(--letter-count, 3), minmax(0, 1fr));
   align-items: end;
   gap: 8%;
 }
@@ -129,4 +129,38 @@ button{cursor:pointer}button:disabled{cursor:default;opacity:.4}button:focus-vis
   padding: 8px 10px;
   border: 1px solid var(--line);
   border-radius: 8px;
+}
+
+.stage {position: relative;}
+#reveal-picture {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  border-radius: inherit;
+  background: transparent;
+}
+.spelling .letter-slot {
+  min-width: 0;
+  padding: 0 0 .2em;
+  border: 1px solid var(--line);
+  border-bottom: 3px solid var(--accent);
+  font: inherit;
+  font-weight: inherit;
+}
+.spelling .letter-slot.vowel {color: var(--accent);}
+.spelling .letter-slot.empty {border-color: var(--line);}
+.spelling .letter-slot.empty:hover {background: var(--tint); border-color: var(--accent);}
+.big-word.spelling {
+  font-size: clamp(24px, min(17cqw, calc(55cqw / var(--letter-count, 3)), 82cqh), 280px);
+}
+.silent-ending {color: #78736d;}
+.silent-e-lesson .big-word:not(.spelling) {
+  font-size: clamp(32px, min(23cqw, calc(100cqw / var(--letter-count, 4)), 85cqh), 380px);
+}
+.silent-e-lesson .word-only .big-word:not(.spelling) {
+  font-size: clamp(40px, min(33cqw, calc(145cqw / var(--letter-count, 4)), 85cqh), 460px);
+}
+.silent-e-lesson .word-grid .label {font-size: clamp(15px, 1.9vw, 30px);}
+.silent-e-lesson .sv-content:is(:fullscreen, .expanded) .word-grid .label {
+  font-size: clamp(15px, 2.9vw, 52px);
 }

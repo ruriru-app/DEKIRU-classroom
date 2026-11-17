@@ -122,7 +122,7 @@ function load(speechDelay=0){
  const item=current();$('japanese').textContent='';$('progress').textContent=(cursor+1)+' / '+queue.length+'問';
  const picture=$('picture');picture.hidden=false;picture.alt='問題のイラスト';
  picture.onerror=()=>{picture.hidden=true;$('answer').disabled=true;$('check').disabled=true;$('feedback').textContent='画像を読み込めませんでした。ページを開き直すか、いったん次へ進んでください。';};
- picture.src='../assets/'+item.english+'.png';
+ picture.src='../assets/'+item.english.toLowerCase()+'.png';
  $('feedback').classList.remove('success');$('feedback').textContent=mode==='hard'?'イラストを見て、英語を入力しよう。':'イラスト・音声'+(showModel?'・お手本':'')+'を手がかりに、英語を入力しよう。';model();previous();stats();$('answer').focus();
  if(speechDelay)speechPause=setTimeout(()=>speak(),speechDelay);else speak();
 }
@@ -214,7 +214,7 @@ $('retry-skipped').onclick=()=>{phase='play';queue=activity.entries.map((_,i)=>i
 window.addEventListener('pagehide',()=>{typingSounds?.stop();stopSpeech();clearInterval(clock);clearTimeout(countdownTimer);});
 document.addEventListener('visibilitychange',()=>{if(document.hidden){typingSounds?.stop();stopSpeech();if(phase==='countdown')setup();}});
 try{
- activity=C.activity(window.ShortVowels);$('title').textContent=activity.title;$('instructions').textContent=activity.instructions;
+ activity=C.activity(window.PhonicsTypingActivity??window.ShortVowels);$('title').textContent=activity.title;$('instructions').textContent=activity.instructions;
  const params=new URLSearchParams(location.search),book=params.get('book'),unit=params.get('unit');
  $('unit-label').textContent=/^nh[56]$/.test(book)&&/^[1-8]$/.test(unit)?(book==='nh5'?'５':'６')+'年生Unit'+unit:'';
  queue=activity.entries.map((_,i)=>i);statuses=activity.entries.map(()=>null);setup();
