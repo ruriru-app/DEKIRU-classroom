@@ -1,0 +1,15 @@
+.digraph-sh { --accent: #a64b2c; --tint: #fff0e7; }
+.digraph-ch { --accent: #216d49; --tint: #eaf7ed; }
+.digraph-th-voiceless { --accent: #78459b; --tint: #f4edfc; }
+.digraph-th-voiced { --accent: #206a97; --tint: #eaf5fd; }
+.digraph-ck { --accent: #826016; --tint: #fff7d9; }
+.digraph-ng { --accent: #9c3f64; --tint: #fbeaf1; }
+.digraph-wh { --accent: #15706e; --tint: #e5f6f4; }
+.digraph-ph { --accent: #57538d; --tint: #efedfa; }
+
+.digraph-letter { color: var(--accent); }
+
+@media (max-width: 480px) {
+  .digraph-lesson .word-card { padding-inline: 2px; }
+  .digraph-lesson .word-grid .label { font-size: clamp(11px, 3vw, 15px); }
+}

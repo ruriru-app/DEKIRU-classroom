@@ -122,7 +122,8 @@ function load(speechDelay=0){
  const item=current();$('japanese').textContent='';$('progress').textContent=(cursor+1)+' / '+queue.length+'問';
  const picture=$('picture');picture.hidden=false;picture.alt='問題のイラスト';
  picture.onerror=()=>{picture.hidden=true;$('answer').disabled=true;$('check').disabled=true;$('feedback').textContent='画像を読み込めませんでした。ページを開き直すか、いったん次へ進んでください。';};
- picture.src='../assets/'+item.english.toLowerCase()+'.png';
+ const imageExtension=window.PhonicsLesson?.imageExtension??'png';
+ picture.src=`../assets/${item.english.toLowerCase()}.${imageExtension}`;
  $('feedback').classList.remove('success');$('feedback').textContent=mode==='hard'?'イラストを見て、英語を入力しよう。':'イラスト・音声'+(showModel?'・お手本':'')+'を手がかりに、英語を入力しよう。';model();previous();stats();$('answer').focus();
  if(speechDelay)speechPause=setTimeout(()=>speak(),speechDelay);else speak();
 }

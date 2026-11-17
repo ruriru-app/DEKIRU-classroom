@@ -154,13 +154,13 @@ button{cursor:pointer}button:disabled{cursor:default;opacity:.4}button:focus-vis
   font-size: clamp(24px, min(17cqw, calc(55cqw / var(--letter-count, 3)), 82cqh), 280px);
 }
 .silent-ending {color: #78736d;}
-.silent-e-lesson .big-word:not(.spelling) {
+:is(.silent-e-lesson, .digraph-lesson) .big-word:not(.spelling) {
   font-size: clamp(32px, min(23cqw, calc(100cqw / var(--letter-count, 4)), 85cqh), 380px);
 }
-.silent-e-lesson .word-only .big-word:not(.spelling) {
+:is(.silent-e-lesson, .digraph-lesson) .word-only .big-word:not(.spelling) {
   font-size: clamp(40px, min(33cqw, calc(145cqw / var(--letter-count, 4)), 85cqh), 460px);
 }
-.silent-e-lesson .word-grid .label {font-size: clamp(15px, 1.9vw, 30px);}
-.silent-e-lesson .sv-content:is(:fullscreen, .expanded) .word-grid .label {
+:is(.silent-e-lesson, .digraph-lesson) .word-grid .label {font-size: clamp(15px, 1.9vw, 30px);}
+:is(.silent-e-lesson, .digraph-lesson) .sv-content:is(:fullscreen, .expanded) .word-grid .label {
   font-size: clamp(15px, 2.9vw, 52px);
 }

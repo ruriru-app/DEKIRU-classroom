@@ -6,6 +6,17 @@
   const silentE=lessonConfig?.silentE===true;
   const vowelIndex=word=>silentE?word.length-3:1;
   const vowelOf=word=>word[vowelIndex(word)];
+  const digraphOf=word=>lessonConfig?.digraphs?.[word];
+  function accentClass(word){
+    const digraph=digraphOf(word);
+    return digraph?'digraph-'+digraph.group:'vowel-'+vowelOf(word);
+  }
+  function focusLabel(word){
+    const digraph=digraphOf(word);
+    if(digraph)return `${digraph.spelling} ${digraph.sound}`;
+    const vowel=vowelOf(word);
+    return silentE?vowel+'_e':'short '+vowel;
+  }
   let state=P.start();
   let order=P.makeOrder();
   let projectionButton=null;
@@ -28,12 +39,20 @@
     location.href=settings.href;
   });
   const modes=[...document.querySelectorAll('[data-mode]')];
-  const imagePath=word=>'assets/'+word.toLowerCase()+'.png';
+  const imageExtension=lessonConfig?.imageExtension??'png';
+  const imagePath=word=>`assets/${word.toLowerCase()}.${imageExtension}`;
   function letterClass(word,index){
+    const digraph=digraphOf(word);
+    if(digraph)return index>=digraph.start&&index<digraph.start+digraph.spelling.length?'digraph-letter':'';
     if(index===vowelIndex(word))return 'vowel';
     return silentE&&index===word.length-1?'silent-ending':'';
   }
   function displayWord(word){
+    const digraph=digraphOf(word);
+    if(digraph){
+      const end=digraph.start+digraph.spelling.length;
+      return `${word.slice(0,digraph.start)}<span class="digraph-letter">${digraph.spelling}</span>${word.slice(end)}`;
+    }
     return [...word].map((char,index)=>{
       const color=letterClass(word,index);
       return color?`<span class="${color}">${char}</span>`:char;
@@ -67,7 +86,7 @@
   function pointerBlur(event){if(event.detail>0)event.currentTarget.blur();}
   function wordCard(word){
     const card=document.createElement('button');
-    card.className='word-card vowel-'+vowelOf(word);
+    card.className='word-card '+accentClass(word);
     card.innerHTML=`<img src="${imagePath(word)}" alt="" draggable="false"><span class="label" lang="en">${displayWord(word)}</span>`;
     return card;
   }
@@ -87,13 +106,12 @@
     return card;
   }
   P.words.forEach((word,index)=>{
-    const vowel=vowelOf(word);
     const card=wordCard(word);
     card.type='button';
     card.setAttribute('aria-label',word+' を表示');
     card.addEventListener('click',event=>{state=P.start('cards',index);render();pointerBlur(event);});
     $('word-grid').append(card);
-    const button=document.createElement('button');button.type='button';button.className='vowel-'+vowel;button.textContent=word;button.lang='en';
+    const button=document.createElement('button');button.type='button';button.className=accentClass(word);button.textContent=word;button.lang='en';
     button.setAttribute('aria-label',word+' を選ぶ');
     button.addEventListener('click',event=>{state=P.start(state.mode,index);render();pointerBlur(event);});
     $('word-rail').append(button);
@@ -117,11 +135,11 @@
     const selected=projection?'worksheets':state.mode;
     modes.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===selected)));
     if(!lesson)return;
-    const word=P.words[state.index],vowel=vowelOf(word),view=P.visible(state);
-    $('lesson').className='vowel-'+vowel;
+    const word=P.words[state.index],view=P.visible(state);
+    $('lesson').className=accentClass(word);
     $('lesson').dataset.mode=state.mode;
     $('lesson').classList.toggle('word-only',state.mode==='guess'&&!view.image);
-    $('vowel-badge').textContent=silentE?vowel+'_e':'short '+vowel;
+    $('vowel-badge').textContent=focusLabel(word);
     const position=order.indexOf(state.index);
     $('progress').textContent=String(position+1).padStart(2,'0')+' / '+P.words.length;
     if($('picture').getAttribute('src')!==imagePath(word))$('picture').src=imagePath(word);
