@@ -12,5 +12,6 @@
  document.getElementById('short-vowels-link').href='short-vowels/'+context;
  document.getElementById('silent-e-link').href='silent-e/'+context;
  document.getElementById('consonant-digraphs-link').href='consonant-digraphs/'+context;
+ document.getElementById('vowel-teams-1-link')?.setAttribute('href','vowel-teams-1/'+context);
  document.getElementById('letter-sounds-link').href='letter-sounds.html'+context;
 })();

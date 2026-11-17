@@ -6,14 +6,16 @@
   const silentE=lessonConfig?.silentE===true;
   const vowelIndex=word=>silentE?word.length-3:1;
   const vowelOf=word=>word[vowelIndex(word)];
-  const digraphOf=word=>lessonConfig?.digraphs?.[word];
+  const patterns=lessonConfig?.patterns??lessonConfig?.digraphs;
+  const patternPrefix=lessonConfig?.patterns?'vowel-team':'digraph';
+  const targetLetterClass=patternPrefix+'-letter';
   function accentClass(word){
-    const digraph=digraphOf(word);
-    return digraph?'digraph-'+digraph.group:'vowel-'+vowelOf(word);
+    const pattern=patterns?.[word];
+    return pattern?patternPrefix+'-'+pattern.group:'vowel-'+vowelOf(word);
   }
   function focusLabel(word){
-    const digraph=digraphOf(word);
-    if(digraph)return `${digraph.spelling} ${digraph.sound}`;
+    const pattern=patterns?.[word];
+    if(pattern)return `${pattern.spelling} ${pattern.sound}`;
     const vowel=vowelOf(word);
     return silentE?vowel+'_e':'short '+vowel;
   }
@@ -42,16 +44,16 @@
   const imageExtension=lessonConfig?.imageExtension??'png';
   const imagePath=word=>`assets/${word.toLowerCase()}.${imageExtension}`;
   function letterClass(word,index){
-    const digraph=digraphOf(word);
-    if(digraph)return index>=digraph.start&&index<digraph.start+digraph.spelling.length?'digraph-letter':'';
+    const pattern=patterns?.[word];
+    if(pattern)return index>=pattern.start&&index<pattern.start+pattern.spelling.length?targetLetterClass:'';
     if(index===vowelIndex(word))return 'vowel';
     return silentE&&index===word.length-1?'silent-ending':'';
   }
   function displayWord(word){
-    const digraph=digraphOf(word);
-    if(digraph){
-      const end=digraph.start+digraph.spelling.length;
-      return `${word.slice(0,digraph.start)}<span class="digraph-letter">${digraph.spelling}</span>${word.slice(end)}`;
+    const pattern=patterns?.[word];
+    if(pattern){
+      const end=pattern.start+pattern.spelling.length;
+      return `${word.slice(0,pattern.start)}<span class="${targetLetterClass}">${pattern.spelling}</span>${word.slice(end)}`;
     }
     return [...word].map((char,index)=>{
       const color=letterClass(word,index);

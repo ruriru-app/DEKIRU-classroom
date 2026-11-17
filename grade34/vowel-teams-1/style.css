@@ -1,0 +1,14 @@
+.vowel-team-a { --accent: #a64b2c; --tint: #fff0e7; }
+.vowel-team-e { --accent: #216d49; --tint: #eaf7ed; }
+.vowel-team-i { --accent: #78459b; --tint: #f4edfc; }
+.vowel-team-o { --accent: #206a97; --tint: #eaf5fd; }
+.vowel-team-u { --accent: #826016; --tint: #fff7d9; }
+
+.vowel-team-letter { color: var(--accent); }
+.vowel-team-lesson .word-card img { min-width: 0; }
+.vowel-team-lesson .spelling .letter-slot { height: 1.3em; }
+
+@media (max-width: 480px) {
+  .vowel-team-lesson .word-card { padding-inline: 2px; }
+  .vowel-team-lesson .word-grid .label { font-size: clamp(11px, 3vw, 15px); }
+}
