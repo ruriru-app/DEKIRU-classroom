@@ -1,0 +1,4 @@
+.past-tense-t { --accent: #8d421f; --tint: #fff0e7; }
+.past-tense-d { --accent: #216d49; --tint: #eaf7ed; }
+.past-tense-id { --accent: #78459b; --tint: #f4edfc; }
+.past-tense-letter { color: var(--accent); }
