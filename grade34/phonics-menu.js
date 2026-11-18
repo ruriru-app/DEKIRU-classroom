@@ -14,5 +14,6 @@
  document.getElementById('consonant-digraphs-link').href='consonant-digraphs/'+context;
  document.getElementById('vowel-teams-1-link')?.setAttribute('href','vowel-teams-1/'+context);
  document.getElementById('vowel-teams-2-link')?.setAttribute('href','vowel-teams-2/'+context);
+ document.getElementById('consonant-blends-link')?.setAttribute('href','consonant-blends/'+context);
  document.getElementById('letter-sounds-link').href='letter-sounds.html'+context;
 })();

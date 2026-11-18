@@ -7,7 +7,7 @@
   const vowelIndex=word=>silentE?word.length-3:1;
   const vowelOf=word=>word[vowelIndex(word)];
   const patterns=lessonConfig?.patterns??lessonConfig?.digraphs;
-  const patternPrefix=lessonConfig?.patterns?'vowel-team':'digraph';
+  const patternPrefix=lessonConfig?.patternPrefix??(lessonConfig?.patterns?'vowel-team':'digraph');
   const targetLetterClass=patternPrefix+'-letter';
   function accentClass(word){
     const pattern=patterns?.[word];

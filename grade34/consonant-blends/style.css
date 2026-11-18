@@ -1,0 +1,14 @@
+.consonant-blend-l { --accent: #a64b2c; --tint: #fff0e7; }
+.consonant-blend-r { --accent: #216d49; --tint: #eaf7ed; }
+.consonant-blend-s { --accent: #78459b; --tint: #f4edfc; }
+.consonant-blend-triple { --accent: #206a97; --tint: #eaf5fd; }
+.consonant-blend-ending { --accent: #826016; --tint: #fff7d9; }
+
+.consonant-blend-letter { color: var(--accent); }
+.consonant-blends-lesson .word-card img { min-width: 0; }
+.consonant-blends-lesson .spelling .letter-slot { height: 1.3em; }
+
+@media (max-width: 480px) {
+  .consonant-blends-lesson .word-card { padding-inline: 2px; }
+  .consonant-blends-lesson .word-grid .label { font-size: clamp(11px, 3vw, 15px); }
+}
