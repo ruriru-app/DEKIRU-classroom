@@ -1,0 +1,25 @@
+.r-controlled-ar { --accent: #a64b2c; --tint: #fff0e7; }
+.r-controlled-er { --accent: #216d49; --tint: #eaf7ed; }
+.r-controlled-ir { --accent: #78459b; --tint: #f4edfc; }
+.r-controlled-or { --accent: #206a97; --tint: #eaf5fd; }
+.r-controlled-ur { --accent: #826016; --tint: #fff7d9; }
+
+.r-controlled-letter { color: var(--accent); }
+.r-controlled-vowels-lesson .word-card img { min-width: 0; }
+.r-controlled-vowels-lesson .spelling .letter-slot { height: 1.3em; }
+
+@media (max-width: 1500px) {
+  .r-controlled-vowels-lesson .sv-content:not(:fullscreen, .expanded) .word-card {
+    flex-direction: column;
+    gap: 2px;
+  }
+  .r-controlled-vowels-lesson .sv-content:not(:fullscreen, .expanded) .word-card img {
+    width: 100%;
+    height: calc(100% - 25px);
+  }
+}
+
+@media (max-width: 480px) {
+  .r-controlled-vowels-lesson .word-card { padding-inline: 2px; }
+  .r-controlled-vowels-lesson .word-grid .label { font-size: clamp(11px, 3vw, 15px); }
+}
