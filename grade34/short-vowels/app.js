@@ -53,7 +53,7 @@
     const pattern=patterns?.[word];
     if(pattern){
       const end=pattern.start+pattern.spelling.length;
-      return `${word.slice(0,pattern.start)}<span class="${targetLetterClass}">${pattern.spelling}</span>${word.slice(end)}`;
+      return `${word.slice(0,pattern.start)}<span class="${targetLetterClass}">${word.slice(pattern.start,end)}</span>${word.slice(end)}`;
     }
     return [...word].map((char,index)=>{
       const color=letterClass(word,index);

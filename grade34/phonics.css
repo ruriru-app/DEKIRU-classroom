@@ -59,6 +59,21 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--blue-dark);outline-
 }
 .phonics-topic strong {display: block; font-size: 19px; line-height: 1.2;}
 .phonics-topic-japanese {display: block; margin-top: 4px; font-size: 13px;}
+.phonics-topic-patterns {
+  display: block;
+  margin-top: 5px;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.4;
+  color: #395977;
+}
+.phonics-topic-rule {
+  display: block;
+  margin-top: 2px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: #5f574f;
+}
 .phonics-topic-number {
   display: grid;
   place-items: center;
