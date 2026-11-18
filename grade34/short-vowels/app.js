@@ -13,9 +13,12 @@
     const pattern=patterns?.[word];
     return pattern?patternPrefix+'-'+pattern.group:'vowel-'+vowelOf(word);
   }
-  function focusLabel(word){
+  function focusLabel(word,mode){
     const pattern=patterns?.[word];
-    if(pattern)return pattern.label??`${pattern.spelling} ${pattern.sound}`;
+    if(pattern){
+      if(pattern.formLabel&&(mode==='letters'||!pattern.spelling))return pattern.formLabel;
+      return pattern.label??`${pattern.spelling} ${pattern.sound}`;
+    }
     const vowel=vowelOf(word);
     return silentE?vowel+'_e':'short '+vowel;
   }
@@ -43,7 +46,7 @@
   });
   const modes=[...document.querySelectorAll('[data-mode]')];
   const imageExtension=lessonConfig?.imageExtension??'png';
-  const imagePath=word=>`assets/${word.toLowerCase()}.${imageExtension}`;
+  const imagePath=word=>`assets/${lessonConfig?.imageAliases?.[word]??word.toLowerCase()}.${imageExtension}`;
   function letterClass(word,index){
     const pattern=patterns?.[word];
     if(pattern)return index>=pattern.start&&index<pattern.start+pattern.spelling.length?targetLetterClass:'';
@@ -88,10 +91,19 @@
     });
   }
   function pointerBlur(event){if(event.detail>0)event.currentTarget.blur();}
-  function wordCard(word){
+  function selectCard(index,event){
+    state=P.start('cards',index);
+    render();
+    pointerBlur(event);
+  }
+  function wordCard(word,index,showPicture=true){
     const card=document.createElement('button');
+    card.type='button';
     card.className='word-card '+accentClass(word);
-    card.innerHTML=`<img src="${imagePath(word)}" alt="" draggable="false"><span class="label" lang="en">${displayWord(word)}</span>`;
+    card.setAttribute('aria-label',word+' を表示');
+    const picture=showPicture?`<img src="${imagePath(word)}" alt="" draggable="false">`:'';
+    card.innerHTML=`${picture}<span class="label" lang="en">${displayWord(word)}</span>`;
+    card.addEventListener('click',event=>selectCard(index,event));
     return card;
   }
   function projectionCard(word,index){
@@ -110,22 +122,33 @@
     return card;
   }
   const wordGrid=$('word-grid');
-  const overviewCards=new Map(P.words.map((word,index)=>{
-    const card=wordCard(word);
-    card.type='button';
-    card.setAttribute('aria-label',word+' を表示');
-    card.addEventListener('click',event=>{state=P.start('cards',index);render();pointerBlur(event);});
-    return [word,card];
-  }));
   if(lessonConfig?.overviewGroups){
+    const indices=new Map(P.words.map((word,index)=>[word,index]));
     for(const words of lessonConfig.overviewGroups){
       const pair=document.createElement('div');
-      pair.className='word-pair '+accentClass(words[0]);
-      pair.append(...words.map(word=>overviewCards.get(word)));
+      const first=words[0];
+      pair.className='word-pair '+accentClass(first);
+      const commonPicture=words.length>1&&words.every(word=>imagePath(word)===imagePath(first));
+      const cards=words.map(word=>wordCard(word,indices.get(word),!commonPicture));
+      if(commonPicture){
+        pair.classList.add('shared-picture-pair');
+        const picture=document.createElement('img');
+        picture.className='pair-image';
+        picture.src=imagePath(first);
+        picture.alt='';
+        picture.draggable=false;
+        picture.addEventListener('click',event=>selectCard(indices.get(first),event));
+        const stack=document.createElement('div');
+        stack.className='pair-words';
+        stack.append(...cards);
+        pair.append(picture,stack);
+      }else{
+        pair.append(...cards);
+      }
       wordGrid.append(pair);
     }
   }else{
-    wordGrid.append(...overviewCards.values());
+    wordGrid.append(...P.words.map((word,index)=>wordCard(word,index)));
   }
   P.words.forEach((word,index)=>{
     const button=document.createElement('button');button.type='button';button.className=accentClass(word);button.textContent=word;button.lang='en';
@@ -156,7 +179,7 @@
     $('lesson').className=accentClass(word);
     $('lesson').dataset.mode=state.mode;
     $('lesson').classList.toggle('word-only',state.mode==='guess'&&!view.image);
-    $('vowel-badge').textContent=focusLabel(word);
+    $('vowel-badge').textContent=focusLabel(word,state.mode);
     const position=order.indexOf(state.index);
     $('progress').textContent=String(position+1).padStart(2,'0')+' / '+P.words.length;
     if($('picture').getAttribute('src')!==imagePath(word))$('picture').src=imagePath(word);

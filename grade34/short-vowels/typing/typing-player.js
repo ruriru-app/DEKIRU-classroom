@@ -119,12 +119,16 @@ function previous(){
 function load(speechDelay=0){
  easyValue='';easyCaret=0;
  stopSpeech();last=null;correct=false;$('practice').hidden=false;$('complete').hidden=true;$('answer').value='';$('answer').disabled=false;$('check').disabled=false;$('next').hidden=true;$('skip').hidden=false;
- const item=current();$('japanese').textContent='';$('progress').textContent=(cursor+1)+' / '+queue.length+'問';
+ const item=current(),lesson=window.PhonicsLesson;
+ const formLabel=lesson?.patterns?.[item.english]?.formLabel??'';
+ $('japanese').textContent=formLabel;$('progress').textContent=(cursor+1)+' / '+queue.length+'問';
  const picture=$('picture');picture.hidden=false;picture.alt='問題のイラスト';
  picture.onerror=()=>{picture.hidden=true;$('answer').disabled=true;$('check').disabled=true;$('feedback').textContent='画像を読み込めませんでした。ページを開き直すか、いったん次へ進んでください。';};
- const imageExtension=window.PhonicsLesson?.imageExtension??'png';
- picture.src=`../assets/${item.english.toLowerCase()}.${imageExtension}`;
- $('feedback').classList.remove('success');$('feedback').textContent=mode==='hard'?'イラストを見て、英語を入力しよう。':'イラスト・音声'+(showModel?'・お手本':'')+'を手がかりに、英語を入力しよう。';model();previous();stats();$('answer').focus();
+ const imageExtension=lesson?.imageExtension??'png';
+ const imageName=lesson?.imageAliases?.[item.english]??item.english.toLowerCase();
+ picture.src=`../assets/${imageName}.${imageExtension}`;
+ const hardCue=formLabel?'イラストと語形のヒント':'イラスト';
+ $('feedback').classList.remove('success');$('feedback').textContent=mode==='hard'?hardCue+'を見て、英語を入力しよう。':'イラスト・音声'+(showModel?'・お手本':'')+'を手がかりに、英語を入力しよう。';model();previous();stats();$('answer').focus();
  if(speechDelay)speechPause=setTimeout(()=>speak(),speechDelay);else speak();
 }
 function finish(){
@@ -142,7 +146,10 @@ function next(skip=false){
 function speak(){
  if(mode==='hard'||!soundEnabled||!activity||phase!=='play'||$('practice').hidden)return;
  if(!window.speechSynthesis||!window.SpeechSynthesisUtterance){$('feedback').textContent='このブラウザでは音声を再生できません。お手本を見ながら練習できます。';return;}
- stopSpeech();const generation=speechGeneration,text=speechLanguage==='ja-JP'?current().japanese:current().english;
+ stopSpeech();
+ const generation=speechGeneration,item=current();
+ const spokenEnglish=window.PhonicsLesson?.speechAliases?.[item.english]??item.english;
+ const text=speechLanguage==='ja-JP'?item.japanese:spokenEnglish;
  if(!text){$('feedback').textContent='この問題には日本語が登録されていません。';return;}
  const words=wordByWord?text.split(/\s+/).filter(Boolean):[text];
  function play(i){

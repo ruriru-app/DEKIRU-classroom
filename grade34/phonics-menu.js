@@ -17,5 +17,6 @@
  document.getElementById('consonant-blends-link')?.setAttribute('href','consonant-blends/'+context);
  document.getElementById('r-controlled-vowels-link')?.setAttribute('href','r-controlled-vowels/'+context);
  document.getElementById('plurals-link')?.setAttribute('href','plurals/'+context);
+ document.getElementById('third-person-singular-link')?.setAttribute('href','third-person-singular/'+context);
  document.getElementById('letter-sounds-link').href='letter-sounds.html'+context;
 })();
