@@ -16,5 +16,6 @@
  document.getElementById('vowel-teams-2-link')?.setAttribute('href','vowel-teams-2/'+context);
  document.getElementById('consonant-blends-link')?.setAttribute('href','consonant-blends/'+context);
  document.getElementById('r-controlled-vowels-link')?.setAttribute('href','r-controlled-vowels/'+context);
+ document.getElementById('plurals-link')?.setAttribute('href','plurals/'+context);
  document.getElementById('letter-sounds-link').href='letter-sounds.html'+context;
 })();

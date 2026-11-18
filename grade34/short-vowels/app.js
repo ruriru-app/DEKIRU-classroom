@@ -15,14 +15,15 @@
   }
   function focusLabel(word){
     const pattern=patterns?.[word];
-    if(pattern)return `${pattern.spelling} ${pattern.sound}`;
+    if(pattern)return pattern.label??`${pattern.spelling} ${pattern.sound}`;
     const vowel=vowelOf(word);
     return silentE?vowel+'_e':'short '+vowel;
   }
   let state=P.start();
   let order=P.makeOrder();
   let projectionButton=null;
-  // The projection follows the fixed order of short-vowels-writing-random.pdf.
+  const worksheetWords=lessonConfig?.worksheetWords??P.words;
+  // The projection follows the fixed order of the corresponding worksheet PDF.
   const randomWorksheetWords=lessonConfig?.randomWorksheetWords??'bug red mop bag map pig six bed cap pin run sit mom bus hot cup top leg hat dog sun ten pen cat big'.split(' ');
   const titles={
     overview:'一覧表示',cards:'一語づつ読む',guess:'文字を読む',letters:'綴りを思い出す',
@@ -52,6 +53,7 @@
   function displayWord(word){
     const pattern=patterns?.[word];
     if(pattern){
+      if(!pattern.spelling)return word;
       const end=pattern.start+pattern.spelling.length;
       return `${word.slice(0,pattern.start)}<span class="${targetLetterClass}">${word.slice(pattern.start,end)}</span>${word.slice(end)}`;
     }
@@ -107,12 +109,25 @@
     card.append(picture,writingSpace);
     return card;
   }
-  P.words.forEach((word,index)=>{
+  const wordGrid=$('word-grid');
+  const overviewCards=new Map(P.words.map((word,index)=>{
     const card=wordCard(word);
     card.type='button';
     card.setAttribute('aria-label',word+' を表示');
     card.addEventListener('click',event=>{state=P.start('cards',index);render();pointerBlur(event);});
-    $('word-grid').append(card);
+    return [word,card];
+  }));
+  if(lessonConfig?.overviewGroups){
+    for(const words of lessonConfig.overviewGroups){
+      const pair=document.createElement('div');
+      pair.className='word-pair '+accentClass(words[0]);
+      pair.append(...words.map(word=>overviewCards.get(word)));
+      wordGrid.append(pair);
+    }
+  }else{
+    wordGrid.append(...overviewCards.values());
+  }
+  P.words.forEach((word,index)=>{
     const button=document.createElement('button');button.type='button';button.className=accentClass(word);button.textContent=word;button.lang='en';
     button.setAttribute('aria-label',word+' を選ぶ');
     button.addEventListener('click',event=>{state=P.start(state.mode,index);render();pointerBlur(event);});
@@ -238,7 +253,7 @@
   document.querySelectorAll('[data-worksheet-projection]').forEach(button=>{
     button.addEventListener('click',()=>{
       projectionButton=button;
-      const words=button.dataset.worksheetProjection==='random'?randomWorksheetWords:P.words;
+      const words=button.dataset.worksheetProjection==='random'?randomWorksheetWords:worksheetWords;
       $('projection-grid').replaceChildren(...words.map(projectionCard));
       state=P.changeMode(state,'projection');
       render();
