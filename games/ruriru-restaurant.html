@@ -81,6 +81,10 @@ h1{font-size:clamp(22px,3vw,34px);margin:0;letter-spacing:.03em}.progress{font-w
 #restaurantScreen.active{display:block}
 .rest-head{height:44px;display:flex;align-items:center;justify-content:space-between}
 .rest-head h1{margin:0;font-size:clamp(19px,2.5vw,29px)}
+.rest-head{gap:10px;height:auto;min-height:44px;flex-wrap:wrap}
+.rest-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.reset-menu{font:700 14px system-ui,sans-serif;color:var(--ink);background:white;border:2px solid var(--blue);border-radius:12px;padding:8px 12px;cursor:pointer}
+.reset-menu:focus-visible{outline:3px solid #4779b0;outline-offset:2px}
 .rest-layout{height:calc(100dvh - 52px);display:grid;grid-template-columns:minmax(0,1.55fr) minmax(290px,.7fr);gap:10px}
 .rest-menu{min-height:0;display:grid;grid-template-rows:repeat(3,1fr);gap:6px}
 .rest-cat{min-height:0;background:#fff;border:2px solid var(--line);border-radius:17px;padding:5px 7px;display:grid;grid-template-columns:110px 1fr;gap:6px}
@@ -172,7 +176,7 @@ h1{font-size:clamp(22px,3vw,34px);margin:0;letter-spacing:.03em}.progress{font-w
 <section id="restaurantScreen" class="screen">
  <div class="rest-head">
   <h1>RuRiRu RESTAURANT <small>¥1,000 Challenge</small></h1>
-  <div class="progress" id="orderCount">ORDER 0 / 8</div>
+  <div class="rest-actions"><button type="button" class="reset-menu" id="resetMenu">メニューを作り直す</button><div class="progress" id="orderCount">ORDER 0 / 8</div></div>
  </div>
  <div class="rest-layout">
   <main class="rest-menu" id="restMenu"></main>
@@ -395,9 +399,10 @@ function launchConfetti(){
  }
 }
 
-let restaurantOrder=[],restaurantFinished=false,checkoutSource=null,checkoutItems=Array(8).fill(null),restaurantTotalDone=false;
+let restaurantOrder=[],restaurantFinished=false,checkoutSource=null,checkoutItems=Array(8).fill(null),restaurantTotalDone=false,restaurantSession=0;
 
 function buildRestaurant(resume=false){
+ restaurantSession++;
  if(!resume){restaurantOrder=[];restaurantFinished=false;checkoutSource=null;checkoutItems=Array(8).fill(null);restaurantTotalDone=false;}
  const menu=document.getElementById('restMenu');menu.innerHTML='';
  const labels={main:'MAIN',drink:'DRINK',side:'SIDE & DESSERT'};
@@ -511,13 +516,15 @@ document.getElementById('totalBtn').onclick=()=>{
  playSound('decisionSound');
  const total=moved.reduce((sum,id)=>sum+prices[id],0);
  const result=totalMarkup();
+ const session=restaurantSession;
  saveProgress();
  setTimeout(()=>{
-  if(!restaurantTotalDone)return;
+  if(!restaurantTotalDone||session!==restaurantSession)return;
   playSound('totalSound');
   document.getElementById('totalResult').innerHTML=result;
   if(total===1000){
    setTimeout(()=>{
+    if(session!==restaurantSession)return;
     playSound('cheerSound');launchConfetti();
     const o=document.getElementById('perfectOverlay');o.classList.add('show');
     setTimeout(()=>o.classList.remove('show'),4200);
@@ -529,6 +536,22 @@ document.getElementById('totalBtn').onclick=()=>{
 };
 
 document.getElementById('newOrder').onclick=()=>buildRestaurant();
+document.getElementById('resetMenu').onclick=()=>{
+ if(!confirm('メニューを最初から作り直しますか？保存しているメニュー・価格帯・金額・注文はリセットされます。'))return;
+ restaurantSession++;
+ for(const cat of ['main','drink','side'])selected[cat].length=0;
+ assignments={};prices={};rangesLocked=false;activeRange=null;filter='main';
+ restaurantOrder=[];restaurantFinished=false;checkoutSource=null;checkoutItems=Array(8).fill(null);restaurantTotalDone=false;
+ document.querySelectorAll('audio').forEach(audio=>{audio.pause();audio.currentTime=0;});
+ document.querySelectorAll('.confetti-piece').forEach(piece=>piece.remove());
+ document.getElementById('perfectOverlay').classList.remove('show');
+ document.getElementById('totalResult').innerHTML='';
+ document.getElementById('newOrder').classList.remove('show');
+ document.getElementById('setRanges').textContent='SET THE RANGES →';
+ document.querySelectorAll('.tab').forEach(tab=>tab.classList.toggle('active',tab.dataset.filter===filter));
+ showScreen('menuScreen');update();
+ document.querySelector('#rail button')?.focus();
+};
 
 function saveProgress(){
  try{

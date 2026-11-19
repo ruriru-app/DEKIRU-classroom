@@ -4,13 +4,13 @@ const {readFileSync}=require('node:fs');
 const vm=require('node:vm');
 const html=readFileSync(__dirname+'/ruriru-restaurant.html','utf8');
 const script=html.match(/<script>([\s\S]*?)<\/script>/)[1];
-function browser(storage){
+function browser(storage,confirmReset=true){
  const elements=new Map();
- const element=()=>({classList:{add(){},remove(){},toggle(){}},dataset:{},style:{},append(){},textContent:''});
+ const element=()=>({classList:{add(){},remove(){},toggle(){}},dataset:{},style:{},append(){},focus(){},textContent:''});
  const context=vm.createContext({
   localStorage:{getItem:()=>storage.value??null,setItem:(_,value)=>{storage.value=value;}},
   document:{createElement:element,querySelectorAll:()=>[],querySelector:()=>element(),getElementById(id){if(!elements.has(id))elements.set(id,element());return elements.get(id);}},
-  window:{scrollTo(){}},Image:class{},setTimeout(fn){fn();},
+  window:{scrollTo(){}},Image:class{},setTimeout(fn){fn();},confirm:()=>confirmReset,
  });
  vm.runInContext(script,context);
  return code=>vm.runInContext(code,context);
@@ -56,4 +56,22 @@ test('invalid stored data falls back to menu setup',()=>{
  const run=browser({value:'not-json'});
  assert.equal(run('screen'),'menuScreen');
  assert.equal(run('selectedItems().length'),0);
+});
+test('menu restart can be cancelled, or clears saved setup and order after confirmation',()=>{
+ const storage={};
+ const run=browser(storage,false);
+ run("add(ITEMS[0]);prices.hamburger=50;restaurantOrder=['hamburger'];screen='restaurantScreen';saveProgress()");
+ assert.equal(run("typeof document.getElementById('resetMenu').onclick"),'function');
+ run("document.getElementById('resetMenu').onclick()");
+ assert.equal(run('selectedItems().length'),1);
+ assert.equal(run('screen'),'restaurantScreen');
+ const reset=browser(storage,true);
+ reset("document.getElementById('resetMenu').onclick()");
+ assert.equal(reset('screen'),'menuScreen');
+ assert.equal(reset('selectedItems().length'),0);
+ assert.equal(reset('Object.keys(prices).length'),0);
+ assert.equal(reset('restaurantOrder.length'),0);
+ const restored=browser(storage);
+ assert.equal(restored('screen'),'menuScreen');
+ assert.equal(restored('selectedItems().length'),0);
 });
