@@ -20,10 +20,10 @@ body {
 .page-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
+  gap: 14px clamp(16px, 3vw, 40px);
   padding-block: 16px;
 }
+#reset { margin-inline-start: auto; white-space: nowrap; }
 .eyebrow { margin: 0; color: #874026; letter-spacing: .16em; font-size: 13px; font-weight: 750; }
 h1 { margin: 0; font: 900 clamp(40px, 6vw, 62px)/.95 Georgia, serif; letter-spacing: -.045em; }
 h2 { margin: 0 0 12px; font-size: 23px; line-height: 1.2; }
@@ -58,11 +58,9 @@ main {
 .kitchen { position: relative; }
 .prep {
   display: flex;
-  justify-content: center;
   align-items: end;
   gap: 10px;
   flex-wrap: wrap;
-  margin-bottom: 8px;
 }
 .prep fieldset { border: 0; padding: 0; margin: 0; }
 .prep legend { color: var(--muted); font-size: 14px; font-weight: 700; padding: 0 0 4px; }
@@ -72,14 +70,14 @@ input { accent-color: var(--green); }
 #pizza {
   position: relative;
   isolation: isolate;
-  width: min(100%, max(338px, calc(100dvh - 290px)), 580px);
+  width: min(100%, max(338px, calc(100dvh - 218px)), 650px);
   aspect-ratio: 1;
   margin-inline: auto;
 }
 #base, #cheese-layer, #toppings, #placement { position: absolute; inset: 0; width: 100%; height: 100%; }
 #base, #cheese-layer { pointer-events: none; object-fit: contain; }
 #base { filter: drop-shadow(0 9px 8px #35221124); }
-#cheese-layer { z-index: 1; }
+#cheese-layer { z-index: 1; scale: .92; }
 #placement { z-index: 2; border: 0; background: transparent; border-radius: 50%; -webkit-tap-highlight-color: transparent; }
 #toppings { z-index: 3; pointer-events: none; }
 .shop-phrase {
@@ -171,6 +169,10 @@ dialog {
 dialog::backdrop { background: #21170eb3; }
 video { width: 100%; max-height: 50vh; background: #21170e; border-radius: 10px; display: block; }
 #camera-status { min-height: 1.5em; }
+@media (max-width: 880px) {
+  .page-header { flex-wrap: wrap; }
+  .prep { order: 1; flex-basis: 100%; }
+}
 @media (max-width: 780px) {
   main { grid-template-columns: minmax(0, 1fr); gap: 12px; }
   main, .page-header { padding-inline: 12px; }

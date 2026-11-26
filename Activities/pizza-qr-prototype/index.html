@@ -4,9 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>MY PIZZA | DEKIRU</title>
-  <link rel="stylesheet" href="style.css?v=6">
+  <link rel="stylesheet" href="style.css?v=7">
   <script defer src="vendor/jsQR.js"></script>
-  <script defer src="catalog.js?v=6"></script>
+  <script defer src="catalog.js?v=7"></script>
   <script defer src="scanner.js?v=2"></script>
   <script defer src="app.js?v=6"></script>
 </head>
@@ -16,19 +16,19 @@
       <p class="eyebrow">LET’S GO SHOPPING</p>
       <h1>MY PIZZA</h1>
     </div>
+    <div class="prep">
+      <fieldset>
+        <legend>ソースを選ぶ</legend>
+        <label><input type="radio" name="sauce" value="tomato"> トマト</label>
+        <label><input type="radio" name="sauce" value="white"> ホワイト</label>
+        <label><input type="radio" name="sauce" value="teriyaki"> てりやき</label>
+      </fieldset>
+      <button id="cheese" type="button" aria-pressed="false">チーズをのせる</button>
+    </div>
     <button id="reset" type="button">はじめから</button>
   </header>
   <main>
     <section class="kitchen" aria-label="ピザを作る">
-      <div class="prep">
-        <fieldset>
-          <legend>ソースを選ぶ</legend>
-          <label><input type="radio" name="sauce" value="tomato"> トマト</label>
-          <label><input type="radio" name="sauce" value="white"> ホワイト</label>
-          <label><input type="radio" name="sauce" value="teriyaki"> てりやき</label>
-        </fieldset>
-        <button id="cheese" type="button" aria-pressed="false">チーズをのせる</button>
-      </div>
       <div id="pizza" role="group" aria-label="ピザ">
         <img id="base" src="assets/base-tomato.webp" alt="" draggable="false">
         <img id="cheese-layer" src="assets/cheese.webp?v=4" alt="" draggable="false" hidden>

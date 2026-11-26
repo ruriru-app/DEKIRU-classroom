@@ -87,6 +87,16 @@
       units: ["lt2-5"],
       href: `${ASSET_BASE}Activities/Gift_set_for_my_friend_v0.1.2.html`,
     },
+    {
+      id: "my-pizza",
+      title: "MY PIZZA",
+      subtitle: "英語で具材を注文して、自分だけのピザを作ろう",
+      units: ["lt2-7"],
+      unitOnly: true,
+      href: `${ASSET_BASE}Activities/pizza-qr-prototype/?v=7`,
+      printHref: `${ASSET_BASE}Activities/pizza-qr-prototype/pizza-shop-cards.pdf?v=7`,
+      qrShare: true,
+    },
   ];
 
   const state = {
@@ -193,7 +203,7 @@
         <div><p class="eyebrow">Activity Library</p><h1>Activities</h1></div>
       </section>
       <section class="catalog-grid">
-        ${ACTIVITIES.map(activityTile).join("")}
+        ${ACTIVITIES.filter((activity) => !activity.unitOnly).map(activityTile).join("")}
       </section>`;
   }
 
@@ -206,11 +216,16 @@
         <h2>${escapeHtml(activity.title)}</h2>
         <p>${escapeHtml(activity.subtitle)}</p>
       </div>
-      <div class="tile-actions">
-        <a class="primary-button" href="${escapeHtml(activity.href)}" target="_blank" rel="noopener">${escapeHtml(activity.openLabel || "ひらく")}</a>
-        ${activity.teacherOnly ? "" : `<button class="secondary-button" data-share="${escapeHtml(activity.id)}">配布</button>`}
-      </div>
+      ${activityActions(activity)}
     </article>`;
+  }
+
+  function activityActions(activity) {
+    return `<div class="tile-actions">
+      <a class="primary-button" href="${escapeHtml(activity.href)}" target="_blank" rel="noopener">${escapeHtml(activity.openLabel || "ひらく")}</a>
+      ${activity.teacherOnly ? "" : `<button class="secondary-button" data-share="${escapeHtml(activity.id)}">配布</button>`}
+      ${activity.printHref ? `<a class="secondary-button" href="${escapeHtml(activity.printHref)}" target="_blank" rel="noopener">お店用カードを印刷（PDF）</a>` : ""}
+    </div>`;
   }
 
   function getUnitVocabulary(bookKey, unit) {
@@ -473,10 +488,7 @@ return `<h2>保存したカードセット</h2>${sets.length?sets.map(s=>`<div c
     return `<article class="feature-tile activity static-tile">
       <div class="feature-tile-heading"><span class="tile-mark">Activities</span><strong>${escapeHtml(activity.title)}</strong></div>
       <span class="feature-tile-description">${escapeHtml(activity.subtitle)}</span>
-      <div class="tile-actions">
-        <a class="primary-button" href="${escapeHtml(activity.href)}" target="_blank" rel="noopener">ひらく</a>
-        <button class="secondary-button" data-share="${escapeHtml(activity.id)}">配布</button>
-      </div>
+      ${activityActions(activity)}
     </article>`;
   }
 
