@@ -13,6 +13,6 @@ window.PizzaCatalog = {
     { id: 'cucumber', name: 'キュウリ', english: 'Cucumbers' },
     { id: 'potato', name: 'ジャガイモ', english: 'Potatoes' },
     { id: 'sausage', name: 'ソーセージ', english: 'Sausages' },
-    { id: 'bacon', name: 'ベーコン', english: 'Bacon' }
+    { id: 'bacon', name: 'ベーコン', english: 'Bacon', image: 'assets/bacon.webp?v=5' }
   ].map(ingredient => ({ image: 'assets/' + ingredient.id + '.webp', ...ingredient }))
 };
