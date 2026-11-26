@@ -13,6 +13,7 @@ const sauces = ['tomato', 'white', 'teriyaki'];
 const knownIngredient = id => ingredients.some(ingredient => ingredient.id === id);
 const knownShop = id => shops.some(shop => shop.id === id);
 const onPizza = (x, y) => Number.isFinite(x) && Number.isFinite(y) && Math.hypot(x - 50, y - 50) <= 39;
+const wrapAngle = degrees => ((degrees % 360) + 360) % 360;
 
 function loadPizza() {
   try {
@@ -24,6 +25,7 @@ function loadPizza() {
         pieces: saved.pieces.filter(piece => piece && typeof piece.id === 'string'
           && knownIngredient(piece.ingredient) && (piece.shop === null || knownShop(piece.shop))
           && (piece.x === null || onPizza(piece.x, piece.y)))
+          .map(piece => ({ ...piece, rotation: Number.isFinite(piece.rotation) ? wrapAngle(piece.rotation) : 0 }))
       };
     }
     const previous = JSON.parse(localStorage.getItem(previousKey));
@@ -32,7 +34,7 @@ function loadPizza() {
         ...blank(),
         pieces: previous.slice(0, 40).filter(piece => piece && typeof piece.id === 'string')
           .map(piece => ({
-            id: piece.id, ingredient: 'green-pepper', shop: null,
+            id: piece.id, ingredient: 'green-pepper', shop: null, rotation: 0,
             x: onPizza(piece.x, piece.y) ? piece.x : null,
             y: onPizza(piece.x, piece.y) ? piece.y : null
           }))
@@ -55,11 +57,27 @@ function save() {
 }
 
 function selectPiece(id) {
-  selected = id;
+  const piece = recipe.pieces.find(item => item.id === id);
+  selected = piece?.id ?? null;
   for (const button of document.querySelectorAll('.piece')) {
-    button.setAttribute('aria-pressed', String(button.dataset.id === id));
+    button.setAttribute('aria-pressed', String(button.dataset.id === selected));
   }
-  byId('return').disabled = !recipe.pieces.some(piece => piece.id === id && piece.x !== null);
+  byId('rotate-left').disabled = !piece;
+  byId('rotate-right').disabled = !piece;
+  byId('return').disabled = !piece || piece.x === null;
+}
+
+function setRotation(image, piece) {
+  image.style.transform = 'rotate(' + piece.rotation + 'deg)';
+}
+
+function rotateSelected(degrees) {
+  const piece = recipe.pieces.find(item => item.id === selected);
+  const image = document.querySelector('.piece[aria-pressed="true"] img');
+  if (!piece || !image) return;
+  piece.rotation = wrapAngle(piece.rotation + degrees);
+  setRotation(image, piece);
+  save();
 }
 
 function movePiece(piece, x, y) {
@@ -133,6 +151,7 @@ function render() {
     image.src = ingredient.image;
     image.alt = '';
     image.draggable = false;
+    setRotation(image, piece);
     button.append(image);
     button.addEventListener('click', () => selectPiece(piece.id));
     setUpPieceDrag(button, piece, image);
@@ -167,6 +186,8 @@ byId('return').addEventListener('click', () => {
   const piece = recipe.pieces.find(item => item.id === selected);
   if (piece) movePiece(piece, null, null);
 });
+byId('rotate-left').addEventListener('click', () => rotateSelected(-45));
+byId('rotate-right').addEventListener('click', () => rotateSelected(45));
 byId('reset').addEventListener('click', () => {
   if (!confirm('ピザと買い物かごを空にして、はじめから作りますか？')) return;
   recipe = blank();
@@ -195,10 +216,19 @@ function receive(code) {
   const ingredient = ingredients.find(item => item.id === parts?.[2]);
   if (!shop || !ingredient) return 'このQRはピザの具材カードではありません。';
   if (recipe.pieces.some(piece => piece.shop === shop.id && piece.ingredient === ingredient.id)) {
-    return shop.name + 'で' + ingredient.name + 'は買いました。もう一つほしいときは、別のお店で注文しよう。';
+    return shop.name + 'で' + ingredient.name + 'は買いました。もっとほしいときは、別のお店で注文しよう。';
   }
-  recipe.pieces.push({ id: shop.id + ':' + ingredient.id, ingredient: ingredient.id, shop: shop.id, x: null, y: null });
-  status.textContent = shop.name + 'で' + ingredient.name + 'を1つ買いました！';
+  for (let number = 1; number <= 2; number++) {
+    recipe.pieces.push({
+      id: `${shop.id}:${ingredient.id}:${number}`,
+      ingredient: ingredient.id,
+      shop: shop.id,
+      x: null,
+      y: null,
+      rotation: 0
+    });
+  }
+  status.textContent = shop.name + 'で' + ingredient.name + 'を2つ買いました！';
   save();
   render();
   return null;

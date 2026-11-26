@@ -4,11 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>MY PIZZA | DEKIRU</title>
-  <link rel="stylesheet" href="style.css?v=2">
+  <link rel="stylesheet" href="style.css?v=6">
   <script defer src="vendor/jsQR.js"></script>
-  <script defer src="catalog.js?v=5"></script>
+  <script defer src="catalog.js?v=6"></script>
   <script defer src="scanner.js?v=2"></script>
-  <script defer src="app.js?v=3"></script>
+  <script defer src="app.js?v=6"></script>
 </head>
 <body>
   <header class="page-header">
@@ -46,8 +46,12 @@
       <button class="primary" id="scan" type="button">QRを読み取る</button>
       <p id="status" role="status">英語で注文して、お店の人から具材のカードを見せてもらおう。</p>
       <div id="tray" aria-label="買い物かごの具材"></div>
+      <div class="rotation-controls" role="group" aria-label="選んだ具材の向き">
+        <button id="rotate-left" type="button" disabled><span aria-hidden="true">↶</span> 左に回す</button>
+        <button id="rotate-right" type="button" disabled><span aria-hidden="true">↷</span> 右に回す</button>
+      </div>
       <button id="return" type="button" disabled>選んだ具材をかごに戻す</button>
-      <p class="hint">同じ具材をもう一つ買うときは、別のお店で注文しよう。ピザと買い物かごは、このブラウザに自動で保存されます。</p>
+      <p class="hint">QRを1回読むと2つもらえます。同じ具材を買い足すときは、別のお店で注文しよう。ピザと買い物かごは自動で保存されます。</p>
     </aside>
   </main>
   <dialog id="camera" aria-labelledby="camera-title">
