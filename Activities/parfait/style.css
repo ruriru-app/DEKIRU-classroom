@@ -8,6 +8,13 @@
 }
 .eyebrow { color: #8c4166; }
 h1 { white-space: nowrap; }
+.header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-inline-start: auto;
+}
+.header-actions #reset { margin-inline-start: 0; }
 main { grid-template-columns: minmax(0, 1fr) 334px; }
 .kitchen, aside { background: #fffdfd; }
 .kitchen {
@@ -20,7 +27,7 @@ main { grid-template-columns: minmax(0, 1fr) 334px; }
   aspect-ratio: 640 / 1120;
   margin: auto;
 }
-#glass { position: absolute; left: 10%; top: 31%; width: 80%; height: 68.5714%; pointer-events: none; }
+#glass, #glass-front { position: absolute; left: 10%; top: 31%; width: 80%; height: 68.5714%; pointer-events: none; }
 #placement, #toppings { position: absolute; inset: 0; width: 100%; height: 100%; }
 #placement { border-radius: 16px; }
 #toppings .piece {
@@ -35,7 +42,7 @@ main { grid-template-columns: minmax(0, 1fr) 334px; }
 #toppings .piece[data-ingredient="pineapple"] { width: 29%; }
 #toppings .piece[data-ingredient="cherry"] { width: 19%; }
 #toppings .piece:is([data-ingredient="kiwi"], [data-ingredient="strawberry"]) { width: 27%; }
-#toppings .piece:is([data-ingredient="ice-cream"], [data-ingredient="chocolate-ice-cream"], [data-ingredient="strawberry-ice-cream"]):not([data-size="layer"]) { width: 57%; }
+#toppings .piece:is([data-ingredient="ice-cream"], [data-ingredient="chocolate-ice-cream"], [data-ingredient="strawberry-ice-cream"]):not([data-size="layer"]) { width: 43%; }
 #toppings .piece[data-size="layer"] {
   aspect-ratio: auto;
   border: 0;
@@ -52,7 +59,7 @@ main { grid-template-columns: minmax(0, 1fr) 334px; }
 }
 #toppings .piece[data-inside="true"] img { filter: saturate(.82) contrast(.94) brightness(1.08); }
 .drag-ghost:is([data-ingredient="ice-cream"], [data-ingredient="chocolate-ice-cream"], [data-ingredient="strawberry-ice-cream"]) {
-  width: min(38vw, 170px);
+  width: min(36vw, 140px);
   height: auto;
   aspect-ratio: 1;
 }
@@ -74,4 +81,5 @@ main { grid-template-columns: minmax(0, 1fr) 334px; }
 @media (max-width: 780px) {
   main { grid-template-columns: minmax(0, 1fr); }
   h1 { font-size: clamp(31px, 8vw, 49px); }
+  .header-actions { margin-inline-start: 0; }
 }

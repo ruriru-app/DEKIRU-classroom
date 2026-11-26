@@ -21,7 +21,7 @@ window.ParfaitCatalog = {
     { id: 'strawberry-ice-cream', name: 'ストロベリーアイス', english: 'Strawberry ice cream', layer: true }
   ].map(withParfaitImage),
   extras: [
-    { id: 'cereal', name: 'シリアル', layer: true },
+    { id: 'cereal', name: 'シリアル', layer: true, texture: 'assets/cereal-texture.webp?v=3' },
     { id: 'yogurt', name: 'ヨーグルト', layer: true },
     { id: 'whipped-cream', name: 'ホイップクリーム', layer: true },
     { id: 'chocolate-sauce', name: 'チョコソース', sauce: true },

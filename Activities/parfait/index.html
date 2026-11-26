@@ -5,11 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>MY PARFAIT | DEKIRU</title>
   <link rel="stylesheet" href="../pizza-qr-prototype/style.css?v=7">
-  <link rel="stylesheet" href="style.css?v=2">
+  <link rel="stylesheet" href="style.css?v=3">
+  <link rel="stylesheet" href="glass.css">
   <script defer src="../pizza-qr-prototype/vendor/jsQR.js"></script>
   <script defer src="../pizza-qr-prototype/scanner.js?v=2"></script>
-  <script defer src="catalog.js?v=2"></script>
-  <script defer src="app.js?v=2"></script>
+  <script defer src="catalog.js?v=3"></script>
+  <script defer src="app.js?v=3"></script>
 </head>
 <body>
   <header class="page-header">
@@ -17,7 +18,10 @@
       <p class="eyebrow">LET’S GO SHOPPING</p>
       <h1>MY PARFAIT</h1>
     </div>
-    <button id="reset" type="button">はじめから</button>
+    <div class="header-actions">
+      <button id="reset-arrangement" type="button" disabled>盛り付けをやりなおす</button>
+      <button id="reset" type="button">はじめから</button>
+    </div>
   </header>
   <main>
     <section class="kitchen" aria-label="パフェを作る">
@@ -25,6 +29,7 @@
         <img id="glass" src="assets/parfait-glass.webp" alt="" draggable="false">
         <button id="placement" type="button" aria-label="選んだ具材をグラスに盛りつける"></button>
         <div id="toppings"></div>
+        <img id="glass-front" src="assets/parfait-glass.webp" alt="" draggable="false" aria-hidden="true">
       </div>
       <p class="hint placement-hint">具材をドラッグするか、具材を選んで盛りつける場所をタップしよう。<br>シリアル・ヨーグルト・アイス・ホイップを下に置くと、底から4段まで重なります。</p>
     </section>

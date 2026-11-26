@@ -9,6 +9,7 @@ const tray = byId('tray');
 const toppings = byId('toppings');
 const status = byId('status');
 const extraSelect = byId('extras');
+const resetArrangement = byId('reset-arrangement');
 const buttons = {
   left: byId('rotate-left'),
   right: byId('rotate-right'),
@@ -33,6 +34,13 @@ const bowlProfile = [
 const isFitted = piece => piece.layer === true;
 const isPlaced = piece => isFitted(piece) || piece.x !== null;
 const isScoop = piece => piece.ingredient.endsWith('ice-cream');
+
+function toppingOutline() {
+  const side = direction => bowlProfile.map(([y, halfWidth]) => (50 + direction * halfWidth) + '% ' + y + '%');
+  // Let toppings extend to either side above the rim, and hide them behind the bowl wall below it.
+  return 'polygon(0 0,100% 0,100% ' + bowlTop + '%,' + side(1).join(',') + ','
+    + side(-1).reverse().join(',') + ',0 ' + bowlTop + '%)';
+}
 
 function bowlHalfWidth(y) {
   const nextIndex = bowlProfile.findIndex(([at]) => at >= y);
@@ -243,7 +251,7 @@ function render() {
     if (isPlaced(piece)) button.dataset.inside = String(inside);
     if (item.layer || item.sauce) button.dataset.size = layer ? 'layer' : item.sauce ? 'wide' : 'large';
     button.setAttribute('aria-label', item.name + (inside ? '・グラスの中' : isPlaced(piece) ? '・グラスの上' : '・買い物かご'));
-    image.src = layer ? 'assets/' + item.id + '-texture.webp' : item.image;
+    image.src = layer ? (item.texture ?? 'assets/' + item.id + '-texture.webp') : item.image;
     image.alt = '';
     image.dataset.ingredient = item.id;
     image.draggable = false;
@@ -279,6 +287,7 @@ function render() {
     }
   }
   byId('count').textContent = count;
+  resetArrangement.disabled = !pieces.some(isPlaced);
   if (!count) tray.textContent = '買った具材や、足した具材がここに入ります。';
   selectPiece(selected);
 }
@@ -315,6 +324,14 @@ buttons.return.addEventListener('click', () => {
   const piece = currentPiece();
   if (piece) movePiece(piece, null, null);
 });
+resetArrangement.addEventListener('click', () => {
+  if (!pieces.some(isPlaced) || !confirm('盛りつけた具材をすべてかごに戻しますか？')) return;
+  pieces = pieces.map(piece => isPlaced(piece) ? { ...storeInTray(piece), rotation: 0 } : piece);
+  selected = null;
+  status.textContent = '盛りつけた具材をかごに戻しました。';
+  save();
+  render();
+});
 byId('reset').addEventListener('click', () => {
   if (!confirm('パフェと買い物かごを空にして、はじめから作りますか？')) return;
   pieces = [];
@@ -344,5 +361,6 @@ byId('add-extra').addEventListener('click', () => {
   render();
 });
 
+toppings.style.clipPath = toppingOutline();
 window.setUpPizzaScanner(receive);
 render();
