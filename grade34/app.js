@@ -97,6 +97,16 @@
       printHref: `${ASSET_BASE}Activities/pizza-qr-prototype/pizza-shop-cards.pdf?v=7`,
       qrShare: true,
     },
+    {
+      id: "my-parfait",
+      title: "MY PARFAIT",
+      subtitle: "英語でフルーツを注文して、自分だけのパフェを作ろう",
+      units: ["lt2-7"],
+      unitOnly: true,
+      href: `${ASSET_BASE}Activities/parfait/`,
+      printHref: `${ASSET_BASE}Activities/parfait/parfait-shop-cards.pdf`,
+      qrShare: true,
+    },
   ];
 
   const state = {

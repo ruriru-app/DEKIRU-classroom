@@ -1,0 +1,8 @@
+:root { background: #fbf4f5; }
+.eyebrow, .print-actions button { color: #7b3150; }
+.print-actions a { background: #7b3150; }
+.print-actions button { border-color: #e6cbd7; }
+
+@media print {
+  :root { background: white; }
+}

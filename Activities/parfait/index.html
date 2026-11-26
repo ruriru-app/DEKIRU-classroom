@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MY PARFAIT | DEKIRU</title>
+  <link rel="stylesheet" href="../pizza-qr-prototype/style.css?v=7">
+  <link rel="stylesheet" href="style.css">
+  <script defer src="../pizza-qr-prototype/vendor/jsQR.js"></script>
+  <script defer src="../pizza-qr-prototype/scanner.js?v=2"></script>
+  <script defer src="catalog.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">LET’S GO SHOPPING</p>
+      <h1>MY PARFAIT</h1>
+    </div>
+    <button id="reset" type="button">はじめから</button>
+  </header>
+  <main>
+    <section class="kitchen" aria-label="パフェを作る">
+      <div id="parfait" role="group" aria-label="パフェグラス">
+        <img id="glass" src="assets/parfait-glass.webp" alt="" draggable="false">
+        <button id="placement" type="button" aria-label="選んだ具材をグラスに盛りつける"></button>
+        <div id="toppings"></div>
+      </div>
+      <p class="hint placement-hint">具材をドラッグするか、具材を選んでグラスをタップしよう。</p>
+    </section>
+    <aside>
+      <h2>買い物かご <span id="count">0</span></h2>
+      <div class="shop-phrase" lang="en">
+        <strong>What do you want?</strong>
+        <span>I want a strawberry, please.</span>
+      </div>
+      <button class="primary" id="scan" type="button">QRを読み取る</button>
+      <p id="status" role="status">英語で果物やアイスを注文しよう。QRを1回読むと1つもらえます。</p>
+      <div id="tray" aria-label="買い物かごの具材"></div>
+      <div class="rotation-controls" role="group" aria-label="選んだ具材の向き">
+        <button id="rotate-left" type="button" disabled><span aria-hidden="true">↶</span> 左に回す</button>
+        <button id="rotate-right" type="button" disabled><span aria-hidden="true">↷</span> 右に回す</button>
+      </div>
+      <button id="return" type="button" disabled>選んだ具材をかごに戻す</button>
+      <div class="extras">
+        <label for="extras">ベース・トッピングを足す</label>
+        <div class="extras-row">
+          <select id="extras"></select>
+          <button id="add-extra" type="button">足す</button>
+        </div>
+      </div>
+      <p class="hint">同じ具材を買い足すときは、別のお店で注文しよう。パフェと買い物かごは自動で保存されます。</p>
+    </aside>
+  </main>
+  <dialog id="camera" aria-labelledby="camera-title">
+    <h2 id="camera-title">具材カードのQRを読み取ろう</h2>
+    <video autoplay playsinline muted aria-label="カメラの映像"></video>
+    <p id="camera-status" role="status">カメラを準備しています…</p>
+    <button id="close" type="button">閉じる</button>
+    <p class="hint">カメラ画像は端末内で読み取り、保存・送信しません。</p>
+  </dialog>
+</body>
+</html>
