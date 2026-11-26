@@ -9,6 +9,7 @@ const status = byId('status');
 const storageKey = 'dekiru-pizza-v2';
 const previousKey = 'dekiru-pizza-pepper-v1';
 const blank = () => ({ sauce: 'tomato', cheese: false, pieces: [] });
+const sauces = ['tomato', 'white', 'teriyaki'];
 const knownIngredient = id => ingredients.some(ingredient => ingredient.id === id);
 const knownShop = id => shops.some(shop => shop.id === id);
 const onPizza = (x, y) => Number.isFinite(x) && Number.isFinite(y) && Math.hypot(x - 50, y - 50) <= 39;
@@ -18,7 +19,7 @@ function loadPizza() {
     const saved = JSON.parse(localStorage.getItem(storageKey));
     if (saved && Array.isArray(saved.pieces)) {
       return {
-        sauce: saved.sauce === 'white' ? 'white' : 'tomato',
+        sauce: sauces.includes(saved.sauce) ? saved.sauce : 'tomato',
         cheese: saved.cheese === true,
         pieces: saved.pieces.filter(piece => piece && typeof piece.id === 'string'
           && knownIngredient(piece.ingredient) && (piece.shop === null || knownShop(piece.shop))
