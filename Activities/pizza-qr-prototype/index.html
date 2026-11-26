@@ -4,14 +4,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>MY PIZZA | DEKIRU</title>
-  <link rel="stylesheet" href="style.css?v=7">
+  <link rel="stylesheet" href="style.css?v=8">
   <script defer src="vendor/jsQR.js"></script>
   <script defer src="catalog.js?v=7"></script>
   <script defer src="scanner.js?v=2"></script>
-  <script defer src="app.js?v=6"></script>
+  <script defer src="app.js?v=8"></script>
 </head>
 <body>
-  <header class="page-header">
+  <header class="page-header pizza-header">
     <div>
       <p class="eyebrow">LET’S GO SHOPPING</p>
       <h1>MY PIZZA</h1>
@@ -25,7 +25,10 @@
       </fieldset>
       <button id="cheese" type="button" aria-pressed="false">チーズをのせる</button>
     </div>
-    <button id="reset" type="button">はじめから</button>
+    <div class="header-actions">
+      <button id="reset-arrangement" type="button" disabled>盛り付けをやりなおす</button>
+      <button id="reset" type="button">はじめから</button>
+    </div>
   </header>
   <main>
     <section class="kitchen" aria-label="ピザを作る">

@@ -6,6 +6,7 @@ const pizza = byId('pizza');
 const tray = byId('tray');
 const toppings = byId('toppings');
 const status = byId('status');
+const resetArrangement = byId('reset-arrangement');
 const storageKey = 'dekiru-pizza-v2';
 const previousKey = 'dekiru-pizza-pepper-v1';
 const blank = () => ({ sauce: 'tomato', cheese: false, pieces: [] });
@@ -165,6 +166,7 @@ function render() {
     }
   }
   byId('count').textContent = inTray;
+  resetArrangement.disabled = inTray === recipe.pieces.length;
   if (!inTray) tray.textContent = '買った具材がここに入ります。';
   selectPiece(selected);
 }
@@ -188,6 +190,19 @@ byId('return').addEventListener('click', () => {
 });
 byId('rotate-left').addEventListener('click', () => rotateSelected(-45));
 byId('rotate-right').addEventListener('click', () => rotateSelected(45));
+resetArrangement.addEventListener('click', () => {
+  const placed = recipe.pieces.filter(piece => piece.x !== null);
+  if (!placed.length || !confirm('盛りつけた具材をすべてかごに戻しますか？')) return;
+  for (const piece of placed) {
+    piece.x = null;
+    piece.y = null;
+    piece.rotation = 0;
+  }
+  selected = null;
+  status.textContent = '盛りつけた具材をかごに戻しました。';
+  save();
+  render();
+});
 byId('reset').addEventListener('click', () => {
   if (!confirm('ピザと買い物かごを空にして、はじめから作りますか？')) return;
   recipe = blank();

@@ -30,38 +30,46 @@ main { grid-template-columns: minmax(0, 1fr) 334px; }
 #glass, #glass-front { position: absolute; left: 10%; top: 31%; width: 80%; height: 68.5714%; pointer-events: none; }
 #placement, #toppings { position: absolute; inset: 0; width: 100%; height: 100%; }
 #placement { border-radius: 16px; }
+.piece { --board-piece-scale: .24; }
+.piece:is([data-size="large"], [data-size="layer"]) { --board-piece-scale: .31; }
+.piece[data-size="wide"] { --board-piece-scale: .33; }
+.piece:is([data-ingredient="apple"], [data-ingredient="orange"], [data-ingredient="peach"]) { --board-piece-scale: .37; }
+.piece[data-ingredient="pineapple"] { --board-piece-scale: .29; }
+.piece[data-ingredient="cherry"] { --board-piece-scale: .19; }
+.piece:is([data-ingredient="kiwi"], [data-ingredient="strawberry"]) { --board-piece-scale: .27; }
+.piece:is([data-ingredient="ice-cream"], [data-ingredient="chocolate-ice-cream"], [data-ingredient="strawberry-ice-cream"]) { --board-piece-scale: .43; }
 #toppings .piece {
-  width: 24%;
+  width: calc(100% * var(--board-piece-scale));
   height: auto;
   aspect-ratio: 1;
-  padding: 2px;
-}
-#toppings .piece[data-size="large"] { width: 31%; }
-#toppings .piece[data-size="wide"] { width: 33%; }
-#toppings .piece:is([data-ingredient="apple"], [data-ingredient="orange"], [data-ingredient="peach"]) { width: 37%; }
-#toppings .piece[data-ingredient="pineapple"] { width: 29%; }
-#toppings .piece[data-ingredient="cherry"] { width: 19%; }
-#toppings .piece:is([data-ingredient="kiwi"], [data-ingredient="strawberry"]) { width: 27%; }
-#toppings .piece:is([data-ingredient="ice-cream"], [data-ingredient="chocolate-ice-cream"], [data-ingredient="strawberry-ice-cream"]):not([data-size="layer"]) { width: 43%; }
-#toppings .piece[data-size="layer"] {
-  aspect-ratio: auto;
   border: 0;
   padding: 0;
+}
+.piece:is([aria-pressed="true"], :focus-visible) {
+  background: transparent;
+  border-color: transparent;
+  outline: none;
+}
+.piece[data-inside="true"] img {
+  --piece-tint: saturate(.82) contrast(.94) brightness(1.08);
+  filter: var(--piece-tint);
+}
+.piece:not([data-size="layer"]):is([aria-pressed="true"], :focus-visible) img {
+  filter: var(--piece-tint, brightness(1)) drop-shadow(0 0 1px #234d76) drop-shadow(0 0 3px #3096bd);
+}
+#toppings .piece[data-size="layer"] {
+  aspect-ratio: auto;
   border-radius: 0;
+  overflow: hidden;
 }
 #toppings .piece[data-size="layer"] img { position: absolute; inset: 0; object-fit: cover; }
+#toppings .piece[data-size="layer"][data-ingredient="cereal"] img { scale: 1.4; }
 #toppings .piece[data-size="layer"]:is([aria-pressed="true"], :focus-visible)::after {
   content: "";
   position: absolute;
   inset: 0;
   border-block: 2px solid #447695;
   pointer-events: none;
-}
-#toppings .piece[data-inside="true"] img { filter: saturate(.82) contrast(.94) brightness(1.08); }
-.drag-ghost:is([data-ingredient="ice-cream"], [data-ingredient="chocolate-ice-cream"], [data-ingredient="strawberry-ice-cream"]) {
-  width: min(36vw, 140px);
-  height: auto;
-  aspect-ratio: 1;
 }
 .shop-phrase { border-color: var(--red); background: #fbedf1; }
 #count { background: #f4e3ef; }

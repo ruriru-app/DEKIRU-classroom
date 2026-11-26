@@ -4,6 +4,7 @@ const { shops, ingredients, extras } = window.ParfaitCatalog;
 const items = new Map([...ingredients, ...extras].map(item => [item.id, item]));
 const byId = id => document.getElementById(id);
 const board = byId('parfait');
+const workspace = board.closest('.kitchen');
 const placement = byId('placement');
 const tray = byId('tray');
 const toppings = byId('toppings');
@@ -34,6 +35,8 @@ const bowlProfile = [
 const isFitted = piece => piece.layer === true;
 const isPlaced = piece => isFitted(piece) || piece.x !== null;
 const isScoop = piece => piece.ingredient.endsWith('ice-cream');
+const spriteMasks = new Map();
+const alphaThreshold = 48;
 
 function toppingOutline() {
   const side = direction => bowlProfile.map(([y, halfWidth]) => (50 + direction * halfWidth) + '% ' + y + '%');
@@ -57,6 +60,14 @@ function toppingHalfWidth(y) {
 function canPlace(x, y) {
   return Number.isFinite(x) && Number.isFinite(y) && y >= firstToppingY && y <= bowlBottom
     && Math.abs(x - 50) <= toppingHalfWidth(y);
+}
+
+function takesLayer(piece, x, y) {
+  return canPlace(x, y) && y >= layerDropY && items.get(piece.ingredient).layer === true;
+}
+
+function textureSource(item) {
+  return item.texture ?? 'assets/' + item.id + '-texture.webp';
 }
 
 function fitLayer(piece) {
@@ -114,6 +125,7 @@ function loadPieces() {
 let pieces = loadPieces();
 let selected = null;
 let drag = null;
+let placedViews = [];
 
 function save() {
   try {
@@ -154,7 +166,7 @@ function rotateSelected(degrees) {
 
 function movePiece(piece, x, y) {
   const onBoard = canPlace(x, y);
-  const fitting = onBoard && y >= layerDropY && items.get(piece.ingredient).layer === true;
+  const fitting = takesLayer(piece, x, y);
   if (fitting && isFitted(piece)) {
     selectPiece(piece.id);
     return;
@@ -174,68 +186,169 @@ function movePiece(piece, x, y) {
   render();
 }
 
-function boardPoint(clientX, clientY) {
-  const rect = board.getBoundingClientRect();
+function boardPoint(clientX, clientY, rect = board.getBoundingClientRect()) {
   return [(clientX - rect.left) * 100 / rect.width, (clientY - rect.top) * 100 / rect.height];
 }
 
-function attachDrag(button, piece, image) {
-  button.addEventListener('pointerdown', event => {
-    if (event.button !== 0 || !event.isPrimary) return;
-    drag = { pointerId: event.pointerId, x: event.clientX, y: event.clientY };
-    button.setPointerCapture(event.pointerId);
-  });
-  button.addEventListener('pointermove', event => {
-    if (drag?.pointerId !== event.pointerId) return;
-    if (!drag.ghost && Math.hypot(event.clientX - drag.x, event.clientY - drag.y) > 6) {
-      drag.ghost = image.cloneNode();
-      drag.ghost.className = 'drag-ghost';
-      if (isFitted(piece)) {
-        drag.ghost.src = items.get(piece.ingredient).image;
-        drag.ghost.style.transform = 'rotate(' + piece.rotation + 'deg)';
-      }
-      document.body.append(drag.ghost);
-      button.classList.add('dragging');
-    }
-    if (drag.ghost) {
-      drag.ghost.style.left = event.clientX + 'px';
-      drag.ghost.style.top = event.clientY + 'px';
-    }
-  });
-  function finish(event) {
-    if (drag?.pointerId !== event.pointerId) return;
-    const moved = Boolean(drag.ghost);
-    drag.ghost?.remove();
-    drag = null;
-    button.classList.remove('dragging');
-    if (moved && event.type === 'pointerup') {
-      selected = piece.id;
-      movePiece(piece, ...boardPoint(event.clientX, event.clientY));
-    }
-  }
-  button.addEventListener('pointerup', finish);
-  button.addEventListener('pointercancel', finish);
-  button.addEventListener('lostpointercapture', finish);
+function pointInRect(x, y, rect) {
+  return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
 }
 
-function sizeLayer(button, slot) {
+function opacityMask(image) {
+  const url = image.currentSrc || image.src;
+  if (!spriteMasks.has(url)) {
+    try {
+      const canvas = document.createElement('canvas');
+      canvas.width = image.naturalWidth;
+      canvas.height = image.naturalHeight;
+      const context = canvas.getContext('2d');
+      context.drawImage(image, 0, 0);
+      spriteMasks.set(url, context.getImageData(0, 0, canvas.width, canvas.height).data);
+    } catch {
+      // A visible image is still selectable if its pixels cannot be read.
+      spriteMasks.set(url, null);
+    }
+  }
+  return spriteMasks.get(url);
+}
+
+function spriteContains({ image, piece }, x, y) {
+  const bounds = image.getBoundingClientRect();
+  if (!pointInRect(x, y, bounds) || !image.complete || !image.naturalWidth) return false;
+
+  // Undo the rotation, then map the rendered object-fit:contain box back to its raster.
+  const radians = piece.rotation * Math.PI / 180;
+  const sine = Math.sin(radians);
+  const cosine = Math.cos(radians);
+  const dx = x - bounds.left - bounds.width / 2;
+  const dy = y - bounds.top - bounds.height / 2;
+  const scale = Math.min(image.offsetWidth / image.naturalWidth, image.offsetHeight / image.naturalHeight);
+  if (!scale) return false;
+  const sampleX = Math.floor((dx * cosine + dy * sine) / scale + image.naturalWidth / 2);
+  const sampleY = Math.floor((dy * cosine - dx * sine) / scale + image.naturalHeight / 2);
+  if (sampleX < 0 || sampleX >= image.naturalWidth || sampleY < 0 || sampleY >= image.naturalHeight) return false;
+  const mask = opacityMask(image);
+  return !mask || mask[(sampleY * image.naturalWidth + sampleX) * 4 + 3] >= alphaThreshold;
+}
+
+function pickPiece(clientX, clientY) {
+  const [x, y] = boardPoint(clientX, clientY);
+  if (x < 0 || x > 100 || y < 0 || y > bowlBottom || (y >= bowlTop && Math.abs(x - 50) > bowlHalfWidth(y))) return null;
+  for (let index = placedViews.length - 1; index >= 0; index--) {
+    const view = placedViews[index];
+    // Fitted textures fill their entire slot within the same bowl outline.
+    if (isFitted(view.piece)
+      ? pointInRect(clientX, clientY, view.button.getBoundingClientRect())
+      : spriteContains(view, clientX, clientY)) {
+      return view;
+    }
+  }
+  return null;
+}
+
+function tapBoard(view, clientX, clientY) {
+  const waiting = currentPiece();
+  const [x, y] = boardPoint(clientX, clientY);
+  if (!view) {
+    if (waiting && canPlace(x, y)) movePiece(waiting, x, y);
+    return;
+  }
+  if (isFitted(view.piece) && waiting && !isPlaced(waiting)) {
+    if (!items.get(waiting.ingredient).layer) {
+      movePiece(waiting, x, y);
+      return;
+    }
+    if (pieces.filter(isFitted).length < layerLimit) {
+      movePiece(waiting, 50, layerDropY);
+      return;
+    }
+  }
+  view.button.focus({ preventScroll: true });
+  selectPiece(view.piece.id);
+}
+
+function startDrag(event, view, fromBoard = false) {
+  if (drag || event.button !== 0 || !event.isPrimary) return;
+  const captureTarget = fromBoard ? board : view.button;
+  drag = { pointerId: event.pointerId, x: event.clientX, y: event.clientY, view, fromBoard, moved: false };
+  captureTarget.setPointerCapture(event.pointerId);
+}
+
+function updateDragGhost({ view, ghost }, clientX, clientY) {
+  const item = items.get(view.piece.ingredient);
+  const inWorkspace = pointInRect(clientX, clientY, workspace.getBoundingClientRect());
+  const rect = board.getBoundingClientRect();
+  const [x, y] = boardPoint(clientX, clientY, rect);
+  const layers = pieces.filter(isFitted);
+  const slot = isFitted(view.piece) ? layers.indexOf(view.piece) : layers.length;
+  const layer = inWorkspace && slot < layerLimit && takesLayer(view.piece, x, y) ? layerGeometry(slot) : null;
+  const source = layer ? textureSource(item) : item.image;
+  if (ghost.getAttribute('src') !== source) ghost.src = source;
+
+  const scale = Number(getComputedStyle(view.button).getPropertyValue('--board-piece-scale'));
+  const size = inWorkspace ? rect.width * scale : 58;
+  ghost.style.width = (layer ? rect.width : size) + 'px';
+  ghost.style.height = (layer ? rect.height * (layer.bottom - layer.top) / 100 : size) + 'px';
+  ghost.style.clipPath = layer ? layer.clipPath : '';
+  ghost.style.objectFit = layer ? 'cover' : 'contain';
+  ghost.style.transform = 'rotate(' + (layer ? 0 : view.piece.rotation) + 'deg)';
+  ghost.style.left = clientX + 'px';
+  ghost.style.top = clientY + 'px';
+}
+
+function trackDrag(event) {
+  if (drag?.pointerId !== event.pointerId) return;
+  if (!drag.moved) {
+    drag.moved = Math.hypot(event.clientX - drag.x, event.clientY - drag.y) > 6;
+    if (drag.moved && drag.view) {
+      drag.ghost = drag.view.image.cloneNode();
+      drag.ghost.className = 'drag-ghost';
+      document.body.append(drag.ghost);
+      drag.view.button.classList.add('dragging');
+    }
+  }
+  if (drag.ghost) updateDragGhost(drag, event.clientX, event.clientY);
+}
+
+function finishDrag(event) {
+  if (drag?.pointerId !== event.pointerId) return;
+  const { view, ghost, moved, fromBoard } = drag;
+  drag = null;
+  ghost?.remove();
+  view?.button.classList.remove('dragging');
+  if (event.type !== 'pointerup') return;
+  if (view && moved) {
+    selected = view.piece.id;
+    movePiece(view.piece, ...boardPoint(event.clientX, event.clientY));
+  } else if (fromBoard && !moved) {
+    tapBoard(view, event.clientX, event.clientY);
+  }
+}
+
+function layerGeometry(slot) {
   const top = layerEdges[slot + 1];
   const bottom = layerEdges[slot];
   const rows = [top, ...bowlProfile.map(([y]) => y).filter(y => y > top && y < bottom), bottom];
   const points = side => rows.map(y =>
     (50 + side * bowlHalfWidth(y)).toFixed(2) + '% ' + ((y - top) * 100 / (bottom - top)).toFixed(2) + '%'
   );
+  return { top, bottom, clipPath: 'polygon(' + [...points(-1), ...points(1).reverse()].join(',') + ')' };
+}
+
+function sizeLayer(button, slot) {
+  const { top, bottom, clipPath } = layerGeometry(slot);
   button.dataset.layer = String(slot + 1);
   button.style.left = '50%';
   button.style.top = (top + bottom) / 2 + '%';
   button.style.width = '100%';
   button.style.height = (bottom - top).toFixed(2) + '%';
-  button.style.clipPath = 'polygon(' + [...points(-1), ...points(1).reverse()].join(',') + ')';
+  button.style.clipPath = clipPath;
 }
 
 function render() {
   tray.replaceChildren();
   toppings.replaceChildren();
+  placedViews = [];
   let count = 0;
   const layers = pieces.filter(isFitted);
   for (const piece of [...layers, ...pieces.filter(piece => !isFitted(piece))]) {
@@ -251,29 +364,16 @@ function render() {
     if (isPlaced(piece)) button.dataset.inside = String(inside);
     if (item.layer || item.sauce) button.dataset.size = layer ? 'layer' : item.sauce ? 'wide' : 'large';
     button.setAttribute('aria-label', item.name + (inside ? '・グラスの中' : isPlaced(piece) ? '・グラスの上' : '・買い物かご'));
-    image.src = layer ? (item.texture ?? 'assets/' + item.id + '-texture.webp') : item.image;
+    image.src = layer ? textureSource(item) : item.image;
     image.alt = '';
     image.dataset.ingredient = item.id;
     image.draggable = false;
     setRotation(image, piece);
     button.append(image);
-    button.addEventListener('click', event => {
-      const waiting = currentPiece();
-      if (layer && event.detail > 0 && waiting && !isPlaced(waiting)) {
-        // Accept toppings on filled areas too, but leave full layers selectable for swapping.
-        if (!items.get(waiting.ingredient).layer) {
-          movePiece(waiting, ...boardPoint(event.clientX, event.clientY));
-          return;
-        }
-        if (pieces.filter(isFitted).length < layerLimit) {
-          movePiece(waiting, 50, layerDropY);
-          return;
-        }
-      }
-      selectPiece(piece.id);
-    });
-    attachDrag(button, piece, image);
+    button.addEventListener('click', () => selectPiece(piece.id));
+    const view = { button, piece, image };
     if (!isPlaced(piece)) {
+      button.addEventListener('pointerdown', event => startDrag(event, view));
       tray.append(button);
       count++;
     } else {
@@ -284,6 +384,7 @@ function render() {
         button.style.top = piece.y + '%';
       }
       toppings.append(button);
+      placedViews.push(view);
     }
   }
   byId('count').textContent = count;
@@ -312,11 +413,25 @@ function receive(code) {
   return null;
 }
 
-placement.addEventListener('click', event => {
+board.addEventListener('pointerdown', event => {
+  if (drag || event.button !== 0 || !event.isPrimary) return;
+  startDrag(event, pickPiece(event.clientX, event.clientY), true);
+  event.preventDefault();
+});
+board.addEventListener('click', event => {
+  if (event.detail === 0) return;
+  // Pointer taps were routed by their visible shapes. Keep native keyboard clicks.
+  event.preventDefault();
+  event.stopPropagation();
+}, true);
+document.addEventListener('pointermove', trackDrag);
+document.addEventListener('pointerup', finishDrag);
+document.addEventListener('pointercancel', finishDrag);
+document.addEventListener('lostpointercapture', finishDrag);
+
+placement.addEventListener('click', () => {
   const piece = currentPiece();
-  if (!piece) return;
-  const [x, y] = event.detail === 0 ? [50, 45] : boardPoint(event.clientX, event.clientY);
-  if (canPlace(x, y)) movePiece(piece, x, y);
+  if (piece) movePiece(piece, 50, 45);
 });
 buttons.left.addEventListener('click', () => rotateSelected(-45));
 buttons.right.addEventListener('click', () => rotateSelected(45));
