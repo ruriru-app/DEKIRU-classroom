@@ -1,7 +1,7 @@
 'use strict';
 
 function withParfaitImage(item) {
-  return { ...item, image: 'assets/' + item.id + '.webp' };
+  return { image: 'assets/' + item.id + '.webp', ...item };
 }
 
 window.ParfaitCatalog = {
@@ -13,9 +13,9 @@ window.ParfaitCatalog = {
     { id: 'apple', name: 'リンゴ', english: 'Apples' },
     { id: 'pineapple', name: 'パイナップル', english: 'Pineapples' },
     { id: 'cherry', name: 'サクランボ', english: 'Cherries' },
-    { id: 'strawberry', name: 'イチゴ', english: 'Strawberries' },
+    { id: 'strawberry', name: 'イチゴ', english: 'Strawberries', image: 'assets/strawberry.webp?v=2' },
     { id: 'orange', name: 'オレンジ', english: 'Oranges' },
-    { id: 'kiwi', name: 'キウイ', english: 'Kiwi fruits' },
+    { id: 'kiwi', name: 'キウイ', english: 'Kiwi fruits', image: 'assets/kiwi.webp?v=2' },
     { id: 'ice-cream', name: 'バニラアイス', english: 'Vanilla ice cream', layer: true },
     { id: 'chocolate-ice-cream', name: 'チョコアイス', english: 'Chocolate ice cream', layer: true },
     { id: 'strawberry-ice-cream', name: 'ストロベリーアイス', english: 'Strawberry ice cream', layer: true }
