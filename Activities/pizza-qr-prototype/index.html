@@ -1,0 +1,8 @@
+<!doctype html>
+<html lang="ja"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MY PIZZA | DEKIRU</title>
+<link rel="stylesheet" href="style.css">
+<header><div><small>LET’S GO SHOPPING · 試作品</small><h1>MY PIZZA <span>ピーマン</span></h1></div><button id="reset">はじめから</button></header>
+<main><section class="workspace"><div class="intro"><h2>買った具材で、ピザを作ろう！</h2><p>① お店で英語で注文 → ② QRを読む → ③ ピザにのせる</p></div><div id="pizza" role="button" tabindex="0" aria-label="ピザ。具材を選んでからタップするとのせられます"><div class="cheese"></div></div><p class="hint">具材をドラッグしてのせよう。具材を選んで、ピザをタップしてもOK！</p></section>
+<aside><h2>買い物かご</h2><button class="primary" id="scan">📷 QRを読み取る</button><p id="status" role="status" aria-live="polite">お店のピーマンのQRを読み取ろう。</p><div id="tray" aria-label="具材のトレー"></div><button id="return" disabled>選んだ具材をかごに戻す</button><p class="hint">1回のお買い物で、ピーマンを4つもらえます。<br>買い物かごとピザは、このブラウザに自動保存します。</p></aside></main>
+<dialog id="camera"><h2>お店のQRを読み取ろう</h2><video autoplay playsinline muted></video><p id="camera-status" role="status">カメラを準備しています…</p><button id="close">閉じる</button><p class="hint">カメラ画像は端末内で読み取り、保存・送信しません。</p></dialog>
+<script src="vendor/jsQR.js"></script><script src="app.js"></script></html>
