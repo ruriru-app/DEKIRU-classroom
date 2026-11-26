@@ -10,7 +10,15 @@
   const escape = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   function activityTiles(key,unit) {
     const world=key==='nh6'&&unit===5?'<a class="feature-tile" href="../games/world-map.html?book=nh6&amp;unit=5"><strong>Map of the World</strong><p>国の場所・英語名・日本への輸入品を調べる</p></a>':'';
-    const restaurant=key==='nh5'&&unit===6?'<a class="feature-tile" href="../games/ruriru-restaurant.html"><strong>RuRiRu RESTAURANT<br>1,000円チャレンジ</strong><p>メニューと値段を決めて、注文の合計1,000円を目指そう</p></a>':'';
+    const restaurant=key==='nh5'&&unit===6?`<div class="feature-tile town-entry-tile">
+      <a class="town-entry-open" href="../games/ruriru-restaurant.html"><strong>RuRiRu RESTAURANT<br>1,000円チャレンジ</strong><p>メニューと値段を決めて、注文の合計1,000円を目指そう</p></a>
+      <details class="restaurant-test-cards"><summary class="secondary-button">テスト用カードダウンロード</summary>
+        <div class="town-entry-actions">
+          <a class="secondary-button" href="downloads/restaurant-test-cards-9up.pdf" download>９枚配置（A4・４ページ）</a>
+          <a class="secondary-button" href="downloads/restaurant-test-cards-12up.pdf" download>12枚配置（A4・３ページ）</a>
+        </div>
+      </details>
+    </div>`:'';
     const burgerShop=key==='nh5'&&unit===6?'<div class="feature-tile town-entry-tile"><a class="town-entry-open" href="../Activities/ruriru-burger-shop/index.html" target="_blank" rel="noopener noreferrer"><strong>RuRiRu BURGER SHOP<br>接客ゲーム</strong><p>LEVEL 1〜4／店員になって注文を聞き取り、英語で会計しよう</p></a><div class="town-entry-actions"><small>別タブで開く ↗</small><button type="button" class="secondary-button" data-activity-copy="https://ruriru-app.github.io/DEKIRU-classroom/Activities/ruriru-burger-shop/index.html">児童用URLをコピー</button></div><p class="town-entry-status" role="status" hidden></p><input class="town-entry-url" aria-label="配信用URL" readonly hidden></div>':'';
     const partyShopping=key==='nh5'&&unit===6?`<div class="feature-tile town-entry-tile">
       <a class="town-entry-open" href="../Activities/ruriru-party-shopping/index.html" target="_blank" rel="noopener noreferrer">

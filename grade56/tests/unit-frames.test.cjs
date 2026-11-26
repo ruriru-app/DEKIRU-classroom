@@ -21,6 +21,15 @@ test('Unit 6 retains its existing restaurant activity inside the new frame',()=>
  assert.ok(html.includes('<summary>Activities</summary>'));
  assert.ok(html.indexOf('RuRiRu RESTAURANT')>html.indexOf('<summary>Activities</summary>'));
 });
+test('restaurant tile offers both speaking-test PDFs only in grade 5 Unit 6',()=>{
+ const {html}=render(6);
+ assert.ok(html.includes('テスト用カードダウンロード'));
+ for(const name of ['restaurant-test-cards-9up.pdf','restaurant-test-cards-12up.pdf']){
+  assert.ok(html.includes('downloads/'+name));
+  assert.equal(fs.readFileSync(__dirname+'/../downloads/'+name).subarray(0,5).toString(),'%PDF-');
+ }
+ assert.ok(!render(5).html.includes('restaurant-test-cards'));
+});
 test('Unit 5 retains its vocabulary configuration and town activities',()=>{
  const {html,units}=render(5);
  assert.deepEqual(Array.from(units.get('nh5',5).main),['directions','positions','town']);
