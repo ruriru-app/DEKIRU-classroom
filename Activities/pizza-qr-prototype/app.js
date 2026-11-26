@@ -1,15 +1,207 @@
 'use strict';
-const KEY='dekiru-pizza-pepper-v1',PAYLOAD='dekiru:pizza:v1:green-pepper';
-const $=s=>document.querySelector(s),pizza=$('#pizza'),tray=$('#tray'),dialog=$('#camera'),video=$('video');
-let pieces=[],selected=null,stream=null,session=0,timer=null,drag=null;
-try{const saved=JSON.parse(localStorage.getItem(KEY));if(Array.isArray(saved)&&saved.length<=40&&saved.every(p=>typeof p.id==='string'&&(p.x===null||Number.isFinite(p.x)&&Number.isFinite(p.y)&&p.x>=0&&p.x<=100&&p.y>=0&&p.y<=100)))pieces=saved;}catch{}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(pieces));}catch{$('#status').textContent='このブラウザでは保存できません。ページを閉じると具材が消えます。';}}
-function render(){pizza.querySelectorAll('.piece').forEach(n=>n.remove());tray.replaceChildren();pieces.forEach(p=>{const b=document.createElement('button');b.className='piece'+(selected===p.id?' selected':'');b.dataset.id=p.id;b.setAttribute('aria-label','ピーマン'+(p.x===null?'・買い物かご':'・ピザの上'));b.setAttribute('aria-pressed',selected===p.id);b.innerHTML='<img src="pepper.svg" alt="">';if(p.x!==null){b.style.left=p.x+'%';b.style.top=p.y+'%';pizza.append(b);}else tray.append(b);b.onclick=e=>{e.stopPropagation();selected=p.id;render();};b.onpointerdown=e=>{if(e.button!==0)return;drag={id:p.id,x:e.clientX,y:e.clientY,moved:false,el:b};b.setPointerCapture(e.pointerId);};b.onpointermove=e=>{if(!drag||drag.id!==p.id)return;if(Math.hypot(e.clientX-drag.x,e.clientY-drag.y)>6)drag.moved=true;if(drag.moved){b.style.opacity='.5';}};b.onpointerup=e=>{if(!drag)return;const moved=drag.moved;drag=null;if(moved){e.preventDefault();place(p.id,e.clientX,e.clientY);}};b.onpointercancel=()=>{drag=null;render();};});$('#return').disabled=!selected;if(!pieces.length)tray.textContent='まだ具材がありません。';}
-function place(id,cx,cy){const r=pizza.getBoundingClientRect(),x=(cx-r.left)/r.width*100,y=(cy-r.top)/r.height*100,p=pieces.find(p=>p.id===id);if(!p)return;if(Math.hypot(x-50,y-50)<36){p.x=x;p.y=y;}else{p.x=null;p.y=null;}selected=id;save();render();}
-pizza.onclick=e=>{if(selected&&e.target===pizza)place(selected,e.clientX,e.clientY);};pizza.onkeydown=e=>{if((e.key==='Enter'||e.key===' ')&&selected){e.preventDefault();const r=pizza.getBoundingClientRect();place(selected,r.left+r.width/2,r.top+r.height/2);}};
-$('#return').onclick=()=>{const p=pieces.find(p=>p.id===selected);if(p){p.x=null;p.y=null;save();render();}};
-$('#reset').onclick=()=>{if(confirm('ピザと買い物かごを空にして、はじめから作りますか？')){pieces=[];selected=null;save();render();$('#status').textContent='お店のピーマンのQRを読み取ろう。';}};
-function stop(){session++;clearTimeout(timer);if(stream)stream.getTracks().forEach(t=>t.stop());stream=null;video.srcObject=null;}
-function receive(data){if(data!==PAYLOAD){$('#camera-status').textContent='これはピーマンのお店のQRではありません。';return false;}if(pieces.length+4>40){$('#camera-status').textContent='買い物かごがいっぱいです。はじめから作り直してください。';return false;}for(let i=0;i<4;i++)pieces.push({id:crypto.randomUUID(),x:null,y:null});save();render();$('#status').textContent='ピーマンを4つ買いました！ 具材を選んでピザにのせよう。';stop();dialog.close();return true;}
-$('#scan').onclick=async()=>{stop();dialog.showModal();$('#camera-status').textContent='カメラの使用を許可してください。';const token=session;try{if(!navigator.mediaDevices?.getUserMedia)throw new Error('unsupported');const s=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1280}},audio:false});if(token!==session){s.getTracks().forEach(t=>t.stop());return;}stream=s;video.srcObject=s;await video.play();if(token!==session)return;$('#camera-status').textContent='QR全体をカメラに映してください。';const canvas=document.createElement('canvas'),ctx=canvas.getContext('2d',{willReadFrequently:true});function tick(){if(token!==session)return;if(video.readyState>=2){canvas.width=Math.min(800,video.videoWidth);canvas.height=canvas.width*video.videoHeight/video.videoWidth;ctx.drawImage(video,0,0,canvas.width,canvas.height);const frame=ctx.getImageData(0,0,canvas.width,canvas.height),qr=jsQR(frame.data,canvas.width,canvas.height,{inversionAttempts:'dontInvert'});if(qr&&receive(qr.data))return;}timer=setTimeout(tick,180);}tick();}catch(err){if(token!==session)return;stop();$('#camera-status').textContent='カメラを開けませんでした。Chromeのカメラ許可と、学校の端末設定を確認し、閉じてからもう一度試してください。';}};
-$('#close').onclick=()=>dialog.close();dialog.addEventListener('close',stop);dialog.addEventListener('cancel',stop);window.addEventListener('pagehide',stop);document.addEventListener('visibilitychange',()=>{if(document.hidden){stop();if(dialog.open)dialog.close();}});render();
+
+const { shops, ingredients } = window.PizzaCatalog;
+const byId = id => document.getElementById(id);
+const pizza = byId('pizza');
+const tray = byId('tray');
+const toppings = byId('toppings');
+const status = byId('status');
+const storageKey = 'dekiru-pizza-v2';
+const previousKey = 'dekiru-pizza-pepper-v1';
+const blank = () => ({ sauce: 'tomato', cheese: false, pieces: [] });
+const knownIngredient = id => ingredients.some(ingredient => ingredient.id === id);
+const knownShop = id => shops.some(shop => shop.id === id);
+const onPizza = (x, y) => Number.isFinite(x) && Number.isFinite(y) && Math.hypot(x - 50, y - 50) <= 39;
+
+function loadPizza() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(storageKey));
+    if (saved && Array.isArray(saved.pieces)) {
+      return {
+        sauce: saved.sauce === 'white' ? 'white' : 'tomato',
+        cheese: saved.cheese === true,
+        pieces: saved.pieces.filter(piece => piece && typeof piece.id === 'string'
+          && knownIngredient(piece.ingredient) && (piece.shop === null || knownShop(piece.shop))
+          && (piece.x === null || onPizza(piece.x, piece.y)))
+      };
+    }
+    const previous = JSON.parse(localStorage.getItem(previousKey));
+    if (Array.isArray(previous)) {
+      return {
+        ...blank(),
+        pieces: previous.slice(0, 40).filter(piece => piece && typeof piece.id === 'string')
+          .map(piece => ({
+            id: piece.id, ingredient: 'green-pepper', shop: null,
+            x: onPizza(piece.x, piece.y) ? piece.x : null,
+            y: onPizza(piece.x, piece.y) ? piece.y : null
+          }))
+      };
+    }
+  } catch { /* The activity still works when storage is unavailable. */ }
+  return blank();
+}
+
+let recipe = loadPizza();
+let selected = null;
+let drag = null;
+
+function save() {
+  try {
+    localStorage.setItem(storageKey, JSON.stringify(recipe));
+  } catch {
+    status.textContent = 'このブラウザではピザを保存できません。';
+  }
+}
+
+function selectPiece(id) {
+  selected = id;
+  for (const button of document.querySelectorAll('.piece')) {
+    button.setAttribute('aria-pressed', String(button.dataset.id === id));
+  }
+  byId('return').disabled = !recipe.pieces.some(piece => piece.id === id && piece.x !== null);
+}
+
+function movePiece(piece, x, y) {
+  const inside = onPizza(x, y);
+  piece.x = inside ? x : null;
+  piece.y = inside ? y : null;
+  save();
+  render();
+}
+
+function placeAt(piece, clientX, clientY) {
+  const rect = pizza.getBoundingClientRect();
+  movePiece(piece, (clientX - rect.left) * 100 / rect.width, (clientY - rect.top) * 100 / rect.height);
+}
+
+function setUpPieceDrag(button, piece, image) {
+  button.addEventListener('pointerdown', event => {
+    if (event.button !== 0 || !event.isPrimary) return;
+    drag = { pointerId: event.pointerId, x: event.clientX, y: event.clientY };
+    button.setPointerCapture(event.pointerId);
+  });
+  button.addEventListener('pointermove', event => {
+    if (drag?.pointerId !== event.pointerId) return;
+    if (!drag.ghost && Math.hypot(event.clientX - drag.x, event.clientY - drag.y) > 6) {
+      drag.ghost = image.cloneNode();
+      drag.ghost.className = 'drag-ghost';
+      document.body.append(drag.ghost);
+      button.classList.add('dragging');
+    }
+    if (drag.ghost) {
+      drag.ghost.style.left = event.clientX + 'px';
+      drag.ghost.style.top = event.clientY + 'px';
+    }
+  });
+  function finish(event) {
+    if (drag?.pointerId !== event.pointerId) return;
+    const moved = Boolean(drag.ghost);
+    drag.ghost?.remove();
+    drag = null;
+    button.classList.remove('dragging');
+    if (moved && event.type === 'pointerup') {
+      selected = piece.id;
+      placeAt(piece, event.clientX, event.clientY);
+    }
+  }
+  button.addEventListener('pointerup', finish);
+  button.addEventListener('pointercancel', finish);
+  button.addEventListener('lostpointercapture', finish);
+}
+
+function render() {
+  const base = byId('base');
+  const source = 'assets/base-' + recipe.sauce + '.webp';
+  if (base.getAttribute('src') !== source) base.src = source;
+  document.querySelector('input[name="sauce"][value="' + recipe.sauce + '"]').checked = true;
+  byId('cheese-layer').hidden = !recipe.cheese;
+  byId('cheese').setAttribute('aria-pressed', String(recipe.cheese));
+  byId('cheese').textContent = recipe.cheese ? 'チーズをはずす' : 'チーズをのせる';
+  tray.replaceChildren();
+  toppings.replaceChildren();
+  let inTray = 0;
+  for (const piece of recipe.pieces) {
+    const ingredient = ingredients.find(item => item.id === piece.ingredient);
+    const button = document.createElement('button');
+    const image = document.createElement('img');
+    button.type = 'button';
+    button.className = 'piece';
+    button.dataset.id = piece.id;
+    button.dataset.ingredient = piece.ingredient;
+    button.setAttribute('aria-label', ingredient.name + (piece.x === null ? '・買い物かご' : '・ピザの上'));
+    image.src = ingredient.image;
+    image.alt = '';
+    image.draggable = false;
+    button.append(image);
+    button.addEventListener('click', () => selectPiece(piece.id));
+    setUpPieceDrag(button, piece, image);
+    if (piece.x === null) {
+      tray.append(button);
+      inTray++;
+    } else {
+      button.style.left = piece.x + '%';
+      button.style.top = piece.y + '%';
+      toppings.append(button);
+    }
+  }
+  byId('count').textContent = inTray;
+  if (!inTray) tray.textContent = '買った具材がここに入ります。';
+  selectPiece(selected);
+}
+
+byId('placement').addEventListener('click', event => {
+  const piece = recipe.pieces.find(item => item.id === selected);
+  if (!piece) return;
+  if (event.detail === 0) {
+    movePiece(piece, 50, 50);
+  } else {
+    const rect = pizza.getBoundingClientRect();
+    const x = (event.clientX - rect.left) * 100 / rect.width;
+    const y = (event.clientY - rect.top) * 100 / rect.height;
+    if (onPizza(x, y)) movePiece(piece, x, y);
+  }
+});
+
+byId('return').addEventListener('click', () => {
+  const piece = recipe.pieces.find(item => item.id === selected);
+  if (piece) movePiece(piece, null, null);
+});
+byId('reset').addEventListener('click', () => {
+  if (!confirm('ピザと買い物かごを空にして、はじめから作りますか？')) return;
+  recipe = blank();
+  selected = null;
+  status.textContent = '英語で注文して、お店の人から具材のカードを見せてもらおう。';
+  save();
+  render();
+});
+document.querySelectorAll('input[name="sauce"]').forEach(radio => radio.addEventListener('change', () => {
+  recipe.sauce = radio.value;
+  save();
+  render();
+}));
+byId('cheese').addEventListener('click', () => {
+  recipe.cheese = !recipe.cheese;
+  save();
+  render();
+});
+
+function receive(code) {
+  if (code === 'dekiru:pizza:v1:green-pepper') {
+    return '前の試作品のQRです。SHOP A〜Dの新しい具材カードを使ってください。';
+  }
+  const parts = code.match(/^dekiru:pizza:v2:([a-z]+):([a-z-]+)$/);
+  const shop = shops.find(item => item.id === parts?.[1]);
+  const ingredient = ingredients.find(item => item.id === parts?.[2]);
+  if (!shop || !ingredient) return 'このQRはピザの具材カードではありません。';
+  if (recipe.pieces.some(piece => piece.shop === shop.id && piece.ingredient === ingredient.id)) {
+    return shop.name + 'で' + ingredient.name + 'は買いました。もう一つほしいときは、別のお店で注文しよう。';
+  }
+  recipe.pieces.push({ id: shop.id + ':' + ingredient.id, ingredient: ingredient.id, shop: shop.id, x: null, y: null });
+  status.textContent = shop.name + 'で' + ingredient.name + 'を1つ買いました！';
+  save();
+  render();
+  return null;
+}
+
+window.setUpPizzaScanner(receive);
+render();

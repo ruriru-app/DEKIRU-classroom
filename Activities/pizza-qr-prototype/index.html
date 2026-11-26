@@ -1,8 +1,60 @@
 <!doctype html>
-<html lang="ja"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MY PIZZA | DEKIRU</title>
-<link rel="stylesheet" href="style.css">
-<header><div><small>LET’S GO SHOPPING · 試作品</small><h1>MY PIZZA <span>ピーマン</span></h1></div><button id="reset">はじめから</button></header>
-<main><section class="workspace"><div class="intro"><h2>買った具材で、ピザを作ろう！</h2><p>① お店で英語で注文 → ② QRを読む → ③ ピザにのせる</p></div><div id="pizza" role="button" tabindex="0" aria-label="ピザ。具材を選んでからタップするとのせられます"><div class="cheese"></div></div><p class="hint">具材をドラッグしてのせよう。具材を選んで、ピザをタップしてもOK！</p></section>
-<aside><h2>買い物かご</h2><button class="primary" id="scan">📷 QRを読み取る</button><p id="status" role="status" aria-live="polite">お店のピーマンのQRを読み取ろう。</p><div id="tray" aria-label="具材のトレー"></div><button id="return" disabled>選んだ具材をかごに戻す</button><p class="hint">1回のお買い物で、ピーマンを4つもらえます。<br>買い物かごとピザは、このブラウザに自動保存します。</p></aside></main>
-<dialog id="camera"><h2>お店のQRを読み取ろう</h2><video autoplay playsinline muted></video><p id="camera-status" role="status">カメラを準備しています…</p><button id="close">閉じる</button><p class="hint">カメラ画像は端末内で読み取り、保存・送信しません。</p></dialog>
-<script src="vendor/jsQR.js"></script><script src="app.js"></script></html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MY PIZZA | DEKIRU</title>
+  <link rel="stylesheet" href="style.css?v=2">
+  <script defer src="vendor/jsQR.js"></script>
+  <script defer src="catalog.js?v=2"></script>
+  <script defer src="scanner.js?v=2"></script>
+  <script defer src="app.js?v=2"></script>
+</head>
+<body>
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">LET’S GO SHOPPING</p>
+      <h1>MY PIZZA</h1>
+    </div>
+    <button id="reset" type="button">はじめから</button>
+  </header>
+  <main>
+    <section class="kitchen" aria-label="ピザを作る">
+      <div class="prep">
+        <fieldset>
+          <legend>ソースを選ぶ</legend>
+          <label><input type="radio" name="sauce" value="tomato"> トマト</label>
+          <label><input type="radio" name="sauce" value="white"> ホワイト</label>
+        </fieldset>
+        <button id="cheese" type="button" aria-pressed="false">チーズをのせる</button>
+      </div>
+      <div id="pizza" role="group" aria-label="ピザ">
+        <img id="base" src="assets/base-tomato.webp" alt="" draggable="false">
+        <img id="cheese-layer" src="assets/cheese.webp" alt="" draggable="false" hidden>
+        <button type="button" id="placement" aria-label="選んだ具材をピザにのせる"></button>
+        <div id="toppings"></div>
+      </div>
+      <p class="hint placement-hint">具材をドラッグするか、具材を選んでピザをタップしよう。</p>
+    </section>
+    <aside>
+      <h2>買い物かご <span id="count">0</span></h2>
+      <div class="shop-phrase" lang="en">
+        <strong>What do you want?</strong>
+        <span>I want green peppers, please.</span>
+      </div>
+      <button class="primary" id="scan" type="button">QRを読み取る</button>
+      <p id="status" role="status">英語で注文して、お店の人から具材のカードを見せてもらおう。</p>
+      <div id="tray" aria-label="買い物かごの具材"></div>
+      <button id="return" type="button" disabled>選んだ具材をかごに戻す</button>
+      <p class="hint">同じ具材をもう一つ買うときは、別のお店で注文しよう。ピザと買い物かごは、このブラウザに自動で保存されます。</p>
+    </aside>
+  </main>
+  <dialog id="camera" aria-labelledby="camera-title">
+    <h2 id="camera-title">具材カードのQRを読み取ろう</h2>
+    <video autoplay playsinline muted aria-label="カメラの映像"></video>
+    <p id="camera-status" role="status">カメラを準備しています…</p>
+    <button id="close" type="button">閉じる</button>
+    <p class="hint">カメラ画像は端末内で読み取り、保存・送信しません。</p>
+  </dialog>
+</body>
+</html>
