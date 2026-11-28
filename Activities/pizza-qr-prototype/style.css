@@ -77,11 +77,14 @@ main {
 .prep label:has(:checked), #cheese[aria-pressed="true"] { background: #e8efd9; border-color: #79906e; }
 input { accent-color: var(--green); }
 #pizza {
+  --pizza-piece-scale: .14;
+  --pizza-piece-inset: 10px;
   position: relative;
   isolation: isolate;
   width: min(100%, max(338px, calc(100dvh - 218px)), 650px);
   aspect-ratio: 1;
   margin-inline: auto;
+  touch-action: none;
 }
 #base, #cheese-layer, #toppings, #placement { position: absolute; inset: 0; width: 100%; height: 100%; }
 #base, #cheese-layer { pointer-events: none; object-fit: contain; }
@@ -157,6 +160,17 @@ input { accent-color: var(--green); }
   pointer-events: auto;
 }
 #toppings .piece[aria-pressed="true"] { background: transparent; }
+#pizza #toppings .piece {
+  width: calc(100% * var(--pizza-piece-scale) - var(--pizza-piece-inset));
+  height: auto;
+  aspect-ratio: 1;
+  padding: 0;
+  border: 0;
+}
+#pizza #toppings .piece:is([aria-pressed="true"], :focus-visible) { outline: none; }
+#pizza #toppings .piece:is([aria-pressed="true"], :focus-visible) img {
+  filter: drop-shadow(0 0 1px #234d76) drop-shadow(0 0 3px #3096bd);
+}
 .piece.dragging { opacity: .25; }
 .drag-ghost {
   position: fixed;

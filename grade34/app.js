@@ -93,7 +93,7 @@
       subtitle: "英語で具材を注文して、自分だけのピザを作ろう",
       units: ["lt2-7"],
       unitOnly: true,
-      href: `${ASSET_BASE}Activities/pizza-qr-prototype/?v=8`,
+      href: `${ASSET_BASE}Activities/pizza-qr-prototype/?v=9`,
       printHref: `${ASSET_BASE}Activities/pizza-qr-prototype/pizza-shop-cards.pdf?v=7`,
       qrShare: true,
     },

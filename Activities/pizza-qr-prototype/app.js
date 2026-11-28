@@ -3,6 +3,7 @@
 const { shops, ingredients } = window.PizzaCatalog;
 const byId = id => document.getElementById(id);
 const pizza = byId('pizza');
+const workspace = pizza.closest('.kitchen');
 const tray = byId('tray');
 const toppings = byId('toppings');
 const status = byId('status');
@@ -15,6 +16,8 @@ const knownIngredient = id => ingredients.some(ingredient => ingredient.id === i
 const knownShop = id => shops.some(shop => shop.id === id);
 const onPizza = (x, y) => Number.isFinite(x) && Number.isFinite(y) && Math.hypot(x - 50, y - 50) <= 39;
 const wrapAngle = degrees => ((degrees % 360) + 360) % 360;
+const alphaThreshold = 48;
+const spriteMasks = new Map();
 
 function loadPizza() {
   try {
@@ -48,6 +51,7 @@ function loadPizza() {
 let recipe = loadPizza();
 let selected = null;
 let drag = null;
+let placedViews = [];
 
 function save() {
   try {
@@ -89,44 +93,114 @@ function movePiece(piece, x, y) {
   render();
 }
 
-function placeAt(piece, clientX, clientY) {
-  const rect = pizza.getBoundingClientRect();
-  movePiece(piece, (clientX - rect.left) * 100 / rect.width, (clientY - rect.top) * 100 / rect.height);
+function boardPoint(clientX, clientY, rect = pizza.getBoundingClientRect()) {
+  return [(clientX - rect.left) * 100 / rect.width, (clientY - rect.top) * 100 / rect.height];
 }
 
-function setUpPieceDrag(button, piece, image) {
-  button.addEventListener('pointerdown', event => {
-    if (event.button !== 0 || !event.isPrimary) return;
-    drag = { pointerId: event.pointerId, x: event.clientX, y: event.clientY };
-    button.setPointerCapture(event.pointerId);
-  });
-  button.addEventListener('pointermove', event => {
-    if (drag?.pointerId !== event.pointerId) return;
-    if (!drag.ghost && Math.hypot(event.clientX - drag.x, event.clientY - drag.y) > 6) {
-      drag.ghost = image.cloneNode();
-      drag.ghost.className = 'drag-ghost';
-      document.body.append(drag.ghost);
-      button.classList.add('dragging');
-    }
-    if (drag.ghost) {
-      drag.ghost.style.left = event.clientX + 'px';
-      drag.ghost.style.top = event.clientY + 'px';
-    }
-  });
-  function finish(event) {
-    if (drag?.pointerId !== event.pointerId) return;
-    const moved = Boolean(drag.ghost);
-    drag.ghost?.remove();
-    drag = null;
-    button.classList.remove('dragging');
-    if (moved && event.type === 'pointerup') {
-      selected = piece.id;
-      placeAt(piece, event.clientX, event.clientY);
+function pointInRect(x, y, rect) {
+  return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
+}
+
+function opacityMask(image) {
+  const url = image.currentSrc || image.src;
+  if (!spriteMasks.has(url)) {
+    try {
+      const canvas = document.createElement('canvas');
+      canvas.width = image.naturalWidth;
+      canvas.height = image.naturalHeight;
+      const context = canvas.getContext('2d');
+      context.drawImage(image, 0, 0);
+      spriteMasks.set(url, context.getImageData(0, 0, canvas.width, canvas.height).data);
+    } catch {
+      // Keep the image selectable if the browser cannot read its pixels.
+      spriteMasks.set(url, null);
     }
   }
-  button.addEventListener('pointerup', finish);
-  button.addEventListener('pointercancel', finish);
-  button.addEventListener('lostpointercapture', finish);
+  return spriteMasks.get(url);
+}
+
+function spriteContains({ image, piece }, x, y) {
+  const bounds = image.getBoundingClientRect();
+  if (!pointInRect(x, y, bounds) || !image.complete || !image.naturalWidth) return false;
+
+  // Undo the displayed rotation and object-fit:contain to find the source pixel.
+  const radians = piece.rotation * Math.PI / 180;
+  const sine = Math.sin(radians);
+  const cosine = Math.cos(radians);
+  const dx = x - bounds.left - bounds.width / 2;
+  const dy = y - bounds.top - bounds.height / 2;
+  const style = getComputedStyle(image);
+  const scale = Math.min(parseFloat(style.width) / image.naturalWidth, parseFloat(style.height) / image.naturalHeight);
+  if (!scale) return false;
+  const sampleX = Math.floor((dx * cosine + dy * sine) / scale + image.naturalWidth / 2);
+  const sampleY = Math.floor((dy * cosine - dx * sine) / scale + image.naturalHeight / 2);
+  if (sampleX < 0 || sampleX >= image.naturalWidth || sampleY < 0 || sampleY >= image.naturalHeight) return false;
+  const mask = opacityMask(image);
+  return !mask || mask[(sampleY * image.naturalWidth + sampleX) * 4 + 3] >= alphaThreshold;
+}
+
+function pickPiece(x, y) {
+  if (!pointInRect(x, y, pizza.getBoundingClientRect())) return null;
+  for (let index = placedViews.length - 1; index >= 0; index--) {
+    if (spriteContains(placedViews[index], x, y)) return placedViews[index];
+  }
+  return null;
+}
+
+function startDrag(event, view, fromBoard = false) {
+  if (drag || event.button !== 0 || !event.isPrimary) return;
+  drag = { pointerId: event.pointerId, x: event.clientX, y: event.clientY, view, fromBoard, moved: false };
+  event.currentTarget.setPointerCapture(event.pointerId);
+  if (fromBoard) event.preventDefault();
+}
+
+function updateDragGhost(ghost, clientX, clientY) {
+  const inWorkspace = pointInRect(clientX, clientY, workspace.getBoundingClientRect());
+  const style = getComputedStyle(pizza);
+  const scale = Number(style.getPropertyValue('--pizza-piece-scale'));
+  const inset = parseFloat(style.getPropertyValue('--pizza-piece-inset'));
+  const size = inWorkspace ? pizza.getBoundingClientRect().width * scale - inset : 58;
+  ghost.style.width = size + 'px';
+  ghost.style.height = size + 'px';
+  ghost.style.left = clientX + 'px';
+  ghost.style.top = clientY + 'px';
+}
+
+function trackDrag(event) {
+  if (drag?.pointerId !== event.pointerId) return;
+  if (!drag.moved) {
+    drag.moved = Math.hypot(event.clientX - drag.x, event.clientY - drag.y) > 6;
+    if (drag.moved && drag.view) {
+      drag.ghost = drag.view.image.cloneNode();
+      drag.ghost.className = 'drag-ghost';
+      document.body.append(drag.ghost);
+      drag.view.button.classList.add('dragging');
+    }
+  }
+  if (drag.ghost) updateDragGhost(drag.ghost, event.clientX, event.clientY);
+}
+
+function finishDrag(event) {
+  if (drag?.pointerId !== event.pointerId) return;
+  const { view, ghost, moved, fromBoard } = drag;
+  drag = null;
+  ghost?.remove();
+  view?.button.classList.remove('dragging');
+  if (event.type !== 'pointerup') return;
+
+  const [x, y] = boardPoint(event.clientX, event.clientY);
+  if (view && moved) {
+    selected = view.piece.id;
+    movePiece(view.piece, x, y);
+  } else if (fromBoard && !moved) {
+    if (view) {
+      view.button.focus({ preventScroll: true });
+      selectPiece(view.piece.id);
+    } else {
+      const piece = recipe.pieces.find(item => item.id === selected);
+      if (piece && onPizza(x, y)) movePiece(piece, x, y);
+    }
+  }
 }
 
 function render() {
@@ -139,6 +213,7 @@ function render() {
   byId('cheese').textContent = recipe.cheese ? 'チーズをはずす' : 'チーズをのせる';
   tray.replaceChildren();
   toppings.replaceChildren();
+  placedViews = [];
   let inTray = 0;
   for (const piece of recipe.pieces) {
     const ingredient = ingredients.find(item => item.id === piece.ingredient);
@@ -151,18 +226,21 @@ function render() {
     button.setAttribute('aria-label', ingredient.name + (piece.x === null ? '・買い物かご' : '・ピザの上'));
     image.src = ingredient.image;
     image.alt = '';
+    image.dataset.ingredient = ingredient.id;
     image.draggable = false;
     setRotation(image, piece);
     button.append(image);
     button.addEventListener('click', () => selectPiece(piece.id));
-    setUpPieceDrag(button, piece, image);
+    const view = { piece, button, image };
     if (piece.x === null) {
+      button.addEventListener('pointerdown', event => startDrag(event, view));
       tray.append(button);
       inTray++;
     } else {
       button.style.left = piece.x + '%';
       button.style.top = piece.y + '%';
       toppings.append(button);
+      placedViews.push(view);
     }
   }
   byId('count').textContent = inTray;
@@ -171,17 +249,23 @@ function render() {
   selectPiece(selected);
 }
 
-byId('placement').addEventListener('click', event => {
+pizza.addEventListener('pointerdown', event => {
+  startDrag(event, pickPiece(event.clientX, event.clientY), true);
+});
+pizza.addEventListener('click', event => {
+  if (event.detail === 0) return;
+  // Pointer taps use visible shapes; keep native keyboard clicks on the buttons.
+  event.preventDefault();
+  event.stopPropagation();
+}, true);
+document.addEventListener('pointermove', trackDrag);
+document.addEventListener('pointerup', finishDrag);
+document.addEventListener('pointercancel', finishDrag);
+document.addEventListener('lostpointercapture', finishDrag);
+
+byId('placement').addEventListener('click', () => {
   const piece = recipe.pieces.find(item => item.id === selected);
-  if (!piece) return;
-  if (event.detail === 0) {
-    movePiece(piece, 50, 50);
-  } else {
-    const rect = pizza.getBoundingClientRect();
-    const x = (event.clientX - rect.left) * 100 / rect.width;
-    const y = (event.clientY - rect.top) * 100 / rect.height;
-    if (onPizza(x, y)) movePiece(piece, x, y);
-  }
+  if (piece) movePiece(piece, 50, 50);
 });
 
 byId('return').addEventListener('click', () => {
