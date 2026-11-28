@@ -2,6 +2,15 @@
 .eyebrow, .print-actions button { color: #7b3150; }
 .print-actions a { background: #7b3150; }
 .print-actions button { border-color: #e6cbd7; }
+.shop-groups { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.shop-groups a {
+  border: 1px solid #e6cbd7;
+  border-radius: 7px;
+  color: #7b3150;
+  padding: 6px 10px;
+}
+.shop-groups a[aria-current] { background: #7b3150; color: white; }
+.shop-group-name { margin-top: 2px; }
 
 @media print {
   :root { background: white; }

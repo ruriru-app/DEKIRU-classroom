@@ -94,17 +94,24 @@
       units: ["lt2-7"],
       unitOnly: true,
       href: `${ASSET_BASE}Activities/pizza-qr-prototype/?v=9`,
-      printHref: `${ASSET_BASE}Activities/pizza-qr-prototype/pizza-shop-cards.pdf?v=7`,
+      printLinks: [
+        { label: "お店用カードを印刷（PDF）", href: `${ASSET_BASE}Activities/pizza-qr-prototype/pizza-shop-cards.pdf?v=7` },
+      ],
       qrShare: true,
     },
     {
       id: "my-parfait",
       title: "MY PARFAIT",
-      subtitle: "英語でフルーツを注文して、自分だけのパフェを作ろう",
+      subtitle: "英語でフルーツやゼリー、アイスを注文して、自分だけのパフェを作ろう",
       units: ["lt2-7"],
       unitOnly: true,
-      href: `${ASSET_BASE}Activities/parfait/?v=5`,
-      printHref: `${ASSET_BASE}Activities/parfait/parfait-shop-cards.pdf?v=2`,
+      href: `${ASSET_BASE}Activities/parfait/?v=6`,
+      printLinks: [
+        { label: "フルーツ屋さん用PDF", href: `${ASSET_BASE}Activities/parfait/parfait-fruit-shop-cards.pdf` },
+        { label: "ゼリー屋さん用PDF", href: `${ASSET_BASE}Activities/parfait/parfait-jelly-shop-cards.pdf` },
+        { label: "アイス屋さん用PDF", href: `${ASSET_BASE}Activities/parfait/parfait-ice-shop-cards.pdf` },
+        { label: "先生用QR", href: `${ASSET_BASE}Activities/parfait/parfait-teacher-cards.pdf` },
+      ],
       qrShare: true,
     },
   ];
@@ -234,7 +241,9 @@
     return `<div class="tile-actions">
       <a class="primary-button" href="${escapeHtml(activity.href)}" target="_blank" rel="noopener">${escapeHtml(activity.openLabel || "ひらく")}</a>
       ${activity.teacherOnly ? "" : `<button class="secondary-button" data-share="${escapeHtml(activity.id)}">配布</button>`}
-      ${activity.printHref ? `<a class="secondary-button" href="${escapeHtml(activity.printHref)}" target="_blank" rel="noopener">お店用カードを印刷（PDF）</a>` : ""}
+      ${(activity.printLinks || []).map(({ label, href }) =>
+        `<a class="secondary-button" href="${escapeHtml(href)}" target="_blank" rel="noopener" type="application/pdf">${escapeHtml(label)}</a>`
+      ).join("")}
     </div>`;
   }
 

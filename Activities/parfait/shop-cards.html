@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>MY PARFAIT お店用カード | DEKIRU</title>
   <link rel="stylesheet" href="../pizza-qr-prototype/shop-cards.css?v=7">
-  <link rel="stylesheet" href="shop-cards.css?v=1">
-  <script defer src="catalog.js?v=2"></script>
-  <script defer src="shop-cards.js?v=1"></script>
+  <link rel="stylesheet" href="shop-cards.css?v=2">
+  <script defer src="catalog.js?v=6"></script>
+  <script defer src="shop-cards.js?v=2"></script>
 </head>
 <body>
   <main>
@@ -15,11 +15,12 @@
       <div>
         <p class="eyebrow">MY PARFAIT</p>
         <h1>お店用QRカード</h1>
-        <p>SHOP A〜Jに、果物9種類とアイスクリーム3種類がそろっています。1店舗につきA4で2枚です。</p>
+        <p id="group-description"></p>
         <p>店名ごとに用紙をまとめてカードを切り分け、お客さんが注文した具材のカードを見せましょう。QRを1回読むと具材が1つ入ります。</p>
+        <nav class="shop-groups" aria-label="お店の種類"></nav>
       </div>
       <div class="print-actions">
-        <a href="parfait-shop-cards.pdf?v=2" target="_blank" rel="noopener">印刷用PDFを開く</a>
+        <a id="open-pdf" target="_blank" rel="noopener">印刷用PDFを開く</a>
         <button type="button" id="print">このページを印刷</button>
       </div>
     </header>
@@ -27,7 +28,10 @@
     <template id="sheet-template">
       <section class="shop-page">
         <header class="shop-heading">
-          <h2><span class="shop-name"></span><span class="sheet-number"></span></h2>
+          <div>
+            <h2><span class="shop-name" lang="en"></span><span class="sheet-number"></span></h2>
+            <p class="shop-group-name"></p>
+          </div>
           <p lang="en">MY PARFAIT · What do you want?</p>
         </header>
         <div class="cards"></div>

@@ -1,7 +1,15 @@
 'use strict';
 
-const { shops, ingredients, teacherItems, extras } = window.ParfaitCatalog;
-const items = new Map([...ingredients, ...teacherItems, ...extras].map(item => [item.id, item]));
+const { shops, ingredients, shopGroups, teacherItems, extras } = window.ParfaitCatalog;
+const shopDirectory = new Map(shops.map(shop => [shop.id, { name: shop.name, items: ingredients }]));
+for (const group of shopGroups) {
+  for (const shop of group.shops) {
+    shopDirectory.set(group.id + ':' + shop.id, { name: shop.name, items: group.items });
+  }
+}
+shopDirectory.set('teacher', { name: '先生', items: teacherItems });
+const items = new Map([...ingredients, ...shopGroups.flatMap(group => group.items), ...teacherItems, ...extras]
+  .map(item => [item.id, item]));
 const byId = id => document.getElementById(id);
 const board = byId('parfait');
 const workspace = board.closest('.kitchen');
@@ -18,7 +26,7 @@ const buttons = {
 };
 const storageKey = 'dekiru-parfait-v2';
 const previousStorageKey = 'dekiru-parfait-v1';
-const welcome = '英語で果物やアイスを注文しよう。QRを1回読むと1つもらえます。';
+const welcome = '英語でフルーツ・ゼリー・アイスなどを注文しよう。QRを1回読むと1つもらえます。';
 const wrapAngle = degrees => ((degrees % 360) + 360) % 360;
 const layerEdges = [75.6, 65.7, 55.8, 45.9, 36];
 const layerLimit = layerEdges.length - 1;
@@ -34,8 +42,10 @@ const bowlProfile = [
 ];
 const isFitted = piece => piece.layer === true;
 const isPlaced = piece => isFitted(piece) || piece.x !== null;
-const isScoop = piece => piece.ingredient.endsWith('ice-cream');
+const isScoop = piece => items.get(piece.ingredient).scoop === true;
+const isJelly = piece => items.get(piece.ingredient).jelly === true;
 const spriteMasks = new Map();
+const layerSources = new Map();
 const alphaThreshold = 48;
 
 function toppingOutline() {
@@ -63,10 +73,30 @@ function canPlace(x, y) {
 }
 
 function takesLayer(piece, x, y) {
-  return canPlace(x, y) && y >= layerDropY && items.get(piece.ingredient).layer === true;
+  return items.get(piece.ingredient).layer === true && canPlace(x, y)
+    && y >= (isJelly(piece) ? bowlTop : layerDropY);
 }
 
 function textureSource(item) {
+  if (item.layerColors) {
+    if (!layerSources.has(item.id)) {
+      const [light, dark] = item.layerColors;
+      const highlight = item.jelly
+        ? '<ellipse cx="105" cy="23" rx="117" ry="9" fill="white" opacity=".18"/>'
+        : '';
+      const flecks = item.crumb
+        ? '<path d="M24 31l5 2-1 5-5-1zM77 77l6-3 4 5-5 5zM130 29l6 3-2 5-5-2zM181 82l7 1-2 6-5-1zM247 41l6-4 3 6-5 4zM329 62l7 2-2 6-5-2z" fill="' + item.crumb + '"/>'
+        : '';
+      const gradient = '<linearGradient id="fill" x2="0%" y2="100%">'
+        + '<stop offset="0%" stop-color="' + light + '"/>'
+        + '<stop offset="' + (item.jelly ? '33%' : '55%') + '" stop-color="' + light + '"/>'
+        + '<stop offset="100%" stop-color="' + dark + '"/></linearGradient>';
+      const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 112"><defs>'
+        + gradient + '</defs><path d="M0 0h360v112H0z" fill="url(#fill)"/>' + highlight + flecks + '</svg>';
+      layerSources.set(item.id, 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg));
+    }
+    return layerSources.get(item.id);
+  }
   return item.texture ?? 'assets/' + item.id + '-texture.webp';
 }
 
@@ -80,8 +110,7 @@ function storeInTray(piece) {
 
 function cleanPieces(stored) {
   return stored.filter(piece => piece && typeof piece.id === 'string' && items.has(piece.ingredient)
-    && (piece.shop === null || shops.some(shop => shop.id === piece.shop)
-      || (piece.shop === 'teacher' && teacherItems.some(item => item.id === piece.ingredient))))
+    && (piece.shop === null || shopDirectory.get(piece.shop)?.items.some(item => item.id === piece.ingredient)))
     .map(piece => ({
       ...piece,
       rotation: Number.isFinite(piece.rotation) ? wrapAngle(piece.rotation) : 0
@@ -94,7 +123,7 @@ function migratePieces(stored) {
     && items.get(piece.ingredient).layer).sort((a, b) => b.y - a.y);
   const layers = oldLayers.slice(0, layerLimit).map(fitLayer);
   const rest = loaded.filter(piece => !oldLayers.includes(piece)).map(piece => {
-    if (!Number.isFinite(piece.x) || !Number.isFinite(piece.y)) return storeInTray(piece);
+    if (isJelly(piece) || !Number.isFinite(piece.x) || !Number.isFinite(piece.y)) return storeInTray(piece);
     const minY = isScoop(piece) ? firstScoopY : firstToppingY;
     const y = Math.max(minY, Math.min(bowlBottom, bowlTop + (piece.y - 20) * 0.8));
     const halfWidth = toppingHalfWidth(y);
@@ -114,7 +143,7 @@ function loadPieces() {
           layers++;
           return fitLayer(piece);
         }
-        return canPlace(piece.x, piece.y) ? { ...piece, layer: false } : storeInTray(piece);
+        return !isJelly(piece) && canPlace(piece.x, piece.y) ? { ...piece, layer: false } : storeInTray(piece);
       });
     }
     const previous = JSON.parse(localStorage.getItem(previousStorageKey));
@@ -168,12 +197,21 @@ function rotateSelected(degrees) {
 function movePiece(piece, x, y) {
   const onBoard = canPlace(x, y);
   const fitting = takesLayer(piece, x, y);
+  const jelly = isJelly(piece);
+  if (jelly && (x !== null || y !== null) && !fitting) {
+    status.textContent = 'ゼリーはグラスの中に入れよう。';
+    selectPiece(piece.id);
+    return;
+  }
   if (fitting && isFitted(piece)) {
+    if (jelly) status.textContent = 'ゼリーはグラスの中に入っています。';
     selectPiece(piece.id);
     return;
   }
   if (fitting && pieces.filter(isFitted).length >= layerLimit) {
-    status.textContent = 'グラスの中は4段までです。グラスの上に盛ってみよう。';
+    status.textContent = jelly
+      ? 'グラスの中は4段までです。空きを作ってから、ゼリーを入れよう。'
+      : 'グラスの中は4段までです。グラスの上に盛ってみよう。';
     selectPiece(piece.id);
     return;
   }
@@ -183,6 +221,7 @@ function movePiece(piece, x, y) {
   // Array order determines stacking. Removing a layer closes the gap above it.
   pieces.splice(pieces.indexOf(piece), 1);
   pieces.push(piece);
+  if (jelly) status.textContent = fitting ? 'ゼリーをグラスの中に入れました。' : 'ゼリーをかごに戻しました。';
   save();
   render();
 }
@@ -251,11 +290,11 @@ function tapBoard(view, clientX, clientY) {
   const waiting = currentPiece();
   const [x, y] = boardPoint(clientX, clientY);
   if (!view) {
-    if (waiting && canPlace(x, y)) movePiece(waiting, x, y);
+    if (waiting && (isJelly(waiting) || canPlace(x, y))) movePiece(waiting, x, y);
     return;
   }
   if (isFitted(view.piece) && waiting && !isPlaced(waiting)) {
-    if (!items.get(waiting.ingredient).layer) {
+    if (isJelly(waiting) || !items.get(waiting.ingredient).layer) {
       movePiece(waiting, x, y);
       return;
     }
@@ -362,6 +401,7 @@ function render() {
     button.className = 'piece';
     button.dataset.id = piece.id;
     button.dataset.ingredient = piece.ingredient;
+    if (item.scoop) button.dataset.scoop = 'true';
     if (isPlaced(piece)) button.dataset.inside = String(inside);
     if (item.layer || item.sauce) button.dataset.size = layer ? 'layer' : item.sauce ? 'wide' : 'large';
     button.setAttribute('aria-label', item.name + (inside ? '・グラスの中' : isPlaced(piece) ? '・グラスの上' : '・買い物かご'));
@@ -399,13 +439,14 @@ function addPiece(id, item, shop) {
 }
 
 function receive(code) {
-  const match = /^dekiru:parfait:v1:([a-j]|teacher):([a-z-]+)$/.exec(code);
-  if (!match) return 'このQRはパフェの具材カードではありません。';
-  const [, source, ingredient] = match;
+  const legacy = /^dekiru:parfait:v1:([a-j]|teacher):([a-z-]+)$/.exec(code);
+  const grouped = /^dekiru:parfait:v2:(fruit|jelly|ice):([a-f]):([a-z-]+)$/.exec(code);
+  const source = grouped ? grouped[1] + ':' + grouped[2] : legacy?.[1];
+  const ingredient = grouped ? grouped[3] : legacy?.[2];
   const fromTeacher = source === 'teacher';
-  const shop = shops.find(entry => entry.id === source);
-  const item = (fromTeacher ? teacherItems : ingredients).find(entry => entry.id === ingredient);
-  if (!item || (!fromTeacher && !shop)) return 'このQRはパフェの具材カードではありません。';
+  const shop = shopDirectory.get(source);
+  const item = shop?.items.find(entry => entry.id === ingredient);
+  if (!item) return 'このQRはパフェの具材カードではありません。';
   if (pieces.some(piece => piece.shop === source && piece.ingredient === item.id)) {
     if (fromTeacher) return item.name + 'は先生から受け取りました。先生のカードは1種類につき1回使えます。';
     return shop.name + 'で' + item.name + 'は買いました。買い足すときは別のお店で注文しよう。';
