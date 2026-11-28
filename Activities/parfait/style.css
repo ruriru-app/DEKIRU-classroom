@@ -44,8 +44,8 @@ main { grid-template-columns: minmax(0, 1fr) 334px; }
 .piece[data-ingredient="pineapple"] { --board-piece-scale: .29; }
 .piece[data-ingredient="cherry"] { --board-piece-scale: .19; }
 .piece:is([data-ingredient="kiwi"], [data-ingredient="strawberry"], [data-ingredient="whole-strawberry"]) { --board-piece-scale: .27; }
-.piece[data-ingredient="diagonal-banana"] { --board-piece-scale: .46; }
-.piece[data-ingredient="sliced-melon"] { --board-piece-scale: .39; }
+.piece[data-ingredient="diagonal-banana"] { --board-piece-scale: .39; }
+.piece[data-ingredient="sliced-melon"] { --board-piece-scale: .45; }
 .piece[data-scoop="true"] { --board-piece-scale: .43; }
 .piece[data-ingredient="chocolate-sprinkles"]:not([data-scatter-part]) { --board-piece-scale: .30; }
 .piece[data-ingredient="nuts"]:not([data-scatter-part]) { --board-piece-scale: .27; }
