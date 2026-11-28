@@ -1,7 +1,7 @@
 'use strict';
 
-const { shops, ingredients, extras } = window.ParfaitCatalog;
-const items = new Map([...ingredients, ...extras].map(item => [item.id, item]));
+const { shops, ingredients, teacherItems, extras } = window.ParfaitCatalog;
+const items = new Map([...ingredients, ...teacherItems, ...extras].map(item => [item.id, item]));
 const byId = id => document.getElementById(id);
 const board = byId('parfait');
 const workspace = board.closest('.kitchen');
@@ -80,7 +80,8 @@ function storeInTray(piece) {
 
 function cleanPieces(stored) {
   return stored.filter(piece => piece && typeof piece.id === 'string' && items.has(piece.ingredient)
-    && (piece.shop === null || shops.some(shop => shop.id === piece.shop)))
+    && (piece.shop === null || shops.some(shop => shop.id === piece.shop)
+      || (piece.shop === 'teacher' && teacherItems.some(item => item.id === piece.ingredient))))
     .map(piece => ({
       ...piece,
       rotation: Number.isFinite(piece.rotation) ? wrapAngle(piece.rotation) : 0
@@ -398,16 +399,22 @@ function addPiece(id, item, shop) {
 }
 
 function receive(code) {
-  const match = /^dekiru:parfait:v1:([a-j]):([a-z-]+)$/.exec(code);
-  const shop = shops.find(entry => entry.id === match?.[1]);
-  const item = ingredients.find(entry => entry.id === match?.[2]);
-  if (!shop || !item) return 'このQRはパフェの具材カードではありません。';
-  if (pieces.some(piece => piece.shop === shop.id && piece.ingredient === item.id)) {
+  const match = /^dekiru:parfait:v1:([a-j]|teacher):([a-z-]+)$/.exec(code);
+  if (!match) return 'このQRはパフェの具材カードではありません。';
+  const [, source, ingredient] = match;
+  const fromTeacher = source === 'teacher';
+  const shop = shops.find(entry => entry.id === source);
+  const item = (fromTeacher ? teacherItems : ingredients).find(entry => entry.id === ingredient);
+  if (!item || (!fromTeacher && !shop)) return 'このQRはパフェの具材カードではありません。';
+  if (pieces.some(piece => piece.shop === source && piece.ingredient === item.id)) {
+    if (fromTeacher) return item.name + 'は先生から受け取りました。先生のカードは1種類につき1回使えます。';
     return shop.name + 'で' + item.name + 'は買いました。買い足すときは別のお店で注文しよう。';
   }
-  addPiece(shop.id + ':' + item.id, item, shop.id);
-  const quantity = item.layer ? '1つ' : '1切れ';
-  status.textContent = shop.name + 'で' + item.name + 'を' + quantity + '買いました！';
+  addPiece(source + ':' + item.id, item, source);
+  const quantity = item.quantity ?? (item.layer ? '1つ' : '1切れ');
+  status.textContent = fromTeacher
+    ? '先生から' + item.name + 'を' + quantity + '受け取りました！'
+    : shop.name + 'で' + item.name + 'を' + quantity + '買いました！';
   save();
   render();
   return null;

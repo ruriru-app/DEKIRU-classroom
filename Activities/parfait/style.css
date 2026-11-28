@@ -36,7 +36,8 @@ main { grid-template-columns: minmax(0, 1fr) 334px; }
 .piece:is([data-ingredient="apple"], [data-ingredient="orange"], [data-ingredient="peach"]) { --board-piece-scale: .37; }
 .piece[data-ingredient="pineapple"] { --board-piece-scale: .29; }
 .piece[data-ingredient="cherry"] { --board-piece-scale: .19; }
-.piece:is([data-ingredient="kiwi"], [data-ingredient="strawberry"]) { --board-piece-scale: .27; }
+.piece:is([data-ingredient="kiwi"], [data-ingredient="strawberry"], [data-ingredient="whole-strawberry"]) { --board-piece-scale: .27; }
+.piece:is([data-ingredient="diagonal-banana"], [data-ingredient="sliced-melon"]) { --board-piece-scale: .28; }
 .piece:is([data-ingredient="ice-cream"], [data-ingredient="chocolate-ice-cream"], [data-ingredient="strawberry-ice-cream"]) { --board-piece-scale: .43; }
 #toppings .piece {
   width: calc(100% * var(--board-piece-scale));

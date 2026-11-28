@@ -103,7 +103,7 @@
       subtitle: "英語でフルーツを注文して、自分だけのパフェを作ろう",
       units: ["lt2-7"],
       unitOnly: true,
-      href: `${ASSET_BASE}Activities/parfait/?v=4`,
+      href: `${ASSET_BASE}Activities/parfait/?v=5`,
       printHref: `${ASSET_BASE}Activities/parfait/parfait-shop-cards.pdf?v=2`,
       qrShare: true,
     },
