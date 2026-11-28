@@ -9,11 +9,15 @@ globalThis.CardPractice=(()=>{
   const observers=new WeakMap();
   function fitLabels(root){
     observers.get(root)?.disconnect();observers.delete(root);
-    const grid=root.querySelector('.practice-grid:not([data-layout="list"])');
+    const grid=root.querySelector('.practice-grid');
     if(!grid||!grid.closest('.content-panel'))return;
+    const labels=grid.querySelectorAll(grid.dataset.layout==='list'
+      ? '.practice-label:has(>strong + small)'
+      : '.practice-label');
+    if(!labels.length)return;
     const fit=()=>{
       if(!grid.isConnected)return;
-      for(const label of grid.querySelectorAll('.practice-label')){
+      for(const label of labels){
         label.style.fontSize='';label.style.overflowWrap='';
         const children=[...label.children];if(!children.length||!label.clientWidth)continue;
         const style=getComputedStyle(label),base=parseFloat(style.fontSize);

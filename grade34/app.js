@@ -111,6 +111,7 @@
         { label: "ゼリー屋さん用PDF", href: `${ASSET_BASE}Activities/parfait/parfait-jelly-shop-cards.pdf` },
         { label: "アイス屋さん用PDF", href: `${ASSET_BASE}Activities/parfait/parfait-ice-shop-cards.pdf` },
         { label: "先生用QR", href: `${ASSET_BASE}Activities/parfait/parfait-teacher-cards.pdf` },
+        { label: "お店の看板（PDF）", href: `${ASSET_BASE}Activities/parfait/my-parfait-shop-signs-a4.pdf` },
       ],
       qrShare: true,
     },
@@ -282,6 +283,8 @@
       && card.displayGroup === "plus"
       && !basicIds.has(card.id)
     );
+    const specialCategories = new Set(DATA.unitSpecialCategories?.[`${bookKey}-${unit}`] || []);
+    const specialCards = DATA.cards.filter((card) => specialCategories.has(card.category));
 
     const basic = [
       ...directExpressions.map((item) => ({ ...item, kind: "expression", ref: `expr:${item.id}`, level: "Basic", category: "expressions" })),
@@ -290,6 +293,7 @@
     const advance = [
       ...advanceCards.map((item) => ({ ...item, kind: "card", ref: `card:${item.id}`, level: "高学年Basic" })),
       ...plusCards.map((item) => ({ ...item, kind: "card", ref: `card:${item.id}`, level: "高学年Plus" })),
+      ...specialCards.map((item) => ({ ...item, kind: "card", ref: `card:${item.id}`, level: "" })),
     ];
     const groups = buildVocabularyGroups(basic, advance);
     return { basic, advance, groups, categories, mapped: directMappings.length > 0 };
@@ -319,9 +323,11 @@
       const basicItems = basic.filter((item) => item.kind === "card" && item.category === category);
       const advanceItems = advance.filter((item) => item.category === category && item.level === "高学年Basic");
       const plusItems = advance.filter((item) => item.category === category && item.level === "高学年Plus");
+      const specialItems = advance.filter((item) => item.category === category && item.displayGroup === "special");
       if (basicItems.length) groups.push({ key: `${category}-basic`, label, level: "Basic", items: basicItems });
       if (advanceItems.length) groups.push({ key: `${category}-advance`, label, level: "高学年Basic", items: advanceItems });
       if (plusItems.length) groups.push({ key: `${category}-upper-plus`, label, level: "高学年Plus", items: plusItems });
+      if (specialItems.length) groups.push({ key: category, label, level: "", items: specialItems });
     });
     return groups;
   }

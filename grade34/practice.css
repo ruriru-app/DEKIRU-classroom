@@ -32,8 +32,11 @@
 /* Keep the standard picture-card overview dense in both preview and fullscreen. */
 .content-panel .practice-grid[data-layout="list"]{grid-template-columns:repeat(8,minmax(0,1fr));grid-auto-rows:minmax(100px,1fr);height:100%;align-items:stretch;gap:8px}
 .content-panel .practice-grid[data-layout="list"] .practice-card{border-radius:9px;height:100%;aspect-ratio:auto}
-.content-panel .practice-grid[data-layout="list"] .practice-art{padding:1px;height:calc(100% - max(20%,30px))}
-.content-panel .practice-grid[data-layout="list"] .practice-label{top:auto;bottom:0;height:max(20%,30px);padding:1px;font-size:clamp(12px,12cqw,30px);line-height:1.1}
+.content-panel .practice-grid[data-layout="list"] .practice-card:has(.practice-label>strong+small){--practice-list-label-height:max(20%,39px,calc(34cqw + 2px))}
+.content-panel .practice-grid[data-layout="list"] .practice-art{padding:1px;height:calc(100% - var(--practice-list-label-height,max(20%,30px)))}
+.content-panel .practice-grid[data-layout="list"] .practice-label{top:auto;bottom:0;height:var(--practice-list-label-height,max(20%,30px));padding:1px;font-size:clamp(12px,12cqw,30px);line-height:1.1}
+.content-panel .practice-grid[data-layout="list"] .practice-label:has(>strong+small){overflow-wrap:normal}
+.content-panel .practice-grid[data-layout="list"] .practice-label:has(>strong+small)>*{flex:none;max-width:100%;min-width:0}
 .content-panel:has(.practice-scroll){padding:12px}
 .content-panel:has(.practice-scroll) .feature-heading{gap:10px;padding-bottom:6px;min-height:44px}
 .content-panel:has(.practice-scroll) .feature-heading h1{font-size:20px;line-height:1.2;margin:0}
