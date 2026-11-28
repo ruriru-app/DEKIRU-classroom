@@ -105,7 +105,7 @@
       subtitle: "英語でフルーツやゼリー、アイスを注文して、自分だけのパフェを作ろう",
       units: ["lt2-7"],
       unitOnly: true,
-      href: `${ASSET_BASE}Activities/parfait/?v=9`,
+      href: `${ASSET_BASE}Activities/parfait/?v=10`,
       printLinks: [
         { label: "フルーツ屋さん用PDF", href: `${ASSET_BASE}Activities/parfait/parfait-fruit-shop-cards.pdf` },
         { label: "ゼリー屋さん用PDF", href: `${ASSET_BASE}Activities/parfait/parfait-jelly-shop-cards.pdf` },
