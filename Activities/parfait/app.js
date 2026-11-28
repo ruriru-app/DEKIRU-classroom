@@ -1,6 +1,6 @@
 'use strict';
 
-const { shops, ingredients, shopGroups, teacherItems, extras } = window.ParfaitCatalog;
+const { shops, ingredients, shopGroups, teacherItems, extras, legacyExtras } = window.ParfaitCatalog;
 const shopDirectory = new Map(shops.map(shop => [shop.id, { name: shop.name, items: ingredients }]));
 for (const group of shopGroups) {
   for (const shop of group.shops) {
@@ -8,7 +8,7 @@ for (const group of shopGroups) {
   }
 }
 shopDirectory.set('teacher', { name: '先生', items: teacherItems });
-const items = new Map([...ingredients, ...shopGroups.flatMap(group => group.items), ...teacherItems, ...extras]
+const items = new Map([...ingredients, ...shopGroups.flatMap(group => group.items), ...teacherItems, ...extras, ...legacyExtras]
   .map(item => [item.id, item]));
 const byId = id => document.getElementById(id);
 const board = byId('parfait');
@@ -504,14 +504,8 @@ byId('reset').addEventListener('click', () => {
   render();
 });
 
-for (const [label, options] of [
-  ['ベース・クリーム', extras.filter(item => !item.sauce)],
-  ['ソース', extras.filter(item => item.sauce)]
-]) {
-  const group = document.createElement('optgroup');
-  group.label = label;
-  for (const item of options) group.append(new Option(item.name, item.id));
-  extraSelect.append(group);
+for (const item of extras) {
+  extraSelect.append(new Option(item.name, item.id));
 }
 byId('add-extra').addEventListener('click', () => {
   const item = extras.find(entry => entry.id === extraSelect.value);

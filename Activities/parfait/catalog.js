@@ -71,9 +71,11 @@ window.ParfaitCatalog = {
     { id: 'cereal', name: 'シリアル', english: 'Cereal', layer: true, texture: 'assets/cereal-texture.webp?v=3' }
   ].map(withParfaitImage),
   extras: [
+    ...fruitRecipes.map(({ id, name }) => ({ id: id + '-sauce', name: name + 'ソース', sauce: true })),
+    { id: 'chocolate-sauce', name: 'チョコソース', sauce: true }
+  ].map(withParfaitImage),
+  legacyExtras: [
     { id: 'yogurt', name: 'ヨーグルト', layer: true },
-    { id: 'chocolate-sauce', name: 'チョコソース', sauce: true },
-    { id: 'strawberry-sauce', name: 'イチゴソース', sauce: true },
     { id: 'blueberry-sauce', name: 'ブルーベリーソース', sauce: true }
   ].map(withParfaitImage)
 };
