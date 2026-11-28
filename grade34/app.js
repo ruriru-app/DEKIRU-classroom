@@ -310,6 +310,7 @@
   }
 
   function buildVocabularyGroups(basic, advance) {
+    const specialGroups = [];
     const groups = [];
     const expressionItems = basic.filter((item) => item.kind === "expression");
     if (expressionItems.length) groups.push({ key: "expressions-basic", label: "表現", level: "Basic", items: expressionItems });
@@ -327,9 +328,9 @@
       if (basicItems.length) groups.push({ key: `${category}-basic`, label, level: "Basic", items: basicItems });
       if (advanceItems.length) groups.push({ key: `${category}-advance`, label, level: "高学年Basic", items: advanceItems });
       if (plusItems.length) groups.push({ key: `${category}-upper-plus`, label, level: "高学年Plus", items: plusItems });
-      if (specialItems.length) groups.push({ key: category, label, level: "", items: specialItems });
+      if (specialItems.length) specialGroups.push({ key: category, label, level: "", items: specialItems });
     });
-    return groups;
+    return [...specialGroups, ...groups];
   }
 
   function getSelection(bookKey, unit, vocabulary) {
