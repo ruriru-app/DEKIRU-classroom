@@ -26,9 +26,9 @@ const buttons = {
 };
 const storageKey = 'dekiru-parfait-v2';
 const previousStorageKey = 'dekiru-parfait-v1';
-const welcome = '英語でフルーツ・ゼリー・アイスなどを注文しよう。QRを1回読むと1つもらえます。';
+const welcome = '英語でフルーツ・ゼリー・アイスなどを注文しよう。QRを1回読むと1回分もらえます。';
 const wrapAngle = degrees => ((degrees % 360) + 360) % 360;
-const layerEdges = [75.6, 65.7, 55.8, 45.9, 36];
+const layerEdges = [75.6, 62.4, 49.2, 36];
 const layerLimit = layerEdges.length - 1;
 const bowlTop = layerEdges[layerLimit];
 const bowlBottom = layerEdges[0];
@@ -40,6 +40,14 @@ const bowlProfile = [
   [36, 31.5], [37, 29.7], [39, 27.3], [42, 24.9], [46, 22.8], [51, 21.1],
   [56, 19.6], [61, 18], [66, 16.2], [71, 13.7], [73, 12.1], [74.5, 10.5], [75.6, 8]
 ];
+// Each shared edge uses the same wave for the slab above and below it.
+const layerRipples = [[0, 0], [0, -.22, -.52, -.35, .13, .42, .27, -.07, 0],
+  [0, .23, .53, .38, -.08, -.53, -.45, -.14, 0], [0, 0]];
+const layerBoundaries = layerEdges.map((y, edge) => {
+  const halfWidth = bowlHalfWidth(y);
+  const ripple = layerRipples[edge];
+  return ripple.map((offset, index) => [50 - halfWidth + 2 * halfWidth * index / (ripple.length - 1), y + offset]);
+});
 const isFitted = piece => piece.layer === true;
 const isPlaced = piece => isFitted(piece) || piece.x !== null;
 const isScoop = piece => items.get(piece.ingredient).scoop === true;
@@ -47,6 +55,29 @@ const isJelly = piece => items.get(piece.ingredient).jelly === true;
 const spriteMasks = new Map();
 const layerSources = new Map();
 const alphaThreshold = 48;
+const scatterCounts = new Map([['chocolate-sprinkles', 6], ['nuts', 4]]);
+
+function isScatterPart(piece) {
+  return Number.isInteger(piece.scatterPart) && piece.scatterPart >= 1
+    && piece.scatterPart <= (scatterCounts.get(piece.ingredient) ?? 0);
+}
+
+function scatterPortion(piece) {
+  const count = scatterCounts.get(piece.ingredient);
+  // Keep an older saved mound in place until the learner returns it to the basket.
+  if (!count || isPlaced(piece) || isScatterPart(piece)) return [piece];
+  return Array.from({ length: count }, (_, index) => {
+    const part = index + 1;
+    return { ...piece, id: piece.id + ':piece:' + part, scatterPart: part };
+  });
+}
+
+function pieceImage(piece) {
+  if (isScatterPart(piece)) {
+    return 'assets/' + piece.ingredient + '-piece-' + piece.scatterPart + '.webp';
+  }
+  return items.get(piece.ingredient).image;
+}
 
 function toppingOutline() {
   const side = direction => bowlProfile.map(([y, halfWidth]) => (50 + direction * halfWidth) + '% ' + y + '%');
@@ -81,18 +112,15 @@ function textureSource(item) {
   if (item.layerColors) {
     if (!layerSources.has(item.id)) {
       const [light, dark] = item.layerColors;
-      const highlight = item.jelly
-        ? '<ellipse cx="105" cy="23" rx="117" ry="9" fill="white" opacity=".18"/>'
-        : '';
       const flecks = item.crumb
         ? '<path d="M24 31l5 2-1 5-5-1zM77 77l6-3 4 5-5 5zM130 29l6 3-2 5-5-2zM181 82l7 1-2 6-5-1zM247 41l6-4 3 6-5 4zM329 62l7 2-2 6-5-2z" fill="' + item.crumb + '"/>'
         : '';
       const gradient = '<linearGradient id="fill" x2="0%" y2="100%">'
         + '<stop offset="0%" stop-color="' + light + '"/>'
-        + '<stop offset="' + (item.jelly ? '33%' : '55%') + '" stop-color="' + light + '"/>'
+        + '<stop offset="55%" stop-color="' + light + '"/>'
         + '<stop offset="100%" stop-color="' + dark + '"/></linearGradient>';
       const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 112"><defs>'
-        + gradient + '</defs><path d="M0 0h360v112H0z" fill="url(#fill)"/>' + highlight + flecks + '</svg>';
+        + gradient + '</defs><path d="M0 0h360v112H0z" fill="url(#fill)"/>' + flecks + '</svg>';
       layerSources.set(item.id, 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg));
     }
     return layerSources.get(item.id);
@@ -139,7 +167,8 @@ function loadPieces() {
     if (Array.isArray(stored)) {
       let layers = 0;
       return cleanPieces(stored).map(piece => {
-        if (items.get(piece.ingredient).layer && isFitted(piece) && layers < layerLimit) {
+        if (isFitted(piece)) {
+          if (!items.get(piece.ingredient).layer || layers >= layerLimit) return storeInTray(piece);
           layers++;
           return fitLayer(piece);
         }
@@ -152,7 +181,7 @@ function loadPieces() {
   return [];
 }
 
-let pieces = loadPieces();
+let pieces = loadPieces().flatMap(scatterPortion);
 let selected = null;
 let drag = null;
 let placedViews = [];
@@ -210,8 +239,8 @@ function movePiece(piece, x, y) {
   }
   if (fitting && pieces.filter(isFitted).length >= layerLimit) {
     status.textContent = jelly
-      ? 'グラスの中は4段までです。空きを作ってから、ゼリーを入れよう。'
-      : 'グラスの中は4段までです。グラスの上に盛ってみよう。';
+      ? `グラスの中は${layerLimit}段までです。空きを作ってから、ゼリーを入れよう。`
+      : `グラスの中は${layerLimit}段までです。グラスの上に盛ってみよう。`;
     selectPiece(piece.id);
     return;
   }
@@ -220,7 +249,9 @@ function movePiece(piece, x, y) {
   piece.y = onBoard && !fitting ? Math.max(y, isScoop(piece) ? firstScoopY : firstToppingY) : null;
   // Array order determines stacking. Removing a layer closes the gap above it.
   pieces.splice(pieces.indexOf(piece), 1);
-  pieces.push(piece);
+  const result = scatterPortion(piece);
+  pieces.push(...result);
+  if (result.length > 1 && selected === piece.id) selected = result[0].id;
   if (jelly) status.textContent = fitting ? 'ゼリーをグラスの中に入れました。' : 'ゼリーをかごに戻しました。';
   save();
   render();
@@ -276,9 +307,8 @@ function pickPiece(clientX, clientY) {
   if (x < 0 || x > 100 || y < 0 || y > bowlBottom || (y >= bowlTop && Math.abs(x - 50) > bowlHalfWidth(y))) return null;
   for (let index = placedViews.length - 1; index >= 0; index--) {
     const view = placedViews[index];
-    // Fitted textures fill their entire slot within the same bowl outline.
     if (isFitted(view.piece)
-      ? pointInRect(clientX, clientY, view.button.getBoundingClientRect())
+      ? layerContains(Number(view.button.dataset.layer) - 1, x, y)
       : spriteContains(view, clientX, clientY)) {
       return view;
     }
@@ -322,11 +352,13 @@ function updateDragGhost({ view, ghost }, clientX, clientY) {
   const layers = pieces.filter(isFitted);
   const slot = isFitted(view.piece) ? layers.indexOf(view.piece) : layers.length;
   const layer = inWorkspace && slot < layerLimit && takesLayer(view.piece, x, y) ? layerGeometry(slot) : null;
-  const source = layer ? textureSource(item) : item.image;
+  const source = layer ? textureSource(item) : pieceImage(view.piece);
   if (ghost.getAttribute('src') !== source) ghost.src = source;
 
-  const scale = Number(getComputedStyle(view.button).getPropertyValue('--board-piece-scale'));
-  const size = inWorkspace ? rect.width * scale : 58;
+  const style = getComputedStyle(view.button);
+  const scale = Number(style.getPropertyValue('--board-piece-scale'));
+  const compactSize = Number.parseFloat(style.getPropertyValue('--tray-piece-size')) || 58;
+  const size = inWorkspace ? rect.width * scale : compactSize;
   ghost.style.width = (layer ? rect.width : size) + 'px';
   ghost.style.height = (layer ? rect.height * (layer.bottom - layer.top) / 100 : size) + 'px';
   ghost.style.clipPath = layer ? layer.clipPath : '';
@@ -365,14 +397,37 @@ function finishDrag(event) {
   }
 }
 
+function layerBoundaryY(edge, x) {
+  const points = layerBoundaries[edge];
+  if (x <= points[0][0]) return points[0][1];
+  for (let index = 1; index < points.length; index++) {
+    const [right, rightY] = points[index];
+    if (x <= right) {
+      const [left, leftY] = points[index - 1];
+      return leftY + (rightY - leftY) * ((x - left) / (right - left));
+    }
+  }
+  return points[points.length - 1][1];
+}
+
+function layerContains(slot, x, y) {
+  return y >= layerBoundaryY(slot + 1, x) && y <= layerBoundaryY(slot, x);
+}
+
 function layerGeometry(slot) {
-  const top = layerEdges[slot + 1];
-  const bottom = layerEdges[slot];
-  const rows = [top, ...bowlProfile.map(([y]) => y).filter(y => y > top && y < bottom), bottom];
-  const points = side => rows.map(y =>
-    (50 + side * bowlHalfWidth(y)).toFixed(2) + '% ' + ((y - top) * 100 / (bottom - top)).toFixed(2) + '%'
-  );
-  return { top, bottom, clipPath: 'polygon(' + [...points(-1), ...points(1).reverse()].join(',') + ')' };
+  const upperWave = layerBoundaries[slot + 1];
+  const lowerWave = layerBoundaries[slot];
+  const top = Math.min(...upperWave.map(([, y]) => y));
+  const bottom = Math.max(...lowerWave.map(([, y]) => y));
+  const walls = bowlProfile.filter(([y]) => y > layerEdges[slot + 1] && y < layerEdges[slot]);
+  const polygon = [
+    ...upperWave,
+    ...walls.map(([y, halfWidth]) => [50 + halfWidth, y]),
+    ...lowerWave.slice().reverse(),
+    ...walls.slice().reverse().map(([y, halfWidth]) => [50 - halfWidth, y])
+  ];
+  const points = polygon.map(([x, y]) => x.toFixed(3) + '% ' + ((y - top) * 100 / (bottom - top)).toFixed(3) + '%');
+  return { top, bottom, clipPath: 'polygon(' + points.join(',') + ')' };
 }
 
 function sizeLayer(button, slot) {
@@ -381,7 +436,7 @@ function sizeLayer(button, slot) {
   button.style.left = '50%';
   button.style.top = (top + bottom) / 2 + '%';
   button.style.width = '100%';
-  button.style.height = (bottom - top).toFixed(2) + '%';
+  button.style.height = (bottom - top) + '%';
   button.style.clipPath = clipPath;
 }
 
@@ -401,11 +456,14 @@ function render() {
     button.className = 'piece';
     button.dataset.id = piece.id;
     button.dataset.ingredient = piece.ingredient;
+    const single = isScatterPart(piece);
+    if (single) button.dataset.scatterPart = String(piece.scatterPart);
     if (item.scoop) button.dataset.scoop = 'true';
     if (isPlaced(piece)) button.dataset.inside = String(inside);
     if (item.layer || item.sauce) button.dataset.size = layer ? 'layer' : item.sauce ? 'wide' : 'large';
-    button.setAttribute('aria-label', item.name + (inside ? '・グラスの中' : isPlaced(piece) ? '・グラスの上' : '・買い物かご'));
-    image.src = layer ? textureSource(item) : item.image;
+    button.setAttribute('aria-label', item.name + (single ? '・' + piece.scatterPart + '粒目' : '')
+      + (inside ? '・グラスの中' : isPlaced(piece) ? '・グラスの上' : '・買い物かご'));
+    image.src = layer ? textureSource(item) : pieceImage(piece);
     image.alt = '';
     image.dataset.ingredient = item.id;
     image.draggable = false;
@@ -435,7 +493,7 @@ function render() {
 }
 
 function addPiece(id, item, shop) {
-  pieces.push({ id, ingredient: item.id, shop, x: null, y: null, layer: false, rotation: 0 });
+  pieces.push(...scatterPortion({ id, ingredient: item.id, shop, x: null, y: null, layer: false, rotation: 0 }));
 }
 
 function receive(code) {
@@ -452,7 +510,8 @@ function receive(code) {
     return shop.name + 'で' + item.name + 'は買いました。買い足すときは別のお店で注文しよう。';
   }
   addPiece(source + ':' + item.id, item, source);
-  const quantity = item.quantity ?? (item.layer ? '1つ' : '1切れ');
+  const count = scatterCounts.get(item.id);
+  const quantity = count ? '1回分（' + count + '粒）' : item.quantity ?? (item.layer ? '1つ' : '1切れ');
   status.textContent = fromTeacher
     ? '先生から' + item.name + 'を' + quantity + '受け取りました！'
     : shop.name + 'で' + item.name + 'を' + quantity + '買いました！';
@@ -489,7 +548,7 @@ buttons.return.addEventListener('click', () => {
 });
 resetArrangement.addEventListener('click', () => {
   if (!pieces.some(isPlaced) || !confirm('盛りつけた具材をすべてかごに戻しますか？')) return;
-  pieces = pieces.map(piece => isPlaced(piece) ? { ...storeInTray(piece), rotation: 0 } : piece);
+  pieces = pieces.flatMap(piece => isPlaced(piece) ? scatterPortion({ ...storeInTray(piece), rotation: 0 }) : [piece]);
   selected = null;
   status.textContent = '盛りつけた具材をかごに戻しました。';
   save();

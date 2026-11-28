@@ -5,12 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>MY PARFAIT | DEKIRU</title>
   <link rel="stylesheet" href="../pizza-qr-prototype/style.css?v=7">
-  <link rel="stylesheet" href="style.css?v=6">
+  <link rel="stylesheet" href="style.css?v=8">
   <link rel="stylesheet" href="glass.css">
   <script defer src="../pizza-qr-prototype/vendor/jsQR.js"></script>
   <script defer src="../pizza-qr-prototype/scanner.js?v=2"></script>
-  <script defer src="catalog.js?v=7"></script>
-  <script defer src="app.js?v=7"></script>
+  <script defer src="catalog.js?v=8"></script>
+  <script defer src="app.js?v=8"></script>
 </head>
 <body>
   <header class="page-header">
@@ -31,7 +31,7 @@
         <div id="toppings"></div>
         <img id="glass-front" src="assets/parfait-glass.webp" alt="" draggable="false" aria-hidden="true">
       </div>
-      <p class="hint placement-hint">具材をドラッグするか、具材を選んで盛りつける場所をタップしよう。<br>ゼリーはグラスの中に入れよう。シリアルやアイスなどと合わせて、底から4段まで重ねられます。</p>
+      <p class="hint placement-hint">具材をドラッグするか、具材を選んで盛りつける場所をタップしよう。<br>ゼリーはグラスの中に入れよう。シリアルやアイスなどと合わせて、底から3段まで重ねられます。</p>
     </section>
     <aside>
       <h2>買い物かご <span id="count">0</span></h2>
@@ -40,7 +40,7 @@
         <span>I want a strawberry, please.</span>
       </div>
       <button class="primary" id="scan" type="button">QRを読み取る</button>
-      <p id="status" role="status">英語でフルーツ・ゼリー・アイスなどを注文しよう。QRを1回読むと1つもらえます。</p>
+      <p id="status" role="status">英語でフルーツ・ゼリー・アイスなどを注文しよう。QRを1回読むと1回分もらえます。</p>
       <div id="tray" aria-label="買い物かごの具材"></div>
       <div class="rotation-controls" role="group" aria-label="選んだ具材の向き">
         <button id="rotate-left" type="button" disabled><span aria-hidden="true">↶</span> 左に回す</button>

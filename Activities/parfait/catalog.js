@@ -15,23 +15,24 @@ function shopGroup(id, name, english, items) {
 }
 
 const fruitRecipes = [
-  { id: 'melon', name: 'メロン', english: 'Melons', flavor: 'Melon', colors: ['#c7ef8c', '#629a33'] },
-  { id: 'peach', name: '白桃', english: 'Peaches', flavor: 'Peach', colors: ['#ffd6a8', '#dd735b'], image: 'assets/peach.webp?v=6' },
-  { id: 'banana', name: 'バナナ', english: 'Bananas', flavor: 'Banana', colors: ['#fff394', '#d4a332'] },
-  { id: 'apple', name: 'リンゴ', english: 'Apples', flavor: 'Apple', colors: ['#ffd389', '#c5702b'] },
-  { id: 'pineapple', name: 'パイナップル', english: 'Pineapples', flavor: 'Pineapple', colors: ['#ffec5d', '#d79813'] },
-  { id: 'cherry', name: 'サクランボ', english: 'Cherries', flavor: 'Cherry', colors: ['#ed6192', '#8e194c'] },
-  { id: 'strawberry', name: 'イチゴ', english: 'Strawberries', flavor: 'Strawberry', colors: ['#ff9b9c', '#c92950'], image: 'assets/strawberry.webp?v=2' },
-  { id: 'orange', name: 'オレンジ', english: 'Oranges', flavor: 'Orange', colors: ['#ffc66c', '#de6d22'] },
-  { id: 'kiwi', name: 'キウイ', english: 'Kiwi fruits', flavor: 'Kiwi', colors: ['#aade68', '#407d2c'], image: 'assets/kiwi.webp?v=2' },
-  { id: 'mango', name: 'マンゴー', english: 'Mangoes', flavor: 'Mango', colors: ['#ffe05d', '#ef8d1d'] },
-  { id: 'persimmon', name: 'カキ', english: 'Persimmons', flavor: 'Persimmon', colors: ['#ffab5e', '#bd4c23'] },
-  { id: 'pear', name: '洋ナシ', english: 'Pears', flavor: 'Pear', colors: ['#f5edac', '#b6a74c'] }
+  { id: 'melon', name: 'メロン', english: 'Melons', flavor: 'Melon' },
+  { id: 'peach', name: '白桃', english: 'Peaches', flavor: 'Peach', image: 'assets/peach.webp?v=6' },
+  { id: 'banana', name: 'バナナ', english: 'Bananas', flavor: 'Banana' },
+  { id: 'apple', name: 'リンゴ', english: 'Apples', flavor: 'Apple' },
+  { id: 'pineapple', name: 'パイナップル', english: 'Pineapples', flavor: 'Pineapple' },
+  { id: 'cherry', name: 'サクランボ', english: 'Cherries', flavor: 'Cherry' },
+  { id: 'strawberry', name: 'イチゴ', english: 'Strawberries', flavor: 'Strawberry', image: 'assets/strawberry.webp?v=2' },
+  { id: 'orange', name: 'オレンジ', english: 'Oranges', flavor: 'Orange' },
+  { id: 'kiwi', name: 'キウイ', english: 'Kiwi fruits', flavor: 'Kiwi', image: 'assets/kiwi.webp?v=2' },
+  { id: 'mango', name: 'マンゴー', english: 'Mangoes', flavor: 'Mango' },
+  { id: 'persimmon', name: 'カキ', english: 'Persimmons', flavor: 'Persimmon' },
+  { id: 'pear', name: '洋ナシ', english: 'Pears', flavor: 'Pear' }
 ];
 
-const fruitShopItems = fruitRecipes.map(({ flavor, colors, ...item }) => withParfaitImage(item));
-const jellyShopItems = fruitRecipes.map(({ id, name, flavor, colors }) => withParfaitImage({
-  id: id + '-jelly', name: name + 'ゼリー', english: flavor + ' jelly', layer: true, jelly: true, layerColors: colors
+const fruitShopItems = fruitRecipes.map(({ flavor, ...item }) => withParfaitImage(item));
+const jellyShopItems = fruitRecipes.map(({ id, name, flavor }) => withParfaitImage({
+  id: id + '-jelly', name: name + 'ゼリー', english: flavor + ' jelly', layer: true, jelly: true,
+  texture: 'assets/' + id + '-jelly-layer.webp?v=8'
 }));
 
 const iceScoopItems = [
@@ -67,7 +68,7 @@ window.ParfaitCatalog = {
   teacherItems: [
     { id: 'whole-strawberry', name: '丸ごとのイチゴ', english: 'Whole strawberry', quantity: '1つ' },
     { id: 'diagonal-banana', name: '斜め切りのバナナ', english: 'Banana slice' },
-    { id: 'sliced-melon', name: 'スライスしたメロン', english: 'Melon slice' },
+    { id: 'sliced-melon', name: 'スライスしたメロン', english: 'Melon slice', image: 'assets/sliced-melon.webp?v=8' },
     { id: 'cereal', name: 'シリアル', english: 'Cereal', layer: true, texture: 'assets/cereal-texture.webp?v=3' }
   ].map(withParfaitImage),
   extras: [
