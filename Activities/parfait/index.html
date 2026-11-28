@@ -5,25 +5,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>MY PARFAIT | DEKIRU</title>
   <link rel="stylesheet" href="../pizza-qr-prototype/style.css?v=7">
-  <link rel="stylesheet" href="style.css?v=8">
+  <link rel="stylesheet" href="style.css?v=9">
   <link rel="stylesheet" href="glass.css">
   <script defer src="../pizza-qr-prototype/vendor/jsQR.js"></script>
   <script defer src="../pizza-qr-prototype/scanner.js?v=2"></script>
-  <script defer src="catalog.js?v=8"></script>
-  <script defer src="app.js?v=8"></script>
+  <script defer src="catalog.js?v=9"></script>
+  <script defer src="app.js?v=9"></script>
 </head>
 <body>
-  <header class="page-header">
+  <header class="page-header" id="editor-header">
     <div>
       <p class="eyebrow">LET’S GO SHOPPING</p>
       <h1>MY PARFAIT</h1>
     </div>
     <div class="header-actions">
       <button id="reset-arrangement" type="button" disabled>盛り付けをやりなおす</button>
-      <button id="reset" type="button">はじめから</button>
+      <button id="complete" type="button">完成</button>
+      <div class="reset-display-actions">
+        <button id="reset" type="button">はじめから</button>
+        <button id="fullscreen" type="button" data-parfait-fullscreen>全画面表示</button>
+      </div>
     </div>
   </header>
-  <main>
+  <p id="fullscreen-status" class="fullscreen-notice" role="status" hidden></p>
+  <main id="editor-view">
     <section class="kitchen" aria-label="パフェを作る">
       <div id="parfait" role="group" aria-label="パフェグラス">
         <img id="glass" src="assets/parfait-glass.webp" alt="" draggable="false">
@@ -45,6 +50,7 @@
       <div class="rotation-controls" role="group" aria-label="選んだ具材の向き">
         <button id="rotate-left" type="button" disabled><span aria-hidden="true">↶</span> 左に回す</button>
         <button id="rotate-right" type="button" disabled><span aria-hidden="true">↷</span> 右に回す</button>
+        <button id="flip-piece" type="button" aria-pressed="false" disabled>左右反転</button>
       </div>
       <button id="return" type="button" disabled>選んだ具材をかごに戻す</button>
       <div class="extras">
@@ -56,6 +62,21 @@
       </div>
       <p class="hint">お店の具材を買い足すときは、別のお店で注文しよう。パフェと買い物かごは自動で保存されます。</p>
     </aside>
+  </main>
+  <main id="complete-view" aria-label="完成したパフェ" hidden>
+    <div class="complete-actions">
+      <button id="complete-back" type="button">戻る</button>
+      <button id="complete-fullscreen" type="button" data-parfait-fullscreen>全画面表示</button>
+    </div>
+    <section class="complete-sheet" aria-label="パフェの作品シート">
+      <figure class="complete-stage" id="complete-stage" aria-label="盛りつけたパフェ"></figure>
+      <div class="complete-details">
+        <label for="parfait-title">パフェのタイトル</label>
+        <textarea id="parfait-title" rows="1" placeholder="マイパフェ"></textarea>
+        <label for="parfait-notes">工夫したポイント</label>
+        <textarea id="parfait-notes" rows="3" placeholder="工夫したことを書こう"></textarea>
+      </div>
+    </section>
   </main>
   <dialog id="camera" aria-labelledby="camera-title">
     <h2 id="camera-title">具材カードのQRを読み取ろう</h2>

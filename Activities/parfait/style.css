@@ -15,6 +15,13 @@ h1 { white-space: nowrap; }
   margin-inline-start: auto;
 }
 .header-actions #reset { margin-inline-start: 0; }
+.reset-display-actions { display: flex; gap: 8px; }
+.reset-display-actions button { white-space: nowrap; }
+#complete {
+  border-color: var(--green);
+  background: var(--green);
+  color: white;
+}
 main { grid-template-columns: minmax(0, 1fr) 334px; }
 .kitchen, aside { background: #fffdfd; }
 .kitchen {
@@ -37,9 +44,11 @@ main { grid-template-columns: minmax(0, 1fr) 334px; }
 .piece[data-ingredient="pineapple"] { --board-piece-scale: .29; }
 .piece[data-ingredient="cherry"] { --board-piece-scale: .19; }
 .piece:is([data-ingredient="kiwi"], [data-ingredient="strawberry"], [data-ingredient="whole-strawberry"]) { --board-piece-scale: .27; }
-.piece[data-ingredient="diagonal-banana"] { --board-piece-scale: .28; }
-.piece[data-ingredient="sliced-melon"] { --board-piece-scale: .17; }
+.piece[data-ingredient="diagonal-banana"] { --board-piece-scale: .54; }
+.piece[data-ingredient="sliced-melon"] { --board-piece-scale: .34; }
 .piece[data-scoop="true"] { --board-piece-scale: .43; }
+.piece[data-ingredient="chocolate-sprinkles"]:not([data-scatter-part]) { --board-piece-scale: .30; }
+.piece[data-ingredient="nuts"]:not([data-scatter-part]) { --board-piece-scale: .27; }
 .piece[data-ingredient="chocolate-sprinkles"][data-scatter-part] {
   --board-piece-scale: .055;
   --tray-piece-size: 20px;
@@ -88,6 +97,8 @@ main { grid-template-columns: minmax(0, 1fr) 334px; }
 .shop-phrase { border-color: var(--red); background: #fbedf1; }
 #count { background: #f4e3ef; }
 #tray { background: #f4eef2; }
+.rotation-controls { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+#flip-piece[aria-pressed="true"] { background: #f4e3ef; border-color: #a75379; }
 .extras { border-top: 1px solid var(--line); margin-top: 14px; padding-top: 12px; }
 .extras label { display: block; font-weight: 700; margin-bottom: 5px; }
 .extras-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px; }
@@ -100,8 +111,76 @@ main { grid-template-columns: minmax(0, 1fr) 334px; }
   padding: 6px 9px;
 }
 #extras:focus-visible { outline: 3px solid #297ba3; outline-offset: 3px; }
+
+.fullscreen-notice {
+  width: min(100% - 24px, 1172px);
+  margin: 0 auto 8px;
+  color: var(--muted);
+}
+#complete-view {
+  display: block;
+  width: min(100%, 1040px);
+  padding-block: 12px 16px;
+}
+.complete-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.complete-sheet {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(18px, 5vw, 60px);
+  padding: 14px clamp(18px, 5vw, 64px);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: radial-gradient(ellipse at 30% 60%, #fffefa 18%, #faeef4 100%);
+}
+.complete-stage { min-width: 0; margin: 0; }
+.complete-stage #parfait {
+  width: min(100%, 350px, max(220px, calc(57dvh - 58px)));
+  pointer-events: none;
+}
+.complete-stage #placement { display: none; }
+.complete-details { min-width: 0; padding-block: 12px; }
+.complete-details label {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--muted);
+  font-weight: 700;
+}
+.complete-details textarea {
+  display: block;
+  width: 100%;
+  padding: 4px 0 6px;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  line-height: 1.5;
+  resize: none;
+  overflow: hidden;
+}
+.complete-details textarea::placeholder { color: var(--muted); opacity: .7; }
+.complete-details textarea:focus-visible { outline: 2px solid #8c4166; outline-offset: 3px; }
+#parfait-title {
+  margin-bottom: 18px;
+  font-size: clamp(25px, 3vw, 42px);
+  font-weight: 800;
+  line-height: 1.2;
+}
+#parfait-notes { font-size: clamp(16px, 2vw, 22px); }
+
 @media (max-width: 780px) {
   main { grid-template-columns: minmax(0, 1fr); }
   h1 { font-size: clamp(31px, 8vw, 49px); }
   .header-actions { margin-inline-start: 0; }
+  .complete-sheet { grid-template-columns: minmax(0, 1fr); gap: 10px; padding: 7px 14px 14px; }
+  .complete-stage #parfait { width: min(100%, 235px, max(160px, calc(57dvh - 192px))); }
+  .complete-details { padding-block: 0; }
+  #parfait-title { margin-bottom: 12px; }
 }

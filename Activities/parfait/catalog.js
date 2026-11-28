@@ -68,7 +68,7 @@ window.ParfaitCatalog = {
   teacherItems: [
     { id: 'whole-strawberry', name: '丸ごとのイチゴ', english: 'Whole strawberry', quantity: '1つ' },
     { id: 'diagonal-banana', name: '斜め切りのバナナ', english: 'Banana slice' },
-    { id: 'sliced-melon', name: 'スライスしたメロン', english: 'Melon slice', image: 'assets/sliced-melon.webp?v=8' },
+    { id: 'sliced-melon', name: 'スライスしたメロン', english: 'Melon slice', image: 'assets/sliced-melon.webp?v=9' },
     { id: 'cereal', name: 'シリアル', english: 'Cereal', layer: true, texture: 'assets/cereal-texture.webp?v=3' }
   ].map(withParfaitImage),
   extras: [

@@ -22,6 +22,7 @@ const resetArrangement = byId('reset-arrangement');
 const buttons = {
   left: byId('rotate-left'),
   right: byId('rotate-right'),
+  flip: byId('flip-piece'),
   return: byId('return')
 };
 const storageKey = 'dekiru-parfait-v2';
@@ -62,20 +63,40 @@ function isScatterPart(piece) {
     && piece.scatterPart <= (scatterCounts.get(piece.ingredient) ?? 0);
 }
 
-function scatterPortion(piece) {
-  const count = scatterCounts.get(piece.ingredient);
-  // Keep an older saved mound in place until the learner returns it to the basket.
-  if (!count || isPlaced(piece) || isScatterPart(piece)) return [piece];
-  return Array.from({ length: count }, (_, index) => {
-    const part = index + 1;
-    return { ...piece, id: piece.id + ':piece:' + part, scatterPart: part };
-  });
+function scatterGroupId(piece) {
+  const suffix = ':piece:' + piece.scatterPart;
+  return isScatterPart(piece) && piece.id.endsWith(suffix) ? piece.id.slice(0, -suffix.length) : null;
+}
+
+function consolidateScatteredServings(saved) {
+  const ids = new Set(saved.map(piece => piece.id));
+  const servings = new Map();
+  for (const piece of saved) {
+    const id = scatterGroupId(piece);
+    if (!id || ids.has(id)) continue;
+    if (!servings.has(id)) servings.set(id, []);
+    servings.get(id).push(piece);
+  }
+
+  const replacements = new Map();
+  for (const [id, parts] of servings) {
+    const count = scatterCounts.get(parts[0].ingredient);
+    // A mixed or incomplete serving keeps its legacy parts and positions.
+    if (parts.length !== count || parts.some(isPlaced)
+      || new Set(parts.map(piece => piece.scatterPart)).size !== count) continue;
+    const group = { ...parts[0], id };
+    delete group.scatterPart;
+    for (const part of parts) replacements.set(part, []);
+    replacements.set(parts[0], [group]);
+  }
+  return saved.flatMap(piece => replacements.get(piece) ?? [piece]);
 }
 
 function pieceImage(piece) {
   if (isScatterPart(piece)) {
     return 'assets/' + piece.ingredient + '-piece-' + piece.scatterPart + '.webp';
   }
+  if (scatterCounts.has(piece.ingredient)) return 'assets/' + piece.ingredient + '-scattered.webp';
   return items.get(piece.ingredient).image;
 }
 
@@ -141,7 +162,8 @@ function cleanPieces(stored) {
     && (piece.shop === null || shopDirectory.get(piece.shop)?.items.some(item => item.id === piece.ingredient)))
     .map(piece => ({
       ...piece,
-      rotation: Number.isFinite(piece.rotation) ? wrapAngle(piece.rotation) : 0
+      rotation: Number.isFinite(piece.rotation) ? wrapAngle(piece.rotation) : 0,
+      flipped: piece.flipped === true
     }));
 }
 
@@ -181,7 +203,7 @@ function loadPieces() {
   return [];
 }
 
-let pieces = loadPieces().flatMap(scatterPortion);
+let pieces = consolidateScatteredServings(loadPieces());
 let selected = null;
 let drag = null;
 let placedViews = [];
@@ -207,11 +229,13 @@ function selectPiece(id) {
   const canRotate = piece && !isFitted(piece);
   buttons.left.disabled = !canRotate;
   buttons.right.disabled = !canRotate;
+  buttons.flip.disabled = !piece;
+  buttons.flip.setAttribute('aria-pressed', String(piece?.flipped === true));
   buttons.return.disabled = !piece || !isPlaced(piece);
 }
 
-function setRotation(image, piece) {
-  image.style.transform = 'rotate(' + (isFitted(piece) ? 0 : piece.rotation) + 'deg)';
+function setPieceTransform(image, piece, layer = isFitted(piece)) {
+  image.style.transform = 'rotate(' + (layer ? 0 : piece.rotation) + 'deg)' + (piece.flipped ? ' scaleX(-1)' : '');
 }
 
 function rotateSelected(degrees) {
@@ -219,7 +243,17 @@ function rotateSelected(degrees) {
   const image = document.querySelector('.piece[aria-pressed="true"] img');
   if (!piece || !image || isFitted(piece)) return;
   piece.rotation = wrapAngle(piece.rotation + degrees);
-  setRotation(image, piece);
+  setPieceTransform(image, piece);
+  save();
+}
+
+function flipSelected() {
+  const piece = currentPiece();
+  const image = document.querySelector('.piece[aria-pressed="true"] img');
+  if (!piece || !image) return;
+  piece.flipped = !piece.flipped;
+  setPieceTransform(image, piece);
+  buttons.flip.setAttribute('aria-pressed', String(piece.flipped));
   save();
 }
 
@@ -249,9 +283,11 @@ function movePiece(piece, x, y) {
   piece.y = onBoard && !fitting ? Math.max(y, isScoop(piece) ? firstScoopY : firstToppingY) : null;
   // Array order determines stacking. Removing a layer closes the gap above it.
   pieces.splice(pieces.indexOf(piece), 1);
-  const result = scatterPortion(piece);
-  pieces.push(...result);
-  if (result.length > 1 && selected === piece.id) selected = result[0].id;
+  pieces.push(piece);
+  if (!onBoard && isScatterPart(piece)) {
+    pieces = consolidateScatteredServings(pieces);
+    if (selected === piece.id && !pieces.includes(piece)) selected = scatterGroupId(piece);
+  }
   if (jelly) status.textContent = fitting ? 'ゼリーをグラスの中に入れました。' : 'ゼリーをかごに戻しました。';
   save();
   render();
@@ -295,7 +331,8 @@ function spriteContains({ image, piece }, x, y) {
   const dy = y - bounds.top - bounds.height / 2;
   const scale = Math.min(image.offsetWidth / image.naturalWidth, image.offsetHeight / image.naturalHeight);
   if (!scale) return false;
-  const sampleX = Math.floor((dx * cosine + dy * sine) / scale + image.naturalWidth / 2);
+  const localX = dx * cosine + dy * sine;
+  const sampleX = Math.floor((piece.flipped ? -localX : localX) / scale + image.naturalWidth / 2);
   const sampleY = Math.floor((dy * cosine - dx * sine) / scale + image.naturalHeight / 2);
   if (sampleX < 0 || sampleX >= image.naturalWidth || sampleY < 0 || sampleY >= image.naturalHeight) return false;
   const mask = opacityMask(image);
@@ -363,7 +400,7 @@ function updateDragGhost({ view, ghost }, clientX, clientY) {
   ghost.style.height = (layer ? rect.height * (layer.bottom - layer.top) / 100 : size) + 'px';
   ghost.style.clipPath = layer ? layer.clipPath : '';
   ghost.style.objectFit = layer ? 'cover' : 'contain';
-  ghost.style.transform = 'rotate(' + (layer ? 0 : view.piece.rotation) + 'deg)';
+  setPieceTransform(ghost, view.piece, Boolean(layer));
   ghost.style.left = clientX + 'px';
   ghost.style.top = clientY + 'px';
 }
@@ -467,7 +504,7 @@ function render() {
     image.alt = '';
     image.dataset.ingredient = item.id;
     image.draggable = false;
-    setRotation(image, piece);
+    setPieceTransform(image, piece);
     button.append(image);
     button.addEventListener('click', () => selectPiece(piece.id));
     const view = { button, piece, image };
@@ -493,7 +530,7 @@ function render() {
 }
 
 function addPiece(id, item, shop) {
-  pieces.push(...scatterPortion({ id, ingredient: item.id, shop, x: null, y: null, layer: false, rotation: 0 }));
+  pieces.push({ id, ingredient: item.id, shop, x: null, y: null, layer: false, rotation: 0, flipped: false });
 }
 
 function receive(code) {
@@ -510,8 +547,7 @@ function receive(code) {
     return shop.name + 'で' + item.name + 'は買いました。買い足すときは別のお店で注文しよう。';
   }
   addPiece(source + ':' + item.id, item, source);
-  const count = scatterCounts.get(item.id);
-  const quantity = count ? '1回分（' + count + '粒）' : item.quantity ?? (item.layer ? '1つ' : '1切れ');
+  const quantity = scatterCounts.has(item.id) ? '1回分' : item.quantity ?? (item.layer ? '1つ' : '1切れ');
   status.textContent = fromTeacher
     ? '先生から' + item.name + 'を' + quantity + '受け取りました！'
     : shop.name + 'で' + item.name + 'を' + quantity + '買いました！';
@@ -542,13 +578,14 @@ placement.addEventListener('click', () => {
 });
 buttons.left.addEventListener('click', () => rotateSelected(-45));
 buttons.right.addEventListener('click', () => rotateSelected(45));
+buttons.flip.addEventListener('click', flipSelected);
 buttons.return.addEventListener('click', () => {
   const piece = currentPiece();
   if (piece) movePiece(piece, null, null);
 });
 resetArrangement.addEventListener('click', () => {
   if (!pieces.some(isPlaced) || !confirm('盛りつけた具材をすべてかごに戻しますか？')) return;
-  pieces = pieces.flatMap(piece => isPlaced(piece) ? scatterPortion({ ...storeInTray(piece), rotation: 0 }) : [piece]);
+  pieces = consolidateScatteredServings(pieces.map(piece => isPlaced(piece) ? { ...storeInTray(piece), rotation: 0 } : piece));
   selected = null;
   status.textContent = '盛りつけた具材をかごに戻しました。';
   save();
@@ -559,6 +596,7 @@ byId('reset').addEventListener('click', () => {
   pieces = [];
   selected = null;
   status.textContent = welcome;
+  clearPresentation();
   save();
   render();
 });
@@ -580,3 +618,118 @@ byId('add-extra').addEventListener('click', () => {
 toppings.style.clipPath = toppingOutline();
 window.setUpPizzaScanner(receive);
 render();
+
+const presentationKey = 'dekiru-parfait-presentation-v1';
+const titleField = byId('parfait-title');
+const notesField = byId('parfait-notes');
+const presentationFields = [titleField, notesField];
+const completeView = byId('complete-view');
+const completeStage = byId('complete-stage');
+const completeButton = byId('complete');
+const completeBack = byId('complete-back');
+const editorHeader = byId('editor-header');
+const editorView = byId('editor-view');
+const fullscreenNotice = byId('fullscreen-status');
+const fullscreenButtons = document.querySelectorAll('[data-parfait-fullscreen]');
+
+function fitPresentationFields() {
+  if (completeView.hidden) return;
+  for (const field of presentationFields) {
+    field.style.height = 'auto';
+    field.style.height = (field.scrollHeight + field.offsetHeight - field.clientHeight) + 'px';
+  }
+}
+
+function loadPresentation() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(presentationKey));
+    if (typeof saved?.title === 'string') titleField.value = saved.title;
+    if (typeof saved?.notes === 'string') notesField.value = saved.notes;
+  } catch { /* A blocked or older browser can still edit the work during this visit. */ }
+}
+
+function savePresentation() {
+  try {
+    localStorage.setItem(presentationKey, JSON.stringify({ title: titleField.value, notes: notesField.value }));
+  } catch { /* Keep the text on screen when storage is unavailable. */ }
+}
+
+function clearPresentation() {
+  for (const field of presentationFields) field.value = '';
+  try {
+    localStorage.removeItem(presentationKey);
+  } catch { /* Storage may be unavailable. */ }
+}
+
+function syncCompletion() {
+  const completed = location.hash === '#complete';
+  if (completed === !completeView.hidden) return;
+  fullscreenNotice.hidden = true;
+  if (completed) {
+    if (byId('camera').open) byId('close').click();
+    selectPiece(null);
+    board.inert = true;
+    completeStage.append(board);
+  } else {
+    workspace.prepend(board);
+    board.inert = false;
+  }
+  editorHeader.hidden = completed;
+  editorView.hidden = completed;
+  completeView.hidden = !completed;
+  fitPresentationFields();
+  window.scrollTo(0, 0);
+  (completed ? completeBack : completeButton).focus({ preventScroll: true });
+}
+
+completeButton.addEventListener('click', () => {
+  history.pushState({ parfaitCompleted: true }, '', '#complete');
+  syncCompletion();
+});
+completeBack.addEventListener('click', () => {
+  if (history.state?.parfaitCompleted) {
+    history.back();
+  } else {
+    history.replaceState(history.state, '', location.pathname + location.search);
+    syncCompletion();
+  }
+});
+window.addEventListener('hashchange', syncCompletion);
+window.addEventListener('resize', fitPresentationFields);
+for (const field of presentationFields) {
+  field.addEventListener('input', () => {
+    fitPresentationFields();
+    savePresentation();
+  });
+}
+
+function syncFullscreen() {
+  const fullscreen = Boolean(document.fullscreenElement);
+  for (const button of fullscreenButtons) {
+    button.textContent = fullscreen ? '全画面解除' : '全画面表示';
+    button.disabled = !fullscreen && (!document.fullscreenEnabled || !document.documentElement.requestFullscreen);
+    button.title = button.disabled ? 'このブラウザでは全画面表示を利用できません。' : '';
+  }
+  fitPresentationFields();
+}
+
+async function toggleFullscreen() {
+  fullscreenNotice.hidden = true;
+  try {
+    if (document.fullscreenElement) {
+      await document.exitFullscreen();
+    } else {
+      await document.documentElement.requestFullscreen();
+    }
+  } catch {
+    fullscreenNotice.textContent = '全画面表示を切り替えられませんでした。';
+    fullscreenNotice.hidden = false;
+  }
+  syncFullscreen();
+}
+
+for (const button of fullscreenButtons) button.addEventListener('click', toggleFullscreen);
+document.addEventListener('fullscreenchange', syncFullscreen);
+loadPresentation();
+syncCompletion();
+syncFullscreen();
